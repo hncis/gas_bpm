@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="FamilyJob">
+
+	<select id="selectGbListToFamilyJob" parameterClass="bgabGascfj02Dto" resultClass="bgabGascfj02Dto">
+		/* familyJob.xml :: selectGbListToFamilyJob */
+		SELECT F_TYPE
+			 , F_SEQ
+			 , F_CODE
+			 , F_GUBUN
+			 , F_ITEM
+			 , F_SORT
+			 , F_USE_YN
+			 , F_SEQ AS HID_F_SEQ
+			 , F_ITEM AS HID_F_ITEM
+		  FROM BGAB_GASCFJ02$corp_cd$
+		 WHERE F_TYPE = #f_type#
+		 ORDER BY F_SORT ASC
+	</select>
+	
+	<insert id="insertGbListToFamilyJob" parameterClass="bgabGascfj02Dto">
+		/* familyJob.xml :: selectGbListToFamilyJob */
+		INSERT INTO BGAB_GASCFJ02$corp_cd$(
+			  F_TYPE
+			, F_SEQ
+			, F_CODE
+			, F_GUBUN
+			, F_ITEM
+			, F_SORT
+			, F_USE_YN
+			, INP_YMD
+			, IPE_EENO
+			, MDFY_YMD
+			, UPDR_EENO
+		)VALUES(
+			  #f_type#
+			, (SELECT NVL(MAX(TO_NUMBER(F_SEQ)),0 )+1 AS SEQ FROM BGAB_GASCFJ02$corp_cd$)
+			, #f_code#
+			, #f_gubun#
+			, #f_item#
+			, #f_sort#
+			, #f_use_yn#
+			, SYSDATE
+			, #inp_eeno#
+			, SYSDATE
+			, #updr_eeno#
+		)
+	</insert>
+	
+	<update id="updateGbListToFamilyJob" parameterClass="bgabGascfj02Dto">
+		/* familyJob.xml :: updateGbListToFamilyJob */
+		UPDATE BGAB_GASCFJ02$corp_cd$
+		   SET F_CODE = #f_code#
+			 , F_GUBUN = #f_gubun#
+			 , F_ITEM = #f_item#
+			 , F_SORT = #f_sort#
+			 , F_USE_YN = #f_use_yn#
+			 , MDFY_YMD = SYSDATE
+			 , UPDR_EENO = #updr_eeno#
+		 WHERE F_SEQ = #f_seq#
+	</update>
+	
+	<delete id="deleteGbListToFamilyJobDetail" parameterClass="bgabGascfj02Dto">
+		/* familyJob.xml :: deleteGbListToFamilyJobDetail */
+		DELETE FROM BGAB_GASCFJ03$corp_cd$
+		 WHERE R_TYPE = #f_code#
+	</delete>
+	
+	<delete id="deleteGbListToFamilyJob" parameterClass="bgabGascfj02Dto">
+		/* familyJob.xml :: deleteGbListToFamilyJob */
+		DELETE FROM BGAB_GASCFJ02$corp_cd$
+		 WHERE F_SEQ = #f_seq#
+	</delete>
+	
+	<select id="selectRelListToFamilyJob" parameterClass="bgabGascfj02Dto" resultClass="bgabGascfj02Dto">
+		/* familyJob.xml :: selectRelListToFamilyJob */
+		SELECT R_TYPE
+			 , B.F_GUBUN AS R_TYPE_NM
+			 , R_SEQ
+			 , R_REL
+			 , R_COMPAY
+			 , R_SORT
+			 , R_USE_YN
+			 , R_SEQ AS HID_R_SEQ
+		  FROM BGAB_GASCFJ03$corp_cd$ A
+		  JOIN BGAB_GASCFJ02$corp_cd$ B
+		    ON A.R_TYPE = B.F_CODE
+		 WHERE R_TYPE = #r_type#
+		 ORDER BY R_SORT ASC
+	</select>
+	
+	<insert id="insertRelListToFamilyJob" parameterClass="bgabGascfj02Dto">
+		/* familyJob.xml :: inserttRelListToFamilyJob */
+		INSERT INTO BGAB_GASCFJ03$corp_cd$(
+			  R_TYPE
+			, R_SEQ
+			, R_REL
+			, R_COMPAY
+			, R_SORT
+			, R_USE_YN
+			, INP_YMD
+			, IPE_EENO
+			, MDFY_YMD
+			, UPDR_EENO
+		)VALUES(
+			  #r_type#
+			, (SELECT NVL(MAX(TO_NUMBER(R_SEQ)),0 )+1 AS SEQ FROM BGAB_GASCFJ03$corp_cd$)
+			, #r_rel#
+			, #r_compay#
+			, #r_sort#
+			, #r_use_yn#
+			, SYSDATE
+			, #inp_eeno#
+			, SYSDATE
+			, #updr_eeno#
+		)
+	</insert>
+	
+	<update id="updateRelListToFamilyJob" parameterClass="bgabGascfj02Dto">
+		/* familyJob.xml :: updateRelListToFamilyJob */
+		UPDATE BGAB_GASCFJ03$corp_cd$
+		   SET R_REL = #r_rel#
+			 , R_COMPAY = #r_compay#
+			 , R_SORT = #r_sort#
+			 , R_USE_YN = #r_use_yn#
+			 , MDFY_YMD = SYSDATE
+			 , UPDR_EENO = #updr_eeno#
+		 WHERE R_SEQ = #r_seq#
+	</update>
+	
+	<delete id="deleteRelListToFamilyJob" parameterClass="bgabGascfj02Dto">
+		/* familyJob.xml :: deleteRelListToFamilyJob */
+		DELETE FROM BGAB_GASCFJ03$corp_cd$
+		 WHERE R_SEQ = #r_seq#
+	</delete>
+	
+	<select id="selectToFamilyJobCombo" parameterClass="bgabGascfj02Dto" resultClass="bgabGascfj02Dto">
+		/* familyJob.xml :: selectToFamilyJobCombo */
+		SELECT F_TYPE
+			 , F_SEQ
+			 , F_CODE
+			 , F_GUBUN
+			 , F_ITEM
+		  FROM BGAB_GASCFJ02$corp_cd$
+		 WHERE F_USE_YN = 'Y'
+		 ORDER BY F_SORT ASC
+	</select>
+	
+	<select id="selectToFamilyJobCombo2" parameterClass="bgabGascfj02Dto" resultClass="bgabGascfj02Dto">
+		/* familyJob.xml :: selectToFamilyJobCombo2 */
+		SELECT R_TYPE
+			 , R_SEQ
+			 , R_REL
+			 , R_COMPAY
+			 , R_SORT
+		  FROM BGAB_GASCFJ03$corp_cd$
+		 WHERE R_USE_YN = 'Y'
+		 ORDER BY R_SORT ASC
+	</select>
+	
+	<insert id="insertToFamilyJob" parameterClass="bgabGascfj01Dto">
+		/* familyJob.xml :: insertToFamilyJob */
+		INSERT INTO BGAB_GASCFJ01$corp_cd$ (
+			  DOC_NO
+			, EENO
+			, FJ_TYPE
+			, FJ_GUBUN
+			, FJ_DATE
+			, FJ_REL
+			, FJ_COMPAY
+			, FJ_TARGETNM
+			, FJ_PLACE
+			, FJ_REASON
+			, FJ_FILE
+			, FJ_SBC
+			, FJ_DELITEM
+			, FJ_DELDATE
+			, FJ_DELTIME
+			, FJ_DELADDR
+			, FJ_DELTITLE
+			, FJ_DELSBC
+			, INP_YMD
+			, IPE_EENO
+			, MDFY_YMD
+			, UPDR_EENO
+			, PGS_ST_CD
+		)VALUES(
+			  #doc_no#
+			, #eeno#
+			, #fj_type#
+			, #fj_gubun#
+			, #fj_date#
+			, #fj_rel#
+			, #fj_compay#
+			, #fj_targetNm#
+			, #fj_place#
+			, #fj_reason#
+			, #fj_file#
+			, #fj_sbc#
+			, #fj_delItem#
+			, #fj_delDate#
+			, #fj_delTime#
+			, #fj_delAddr#
+			, #fj_delTitle#
+			, #fj_delSbc#
+			, sysdate
+			, #ipe_eeno#
+			, sysdate
+			, #updr_eeno#
+			, #pgs_st_cd# 
+		)
+	</insert>
+	
+	<update id="updateToFamilyJob" parameterClass="bgabGascfj01Dto">
+		/* familyJob.xml :: updateToFamilyJob */
+		UPDATE BGAB_GASCFJ01$corp_cd$ 
+		   SET FJ_TYPE = #fj_type#
+			 , FJ_GUBUN = #fj_gubun#
+			 , FJ_DATE = #fj_date#
+			 , FJ_REL = #fj_rel#
+			 , FJ_COMPAY = #fj_compay#
+			 , FJ_TARGETNM = #fj_targetNm#
+			 , FJ_PLACE = #fj_place#
+			 , FJ_REASON = #fj_reason#
+			 , FJ_FILE = #fj_file#
+			 , FJ_SBC = #fj_sbc#
+			 , FJ_DELITEM = #fj_delItem#
+			 , FJ_DELDATE = #fj_delDate#
+			 , FJ_DELTIME = #fj_delTime#
+			 , FJ_DELADDR = #fj_delAddr#
+			 , FJ_DELTITLE = #fj_delTitle#
+			 , FJ_DELSBC = #fj_delSbc#
+			 , MDFY_YMD = sysdate
+			 , UPDR_EENO = #updr_eeno#
+		 WHERE DOC_NO = #doc_no#
+	</update>
+	
+	<delete id="deleteToFamilyJob" parameterClass="bgabGascfj01Dto">
+		/* familyJob.xml :: deleteToFamilyJob */
+		DELETE FROM BGAB_GASCFJ01$corp_cd$
+		 WHERE DOC_NO = #doc_no#
+	</delete>
+	
+	<select id="selectToFamilyJob" parameterClass="bgabGascfj01Dto" resultClass="bgabGascfj01Dto">
+		/* familyJob.xml :: selectToFamilyJob */
+		SELECT FJ01.DOC_NO
+			 , FJ01.EENO
+			 , FJ01.FJ_TYPE
+			 , FJ01.FJ_GUBUN
+			 , TO_CHAR(TO_DATE(FJ01.FJ_DATE,'YYYY-MM-DD'), 'YYYY-MM-DD') AS FJ_DATE
+			 , FJ01.FJ_REL
+			 , FJ01.FJ_COMPAY
+			 , FJ01.FJ_TARGETNM
+			 , FJ01.FJ_PLACE
+			 , FJ01.FJ_REASON
+			 , FJ01.FJ_FILE
+			 , FJ01.FJ_SBC
+			 , FJ01.FJ_DELITEM
+			 , TO_CHAR(TO_DATE(FJ01.FJ_DELDATE,'YYYY-MM-DD'), 'YYYY-MM-DD') AS FJ_DELDATE
+			 , FJ01.FJ_DELTIME
+			 , FJ01.FJ_DELADDR
+			 , FJ01.FJ_DELTITLE
+			 , FJ01.FJ_DELSBC
+			 , TO_CHAR(FJ01.INP_YMD, 'YYYY-MM-DD') INP_YMD
+			 , FJ01.IPE_EENO
+			 , FJ01.PGS_ST_CD
+			 , Z005.XCOD_HNAME AS PGS_ST_NM
+			 , FJ01.SNB_RSON_SBC
+			 , FJ01.IF_ID
+			 , USR.XUSR_NAME AS EENM
+			 , USR.XUSR_DEPT_NAME AS DEPT_NM
+			 , USR.XUSR_DEPT_CODE AS DEPT_CD
+			 , USR.XUSR_STEP_NAME AS STEP_NM
+			 , USR.XUSR_TEL_NO AS TEL_NO
+			 , FIL.FIL_NM
+		  FROM BGAB_GASCFJ01$corp_cd$ FJ01
+		  LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ USR
+			ON FJ01.EENO = USR.XUSR_EMPNO
+		  LEFT OUTER JOIN BGAB_GASCZ011$corp_cd$ FIL
+     		ON FJ01.FJ_FILE = FIL.DOC_NO 
+		  LEFT OUTER JOIN ( SELECT XCOD_CODE, XCOD_HNAME
+		         			  FROM BGAB_GASCZ005$corp_cd$
+		     				 WHERE XCOD_KND = 'RC02'
+		     				   AND LOCALE = #locale# ) Z005
+		    ON FJ01.PGS_ST_CD = Z005.XCOD_CODE
+		 WHERE 1=1
+		   <isNotEmpty property="doc_no">
+		   AND FJ01.DOC_NO = #doc_no#
+		   </isNotEmpty>
+		   <isNotEmpty property="if_id">
+		   AND FJ01.IF_ID = #if_id#
+		   </isNotEmpty>
+	</select>
+	
+	<select id="selectToFamilyJobListCount" parameterClass="bgabGascfj01Dto" resultClass="String">
+		/* familyJob.xml :: selectToFamilyJobListCount */
+		SELECT COUNT(*)
+		  FROM BGAB_GASCFJ01$corp_cd$ FJ01
+	 	  LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ USR
+		    ON FJ01.EENO = USR.XUSR_EMPNO
+		  LEFT OUTER JOIN (SELECT XCOD_CODE, XCOD_HNAME
+               				 FROM BGAB_GASCZ005$corp_cd$
+           					WHERE XCOD_KND = 'RC02'
+           					  AND LOCALE = #locale# ) Z005
+            ON Z005.XCOD_CODE = FJ01.PGS_ST_CD
+		WHERE	1 = 1
+		<isNotEmpty property="dept_cd" prepend="and">
+			USR.XUSR_DEPT_CODE = #dept_cd#
+		</isNotEmpty>
+		<isNotEmpty property="eeno" prepend="and">
+			FJ01.EENO = #eeno#
+		</isNotEmpty>
+		<isNotEmpty property="eenm" prepend="and">
+			USR.XUSR_NAME LIKE '%' || #eenm# || '%'
+		</isNotEmpty>
+		<isNotEmpty property="fr_ymd" prepend="and">
+			TO_CHAR(FJ01.INP_YMD,'YYYYMMDD') BETWEEN #fr_ymd# AND #to_ymd#
+		</isNotEmpty>
+		<isNotEmpty property="pgs_st_cd" prepend="and">
+			FJ01.PGS_ST_CD = #pgs_st_cd#
+		</isNotEmpty>
+	</select>
+	
+	<select id="selectToFamilyJobList" parameterClass="bgabGascfj01Dto" resultClass="bgabGascfj01Dto">
+		/* familyJob.xml :: selectToFamilyJobList */
+		SELECT * FROM (
+	  		SELECT rownum rnum, K.*
+			FROM
+			(
+				SELECT DOC_NO
+					 , EENO
+					 , FJ_TYPE
+					 , FJ_GUBUN
+					 , TYPE.XCOD_HNAME AS TYPE_NM
+					 , FJ02.F_GUBUN AS GUBUN_NM
+					 , TO_CHAR(TO_DATE(FJ_DATE,'YYYY-MM-DD'), 'YYYY-MM-DD') AS FJ_DATE
+					 , FJ_REL
+					 , FJ03.R_REL AS REL_NM
+					 , FJ_COMPAY
+					 , FJ_TARGETNM
+					 , FJ_PLACE
+					 , FJ_REASON
+					 , FJ_FILE
+					 , FJ_SBC
+					 , FJ_DELITEM
+					 , TO_CHAR(TO_DATE(FJ_DELDATE,'YYYY-MM-DD'), 'YYYY-MM-DD') AS FJ_DELDATE
+					 , FJ_DELTIME
+					 , FJ_DELADDR
+					 , FJ_DELTITLE
+					 , FJ_DELSBC
+					 , TO_CHAR(FJ01.INP_YMD, 'YYYY-MM-DD') INP_YMD 
+					 , FJ01.IPE_EENO
+					 , PGS_ST_CD
+					 , Z005.XCOD_HNAME AS PGS_ST_NM
+					 , SNB_RSON_SBC
+					 , IF_ID
+					 , USR.XUSR_NAME AS EENM
+					 , USR.XUSR_DEPT_NAME AS DEPT_NM
+					 , USR.XUSR_DEPT_CODE AS DEPT_CD
+					 , USR.XUSR_STEP_NAME AS STEP_NM
+					 , USR.XUSR_TEL_NO AS TEL_NO
+				FROM BGAB_GASCFJ01$corp_cd$ FJ01
+				LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ USR
+				  ON FJ01.EENO = USR.XUSR_EMPNO
+				LEFT OUTER JOIN BGAB_GASCFJ02$corp_cd$ FJ02
+				  ON FJ01.FJ_GUBUN = FJ02.F_CODE
+				LEFT OUTER JOIN BGAB_GASCFJ03$corp_cd$ FJ03
+				  ON FJ01.FJ_REL = FJ03.R_SEQ
+				LEFT OUTER JOIN BGAB_GASCZ005$corp_cd$ TYPE
+				  ON TYPE.XCOD_KND = 'XFJ01'
+             	 AND TYPE.LOCALE = #locale#
+             	 AND TYPE.XCOD_CODE = FJ01.FJ_TYPE
+				LEFT OUTER JOIN ( SELECT XCOD_CODE, XCOD_HNAME
+                 					FROM BGAB_GASCZ005$corp_cd$
+             					   WHERE XCOD_KND = 'RC02'
+             						 AND LOCALE = #locale#) Z005
+                  ON Z005.XCOD_CODE = FJ01.PGS_ST_CD
+				WHERE	1 = 1
+				<isNotEmpty property="dept_cd" prepend="and">
+					USR.XUSR_DEPT_CODE = #dept_cd#
+				</isNotEmpty>
+				<isNotEmpty property="eeno" prepend="and">
+					FJ01.EENO = #eeno#
+				</isNotEmpty>
+				<isNotEmpty property="eenm" prepend="and">
+					USR.XUSR_NAME LIKE '%' || #eenm# || '%'
+				</isNotEmpty>
+				<isNotEmpty property="fr_ymd" prepend="and">
+					TO_CHAR(FJ01.INP_YMD, 'YYYYMMDD') BETWEEN #fr_ymd# AND #to_ymd#
+				</isNotEmpty>
+				<isNotEmpty property="pgs_st_cd" prepend="and">
+					FJ01.PGS_ST_CD = #pgs_st_cd#
+				</isNotEmpty>
+				ORDER BY FJ01.INP_YMD DESC
+			) k
+		) j WHERE rnum between #startRow# AND #endRow#
+	</select>
+	
+	
+	<insert id="insertFjToFile" parameterClass="BgabGascZ011Dto">
+		/* familyJob :: insertFjToFile */
+		INSERT INTO BGAB_GASCZ011$corp_cd$ (
+			  DOC_NO
+			, EENO
+			, SEQ
+			, AFFR_SCN_CD
+			, OGC_FIL_NM
+			, FIL_NM
+			, FIL_MGN_QTY
+			, INP_YMD
+			, IPE_EENO
+		)VALUES(
+			  #doc_no#
+			, #eeno#
+			, #seq# 
+			, #affr_scn_cd# 
+			, #ogc_fil_nm# 
+			, #fil_nm#
+			, #fil_mgn_qty#
+			, sysdate
+			, #ipe_eeno#
+		)
+	</insert>
+
+	<select id="selectFjToFile" resultClass="BgabGascZ011Dto" parameterClass="BgabGascZ011Dto">
+		/* familyJob :: selectFjToFile */
+		SELECT DOC_NO
+			 , EENO
+			 , SEQ
+			 , AFFR_SCN_CD
+			 , FIL_NM
+			 , OGC_FIL_NM
+			 , FIL_MGN_QTY
+			 , INP_YMD
+			 , IPE_EENO
+		  FROM BGAB_GASCZ011$corp_cd$
+		 WHERE DOC_NO = #doc_no#
+		  AND EENO = #eeno#
+		  AND SEQ =#seq#
+		  AND AFFR_SCN_CD = #affr_scn_cd#
+		  <isNotEmpty property="ogc_fil_nm">
+		  AND OGC_FIL_NM =#ogc_fil_nm#
+		  </isNotEmpty>
+		ORDER BY FIL_NM
+	</select>
+
+	<delete id="deleteFjToFile" parameterClass="BgabGascZ011Dto">
+		/* familyJob :: deleteFjToFile */
+		DELETE FROM BGAB_GASCZ011$corp_cd$
+		 WHERE DOC_NO = #doc_no#
+		   AND EENO = #eeno#
+		   AND SEQ = #seq#
+		   AND AFFR_SCN_CD = #affr_scn_cd#
+		   AND OGC_FIL_NM = #ogc_fil_nm#
+	</delete>
+	
+	<update id="updateFjToRequestForApproveCancel" parameterClass="bgabGascfj01Dto">
+		/* familyJob :: updateFjToRequestForApproveCancel */
+		UPDATE BGAB_GASCFJ01$corp_cd$
+		   SET PGS_ST_CD = #pgs_st_cd#
+		 WHERE DOC_NO = #doc_no#
+	</update>
+	
+	<update id="updateFjToRequestForConfirm" parameterClass="bgabGascfj01Dto">
+		/* familyJob :: updateFjToRequestForConfirm */
+		UPDATE	BGAB_GASCFJ01$corp_cd$
+		SET		PGS_ST_CD	= #pgs_st_cd#
+				,acpc_eeno	= #updr_eeno#
+				,acpc_ymd	= sysdate
+		WHERE	1 = 1
+		AND		DOC_NO = #doc_no#
+	</update>
+	
+	<update id="updateFjToRequestForReject" parameterClass="bgabGascfj01Dto">
+		/* familyJob :: updateFjToRequestForReject */
+		UPDATE	BGAB_GASCFJ01$corp_cd$
+		SET 	PGS_ST_CD  = #pgs_st_cd#
+				,IF_ID     = ''
+				,RPTS_EENO = ''
+				,RPTS_YMD  = ''
+				,RDCS_EENO = ''
+				,RDCS_YMD  = ''
+				,ACPC_EENO = ''
+				,ACPC_YMD  = ''
+				,SNB_RSON_SBC = #snb_rson_sbc#
+				,UPDR_EENO = #updr_eeno#
+				,MDFY_YMD  = SYSDATE
+		WHERE	1 = 1
+		AND		DOC_NO = #doc_no#
+	</update>
+</sqlMap>

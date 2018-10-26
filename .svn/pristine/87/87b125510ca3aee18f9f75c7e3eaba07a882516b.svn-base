@@ -1,0 +1,345 @@
+<%@ page contentType="text/html; charset=UTF-8"%>
+<%@ page import="com.hncis.common.message.HncisMessageSource"%>
+<%@ page import="java.util.Locale" %>
+<%@ page import="java.util.Arrays" %>
+<%@ page import="java.util.Comparator" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:choose>
+	<c:when test="${param.reqLocale ne null and param.reqLocale ne ''}">
+		<c:set var="reqLocale" value="${param.reqLocale}"/>
+	</c:when>
+	<c:otherwise>
+		<c:set var="reqLocale" value="${reqLocale}"/>
+	</c:otherwise>
+</c:choose>
+<fmt:setLocale value="${reqLocale}"/>
+<fmt:setBundle basename="com.hncis.common.message.messages"/>
+<%
+	String ctxPath = request.getContextPath();
+	Locale[] locales = Locale.getAvailableLocales();
+%>
+<!DOCTYPE html>
+<html>
+	<head>
+		<title><fmt:message key="signup"/></title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv="pragma" content="no-cache">
+		<meta http-equiv="expires" content="-1">
+		<link rel="stylesheet" href="<%=ctxPath%>/script/css/hncis_login.css" />
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery.blockUI.js"></script>
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/jsonUtil.js"></script>
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/common.js"></script>
+		<style type="text/css">
+		    input.upper { text-transform: uppercase; }
+		    input.nokor { ime-mode:disabled; }
+		    .fs14 {size:14px}
+		    .fs16 {size:16px}
+		</style>
+	</head>
+	<body>
+		<div class="signUp_wrap">
+			<h1><span class="join_logo"></span><fmt:message key="lic_title"/></h1>
+			<form id="frm" name="frm" method="post" action="" onSubmit="return false">
+				<input type="hidden" id="corp_nm" name="corp_nm" />
+				<h2><fmt:message key="mbsp_info_input"/></h2>
+				<table class="company_info">
+					<caption></caption>
+					<colgroup>
+						<col style="width:200px;">
+						<col style="width:auto;">
+						<col style="width:200px;">
+						<col style="width:auto;">
+					</colgroup>
+					<tbody>
+						<tr>
+							<th><fmt:message key="comp_code"/></th>
+							<td colspan="3">
+								<input type="text" id="corp_cd" name="corp_cd" class="upper nokor" maxlength="8" style="width:36%" />
+								<input type="button" id="search" class="check_btn" value="<fmt:message key="BUTTON.SEARCH"/>" onClick="doSearch();" style="cursor:pointer" />
+							</td>
+						</tr>
+						<tr>
+							<th><fmt:message key="comp_nm"/></th>
+							<td>
+								<span id="spn_corp_nm" class="fs14"></span>
+							</td>
+							<th><fmt:message key="corp_reg_num"/></th>
+							<td>
+								<input type="text" id="ven_cd" name="ven_cd" class="nokor" />
+							</td>
+						</tr>
+						<tr>
+							<th><fmt:message key="req_eeno"/></th>
+							<td><input type="text" id="req_user_nm" name="req_user_nm" /></td>
+							<th><fmt:message key="tel_no"/></th>
+							<td><input type="text" id="req_contact" name="req_contact" /></td>
+						</tr>
+						<tr>
+							<th><fmt:message key="email"/></th>
+							<td colspan="3">
+								<input type="text" id="req_email" name="req_email" class="nokor"/>
+							</td>
+						</tr>
+						<tr>
+							<th><fmt:message key="use_cnt"/></th>
+							<td>
+								<input type="text" id="use_cnt" name="use_cnt" maxLength="5" />
+							</td>
+							<th><fmt:message key="pay_amt1"/></th>
+							<td>
+								<span>￦&nbsp;</span><b><span id="spn_pay_amt" class="fs16">0</span></b>
+							</td>
+						</tr>
+						<tr>
+							<th rowspan="2">안내메세지</th>
+							<td colspan="3">
+								<div style="padding-bottom:3px;">※ 계산표</div>
+								<div>
+									<table border="0" style="width:350px">
+										<tr>
+											<td width="100px">A Type</td>
+											<td width="120px">1 ~ 100 Users</td>
+											<td width="*">1명당 ￦7,000</td>
+										</tr>
+										<tr>
+											<td>B Type</td>
+											<td>1 ~ 500 Users</td>
+											<td>1명당 ￦5,000</td>
+										</tr>
+										<tr>
+											<td>C Type</td>
+											<td>∞ Users</td>
+											<td>1명당 ￦3,000</td>
+										</tr>
+									</table>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="3">
+								<div style="padding-bottom:3px;">※ 개인정보 수집·이용</div>
+								<div>
+									<table border="0">
+										<tr>
+											<th>목적</td>
+											<th>항목</td>
+											<th>보유기간</td>
+										</tr>
+										<tr>
+											<td>서비스 제공에 따른 요금정산, 콘텐츠 제공, 구매 및 요금결제, 금융거래 본인 인증 및 금융서비스</td>
+											<td>주문자 정보(이름, 연락처, 이메일)</td>
+											<td>목적 달성 후 5일까지(관계법률로 인해 필요 시, 일정기간 보존) </td>
+										</tr>
+										<tr>
+											<td>(주)휴먼엔시스</td>
+											<td>주문 정보</td>
+											<td>-</td>
+										</tr>
+									</table>
+									<div style="padding-top:3px;">※ 동의하셔야 서비스를 이용할 수 있습니다.</div>
+									<div style="padding-top:3px;">
+										<input type="radio" id="rdoAgree1" name="rdoAgree" value="Y"> <label for="rdoAgree1">정보수집에 동의합니다.</label>
+										<input type="radio" id="rdoAgree2" name="rdoAgree" value="N" checked> <label for="rdoAgree2">정보수집에 동의하지 않습니다.</label>
+									</div>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</form>
+			<div class="btn_area">
+				<input type="button" value="<fmt:message key='BUTTON.PAYMENT'/>" onClick="doPayment();" class="agree_btn" />
+				<input type="button" value="<fmt:message key="BUTTON.CANCEL"/>" onClick="doCancle()" class="cancel_btn" style="cursor:pointer"/>
+			</div>
+		</div>
+		<div id="alert_pop" style="display:none">
+			<div class="msgBox">
+				<div class="msgBoxIn">
+				    <!--<strong><fmt:message key="msg_cont"/></strong>
+				    <hr> -->
+				    <ul>
+				        <li id="alert_msg" style="height:auto"><fmt:message key="msg_cont"/></li>
+				        <li>
+							<div class="btn_area">
+	                           <a href="#" id="pop_cls" class="white_btn22"><span><fmt:message key="close"/></span></a>
+	                       	</div>
+						</li>
+				    </ul>
+				    <!--<div class="boxRound01"><img src="../../images/msgbox/layer_pop_topLeft.gif" alt="" /></div>
+				    <div class="boxRound02"><img src="../../images/msgbox/layer_pop_topRight.gif" alt="" /></div>
+				    <div class="boxRound03"><img src="../../images/msgbox/layer_pop_bottomLeft.gif" alt="" /></div>
+				    <div class="boxRound04"><img src="../../images/msgbox/layer_pop_bottomRight.gif" alt="" /></div>-->
+				</div>
+			</div>
+		</div>
+		<div id="confirm_pop" style="display:none">
+			<div class="msgBox">
+				<div class="msgBoxIn">
+				    <!--<strong><fmt:message key="msg_cont"/></strong>
+				    <hr> -->
+				    <ul>
+				        <li id="confirm_msg" style="height:auto"><fmt:message key="msg_cont"/></li>
+				        <li>
+							<div class="btn_area">
+	                           <a href="#" id="pop_yes" class="white_btn22"><span><fmt:message key="conf"/></span></a>
+	                           <a href="#" id="pop_no" class="white_btn22 ml10"><span><fmt:message key="cncl"/></span></a>
+	                       	</div>
+						</li>
+				    </ul>
+				    <!--<div class="boxRound01"><img src="../../images/msgbox/layer_pop_topLeft.gif" alt="" /></div>
+				    <div class="boxRound02"><img src="../../images/msgbox/layer_pop_topRight.gif" alt="" /></div>
+				    <div class="boxRound03"><img src="../../images/msgbox/layer_pop_bottomLeft.gif" alt="" /></div>
+				    <div class="boxRound04"><img src="../../images/msgbox/layer_pop_bottomRight.gif" alt="" /></div>-->
+				</div>
+			</div>
+		</div>
+		<form id="frmPayment" name="frmPayment" method="post" action="" onSubmit="return false">
+			<input type="hidden" id="p_corp_cd" name="p_corp_cd" />
+			<input type="hidden" id="p_corp_nm" name="p_corp_nm" />
+			<input type="hidden" id="p_ven_cd" name="p_ven_cd" />
+			<input type="hidden" id="p_req_user_nm" name="p_req_user_nm" />
+			<input type="hidden" id="p_req_contact" name="p_req_contact" />
+			<input type="hidden" id="p_req_email" name="p_req_email" />
+			<input type="hidden" id="p_use_cnt" name="p_use_cnt" />
+			<input type="hidden" id="p_pay_amt" name="p_pay_amt" />
+			<input type="hidden" id="p_csrfToken" name="p_csrfToken" />
+		</form>
+	</body>
+</html>
+
+<script language="JavaScript">
+	var isSearch = "N"; 
+	var ctxPath = "<%=ctxPath%>";
+	function fnSetDocumentReady(){}
+	$(document).ready(function() {
+		$("#corp_cd").on("keypress", function(e) {
+			var code = e.keyCode || e.which;
+			if (code == 13) {
+				doSearch();
+			}
+		});
+		
+		$("#use_cnt").keyup(function() {
+			var result = 0;
+			if ($(this).val() <= 100) {
+				result = $(this).val() * 7000;
+			} else if ($(this).val() > 100 && $(this).val() <= 500) {
+				result = $(this).val() * 5000;
+			} else {
+				result = $(this).val() * 3000;
+			}
+			result = String(result);
+			$("#spn_pay_amt").text(result.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,'));
+		});
+	});
+	
+	function doPayment() {
+		if (isSearch == "N") {
+			alertUI("조회된 회사 정보가 없습니다.<br>다시 한번 조회 부탁드립니다.");
+			return;
+		}
+		
+		if ($.trim($("#use_cnt").val()) == "" || $.trim($("#use_cnt").val()) == "0") {
+			alertUI("사용자수에 최소 1 이상을 입력 하세요.");
+			$("#use_cnt").focus();
+			return;
+		}
+		
+		var agree = $(":input:radio[name=rdoAgree]:checked").val();
+		if (agree == "N") {
+			alertUI("정보제공에 동의하셔야 서비스를 이용할 수 있습니다.");
+			return;
+		}
+		
+		var params = "?";
+			params += "corp_cd="+$("#corp_cd").val();
+			params += "&corp_nm="+$("#corp_nm").val();
+			params += "&ven_cd="+$("#ven_cd").val();
+			params += "&req_user_nm="+$("#req_user_nm").val();
+			params += "&req_contact="+$("#req_contact").val();
+			params += "&req_email="+$("#req_email").val();
+			params += "&use_cnt="+$("#use_cnt").val();
+			params += "&spn_pay_amt="+$("#spn_pay_amt").text();
+			params += "&csrfToken="+$("#csrfToken").val()
+		newPopWin(ctxPath+"/lic_buy_prc.gas"+params, "655", "685", "popup", "no");
+	}
+	
+	function doCancle() {
+		var frm = document.frm;
+		frm.action = ctxPath+"/index.htm";
+		frm.submit();
+	}
+
+	function doSearch(){
+		if(!($("#corp_cd").val().length > 3 && $("#corp_cd").val().length < 9)){
+			alertUI('<fmt:message key="MSG.INP.0074"/>');
+			$("#corp_cd").val("");
+			$("#corp_cd").focus();
+			return;
+		}
+		
+		if(EngStrChk($("#corp_cd").val(), "N") == 0){
+			alertUI('<fmt:message key="MSG.VAL.0039"/>');
+			$("#corp_cd").val("");
+			$("#corp_cd").focus();
+			return;
+		}
+		
+		if(!check_busino($("#ven_cd").val()) || $.trim($("#ven_cd").val()) == ""){
+			alertUI('<fmt:message key="MSG.INP.0073"/>');
+			$("#ven_cd").val("");
+			$("#ven_cd").focus();
+			return;
+		}
+		
+		var params = {
+			corp_cd	: $("#corp_cd").val(),
+			ven_cd	: $("#ven_cd").val()
+		};
+		
+		paramData = {
+			paramJson : util.jsonToString(params)
+		};
+		
+		doCommonAjax("/doSearchCorpInfo.do", paramData, "doSearchCallBack(jsonData.sendResult);");
+	}
+
+	function doSearchCallBack(result) {
+		isSearch = result.isSuccess;
+		if (result.isSuccess == "Y") {
+			$("#corp_nm").val(result.corp_nm);
+			$("#spn_corp_nm").text(result.corp_nm);
+			$("#req_user_nm").val(result.req_user_nm);
+			$("#req_contact").val(result.req_contact);
+			$("#req_email").val(result.req_email);
+		} else {
+			alertUI(result.message);
+			$("#corp_cd").val("");
+			$("#corp_nm").val("");
+			$("#spn_corp_nm").text("");
+			$("#ven_cd").val("");
+			$("#req_user_nm").val("");
+			$("#req_contact").val("");
+			$("#req_email").val("");
+		}
+	}
+	
+	function test() {
+		$("#p_corp_cd").val($("#corp_cd").val());
+		$("#p_corp_nm").val($("#corp_nm").val());
+		$("#p_ven_cd").val($("#ven_cd").val());
+		$("#p_req_user_nm").val($("#req_user_nm").val());
+		$("#p_req_contact").val($("#req_contact").val());
+		$("#p_req_email").val($("#req_email").val());
+		$("#p_use_cnt").val($("#use_cnt").val());
+		$("#p_pay_amt").val($("#spn_pay_amt").text());
+		$("#p_csrfToken").val($("#csrfToken").val());
+		var frmPayment = document.frmPayment;
+		frmPayment.action = ctxPath+"/lic_buy_end.gas";
+		frmPayment.submit();
+	}
+	
+</script>

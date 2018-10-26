@@ -1,0 +1,16 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<div id="header_wrap">
+  <div id="header">
+    <div class="header_info" align="right">
+      <table>
+        <tr>
+          <td class="dep_info">General Affairs</td>
+          <td class="emp_info"><span>Militza Natasha Jovovich</span>(123456)</td>
+          <td><a href="#">Approval</a></td>
+          <td><a href="#">System</a></td>
+          <td><a href="#">Log Out</a></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

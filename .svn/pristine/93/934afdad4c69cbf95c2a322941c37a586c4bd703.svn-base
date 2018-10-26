@@ -1,0 +1,197 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId = "XGF08";
+	String hid_cond  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_cond")));
+
+	String yy = CurrentDateTime.getYear();
+	String mm = CurrentDateTime.getMonth();
+	String byy = CurrentDateTime.getYearByAddMonth(CurrentDateTime.getDate(),-1);
+	String bmm = CurrentDateTime.addMonth(CurrentDateTime.getDate(),-1);
+	String tdd = Integer.toString( CurrentDateTime.getMaxday(yy+mm));
+
+	String fromDay = byy + "-" + bmm + "-" + "01";
+	String toDay = yy + "-" + mm + "-" + tdd;
+	
+	String strSav = JSPMessageSource.getMessage("BUTTON.SAVE", locale);
+	
+	String strBtn = "";
+	strBtn = strSav+"/save";
+	
+	String tempPath     = request.getServletPath().toString();
+	String stepHelpUrl  = StringUtil.getStepHelp(tempPath);
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>신청</title>
+	</head>
+	<body>
+		<div id="wrap">
+		<form name="frm" id="frm">
+			<input type="hidden" id="menu_id" name="menu_id" value="<%=menuId.toLowerCase() %>">
+			<input type="hidden" id="hid_cond" name="hid_cond" value="<%=hid_cond %>">
+			<input type="hidden" id="hid_page" name="hid_page">
+			<input type="hidden" id="help_url" name="help_url" value="<%=stepHelpUrl%>">
+			
+			<%@ include file="../include/hncis_header.gas"%>
+			<div id="contents_wrap">
+				<%@ include file="../include/hncis_left.gas"%>
+				<div id="contents">
+					<%=CommonGasc.getTitleAndButtonNew(sess_empno
+						,"XGF08"
+						,strBtn
+						,null
+						,null
+						,null
+						,request)
+					%>
+					<div class="search_area">
+						<table>
+							<colgroup>
+								<col style="width:60px;" />
+	                            <col style="width:auto;" />
+							</colgroup>
+							<tr>
+								<th><fmt:message key="req_term"/></th>
+								<td>
+									<input id="key_fr_ymd" type="text" style="width:80px" value="" readonly> ~
+									<input id="key_to_ymd" type="text" style="width:80px"  value="" readonly>
+								</td>
+							</tr>
+						</table>
+					</div>
+                	<%@ include file="../include/hncis_message.gas"%>
+				</div>
+			</div>
+		</form>
+		</div>
+	</body>
+</html>
+		<script type="text/javascript">
+
+		var initYn = "N";
+		function fnSetDocumentReady(){
+			initMenus();
+
+			$("#key_fr_ymd").datepicker({ dateFormat: "yy-mm-dd" });
+			$("#key_to_ymd").datepicker({ dateFormat: "yy-mm-dd" });
+
+//			sess_auth = $("#work_auth").val();
+		//
+//			if(sess_auth < 5 && sess_mstu != "M"){
+//				$("#key_ops_cd") .val(sess_dept_code);
+//				$("#key_ops_nm") .val(sess_dept_name);
+//				$("#key_eeno")   .val(sess_empno);
+//				$("#key_eeno_nm").val(sess_name);
+		//
+//				readOnlyStyle("key_ops_cd" , "1");
+//				readOnlyStyle("key_eeno"   , "1");
+//				readOnlyStyle("key_eeno_nm", "1");
+		//
+//				$("#deptBtn").attr("disabled", true);
+//			}
+		//
+			init();
+		}
+
+
+		/**
+		 * process init() loading
+		 */
+		function init(){
+			doSearch();
+		}
+
+
+		function retrieve(gubn){
+			switch(gubn){
+				case "search" :
+					doSearch();
+					break;
+				case "save" :
+					doSave();
+					break;
+			}
+		}
+
+
+		function doSearch(msgFlag){
+			var param = {
+				from_ymd       		: selectNum($("#key_fr_ymd").val()),
+				to_ymd       		: selectNum($("#key_to_ymd").val()),
+				corp_cd				: sess_corp_cd
+			};
+
+			var paramData = {
+				paramJson : util.jsonToString(param)
+			};
+
+			doCommonAjax("doSelectXgf08Info.do", paramData, "loadCallBack(jsonData.sendResult);");
+		}
+
+		/**
+		 * callback
+		 */
+		function loadCallBack(result){
+			$("#key_fr_ymd").val(setDateFormat(result.from_ymd));
+			$("#key_to_ymd").val(setDateFormat(result.to_ymd));
+		}
+
+		function doSave(){
+			var fromYmd = selectNum($("#key_fr_ymd").val());
+			var toYmd = selectNum($("#key_to_ymd").val());
+
+			if(fromYmd == ''){
+				alertUI('<fmt:message key="MSG.INP.0047"/>');
+				return;
+			}
+			if(toYmd == ''){
+				alertUI('<fmt:message key="MSG.INP.0047"/>');
+				return;
+			}
+			if(fromYmd > toYmd){
+				alertUI('<fmt:message key="MSG.VAL.0028"/>');
+				return;
+			}
+
+			var param = {
+				from_ymd       		: selectNum($("#key_fr_ymd").val()),
+				to_ymd       		: selectNum($("#key_to_ymd").val()),
+				corp_cd				: sess_corp_cd
+			};
+			
+			confirmUI('<fmt:message key="MSG.CNF.0004"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramJson : util.jsonToString(param)
+						};
+						doCommonAjax("doSaveXgf08Info.do", paramData, "doSaveCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function doSaveCallBack(result){
+			alertUI(result.message);
+			doSearch();
+		}
+
+		function setDateFormat(sValue){
+
+			if (sValue.length != 8 ) return sValue;
+
+			var sResult = sValue.substring(0,4)+"-"+sValue.substring(4,6)+"-"+sValue.substring(6,8);
+			return sResult;
+		}
+		
+		function pageStepHelpPopup(){
+			if(popup != null ){
+				popup.close();
+			}
+			
+			popup = popUpWindow3($("#help_url").val());
+		}
+		</script>

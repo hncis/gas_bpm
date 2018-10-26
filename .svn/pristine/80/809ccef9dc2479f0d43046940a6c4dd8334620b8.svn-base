@@ -1,0 +1,737 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Books"> 
+	<select id="selectBkToLrgCombo" parameterClass="bgabGascbk03Dto" resultClass="bgabGascbk03Dto">
+		/* books.xml :: selectBkListToMrgInfo */
+		SELECT 	LRG_CD
+				,LRG_NM
+		FROM BGAB_GASCBK03$corp_cd$
+		WHERE USE_YN = 'Y' 
+		ORDER BY LRG_SORT ASC
+	</select>
+	<select id="selectBkToMrgCombo" parameterClass="bgabGascbk04Dto" resultClass="bgabGascbk04Dto">
+		/* books.xml :: selectBkListToMrgInfo */
+		SELECT 	LRG_CD
+				,MRG_CD
+				,MRG_NM
+		FROM BGAB_GASCBK04$corp_cd$ 
+		WHERE LRG_CD = #lrg_cd#
+		AND USE_YN = 'Y' 
+		ORDER BY MRG_SORT ASC
+	</select>
+	
+	<select id="selectCountBkToBookList" parameterClass="bgabGascbk01Dto" resultClass="java.lang.String">
+	/*selectCountBkToBookList*/
+		SELECT COUNT(*) TOT_CNT
+		FROM BGAB_GASCBK01$corp_cd$ BK01
+		LEFT OUTER JOIN BGAB_GASCBK03$corp_cd$ BK03
+		ON BK01.LRG_CD = BK03.LRG_CD
+		LEFT OUTER JOIN BGAB_GASCBK04$corp_cd$ BK04
+		ON BK01.LRG_CD = BK04.LRG_CD
+		AND BK01.MRG_CD = BK04.MRG_CD
+		WHERE	1 = 1
+		<isNotEmpty property="lrg_cd" prepend="and">
+			BK01.LRG_CD = #lrg_cd#
+		</isNotEmpty>
+		<isNotEmpty property="mrg_cd" prepend="and">
+			BK01.MRG_CD = #mrg_cd#
+		</isNotEmpty>
+	</select>
+	<select id="selectBkToBookList" parameterClass="bgabGascbk01Dto" resultClass="bgabGascbk01Dto">
+	/*selectBkToBookList*/
+		SELECT * FROM (
+	  		SELECT rownum rnum, K.*
+			FROM
+			(
+				SELECT	 
+						BK01.BK_SEQ
+						,BK01.LRG_CD
+						,BK01.MRG_CD
+						,BK01.BK_TTL
+						,BK01.BK_WRTR
+						,BK01.BK_QTY
+						,TO_CHAR( BK01.BK_YMD, 'yyyy-mm-dd' ) AS BK_YMD
+						,BK01.BK_CONT
+						,TO_CHAR( BK01.INP_YMD, 'yyyy-mm-dd' ) AS INP_YMD
+						,BK01.IPE_EENO
+						,TO_CHAR( BK01.MDFY_YMD, 'yyyy-mm-dd' ) AS MDFY_YMD
+						,BK01.UPDR_EENO
+						,BK03.LRG_NM || ' > ' || BK04.MRG_NM AS BK_CTGRY
+						,CASE WHEN BK01.BK_QTY - (SELECT COUNT(DOC_NO) FROM BGAB_GASCBK02$corp_cd$ WHERE BK_SEQ = BK01.BK_SEQ AND PGS_ST_CD NOT IN ('C','D')) > 0
+				            THEN 'Y'
+							ELSE 'N'
+				        END AS BK_RENT_YN
+				        ,(SELECT MAX(OGC_FIL_NM) FROM BGAB_GASCZ011$corp_cd$ WHERE DOC_NO = BK01.FILE_INFO) AS ORG_FILE_NM
+				FROM BGAB_GASCBK01$corp_cd$ BK01
+				LEFT OUTER JOIN BGAB_GASCBK03$corp_cd$ BK03
+				ON BK01.LRG_CD = BK03.LRG_CD
+				LEFT OUTER JOIN BGAB_GASCBK04$corp_cd$ BK04
+				ON BK01.LRG_CD = BK04.LRG_CD
+				AND BK01.MRG_CD = BK04.MRG_CD
+				WHERE	1 = 1
+				<isNotEmpty property="lrg_cd" prepend="and">
+					BK01.LRG_CD = #lrg_cd#
+				</isNotEmpty>
+				<isNotEmpty property="mrg_cd" prepend="and">
+					BK01.MRG_CD = #mrg_cd#
+				</isNotEmpty>
+				ORDER BY BK01.LRG_CD ASC, BK01.MRG_CD ASC, BK01.BK_TTL ASC
+			) k
+		) j WHERE rnum between #startRow# AND #endRow#
+	</select>
+	
+	<select id="selectCountBkToBookRentList" parameterClass="bgabGascbk02Dto" resultClass="java.lang.String">
+	/*selectCountBkToBookRentList*/
+		SELECT COUNT(*) TOT_CNT
+		FROM (
+	  		SELECT k.*
+			FROM
+			(
+				SELECT M.DOC_NO
+						,M.BK_SEQ
+						,M.RENT_YMD
+						,M.BK_CTGRY
+						,M.BK_TTL
+						,M.BK_WRTR
+						,M.BK_YMD
+						,M.EENM
+						,M.PGS_ST_CD
+						,M.PGS_ST_NM
+						,M.RETURN_YMD
+						,M.REQ_YMD
+						,CASE WHEN (M.PGS_ST_CD = 'B' AND M.BK_PRD-M.RENT_DAYS <![CDATA[<]]> 0)
+							THEN 'Y'
+							ELSE 'N'
+						END AS BK_DLY_YN 
+				FROM
+				(
+					SELECT	BK02.DOC_NO
+							,BK02.BK_SEQ
+							,TO_CHAR( BK02.RENT_YMD, 'YYYY-MM-DD' ) AS RENT_YMD
+							,BK02.PGS_ST_CD
+							,PGS.XCOD_HNAME AS PGS_ST_NM
+							,BK03.LRG_NM || ' > ' || BK04.MRG_NM AS BK_CTGRY
+							,BK01.BK_TTL
+							,BK01.BK_WRTR
+							,TO_CHAR( BK01.BK_YMD, 'YYYY-MM-DD' ) AS BK_YMD
+							,Z002.XUSR_NAME AS EENM
+							,TO_CHAR( BK02.RETURN_YMD, 'YYYY-MM-DD' ) AS RETURN_YMD
+							,TO_CHAR( BK02.REQ_YMD, 'YYYY-MM-DD' ) AS REQ_YMD
+							,NVL(BK01.BK_PRD, 0) AS BK_PRD
+							,NVL((SYSDATE+1 - RENT_YMD), 0) AS RENT_DAYS        
+					FROM BGAB_GASCBK02$corp_cd$ BK02
+					LEFT OUTER JOIN BGAB_GASCBK01$corp_cd$ BK01
+					ON BK02.BK_SEQ = BK01.BK_SEQ
+					LEFT OUTER JOIN BGAB_GASCBK03$corp_cd$ BK03
+					ON BK01.LRG_CD = BK03.LRG_CD
+					LEFT OUTER JOIN BGAB_GASCBK04$corp_cd$ BK04
+					ON BK01.LRG_CD = BK04.LRG_CD
+					AND BK01.MRG_CD = BK04.MRG_CD
+					LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+					ON BK02.EENO = Z002.XUSR_EMPNO
+					LEFT OUTER JOIN BGAB_GASCZ005$corp_cd$ PGS
+					ON BK02.PGS_ST_CD = PGS.XCOD_CODE
+					AND PGS.XCOD_KND  = 'XBK01'
+					AND PGS.LOCALE = #locale#
+					WHERE 1 = 1
+					<isNotEmpty property="search_ops_cd" prepend="and">
+						Z002.XUSR_DEPT_CODE = #search_ops_cd#
+					</isNotEmpty>
+					<isNotEmpty property="search_eeno" prepend="and">
+						EENO = #search_eeno#
+					</isNotEmpty>
+					AND TO_CHAR(BK02.REQ_YMD, 'YYYYMMDD') BETWEEN #fr_ymd# and #to_ymd#
+					<isNotEmpty property="search_eenm" prepend="and">
+						Z002.XUSR_NAME LIKE '%' || #search_eenm# || '%'
+					</isNotEmpty>
+					<isNotEmpty property="bk_sts">
+						<isNotEqual property="bk_sts" compareValue="E">
+							  AND BK02.PGS_ST_CD = #bk_sts#
+						</isNotEqual>
+					</isNotEmpty>
+				) m
+				ORDER BY M.PGS_ST_CD ASC, M.RENT_YMD ASC
+			) k
+			<isEqual property="bk_sts" compareValue="E">
+				  WHERE BK_DLY_YN = 'Y'
+			</isEqual>
+		) j
+	</select>
+	<select id="selectBkToBookRentList" parameterClass="bgabGascbk02Dto" resultClass="bgabGascbk02Dto">
+	/*selectBkToBookRentList*/
+		SELECT * FROM (
+	  		SELECT rownum rnum, k.*
+			FROM
+			(
+				SELECT 
+						M.DOC_NO
+						,M.BK_SEQ
+						,M.RENT_YMD
+						,M.BK_CTGRY
+						,M.BK_TTL
+						,M.BK_WRTR
+						,M.BK_YMD
+						,M.EENM
+						,M.PGS_ST_CD
+						,M.PGS_ST_NM
+						,M.RETURN_YMD
+						,M.REQ_YMD
+						,CASE WHEN (M.PGS_ST_CD = 'B' AND M.BK_PRD-M.RENT_DAYS <![CDATA[<]]> 0)
+							THEN 'Y'
+							ELSE 'N'
+						END AS BK_DLY_YN 
+						,EXPECTED_YMD
+				FROM
+				(
+					SELECT	BK02.DOC_NO
+							,BK02.BK_SEQ
+							,TO_CHAR ( BK02.RENT_YMD, 'yyyy-mm-dd' ) AS RENT_YMD
+							,BK02.PGS_ST_CD
+							,PGS.XCOD_HNAME AS PGS_ST_NM
+							,BK03.LRG_NM || ' > ' || BK04.MRG_NM AS BK_CTGRY
+							,BK01.BK_TTL
+							,BK01.BK_WRTR
+							,TO_CHAR ( BK01.BK_YMD, 'yyyy-mm-dd' )AS BK_YMD
+							,Z002.XUSR_NAME AS EENM
+							,TO_CHAR ( BK02.RETURN_YMD, 'yyyy-mm-dd' ) AS RETURN_YMD
+							,TO_CHAR ( BK02.REQ_YMD, 'yyyy-mm-dd' ) AS REQ_YMD
+							,NVL(BK01.BK_PRD, 0) AS BK_PRD
+							,NVL((SYSDATE+1 - RENT_YMD), 0) AS RENT_DAYS
+							,TO_CHAR ( BK02.RENT_YMD + TO_NUMBER(BK01.BK_PRD), 'YYYY-MM-DD') AS EXPECTED_YMD
+					FROM BGAB_GASCBK02$corp_cd$ BK02
+					LEFT OUTER JOIN BGAB_GASCBK01$corp_cd$ BK01
+					ON BK02.BK_SEQ = BK01.BK_SEQ
+					LEFT OUTER JOIN BGAB_GASCBK03$corp_cd$ BK03
+					ON BK01.LRG_CD = BK03.LRG_CD
+					LEFT OUTER JOIN BGAB_GASCBK04$corp_cd$ BK04
+					ON BK01.LRG_CD = BK04.LRG_CD
+					AND BK01.MRG_CD = BK04.MRG_CD
+					LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+					ON BK02.EENO = Z002.XUSR_EMPNO
+					LEFT OUTER JOIN BGAB_GASCZ005$corp_cd$ PGS
+					ON BK02.PGS_ST_CD = PGS.XCOD_CODE
+					AND PGS.XCOD_KND  = 'XBK01'
+					AND PGS.LOCALE = #locale#
+					WHERE 1 = 1
+					<isNotEmpty property="search_ops_cd" prepend="and">
+						Z002.XUSR_DEPT_CODE = #search_ops_cd#
+					</isNotEmpty>
+					<isNotEmpty property="search_eeno" prepend="and">
+						EENO = #search_eeno#
+					</isNotEmpty>
+					AND TO_CHAR(BK02.REQ_YMD, 'YYYYMMDD') BETWEEN #fr_ymd# and #to_ymd#
+					<isNotEmpty property="search_eenm" prepend="and">
+						Z002.XUSR_NAME LIKE '%' || #search_eenm# || '%'
+					</isNotEmpty>
+					<isNotEmpty property="bk_sts">
+						<isNotEqual property="bk_sts" compareValue="E">
+							  AND BK02.PGS_ST_CD = #bk_sts#
+						</isNotEqual>
+					</isNotEmpty>
+				) m
+				ORDER BY M.PGS_ST_CD ASC, M.RENT_YMD ASC
+			) k
+			<isEqual property="bk_sts" compareValue="E">
+				  WHERE BK_DLY_YN = 'Y'
+			</isEqual>
+		) j WHERE rnum between #startRow# AND #endRow#
+	</select>
+	
+	<delete id="deleteRentListToRequestCancel" parameterClass="bgabGascbk02Dto">
+		/* books.xml :: deleteRentListToRequestCancel */
+		DELETE FROM BGAB_GASCBK02$corp_cd$
+		WHERE DOC_NO = #doc_no#
+	</delete>
+	
+	<select id="selectBkToBookExtrQty" parameterClass="bgabGascbk02Dto" resultClass="java.lang.String">
+		/* books.xml :: selectBkToBookExtrQty */
+		SELECT	BK01.BK_QTY - (SELECT COUNT(DOC_NO) FROM BGAB_GASCBK02$corp_cd$ WHERE BK_SEQ = BK01.BK_SEQ AND PGS_ST_CD NOT IN ('C','D')) AS CNT
+		FROM BGAB_GASCBK01$corp_cd$ BK01
+ 		WHERE BK_SEQ =  #bk_seq#
+	</select>
+	<insert id="insertBkToBookRequest" parameterClass="bgabGascbk02Dto">
+		/* books.xml :: insertBkToBookRequest */
+		INSERT INTO BGAB_GASCBK02$corp_cd$ (
+		  	DOC_NO
+			,EENO
+			,BK_SEQ
+			,REQ_YMD
+			,PGS_ST_CD
+			,INP_YMD
+			,IPE_EENO
+			,MDFY_YMD
+			,UPDR_EENO
+		) VALUES (
+			  #doc_no#
+			, #eeno#
+			, #bk_seq#
+			, SYSDATE
+			, #pgs_st_cd#
+			, SYSDATE
+			, #ipe_eeno#
+			, SYSDATE
+			, #ipe_eeno#
+		)
+	</insert>
+	<update id="updateBkToBookReturn" parameterClass="bgabGascbk02Dto">
+		/* books.xml :: updateBkToBookReturn */
+		UPDATE 	BGAB_GASCBK02$corp_cd$
+		SET		RETURN_YMD = TO_CHAR( SYSDATE,'YYYYMMDD' )
+			  , PGS_ST_CD  = #pgs_st_cd#
+		WHERE 	DOC_NO = #doc_no#
+	</update>
+	<update id="updateBkToBookReturnList" parameterClass="bgabGascbk02Dto">
+		/* books.xml :: insertBkToBookReturnList */
+		UPDATE 	BGAB_GASCBK02$corp_cd$
+		SET		RETURN_YMD = SYSDATE
+			  , PGS_ST_CD  = #pgs_st_cd#
+		WHERE 	DOC_NO = #doc_no#
+	</update>
+	
+	<update id="updateBkToBookRent" parameterClass="bgabGascbk02Dto">
+		/* books.xml :: updateBkToBookRent */
+		UPDATE 	BGAB_GASCBK02$corp_cd$
+		SET		PGS_ST_CD  = #pgs_st_cd#
+		<isEqual property="pgs_st_cd" compareValue="A">
+			  , RETURN_YMD = ''
+		</isEqual>
+		<isEqual property="pgs_st_cd" compareValue="B">
+			  , RENT_YMD = SYSDATE
+		</isEqual>
+			  , MDFY_YMD   = SYSDATE
+			  , UPDR_EENO  = #updr_eeno#
+		WHERE 	DOC_NO = #doc_no#
+	</update>
+	
+   <insert id="insertBkToLrgList" parameterClass="bgabGascbk03Dto">
+		/* books.xml :: insertBkToLrgList */
+		INSERT INTO BGAB_GASCBK03$corp_cd$ (
+		  	LRG_CD
+			,LRG_NM
+			,LRG_SORT
+			,USE_YN
+			,INP_YMD
+			,IPE_EENO
+			,MDFY_YMD
+			,UPDR_EENO
+		) VALUES (
+			  #lrg_cd#
+			, #lrg_nm#
+			, #lrg_sort#
+			, #use_yn#
+			, SYSDATE
+			, #ipe_eeno#
+			, SYSDATE
+			, #ipe_eeno#
+		)
+	</insert>
+	
+	<update id="updateBkToLrgList" parameterClass="bgabGascbk03Dto">
+		/* books.xml :: updateBkToLrgList */
+		UPDATE BGAB_GASCBK03$corp_cd$ SET
+			  LRG_CD        = #lrg_cd#
+			, LRG_NM 		= #lrg_nm#
+			, LRG_SORT      = #lrg_sort#
+			, USE_YN     	= #use_yn#
+			, MDFY_YMD      = SYSDATE
+			, UPDR_EENO     = #updr_eeno#
+		WHERE lrg_cd = #lrg_cd_h#
+	</update>
+	
+	<select id="selectBkListToLrgInfo" parameterClass="bgabGascbk03Dto" resultClass="bgabGascbk03Dto">
+		/* books.xml :: selectBkListToLrgInfo */
+		SELECT 	LRG_CD
+				,LRG_NM
+				,LRG_SORT
+				,USE_YN
+				,INP_YMD
+				,IPE_EENO
+				,MDFY_YMD
+				,UPDR_EENO
+				,LRG_CD AS LRG_CD_H
+		FROM BGAB_GASCBK03$corp_cd$ 
+		ORDER BY CAST(LRG_SORT as DECIMAL) ASC
+	</select>
+	
+	<insert id="insertBkToMrgList" parameterClass="bgabGascbk04Dto">
+		/* books.xml :: insertBkToMrgList */
+		INSERT INTO BGAB_GASCBK04$corp_cd$ (
+			  	LRG_CD
+				,MRG_CD
+				,MRG_NM
+				,MRG_SORT
+				,USE_YN
+				,INP_YMD
+				,IPE_EENO
+				,MDFY_YMD
+				,UPDR_EENO
+		) VALUES (
+				#lrg_cd#
+				,#mrg_cd#
+				,#mrg_nm#
+				,#mrg_sort#
+				,#use_yn#
+				,SYSDATE
+				,#ipe_eeno#
+				,SYSDATE
+				,#ipe_eeno#
+		)
+	</insert>
+	
+	<update id="updateBkToMrgList" parameterClass="bgabGascbk04Dto">
+		/* books.xml :: updateBkToLrgList */
+		UPDATE BGAB_GASCBK04$corp_cd$ SET
+			  MRG_CD        = #mrg_cd#
+			, MRG_NM 		= #mrg_nm#
+			, MRG_SORT      = #mrg_sort#
+			, USE_YN     	= #use_yn#
+			, MDFY_YMD      = SYSDATE
+			, UPDR_EENO     = #updr_eeno#
+		WHERE lrg_cd = #lrg_cd_h#
+		AND   mrg_cd = #mrg_cd_h#
+	</update>
+	
+	<select id="selectBkListToMrgInfo" parameterClass="bgabGascbk04Dto" resultClass="bgabGascbk04Dto">
+		/* books.xml :: selectBkListToMrgInfo */
+		SELECT 	LRG_CD
+				,MRG_CD
+				,MRG_NM
+				,MRG_SORT
+				,USE_YN
+				,INP_YMD
+				,IPE_EENO
+				,MDFY_YMD
+				,UPDR_EENO
+				,LRG_CD AS MRG_LRG_CD_H
+				,MRG_CD AS MRG_CD_H
+		FROM BGAB_GASCBK04$corp_cd$ 
+		WHERE LRG_CD = #lrg_cd#
+		ORDER BY MRG_SORT ASC
+	</select>
+	<delete id="deleteBkToLrgList" parameterClass="bgabGascbk03Dto">
+		/* books.xml :: deleteBkToLrgList */
+		DELETE FROM BGAB_GASCBK03$corp_cd$
+		WHERE lrg_cd = #lrg_cd_h#
+	</delete>
+	<delete id="deleteBkToMrgDtlList" parameterClass="bgabGascbk03Dto">
+		/* books.xml :: deleteBkToMrgDtlList */
+		DELETE FROM BGAB_GASCBK04$corp_cd$
+		WHERE lrg_cd = #lrg_cd_h#
+	</delete>
+	<delete id="deleteBkToMrgList" parameterClass="bgabGascbk04Dto">
+		/* books.xml :: deleteBkToMrgList */
+		DELETE FROM BGAB_GASCBK04$corp_cd$
+		WHERE lrg_cd = #lrg_cd_h#
+		AND   mrg_cd = #mrg_cd_h#
+	</delete>
+	
+	
+	<select id="selectCountBkToBookMgmtList" parameterClass="bgabGascbk01Dto" resultClass="java.lang.String">
+	/*selectCountBkToBookMgmtList*/
+		SELECT COUNT(*) TOT_CNT
+		FROM BGAB_GASCBK01$corp_cd$ BK01
+		LEFT OUTER JOIN BGAB_GASCBK03$corp_cd$ BK03
+		ON BK01.LRG_CD = BK03.LRG_CD
+		LEFT OUTER JOIN BGAB_GASCBK04$corp_cd$ BK04
+		ON BK01.LRG_CD = BK04.LRG_CD
+		AND BK01.MRG_CD = BK04.MRG_CD
+		WHERE	1 = 1
+		<isNotEmpty property="lrg_cd" prepend="and">
+			BK01.LRG_CD = #lrg_cd#
+		</isNotEmpty>
+		<isNotEmpty property="mrg_cd" prepend="and">
+			BK01.MRG_CD = #mrg_cd#
+		</isNotEmpty>
+	</select>
+	<select id="selectBkToBookMgmtList" parameterClass="bgabGascbk01Dto" resultClass="bgabGascbk01Dto">
+	/*selectBkToBookMgmtList*/
+		SELECT * FROM (
+	  		SELECT rownum rnum, k.*
+			FROM
+			(
+				SELECT	
+						BK01.BK_SEQ
+						,BK01.LRG_CD
+						,BK01.MRG_CD
+						,BK01.BK_TTL
+						,BK01.BK_WRTR
+						,BK01.BK_QTY
+						,TO_CHAR( BK01.BK_YMD, 'yyyy-mm-dd' ) AS BK_YMD
+						,BK01.BK_CONT
+						,BK01.INP_YMD
+						,BK01.IPE_EENO
+						,BK01.MDFY_YMD
+						,BK01.UPDR_EENO
+						,BK03.LRG_NM || ' > ' || BK04.MRG_NM AS BK_CTGRY
+						,(SELECT COUNT(DOC_NO) FROM BGAB_GASCBK02$corp_cd$ WHERE BK_SEQ = BK01.BK_SEQ AND PGS_ST_CD NOT IN ('C','D')) AS BK_RENT_QTY
+						,(BK01.BK_QTY - (SELECT COUNT(DOC_NO) FROM BGAB_GASCBK02$corp_cd$ WHERE BK_SEQ = BK01.BK_SEQ AND PGS_ST_CD NOT IN ('C','D'))) AS BK_EXTR_QTY
+						,(SELECT MAX(OGC_FIL_NM) FROM BGAB_GASCZ011$corp_cd$ WHERE DOC_NO = BK01.FILE_INFO) AS ORG_FILE_NM
+				FROM BGAB_GASCBK01$corp_cd$ BK01
+				LEFT OUTER JOIN BGAB_GASCBK03$corp_cd$ BK03
+				ON BK01.LRG_CD = BK03.LRG_CD
+				LEFT OUTER JOIN BGAB_GASCBK04$corp_cd$ BK04
+				ON BK01.LRG_CD = BK04.LRG_CD
+				AND BK01.MRG_CD = BK04.MRG_CD
+				WHERE	1 = 1
+				<isNotEmpty property="lrg_cd" prepend="and">
+					BK01.LRG_CD = #lrg_cd#
+				</isNotEmpty>
+				<isNotEmpty property="mrg_cd" prepend="and">
+					BK01.MRG_CD = #mrg_cd#
+				</isNotEmpty>
+				ORDER BY BK01.LRG_CD ASC, BK01.MRG_CD ASC, BK01.BK_TTL ASC
+			) k
+		) j WHERE rnum between #startRow# AND #endRow#
+	</select>
+	
+	<insert id="insertBkToBookInfo" parameterClass="bgabGascbk01Dto">
+		/*insertBkToBookInfo*/
+		MERGE INTO BGAB_GASCBK01$corp_cd$ 
+		USING DUAL
+		ON (bk_seq = #bk_seq#)
+		WHEN MATCHED THEN
+		UPDATE SET 
+			LRG_CD        = #lrg_cd# 
+			,MRG_CD        = #mrg_cd# 
+			,BK_TTL        = #bk_ttl# 
+			,BK_WRTR       = #bk_wrtr#
+			,BK_QTY        = #bk_qty# 
+			,BK_YMD        = TO_DATE(#bk_ymd#, 'YYYYMMDD') 
+			,BK_CONT       = #bk_cont#
+			,UPDR_EENO     = #updr_eeno# 
+			,MDFY_YMD 	   = SYSDATE  
+			,BK_PRD		   = #bk_prd#
+		WHEN NOT MATCHED THEN
+		INSERT (
+			  BK_SEQ
+			, LRG_CD
+			, MRG_CD
+			, BK_TTL
+			, BK_WRTR
+			, BK_QTY
+			, BK_YMD
+			, BK_CONT
+			, INP_YMD
+			, IPE_EENO
+			, MDFY_YMD
+			, UPDR_EENO
+			, FILE_INFO
+			, BK_PRD
+		) VALUES (
+			  #bk_seq#
+			, #lrg_cd#
+			, #mrg_cd#
+			, #bk_ttl#
+			, #bk_wrtr#
+			, #bk_qty#
+			, TO_DATE(#bk_ymd#, 'YYYYMMDD')
+			, #bk_cont#
+			, SYSDATE    
+			, #ipe_eeno# 
+			, SYSDATE  
+			, #updr_eeno#
+			, #file_info#
+			, #bk_prd#
+		)
+		
+	</insert>
+	<delete id="deleteBkToBookInfo" parameterClass="bgabGascbk01Dto">
+		/*deleteBkToBookInfo*/
+		DELETE FROM BGAB_GASCBK01$corp_cd$
+		WHERE BK_SEQ = #bk_seq#
+	</delete>
+	<select id="selectInfoBkToBookInfo" parameterClass="bgabGascbk01Dto" resultClass="bgabGascbk01Dto">
+		/* books.xml :: selectBkListToMrgInfo */
+		SELECT 	BK01.BK_SEQ
+				,BK01.LRG_CD
+				,BK01.MRG_CD
+				,BK01.BK_TTL
+				,BK01.BK_WRTR
+				,BK01.BK_QTY
+				,TO_CHAR ( BK01.BK_YMD, 'yyyy-mm-dd' ) AS BK_YMD
+				,BK01.BK_CONT
+				,BK03.LRG_NM || ' > ' || BK04.MRG_NM AS BK_CTGRY
+				,(SELECT MAX(OGC_FIL_NM) FROM BGAB_GASCZ011$corp_cd$ WHERE DOC_NO = BK01.FILE_INFO) AS FILE_NM
+				,(SELECT MAX(FIL_NM) FROM BGAB_GASCZ011$corp_cd$ WHERE DOC_NO = BK01.FILE_INFO) AS ORG_FILE_NM
+				,BK01.BK_PRD
+				,(SELECT PGS_ST_CD FROM BGAB_GASCBK02$corp_cd$ WHERE DOC_NO = #doc_no#) AS PGS_ST_CD
+		FROM BGAB_GASCBK01$corp_cd$ BK01 
+		LEFT OUTER JOIN BGAB_GASCBK03$corp_cd$ BK03
+		ON BK01.LRG_CD = BK03.LRG_CD
+		LEFT OUTER JOIN BGAB_GASCBK04$corp_cd$ BK04
+		ON BK01.LRG_CD = BK04.LRG_CD
+		AND BK01.MRG_CD = BK04.MRG_CD
+		WHERE BK01.BK_SEQ = #bk_seq#
+	</select>
+	
+	<insert id="insertBkToExcelTemp" parameterClass="bgabGascbkExcelTempDto">
+		/* books.xml :: insertBkToExcelTemp */
+		INSERT INTO BGAB_GASCBK_EXCEL_TEMP$corp_cd$(
+			  LRG_CD
+			, LRG_NM
+			, LRG_SORT
+			, MRG_CD
+			, MRG_NM
+			, MRG_SORT
+		) VALUES (
+			  #lrg_cd#
+			, #lrg_nm#
+			, #lrg_sort#
+			, #mrg_cd#
+			, #mrg_nm#
+			, #mrg_sort#
+		)
+	</insert>
+	
+	<select id="selectBkToExcelTempMrgChk" resultClass="String">
+		/* books.xml :: selectBkToExcelTempMrgChk */
+		SELECT COUNT(CNT)
+		FROM (
+			SELECT COUNT(MRG_CD) CNT
+			FROM BGAB_GASCBK_EXCEL_TEMP$corp_cd$
+			GROUP BY LRG_CD, MRG_CD
+		) A
+		WHERE CNT <![CDATA[>]]> 1
+	</select>
+	
+	<select id="selectBkToMrgChk" resultClass="String">
+		/* books.xml :: selectBkToMrgChk */
+		SELECT COUNT(BK04.MRG_CD)
+		FROM BGAB_GASCBK04$corp_cd$ BK04
+		JOIN (
+			SELECT LRG_CD, MRG_CD
+			FROM BGAB_GASCBK_EXCEL_TEMP$corp_cd$
+			GROUP BY LRG_CD, MRG_CD
+		) TMP
+		 ON BK04.LRG_CD = TMP.LRG_CD
+		AND BK04.MRG_CD = TMP.MRG_CD
+	</select>
+	
+	<select id="selectBkToLrgList" parameterClass="bgabGascbkExcelTempDto" resultClass="bgabGascbkExcelTempDto">
+		/* books.xml :: selectBkToLrgList */
+		SELECT LRG_CD
+			 , MAX(LRG_NM)   AS LRG_NM
+			 , MAX(LRG_SORT) AS LRG_SORT
+			 , 'Y'           AS USE_YN
+			 , #eeno#        AS IPE_EENO
+			 , #eeno#        AS UPDR_EENO
+		FROM BGAB_GASCBK_EXCEL_TEMP$corp_cd$
+		GROUP BY LRG_CD
+	</select>
+	
+	<select id="selectBkToLrgChk" parameterClass="bgabGascbkExcelTempDto" resultClass="String">
+		/* books.xml :: selectBkToLrgChk */
+		SELECT COUNT(*)
+		FROM BGAB_GASCBK03$corp_cd$
+		WHERE LRG_CD = #lrg_cd#
+	</select>
+	
+	<insert id="insertBkLrgToExcelTemp" parameterClass="bgabGascbkExcelTempDto">
+		/* books.xml :: insertBkLrgToExcelTemp */
+		INSERT INTO BGAB_GASCBK03$corp_cd$(
+			  LRG_CD
+			, LRG_NM
+			, LRG_SORT
+			, USE_YN
+			, IPE_EENO
+			, INP_YMD
+			, UPDR_EENO
+			, MDFY_YMD
+		) VALUES (
+			  #lrg_cd#
+			, #lrg_nm#
+			, #lrg_sort#
+			, #use_yn#
+			, #ipe_eeno#
+			, SYSDATE
+			, #updr_eeno#
+			, SYSDATE
+		)
+	</insert>
+	
+	<insert id="insertBkMrgToExcelTemp" parameterClass="bgabGascbkExcelTempDto">
+		/* books.xml :: insertBkMrgToExcelTemp */
+		INSERT INTO BGAB_GASCBK04$corp_cd$
+		SELECT LRG_CD
+			 , MRG_CD
+			 , MAX(MRG_NM)   AS MRG_NM
+			 , MAX(MRG_SORT) AS MRG_SORT
+			 , 'Y'
+			 , SYSDATE
+			 , #eeno#
+			 , SYSDATE
+			 , #eeno#
+		FROM BGAB_GASCBK_EXCEL_TEMP$corp_cd$
+		GROUP BY LRG_CD, MRG_CD
+	</insert>
+	
+	<delete id="deleteBkToExcelTemp">
+		/* books.xml :: deleteBkToExcelTemp */
+		DELETE FROM BGAB_GASCBK_EXCEL_TEMP$corp_cd$
+	</delete>
+	
+	<insert id="insertBkToFile" parameterClass="BgabGascZ011Dto">
+		/* insertBkToFile */
+		INSERT INTO BGAB_GASCZ011$corp_cd$ (
+		DOC_NO ,
+		EENO ,
+		SEQ ,
+		AFFR_SCN_CD ,
+		OGC_FIL_NM ,
+		FIL_NM ,
+		FIL_MGN_QTY ,
+		INP_YMD ,
+		IPE_EENO
+		)VALUES(
+		#doc_no# ,
+		#eeno# ,
+		#seq# ,
+		#affr_scn_cd# ,
+		#ogc_fil_nm# ,
+		#fil_nm# ,
+		#fil_mgn_qty# ,
+		sysdate ,
+		#ipe_eeno#
+		)
+	</insert>
+
+	<select id="selectBkToFile" resultClass="BgabGascZ011Dto" parameterClass="BgabGascZ011Dto">
+		/* selectBkToFile */
+		SELECT
+		DOC_NO ,
+		EENO ,
+		SEQ ,
+		AFFR_SCN_CD ,
+		FIL_NM ,
+		OGC_FIL_NM ,
+		FIL_MGN_QTY ,
+		INP_YMD ,
+		IPE_EENO
+		FROM BGAB_GASCZ011$corp_cd$
+		WHERE DOC_NO = #doc_no#
+		AND EENO = #eeno#
+		AND SEQ =
+		#seq#
+		AND AFFR_SCN_CD = #affr_scn_cd#
+		<isNotEmpty property="ogc_fil_nm" prepend="and">
+			OGC_FIL_NM =
+			#ogc_fil_nm#
+		</isNotEmpty>
+		ORDER BY FIL_NM
+	</select>
+
+	<delete id="deleteBkToFile" parameterClass="BgabGascZ011Dto">
+		/* deleteBkToFile */
+		DELETE FROM BGAB_GASCZ011$corp_cd$
+		WHERE DOC_NO = #doc_no#
+		AND EENO = #eeno#
+		AND SEQ = #seq#
+		AND AFFR_SCN_CD = #affr_scn_cd#
+		AND
+		OGC_FIL_NM = #ogc_fil_nm#
+	</delete>
+</sqlMap>

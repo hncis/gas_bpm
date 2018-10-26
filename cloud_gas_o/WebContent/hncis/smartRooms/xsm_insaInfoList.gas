@@ -1,0 +1,141 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId = "XSM04";
+	String getDate     = CurrentDateTime.getDate();
+	String getFromDate = CurrentDateTime.getDashDate(getDate, 0);
+	String getToDate   = CurrentDateTime.getDashDate(getDate, +7);
+	String isAdminAuth = sess_mstu_gubb.equals("M") ? "true" : "false";
+%>
+
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>예약현황</title>
+		<script type="text/javascript" src='./js/xsm04.js'></script>
+	</head>
+	
+	<body>
+		<div id="wrap">
+			<form id="frm" name="frm" method="post">
+				<input type="hidden" id="gubun" name="gubun">+
+				<input type="hidden" id="codeKnd" name="codeKnd">
+				<input type="hidden" id="jsonData" name="jsonData">
+				<input type="hidden" id="nSource" name="nSource">
+				<input type="hidden" id="nTarget" name="nTarget">
+				<input type="hidden" id="pagingIndex" name="pagingIndex" value="0">
+				<input type="hidden" id="menuId" name="menuId" value="<%=menuId%>">
+				<input type="hidden" id="curYmd" name="curYmd" value="<%=getDate%>">
+				<input type="hidden" id="KEY_PARAM_DAY" name="KEY_PARAM_DAY">
+				<input type="hidden" id="KEY_GUBUN" name="KEY_GUBUN">
+				<input type="hidden" id="p_regn_cd" name="p_regn_cd">
+				<input type="hidden" id="p_bd_cd" name="p_bd_cd">
+				<input type="hidden" id="p_corm_fl_cd" name="p_corm_fl_cd">
+				<input type="hidden" id="p_corm_cd" name="p_corm_cd">
+				<input type="hidden" id="p_corm_nm" name="p_corm_nm">
+				<input type="hidden" id="p_from_ymd" name="p_from_ymd">
+				<input type="hidden" id="p_to_ymd" name="p_to_ymd">
+				<input type="hidden" id="p_from_time" name="p_from_time">
+				<input type="hidden" id="p_to_time" name="p_to_time">
+				<input type="hidden" id="hid_doc_no" name="hid_doc_no">
+				<input type="hidden" id="hid_key_no" name="hid_key_no">
+				<input type="hidden" id="etc_user" name="etc_user">
+				<input type="hidden" id="etc_org" name="etc_org">
+				<input type="hidden" id="etc_user_data" name="etc_user_data">
+				<input type="hidden" id="etc_org_data1" name="etc_org_data1">
+				<input type="hidden" id="etc_org_data2" name="etc_org_data2">
+				<select id="KEY_FROM_TIME" name="KEY_FROM_TIME" style="display:none"></select>
+				<select id="KEY_TO_TIME" name="KEY_TO_TIME" style="display:none"></select>
+				
+				<%@ include file="../include/hncis_header.gas"%>
+				<div id="contents_wrap">
+	        		<%@ include file="../include/hncis_left.gas"%>
+	            	<div id="contents">
+						<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,menuId
+							,"조회/search@삭제/delete@승인/use_approve@승인취소/not_use_approve"
+							,null
+							,null
+							,null
+							,request)
+						%>
+						
+						<div class="con_t_area mt10">
+		                	<h3>기본정보</h3>
+		                </div>
+		                <div class="search_area">
+							<table>
+								<colgroup>
+									<col width="60px">
+									<col width="160px">
+									<col width="60px">
+									<col width="160px">
+									<col width="60px">
+									<col width="120px">
+									<col width="60px">
+									<col width="160px">
+									<col width="60px">
+									<col width="*">
+								</colgroup>
+								<tr>
+									<td align="left">근무지역</td>
+									<td align="left">
+										<select id="KEY_REGN_CD" name="KEY_REGN_CD" style="width:140px">
+											<option value="">전 체</option>
+										</select>
+									</td>
+									<td align="left">건물</td>
+									<td align="left">
+										<select id="KEY_BD_CD" name="KEY_BD_CD" style="width:140px" disabled>
+											<option value="">전 체</option>
+										</select>
+									</td>
+									<td align="left">층</td>
+									<td align="left">
+										<select id="KEY_CORM_FL_CD" name="KEY_CORM_FL_CD" style="width:90px" disabled>
+											<option value="">전 체</option>
+										</select>
+									</td>
+									<td align="left">회의실</td>
+									<td align="left">
+										<select id="KEY_CORM_CD" name="KEY_CORM_CD" style="width:140px" disabled>
+											<option value="">전 체</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td align="left">구분</td>
+									<td align="left">
+										<select id="KEY_PTT_GUBUN" style="width:110px"></select>										
+									</td>
+									<td align="left">상태</td>
+									<td align="left">
+										<select id="KEY_PGS_ST_CD" style="width:80px"></select>
+									</td>
+									<td align="left">일정</td>
+									<td align="left" colspan="6">
+										<input type="text" id="KEY_FROM_YMD" name="KEY_FROM_YMD" style="width:80px" value="<%=getFromDate%>">
+										<img name="car1" src="../../images/sub/ico_datepicker.gif" alt="" align="absmiddle" onclick="openIframeCalendar(frm.KEY_FROM_YMD);return false;">
+										부터
+										<input type="text" id="KEY_TO_YMD" name="KEY_TO_YMD" style="width:80px" value="<%=getToDate%>">
+										<img name="car2" src="../../images/sub/ico_datepicker.gif" alt="" align="absmiddle" onclick="openIframeCalendar(frm.KEY_TO_YMD);return false;">
+										까지
+									</td>
+								</tr>
+							</table> 
+						</div>
+						<div class="jq_tbl">
+		                	<table id="htmlTable1" class="scroll"></table>
+		                	<div id="htmlPager1" class="scroll"></div>
+		                </div>
+						<%@ include file="../include/hncis_message.gas"%>
+					</div>
+				</div>
+			</form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+			<img id="loading_progress_img" src="../../images/common/progress_bar.gif" width="362" height="131" style="display:none" />
+		</div>
+	</body>
+</html>

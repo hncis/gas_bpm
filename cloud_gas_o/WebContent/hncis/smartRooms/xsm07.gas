@@ -1,0 +1,350 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XSM07";
+
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH", locale);
+	String strSav = JSPMessageSource.getMessage("BUTTON.SAVE", locale);
+	String strDel = JSPMessageSource.getMessage("BUTTON.DELETE", locale);
+	String strAdd = JSPMessageSource.getMessage("BUTTON.ADD", locale);
+	
+	String strBtn = "";
+	strBtn = strSch+"/search@"+strSav+"/save@"+strDel+"/delete@"+strAdd+"/addrow";
+
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>회의실코드관리</title>
+	</head>
+	<body>
+		<div id="wrap">
+	    	<form name="testForm" id="testForm">
+		    	<%@ include file="../include/hncis_header.gas"%>
+		        <div id="contents_wrap">
+		        	<%@ include file="../include/hncis_left.gas"%>
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,"XSM07"
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+		                <div class="search_area">
+		                	<table>
+		                        <colgroup>
+		                        	<col style="width:40px;" />
+		                            <col style="width:220px;" />
+		                            <col style="width:50px;" />
+		                            <col style="width:auto;" />
+		                        </colgroup>
+		                        <tbody>
+		                            <tr>
+		                            	<th><fmt:message key="code"/></th>
+		                            	<td>
+											<select id="key_code_code" name="key_code_knd" style="width:200px" onChange="doSearch()">
+												<option value=""><fmt:message key="total"/></option>
+											</select>
+										</td>
+										<th><fmt:message key="hngl_nm"/></th>
+										<td>
+											<input type="text" id="key_code_hname" name="key_code_hname" style="width:200px" onkeyup="enterKey();">
+										</td>
+									</tr>
+		                        </tbody>
+		                    </table>
+		                </div>
+		                <div class="jq_tbl">
+			                <table id="htmlTable" class="scroll"></table>
+							<div id="htmlPager" class="scroll"></div>
+						</div>
+		                <%@ include file="../include/hncis_message.gas"%>
+		            </div>
+		            <div class="clear"></div>
+		        </div>
+	        </form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+	    </div>
+	</body>
+</html>
+		<script type="text/javascript">
+		function fnSetDocumentReady(){
+			initMenus();
+			CodeKndCombo();
+			init();
+		}
+
+		function CodeKndCombo(){
+			var params = {
+				};
+			doCommonAjax("doSearchCodeKndCombo.do", params,"CodeKndComboCallBack(jsonData);");
+		}
+
+		function CodeKndComboCallBack(jsonData){
+			$.each(eval(jsonData.sendResult),function(targetNm,optionData){
+				$("#key_code_code").loadSelect(eval(optionData));
+			});
+		}
+
+		/**
+		 * process init() loading
+		 */
+		var params;
+		var fnMerge;
+		var gridParam;
+		var gridName = "htmlTable";
+		var datarow  = {xsm_knd_old:"", xsm_code_old:"", xsm_knd:"", xsm_code:"", xsm_hname:"", xsm_ename:"", xsm_remark:"", xsm_sort_no:"", xsm_use_yn:""};
+		function init(){
+			$("#"+gridName).GridUnload();
+			//set grid parameter
+			var params = {
+					xsm_knd : "00000",
+					corp_cd	: sess_corp_cd
+				};
+			gridParam = {
+				viewEdit : [{
+					gridName     : gridName,
+					url          : "doSearchConferenceRoomCodeMgmtByXsm07.do",
+// 					colNames     : ["", "", "코드 종류", "코드", "한글명", "영문명", "설명", "정렬 순서", "사용 여부"],
+					colNames     : ['' // ""
+							      ,'' // ""
+								  ,'' // "코드 종류"
+								  ,'<fmt:message key="code"/>' // "코드"
+								  ,'<fmt:message key="hngl_nm"/>' // "한글명"
+								  ,'<fmt:message key="eng_nm"/>' // "영문명"
+								  ,'<fmt:message key="exp"/>' // "설명"
+								  ,'<fmt:message key="sort_no"/>' // "정렬 순서"
+								  ,'<fmt:message key="use_yn"/>' // "사용 여부"
+						  ],
+					colModel     : [{name:"xsm_knd_old",	index:"xsm_knd_old"		, sortable:false,		formatter:"string",	width:"0",		align:"center",	editable:false,	frozen:false, hidden : true},
+					                {name:"xsm_code_old",	index:"xsm_code_old"	, sortable:false,		formatter:"string",	width:"0",		align:"center",	editable:false,	frozen:false, hidden : true},
+					                {name:"xsm_knd",		index:"xsm_knd"			, sortable:false,		formatter:"string",	width:"100",	align:"center",	editable:true,	frozen:false, hidden : true},
+					            	{name:"xsm_code",		index:"xsm_code"		, sortable:false,		formatter:"string",	width:"130",	align:"center",	editable:true,	frozen:false,
+					                	editoptions: {maxlength:"5"}
+					                },
+					            	{name:"xsm_hname",		index:"xsm_hname"		, sortable:false,		formatter:"string",	width:"150",	align:"left",	editable:true,	frozen:false},
+					            	{name:"xsm_ename",		index:"xsm_ename"		, sortable:false,		formatter:"string",	width:"150",	align:"left",	editable:true,	frozen:false},
+					            	{name:"xsm_remark",		index:"xsm_remark"		, sortable:false,		formatter:"string",	width:"350",	align:"left",	editable:true,	frozen:false},
+					            	{name:"xsm_sort_no",	index:"xsm_sort_no"		, sortable:false,		formatter:"string",	width:"90",	align:"center",	editable:true,	frozen:false,
+					            		editoptions: {
+					    		            dataInit: function(element) {
+					    		     		    $(element).keyup(function(){
+					    		     		    	if(!isNumeric(element.value)){
+					    		     		    		element.value = selectNum(element.value);
+					    		     		    	}
+					    		     		    });
+					    		            }
+					    		        }	
+					            	},
+					            	{name:"xsm_use_yn",		index:"xsm_use_yn"		, sortable:false,		edittype:"select", formatter:"select",	width:"80", align:"center",	editable:true,	
+					            		editoptions:{value:"Y:Y;N:N"}
+					            	}
+					            	],
+					height       : "100%",
+					rownumbers   : true,
+					multiselect  : true,
+					cellEdit     : true,
+					fnMerge      : false,
+					completeFc   : "addGridRow();initAfterMenus();",
+					pager		 : "htmlPager",
+					paramJson    : params
+				}]
+			};
+			
+			//common jqGrid call...
+			commonJqGridInit(gridParam);
+			
+			//method overliding
+			jQuery("#"+gridName).jqGrid("navGrid","#htmlPager",{edit:false,add:false,del:false,search:false,refresh:false});
+			
+			setGridColumnOptions(gridName);
+		}
+
+		function retrieve(gubn){
+			switch(gubn){
+				case "search" :
+					doSearch();
+					break;
+				case "save" :
+					doInsert();
+					break;
+				case "delete" :
+					doDelete();
+					break;
+				case "addrow" :
+					fnAddRow();
+					break;
+			}
+		}
+
+		function fnAddRow(){
+			var gridRowId = $("#htmlTable").getDataIDs().length;
+			jQuery("#htmlTable").jqGrid("addRowData", gridRowId+1, datarow);
+		}
+
+
+		function doSearch(msgFlag){
+			var key_code_knd = $("#key_code_code").val()==""?"00000":$("#key_code_code").val();
+			var params = {
+				xsm_knd   : key_code_knd,
+				xsm_hname : $("#key_code_hname").val(),
+				corp_cd	  : sess_corp_cd
+			};
+			
+			doCommonSearch("doSearchConferenceRoomCodeMgmtByXsm07.do", util.jsonToString(params), "loadCallBack();initAfterMenus();", gridName, msgFlag);
+		}
+
+		function doInsert(){
+			var paramsI = [];	
+			var paramsU = [];
+			var selectRow = jQuery("#"+gridName).jqGrid("getGridParam", "selarrrow");
+			
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}else{
+				for(var i = 0; i < selectRow.length; i++){
+					var rowId = selectRow[i];
+					if(rowId){
+						if(getColValue("xsm_code" , rowId, gridName) == ""){
+							alertUI('<fmt:message key="MSG.INP.0029"/>');
+							return;
+						}else if(getColValue("xsm_hname" , rowId, gridName) == ""){
+							alertUI('<fmt:message key="MSG.INP.0032"/>');
+							return;
+						}
+						
+						var sort_no = getColValue("xsm_sort_no" , rowId, gridName);
+						sort_no = (sort_no == "") ? generateSortNo(rowId, i):sort_no;
+						
+						if($.trim($("#key_code_code").val()) == ""){
+							list ={
+								xsm_knd      	: "00000",
+								xsm_knd_old   	: "00000",
+								xsm_code   		: getColValue("xsm_code" , rowId, gridName),
+								xsm_code_old  	: getColValue("xsm_code_old" , rowId, gridName),
+								xsm_hname       : changeToUni(getColValue("xsm_hname", rowId, gridName)),
+								xsm_ename       : getColValue("xsm_ename", rowId, gridName),
+								xsm_remark      : changeToUni(getColValue("xsm_remark", rowId, gridName)),
+								xsm_sort_no     : sort_no,
+								xsm_use_yn  	: getColValue("xsm_use_yn", rowId, gridName),
+								ipe_eeno    	: sess_empno,
+								updr_eeno   	: sess_empno,
+								corp_cd	   		: sess_corp_cd
+							};
+						}else{
+							list ={
+								xsm_knd      	: $("#key_code_code").val(),
+								xsm_knd_old   	: $("#key_code_code").val(),
+								xsm_code   		: getColValue("xsm_code" , rowId, gridName),
+								xsm_code_old  	: getColValue("xsm_code_old" , rowId, gridName),
+								xsm_hname       : changeToUni(getColValue("xsm_hname", rowId, gridName)),
+								xsm_ename       : getColValue("xsm_ename", rowId, gridName),
+								xsm_remark      : changeToUni(getColValue("xsm_remark", rowId, gridName)),
+								xsm_sort_no     : sort_no,
+								xsm_use_yn  	: getColValue("xsm_use_yn", rowId, gridName),
+								ipe_eeno    	: sess_empno,
+								updr_eeno   	: sess_empno,
+								corp_cd	   		: sess_corp_cd
+							};
+						}
+						if($.trim(getColValue("xsm_knd_old", rowId, gridName)) != ""){
+							paramsU.push(list);
+						}else{
+							paramsI.push(list);
+						}
+					}
+				}
+			}
+			
+			confirmUI('<fmt:message key="MSG.CNF.0004"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramsI : util.jsonToList(paramsI),
+								paramsU	: util.jsonToList(paramsU)
+							};
+						doCommonAjax("doSaveConferenceRoomCodeMgmtByXsm07.do", paramData, "submitCallBack('save', jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function doDelete(){
+			var params = [];
+			var selectRow = jQuery("#"+gridName).jqGrid("getGridParam", "selarrrow");
+			
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}else{
+				for(var i = 0; i < selectRow.length; i++){
+					var rowId = selectRow[i];
+					if(rowId){
+						list ={
+							xsm_knd    : getColValue("xsm_knd_old"  , rowId, gridName),
+							xsm_code   : getColValue("xsm_code_old" , rowId, gridName),
+							corp_cd	   : sess_corp_cd
+						};
+						params.push(list);
+					}
+				}
+			}
+			
+			confirmUI('<fmt:message key="MSG.CNF.0002"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramJson : util.jsonToList(params)
+							};
+							doCommonAjax("doDeleteConferenceRoomCodeMgmtByXsm07.do", paramData, "submitCallBack('delete', jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function generateSortNo(selectedId, count){
+			do{
+				selectedId -= 1;
+			}while(getColValue("xsm_sort_no" , selectedId, gridName) == "");
+			
+			return (Number(getColValue("xsm_sort_no", selectedId, gridName)) + count + 1).toString();
+		}
+
+		/**
+		 * addRow $.IDs.length + 1
+		 * datarow colModel keyName:"", ....
+		 */
+		function addRow(){
+			var gridRowId = jQuery("#"+gridName).getDataIDs().length;
+			for(var i = 1; i <= 10 - gridRowId ; i++){
+				jQuery("#"+gridName).jqGrid("addRowData", gridRowId+i, datarow);
+			}
+		}
+
+		/**
+		 * callback
+		 */
+		function loadCallBack(){
+			addGridRow();
+		}
+
+		function submitCallBack(id, result){
+			setBottomMsg(result.message, true);
+			CodeKndCombo();
+			doSearch('N');
+		}
+		function celldbClickAction(rowId,iRow,iCol,e){
+			if(getColValue("xsm_knd",rowId) == "00000"){
+				$("#key_code_knd").val(getColValue("xsm_code",rowId));
+				doSearch();
+			}
+		}
+
+		</script>

@@ -1,0 +1,660 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.*" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ include file="/hncis/include/common_sub1.gas"%>
+<%
+	String menuId	   = "XSM08";
+	String isAdminAuth = sess_mstu_gubb.equals("M") ? "true" : "false"; 
+	String strYymm     = CurrentDateTime.getYear()+CurrentDateTime.getMonth();
+	String getDate     = CurrentDateTime.getDate();
+	String getDashDate = CurrentDateTime.getDashDate();
+	
+	Calendar cal = Calendar.getInstance(Locale.KOREA);
+	int cntWeek = CurrentDateTime.getDayOfWeek(getDate);
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	cal.add(Calendar.DAY_OF_WEEK , (-(cntWeek)+1));
+	String curYmd = sdf.format(cal.getTime());
+	
+	String param1 = StringUtil.isNullToString(request.getParameter("param1"));
+	String param2 = StringUtil.isNullToString(request.getParameter("param2"));
+	String regnCd = "";
+	String bdCd = "";
+	String cormFlCd = "";
+	String cormCd = "";
+	if(!"".equals(param2)){
+		String[] tmpArr = param2.split("\\|");
+		regnCd = tmpArr[0];
+		bdCd = tmpArr[1];
+		cormFlCd = tmpArr[2];
+		cormCd = tmpArr[3];				
+	}
+	
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH",locale);
+	String strDys = JSPMessageSource.getMessage("BUTTON.DAYS", locale);
+	String strWks = JSPMessageSource.getMessage("BUTTON.WEEKS", locale);
+	String strMts = JSPMessageSource.getMessage("BUTTON.MONTHS", locale);
+
+	String strBtn = "";
+	strBtn = strSch+"/search@"+strDys+"/day@"+strWks+"/week@"+strMts+"/month";
+%>
+
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>상세검색및예약(주별)</title>
+		<script type="text/javascript">
+			var isAdmAuth = "<%=isAdminAuth%>";
+		</script>
+		<script type="text/javascript" src='./js/xsm_reg.js'></script>
+		<script type="text/javascript" src='./js/xsm_util.js'></script>
+	</head>
+	<body>
+		<div id="wrap">
+			<form id="frm" name="frm" method="post">
+				<input type="hidden" id="gubun" name="gubun">
+				<input type="hidden" id="codeKnd" name="codeKnd">
+				<input type="hidden" id="jsonData" name="jsonData">
+				<input type="hidden" id="nSource" name="nSource">
+				<input type="hidden" id="nTarget" name="nTarget">
+				<input type="hidden" id="pagingIndex" name="pagingIndex" value="0">
+				<input type="hidden" id="menuId" name="menuId" value="<%=menuId%>">
+				<input type="hidden" id="getToDay" name="getToDay" value="<%=getDate%>">
+				<input type="hidden" id="curYmd" name="curYmd" value="<%=curYmd%>">
+				<input type="hidden" id="KEY_GUBUN" name="KEY_GUBUN" />
+				<input type="hidden" id="KEY_PARAM_YMD" name="KEY_PARAM_YMD"/>
+				<input type="hidden" id="KEY_CNF_FROM_YMD" name="KEY_CNF_FROM_YMD"/>
+				<input type="hidden" id="KEY_CNF_TO_YMD" name="KEY_CNF_TO_YMD"/>
+				<input type="hidden" id="p_regn_cd" name="p_regn_cd">
+				<input type="hidden" id="p_bd_cd" name="p_bd_cd">
+				<input type="hidden" id="p_corm_fl_cd" name="p_corm_fl_cd">
+				<input type="hidden" id="p_corm_cd" name="p_corm_cd">
+				<input type="hidden" id="p_corm_nm" name="p_corm_nm">
+				<input type="hidden" id="p_from_ymd" name="p_from_ymd">
+				<input type="hidden" id="p_to_ymd" name="p_to_ymd">
+				<input type="hidden" id="p_from_time" name="p_from_time">
+				<input type="hidden" id="p_to_time" name="p_to_time">
+				<input type="hidden" id="hid_doc_no" name="hid_doc_no">
+				<input type="hidden" id="hid_key_no" name="hid_key_no">
+				<input type="hidden" id="etc_user" name="etc_user">
+				<input type="hidden" id="etc_org" name="etc_org">
+				<input type="hidden" id="etc_user_data" name="etc_user_data">
+				<input type="hidden" id="etc_org_data1" name="etc_org_data1">
+				<input type="hidden" id="etc_org_data2" name="etc_org_data2">
+				<input type="hidden" id="paramJson" name="paramJson">
+				<input type="hidden" id="hid_param2" name="hid_param2" value="<%=param2%>">
+				<input type="hidden" id="hid_regn_cd" name="hid_regn_cd" value="<%=regnCd%>">
+				<input type="hidden" id="hid_bd_cd" name="hid_bd_cd" value="<%=bdCd%>">
+				<input type="hidden" id="hid_corm_fl_cd" name="hid_corm_fl_cd" value="<%=cormFlCd%>">
+				<input type="hidden" id="hid_corm_cd" name="hid_corm_cd" value="<%=cormCd%>">
+				
+				<%@ include file="../include/hncis_header.gas"%>
+				<div id="contents_wrap">
+	        		<%@ include file="../include/hncis_left.gas"%>
+	            	<div id="contents">
+						<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							, menuId
+							, strBtn
+							, null
+							, null
+							, null
+							, request)
+						%>
+						
+						<div class="search_area">
+							<table>
+								<colgroup>
+									<col width="60px">
+									<col width="160px">
+									<col width="40px">
+									<col width="160px">
+									<col width="30px">
+									<col width="120px">
+									<col width="50px">
+									<col width="*">
+								</colgroup>
+								<tr>
+									<td align="left"><fmt:message key="svc_ar"/></td>
+									<td align="left">
+										<select id="KEY_REGN_CD" name="KEY_REGN_CD" style="width:140px">
+											<option value="">선 택</option>
+										</select>
+									</td>
+									<td align="left"><fmt:message key="bld"/></td>
+									<td align="left">
+										<select id="KEY_BD_CD" name="KEY_BD_CD" style="width:140px" disabled>
+											<option value="">선 택</option>
+										</select>
+									</td>
+									<td align="left"><fmt:message key="floor"/></td>
+									<td align="left">
+										<select id="KEY_CORM_FL_CD" name="KEY_CORM_FL_CD" style="width:90px" disabled>
+											<option value="">선 택</option>
+										</select>
+									</td>
+									<td align="left"><fmt:message key="mt_rm"/></td>
+									<td align="left">
+										<select id="KEY_CORM_CD" name="KEY_CORM_CD" style="width:140px" disabled>
+											<option value="">선 택</option>
+										</select>
+										<select id="KEY_FROM_TIME" name="KEY_FROM_TIME" style="display:none">
+											<option value="">선 택</option>
+										</select>
+										<select id="KEY_TO_TIME" name="KEY_TO_TIME" style="display:none">
+											<option value="">선 택</option>
+										</select>
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div style="margin-bottom:30px; padding: 0 0 0 21px; min-height: 800px; max-width: 968px">
+				            <div id='calendar' class="mt5"></div>
+						</div>
+						<%@ include file="../include/hncis_message.gas"%>
+					</div>
+				</div>
+			</form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+			<img id="loading_progress_img" src="../../images/common/progress_bar.gif" width="362" height="131" style="display:none" />
+		</div>
+	</body>
+</html>
+
+<script type="text/javascript">
+	var curPage = 0;
+	var calendar = null;
+	var firClick = "";
+	var lstClick = "";
+	var resvDate = "";
+	var firDate = "";
+	var lstDate = "";
+	var firTime = "";
+	var lstTime = "";
+
+	function fnSetDocumentReady(){
+		initMenus();
+		$('#SM').slideDown('fast');
+		
+		block_open();
+		doAuthInfo();
+	}
+	
+	function doAuthInfo(){
+	    var params = {
+	        url : "doSearchLoginTimeUser.do",
+	        data : "",
+	        callback : "doAuthInfoCallBack(data.sendResult)"
+	    };
+	    
+	    Con.ajax(params);
+	}
+	
+	function doAuthInfoCallBack(rs){
+		$("#etc_user").val(rs.isEtcUser);
+		
+		//공통 콤보 조회
+		var sCode  = "KEY_REGN_CD:SM001:Z;";
+			sCode += "KEY_FROM_TIME:SM005:A;KEY_TO_TIME:SM006:A;";
+		var sCallBack = "init();";
+		var sUrl = "doSearchComboByXsm.do";
+		getCommonCode(sCode, "N", sCallBack, sUrl);
+	}
+	
+	function init(){
+		$("#KEY_REGN_CD").val(sess_plac_work);
+		
+		if($("#hid_regn_cd").val() != ""){
+			$("#KEY_REGN_CD").val($("#hid_regn_cd").val());
+		}
+		doBdCdComboInfo();
+	}
+	
+	/**
+	 * 건물 콤보 조회
+	 */
+	function doBdCdComboInfo(){
+		var paramData = {
+			regn_cd : $("#KEY_REGN_CD").val(),
+			code1 : "KEY_BD_CD",
+			code2 : "S"		
+		};
+		var sCallBack = 'block_close();doBdCdComboInfoCallBack();';
+		var sUrl = "selectBuildingComboByXsm05.do";
+		getCommonCode(util.jsonToString(paramData), "N", sCallBack, sUrl);
+	}
+	
+	function doBdCdComboInfoCallBack(){
+		$("#KEY_BD_CD").attr("disabled", false);
+		
+		if($("#hid_bd_cd").val() != ""){
+			$("#KEY_BD_CD").val($("#hid_bd_cd").val());
+			doCormFlComboInfo();
+		}
+	}
+	
+	/**
+	 * 층수 콤보 조회
+	 */
+	function doCormFlComboInfo(){
+		var paramData = {
+			regn_cd : $("#KEY_REGN_CD").val(),
+			bd_cd : $("#KEY_BD_CD").val(),
+			code1 : "KEY_CORM_FL_CD",
+			code2 : "S",		
+			code3 : "FL"		
+		};
+		var sCallBack = 'doCormFlComboInfoCallBack();';
+		var sUrl = "doSearchConferenceComboByXsm06.do";
+		getCommonCode(util.jsonToString(paramData), "N", sCallBack, sUrl);
+	}
+	
+	function doCormFlComboInfoCallBack(){
+		$("#KEY_CORM_FL_CD").attr("disabled", false);
+		if($("#hid_corm_fl_cd").val() != ""){
+			$("#KEY_CORM_FL_CD").val($("#hid_corm_fl_cd").val());
+			doCormComboInfo()
+		}
+	}
+	
+	/**
+	 * 회의실 콤보 조회
+	 */
+	function doCormComboInfo(){
+		var paramData = {
+			regn_cd : $("#KEY_REGN_CD").val(),
+			bd_cd : $("#KEY_BD_CD").val(),
+			corm_fl_cd : $("#KEY_CORM_FL_CD").val(),
+			code1 : "KEY_CORM_CD",
+			code2 : "S",		
+			code3 : "CD"		
+		};
+		var sCallBack = 'doCormComboInfoCallBack();';
+		var sUrl = "doSearchConferenceComboByXsm06.do";
+		getCommonCode(util.jsonToString(paramData), "N", sCallBack, sUrl);
+	}
+	
+	function doCormComboInfoCallBack(){
+		$("#KEY_CORM_CD").attr("disabled", false);
+		$("#KEY_CORM_CD").val($("#hid_corm_cd").val());
+		
+		if($("#hid_corm_cd").val() != ""){
+			retrieve('search');
+			
+			$("#hid_regn_cd").val("");
+			$("#hid_bd_cd").val("");
+			$("#hid_corm_fl_cd").val("");
+			$("#hid_corm_cd").val("");
+		}
+	}
+	
+	$(document).ready(function(){
+	    /**
+	     * 달력 초기 생성
+	     * month,agendaWeek,basicWeek
+	     */
+		calendar = $('#calendar').fullCalendar({
+	        header: {
+	            left: '',
+	            center: 'prev, title, next today',
+	            right: ''
+	        },
+	        lang: 'ko',
+	        defaultView:"agendaWeek",
+	        allDaySlot:false,
+	        minTime:"06:00:00",
+	        maxTime:"22:00:00",
+	        slotDuration:"00:30:00",
+	        timeFormat: 'H:mm',
+			unselectAuto: false,
+			selectable: true,
+			selectHelper: false,
+	        contentHeight:"auto",
+	        editable: false,
+	        eventLimit: false, // +몇개
+	        events: [],
+	        dayClick: function(date, jsEvent, view) {
+	        	if($("#KEY_CORM_CD").val() == ""){
+	        		alertUI('<fmt:message key="MSG.VAL.0013"/>');
+	        		calendar.fullCalendar('unselect');
+	        		return;
+	        	}else if($("#curYmd").val() > (selectNum(date.format()))){
+	        		alertUI('<fmt:message key="MSG.VAL.0023"/>');
+	        		setClear();
+	        		return;
+	        	}
+	        	
+	        	var tmpDate = date.format().split("T");
+	        	resvDate = selectNum(tmpDate[0]);
+	        	if(firClick == ""){
+	        		firClick = "Y";
+	        		firTime  = selectNum(tmpDate[1]).substring(0, 4);
+	        		firDate = selectNum(tmpDate[0]);
+	        		
+	        		$("#p_regn_cd").val($("#KEY_REGN_CD").val());
+	        		$("#p_bd_cd").val($("#KEY_BD_CD").val());
+	        		$("#p_corm_fl_cd").val($("#KEY_CORM_FL_CD").val());
+	        		$("#p_corm_cd").val($("#KEY_CORM_CD").val());
+	        		$("#p_corm_nm").val($("#KEY_CORM_CD option:selected").text());
+	        	}else if(firClick != ""){
+	        		lstClick = "Y";
+	        		lstTime  = selectNum(tmpDate[1]).substring(0, 4);
+	        		lstDate = selectNum(tmpDate[0]);
+	        	}
+	        	
+	            //시간 체크
+	            var scd = new Date();
+	            var diffTime = ""+numPad(scd.getHours())+numPad(scd.getMinutes());
+	            if(Number(getCurrentToDate()+diffTime+"00") > Number(selectNum(tmpDate[0])+selectNum(tmpDate[1]))){
+	            	alertUI('<fmt:message key="MSG.VAL.0024"/>');
+	            	setClear();
+	            	return;
+	            }
+	        	
+	        	//두번째 클릭
+	        	if(lstClick == "Y"){
+	        	    if(firTime > lstTime){
+	        	    	alertUI('<fmt:message key="MSG.VAL.0027"/>');
+	        	    	setClear();
+	        	    	return;
+	        	    }
+	        	    
+	    			var mm = "", hh1 = "", mm1 = "";
+	    			var ohh = lstTime.substring(0,2);
+	    			var omm = lstTime.substring(2,4);
+	    			
+	    			//변수에 셋팅될 시간
+	    			if(omm == "00"){
+	    				mm = "29";
+	    			}else{
+	    				mm = "59";
+	    			}
+	    			lstTime = ohh+mm;
+	    			if(isAdmAuth == "true" || $("#etc_user").val() == "Y"){
+						$("#p_from_ymd").val(firDate);
+						$("#p_to_ymd").val(lstDate);
+	    			}else{
+	    				$("#p_from_ymd").val(firDate);
+						$("#p_to_ymd").val(firDate);
+	    			}
+					$("#p_from_time").val(firTime);
+					$("#p_to_time").val(lstTime);
+					
+	    			//confirm 화면에 보여줄 시간
+	    			if(omm == "00"){
+	    				hh1 = ohh;
+	    				mm1 = "30";
+	    			}else{
+	    				hh1 = numPad(Number(ohh)+1);
+	    				mm1 = "00"; 
+	    			}
+	    			dispLstTime = hh1+mm1;
+					confirmDisp();
+	        	}
+	        },
+	        eventAfterRender:function(event, element, view){
+	        },
+	        eventClick: function(event, element) {
+	    		$("#p_regn_cd").val($("#KEY_REGN_CD").val());
+	    		$("#p_bd_cd").val($("#KEY_BD_CD").val());
+	    		$("#p_corm_fl_cd").val($("#KEY_CORM_FL_CD").val());
+	    		$("#p_corm_cd").val($("#KEY_CORM_CD").val());
+	    		$("#p_corm_nm").val($("#KEY_CORM_CD option:selected").text());
+	        	var hidKeyNo = "";
+	        	hidKeyNo += $("#KEY_BD_CD").val()+$("#KEY_CORM_FL_CD").val()+$("#KEY_CORM_CD").val();
+	        	hidKeyNo += "-" + selectNum(event.cnf_from_ymd);
+	        	hidKeyNo += "-" + event.cnf_from_time;
+				$("#hid_key_no").val(hidKeyNo);
+				$("#hid_doc_no").val(event.doc_no);
+				
+				cormReservationView(event.mode);
+	        },
+	        eventRender: function(event, element) {
+	        	element.qtip({
+	        		content:{
+	        			title : {
+	        				text : event.cnf_title==""?"제목없음":event.cnf_title
+	        			},
+	        			text : "회의주관자 : " + event.cnf_name + " " + event.pos_nm + " " + event.dept_nm + "<br>"+
+	        				   "회의시간 : " + setTimeFormat(event.cnf_from_time) + " ~ " + setTimeFormat(event.cnf_to_time)
+	        		},
+	        		position: {
+	        			my : "top left",
+	        			at : "middle center",
+	        			target : element
+	        		}
+	        	});
+	        }
+	    });
+		
+	    var descript = '<span style="color:#C1D82E">■</span><span style="padding-right:5px;"><fmt:message key="self_rsvt"/></span><span style="color:#68C8C6">■</span><span style="color:#007A85">■</span><span style="color:#7EB0CB">■</span><span><fmt:message key="others_rsvt"/></span>';
+	    var descWrap = '<span style="padding-top:5px;">'+descript+'</span>';
+	    $(".fc-center").append(descWrap);
+		$(".fc-today-button").text("<fmt:message key='this_week'/>");
+		
+		//근무지역 변경 이벤트
+		$("#KEY_REGN_CD").change(function(){
+			$("#KEY_BD_CD option:gt(0)").remove();
+			$("#KEY_CORM_FL_CD option:gt(0)").remove();
+			$("#KEY_CORM_CD option:gt(0)").remove();
+			$("#KEY_BD_CD").attr("disabled", true);
+			$("#KEY_CORM_FL_CD").attr("disabled", true);
+			$("#KEY_CORM_CD").attr("disabled", true);
+			doBdCdComboInfo();
+		});
+	
+		//건물 변경 이벤트
+		$("#KEY_BD_CD").change(function(){
+			$("#KEY_CORM_FL_CD option:gt(0)").remove();
+			$("#KEY_CORM_CD option:gt(0)").remove();
+			$("#KEY_CORM_CD").attr("disabled", true);
+			if($(this).val() != ""){
+				doCormFlComboInfo();
+			}
+		});
+		
+		//층수 변경 이벤트
+		$("#KEY_CORM_FL_CD").change(function(){
+			$("#KEY_CORM_CD option:gt(0)").remove();
+			$("#KEY_CORM_CD").attr("disabled", true);
+			if($(this).val() != ""){
+				doCormComboInfo();
+			}
+		});
+		
+		//사용설명팝업
+		$("#resv_desc").live("click",function() {
+			var gbWidth = "300";
+			var gbHeight = "150";
+			var popTop = (($(window).height() - Number(gbHeight)) /2) + 'px';
+			var popLeft = (($(window).width() - Number(gbWidth)) /2) + 'px';
+			var css = {
+				top: popTop, left: popLeft, width: gbWidth, height: gbHeight,
+				cursor: 'hand', border: 'none', color: '#fff', backgroundColor:'#fff'
+			};
+			$.blockUI({
+			    message: $("#resv_desc_pop"),
+			    css: css
+			});
+			return false;
+		});
+		
+		//오늘 일자 셋팅(로딩시 한번 셋팅)
+	    $("#KEY_PARAM_YMD").val($("#curYmd").val());
+		$("#KEY_CNF_FROM_YMD").val(selectNum(getAddDayDate($("#KEY_PARAM_YMD").val(), 0)));
+	    $("#KEY_CNF_TO_YMD").val(selectNum(getAddDayDate($("#KEY_CNF_FROM_YMD").val(), 6)));
+	    
+	    //이전주
+	    $(".fc-prev-button").click(function(){
+	    	$("#KEY_CNF_FROM_YMD").val(selectNum(getAddDayDate($("#KEY_PARAM_YMD").val(), -7)));
+	        $("#KEY_CNF_TO_YMD").val(selectNum(getAddDayDate($("#KEY_CNF_FROM_YMD").val(), 6)));
+	        $("#KEY_GUBUN").val("P");
+	        retrieve('search');
+	    });
+	    
+	    //다음주
+	    $(".fc-next-button").click(function(){
+	    	$("#KEY_CNF_FROM_YMD").val(selectNum(getAddDayDate($("#KEY_PARAM_YMD").val(), 7)));
+	        $("#KEY_CNF_TO_YMD").val(selectNum(getAddDayDate($("#KEY_CNF_FROM_YMD").val(), 6)));
+	        $("#KEY_GUBUN").val("N");
+	        retrieve('search');
+	    });
+	    
+	    //금주
+	    $(".fc-today-button").click(function(){
+	    	$("#KEY_PARAM_YMD").val($("#curYmd").val());
+	    	$("#KEY_CNF_FROM_YMD").val(selectNum($("#KEY_PARAM_YMD").val(), 0));
+	        $("#KEY_CNF_TO_YMD").val(selectNum(getAddDayDate($("#KEY_PARAM_YMD").val(), 6)));
+	        $("#KEY_GUBUN").val("T");
+	        retrieve('search');
+	    });
+	    
+	    //예약
+	    $("#btn_resv").live("click", function(){
+	    	cormReservation();
+	    });
+	    
+	    //예약취소
+	    $("#btn_resv_cancel").live("click", function(){
+	    	block_close();
+	    	setClear();
+	    });
+	});
+	
+	function setClear(){
+		firClick = "";
+		lstClick = "";
+		resvDate = "";
+		firDate = "";
+		lstDate = "";
+		firTime = "";
+		lstTime = "";
+		calendar.fullCalendar('unselect');
+	}
+	
+	/**
+	 * 업무 호출
+	 */
+	function retrieve(btnFlag){
+		$("#gubun").val(btnFlag);
+		switch(btnFlag){
+			case "search" :
+				 doSearch();
+				 break;
+			case "day" :
+			case "week" :
+			case "month" :
+				 doMovePage(btnFlag);
+				 break;
+		}
+	}
+	
+	function doMovePage(btnFlag){
+	    var jsonData = {};
+	    var cormInfo = "";
+	    var sUrl = "/hncis/smartRooms/";
+	    if(btnFlag == "day"){
+	    	jsonData = {url:sUrl+"xsm02.gas", mv:"Y", param2:""};
+	    }else if(btnFlag == "week" || btnFlag == "month"){
+			if($("#KEY_CORM_CD").val() == ""){
+				alertUI('<fmt:message key="select"/>');
+				return;
+			}
+			cormInfo += $("#KEY_REGN_CD").val();
+			cormInfo += "|"+$("#KEY_BD_CD").val();
+			cormInfo += "|"+$("#KEY_CORM_FL_CD").val();
+			cormInfo += "|"+$("#KEY_CORM_CD").val();
+			
+			if(btnFlag == "week"){
+				jsonData = {url:sUrl+"xsm08.gas", mv:"Y", param2:cormInfo};
+			}else if(btnFlag == "month"){
+				jsonData = {url:sUrl+"xsm09.gas", mv:"Y", param2:cormInfo};
+			}
+	    }
+	    block_open();
+	    getMovePage(jsonData);
+	}
+	
+	function doSearch(){
+		var regnCd = $("#KEY_REGN_CD");
+		var bdCd = $("#KEY_BD_CD");
+		var cormFlCd = $("#KEY_CORM_FL_CD");
+		var cormCd = $("#KEY_CORM_CD");
+		
+		if(regnCd.val() == ""){
+			alertUI('<fmt:message key="MSG.SEL.0032"/>');
+			regnCd.focus();
+			return;
+		}else if(bdCd.val() == ""){
+			alertUI('<fmt:message key="MSG.SEL.0033"/>');
+			bdCd.focus();
+			return;
+		}else if(cormFlCd.val() == ""){
+			alertUI('<fmt:message key="MSG.SEL.0034"/>');
+			cormFlCd.focus();
+			return;
+		}else if(cormCd.val() == ""){
+			alertUI('<fmt:message key="MSG.SEL.0031"/>');
+			cormCd.focus();
+			return;
+		}
+		
+	    var paramData = {
+	        regn_cd : regnCd.val(),
+	        bd_cd : bdCd.val(),
+	        corm_fl_cd : cormFlCd.val(),
+	        corm_cd : cormCd.val(),
+	        cnf_from_ymd : $("#KEY_CNF_FROM_YMD").val(),
+	        cnf_to_ymd : $("#KEY_CNF_TO_YMD").val(),
+	        ptt_ymd : $("#KEY_PARAM_YMD").val(),
+	        mode : "W",
+	        code2 : $("#KEY_GUBUN").val()
+	    };
+	    var form_data = {
+	        paramJson : util.jsonToString(paramData)
+	    };
+	    var params = {
+	        url : "doSearchReservationList.do",
+	        data : form_data,
+	        callback : "endCallback(data, 'select')"
+	    };
+	    block_open();
+	    Con.ajax(params);
+	}
+	
+	function endCallback(rs, flag){
+	    switch(flag){
+	    	case "select" :
+	    		block_close();
+	    		var data = rs.list1;
+	    		var wFromYmd = rs.code1;
+	    		$("#KEY_PARAM_YMD").val(wFromYmd);
+	            $('#calendar').fullCalendar('removeEvents');
+	            $('#calendar').fullCalendar('addEventSource', data);
+	            $('#calendar').fullCalendar('rerenderEvents');
+	            break;
+	    }
+	}
+	
+	function confirmDisp(){
+		var strVal = "";
+			strVal += "<span class='fontBlue'><b>" + setDateFormat($("#p_from_ymd").val()) + " " + setTimeFormat(firTime) + " 부터 ";
+			strVal += setDateFormat($("#p_to_ymd").val()) + " " + setTimeFormat(dispLstTime) + " 까지</b>";
+			strVal += "</span><br>";
+			strVal += $("#KEY_CORM_CD option:selected").text() + " 을 예약 하시겠습니까?";
+		$("#conf_msg").html(strVal);
+		
+		var gbWidth = "300";
+		var gbHeight = "150";
+		var popTop = (($(window).height() - Number(gbHeight)) /2) + 'px';
+		var popLeft = (($(window).width() - Number(gbWidth)) /2) + 'px';
+		var css = { 
+			top: popTop, left: popLeft, width: gbWidth, height: gbHeight,
+			cursor: 'hand', border: 'none', color: '#fff', backgroundColor:'#fff'
+		};
+		$.blockUI({
+		    message: $("#conf_pop"),
+		    css: css
+		});
+	}
+</script>

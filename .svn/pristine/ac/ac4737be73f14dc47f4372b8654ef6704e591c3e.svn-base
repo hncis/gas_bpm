@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>New Document</title>
+<!-- <link rel="shortcut icon" href="favicon.ico" /> -->
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Cache-Control" content="no-cache" />
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+<meta http-equiv="Imagetoolbar" content="no" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<script type="text/javascript" src="/script/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="/script/js/jquery-ui-1.10.2.custom.min.js"></script>
+<script type="text/javascript" src="/script/js/front.js"></script>
+<!--// css start -->
+<link rel="stylesheet" type="text/css" href="/script/css/import.css" />
+<script type="text/javascript">
+<!--
+	$(function(){
+		
+	});
+//-->
+</script>
+</head>
+
+<body class="popup">
+<div class="popupIn">
+	<!-- title -->
+	<h2><img src="/images/txt/ph2_uniform_01.gif" alt="UNIFORM SEARCH" /></h2>
+	<!-- /title -->
+
+	<!-- btn -->
+	<div class="btnSec">
+		<a href="javascript:;"><img src="/images/btn/sb_01_01.gif" alt="SEARCH" /></a>
+		<a href="javascript:;" onclick="dimLayerView('hide', 'popup'); return false;"><img src="/images/btn/sb_01_14.gif" alt="CLOSE" /></a>
+	</div>
+	<!-- /btn -->
+
+	<!-- search -->
+	<div class="searchSec"><div class="in">
+		<ul>
+			<li>
+				<label>User ID</label>
+				<input type="text" class="txt1" style="width: 55px;" />
+			</li>
+
+			<li>
+				<label>Name</label>
+				<input type="text" class="txt1" style="width: 55px;" />
+			</li>
+
+			<li class="br"></li>
+
+			<li>
+				<label>Type 1</label>
+				<select class="sel1">
+					<option>Select</option>
+				</select>
+			</li>
+
+			<li>
+				<label>Type 2</label>
+				<select class="sel1">
+					<option>Select</option>
+				</select>
+			</li>
+
+			<li>
+				<label>Type 3</label>
+				<select class="sel1">
+					<option>Select</option>
+				</select>
+			</li>
+		</ul>
+	</div></div>
+	<!-- /search -->
+
+	<!-- list -->
+	<div class="listSecType1 noScroll">
+		<table width="100%" class="hoverOn">
+			<colgroup>
+				<col width="100" />
+				<col width="100" />
+				<col width="100" />
+				<col width="" />
+			</colgroup>
+			<thead>
+				<tr>
+					<th>User ID</th>
+					<th>Type 1</th>
+					<th>Type 2</th>
+					<th>Type 3</th>
+					<th>Color</th>
+					<th>Size</th>
+					<th>Approve Date</th>
+			</thead>
+
+			<tbody>
+				<tr>
+					<td>1281292</td>
+					<td>Summer</td>
+					<td>Operators</td>
+					<td>Trousers</td>
+					<td>Red</td>
+					<td>S</td>
+					<td>21/05/2013</td>
+				</tr>
+				<tr>
+					<td>1281292</td>
+					<td>Summer</td>
+					<td>Operators</td>
+					<td>Trousers</td>
+					<td>Red</td>
+					<td>S</td>
+					<td>21/05/2013</td>
+				</tr>
+				<tr>
+					<td>1281292</td>
+					<td>Summer</td>
+					<td>Operators</td>
+					<td>Trousers</td>
+					<td>Red</td>
+					<td>S</td>
+					<td>21/05/2013</td>
+				</tr>
+				<tr>
+					<td>1281292</td>
+					<td>Summer</td>
+					<td>Operators</td>
+					<td>Trousers</td>
+					<td>Red</td>
+					<td>S</td>
+					<td>21/05/2013</td>
+				</tr>
+				<tr>
+					<td>1281292</td>
+					<td>Summer</td>
+					<td>Operators</td>
+					<td>Trousers</td>
+					<td>Red</td>
+					<td>S</td>
+					<td>21/05/2013</td>
+				</tr>
+				<tr>
+					<td>1281292</td>
+					<td>Summer</td>
+					<td>Operators</td>
+					<td>Trousers</td>
+					<td>Red</td>
+					<td>S</td>
+					<td>21/05/2013</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<!-- /list -->
+
+	<!-- paging -->
+	<div class="pagingSec container">
+		<div class="paging">
+			<a href="javascript:;"><img src="/images/btn/pg_01_01.gif" alt="first" /></a>
+			<a href="javascript:;"><img src="/images/btn/pg_01_02.gif" alt="prev" /></a>
+
+			<span><strong>Page</strong> <a href="javascript:;" class="num">1</a> <strong>of</strong> 10</span>
+
+			<a href="javascript:;"><img src="/images/btn/pg_01_03.gif" alt="next" /></a>
+			<a href="javascript:;"><img src="/images/btn/pg_01_04.gif" alt="end" /></a>
+
+			<select>
+				<option>1</option>
+				<option>2</option>
+				<option>3</option>
+				<option>4</option>
+				<option>5</option>
+				<option>6</option>
+				<option>7</option>
+				<option>8</option>
+				<option>9</option>
+				<option>10</option>
+			</select>
+		</div>
+
+		<div class="pageTxt">
+			<strong>View <span>1-10</span> of</strong> 10
+		</div>
+	</div>
+	<!-- /paging -->
+</div>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<html>
+<head>
+<title>[GLOBAL HMB]</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="shortcut icon" href="/images/icon/favicon.ico">
+</head>
+<script language="JavaScript">
+	if(window.location.protocol != "https:"){
+		window.location.href="https://gasc.hyundai-brasil.com/index.htm";
+	}
+</script>
+<frameset rows="*,30" cols="*" frameborder="NO" border="0"  framespacing="0" > 
+	<frame name="rightFrame" src="./login.html" scrolling="YES">
+</frameset>
+<noframes> 
+<body bgcolor="#FFFFFF" text="#000000">
+</body>
+</noframes> 
+</html>

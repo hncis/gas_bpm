@@ -1,0 +1,246 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XST14";
+
+	String strSav = JSPMessageSource.getMessage("BUTTON.SAVE", locale);
+	
+	String strBtn = "";
+	strBtn = strSav+"/save";
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Budget Check Switch</title>
+	</head>
+	<body>
+		<div id="wrap">
+	    	<form name="testForm" id="testForm">
+		    	<%@ include file="../include/hncis_header.gas"%>
+		        <div id="contents_wrap">
+		        	<%@ include file="../include/hncis_left.gas"%>
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,"XST14"
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+		                <div class="vehicle_tbl">
+							<table style="width:480px">
+								<colgroup>
+									<col style="width:400px;" />
+									<col style="width:80px;" />
+								</colgroup>
+								<tbody id="budget_check_switch">
+<!-- 									<tr> -->
+<!-- 										<th style="font-size:15px;">Budget Check Switch</th> -->
+<!-- 										<td align="center" style="height:46px;"> -->
+<!-- 											<select id="xcod_hname" name="xcod_hname"  -->
+<!-- 												style="width:85px;height:35px;font-size:15pt;font-weight:bold;color:#EBB52D; -->
+<!-- 															background-color:#2d2d2d;display:block;border:solid 1px #b4b4b4;text-align:center"> -->
+<!-- 												<option value="Y">&nbsp;&nbsp;ON</option> -->
+<!-- 												<option value="N">&nbsp;OFF</option> -->
+<!-- 											</select> -->
+<!-- 										</td> -->
+<!-- 									</tr> -->
+								</tbody>
+							</table>
+						</div>
+		                <%@ include file="../include/hncis_message.gas"%>
+		            </div>
+		            <div class="clear"></div>
+		        </div>
+	        </form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+	    </div>
+	    
+		<%--<div id="wrap">
+			<div id="GASC">
+				<form name="testForm" id="testForm">
+					<%@ include file="../include/leftMenuSys.gas"%>
+					<div id="container_wrap">
+						<div id="container">
+							<%=CommonGasc.getTitleAndButtonNew(sess_empno
+								,"XST14"
+								,"save/save"
+								,null
+								,null
+								,null
+								,request)
+							%> --%>
+							
+<!-- 							<div id="basic_info" style="height:150px;"> -->
+<!-- 								<table style="padding-top:20px"> -->
+<!-- 									<tr> -->
+<!-- 										<td width="500px" align="right"><font size="50px">Budget Check Switch</font></td> -->
+<!-- 										<td align="center"> -->
+<!-- 											<select id="xcod_hname" name="xcod_hname"  -->
+<!-- 												style="width:200px;height:100px;font-size:50pt;font-weight:bold;color:#EBB52D; -->
+<!--  														background-color:#2d2d2d;display:block;border:solid 1px #b4b4b4;text-align:center"> -->
+<!-- 												<option value="Y">&nbsp;&nbsp;ON</option> -->
+<!-- 												<option value="N">&nbsp;OFF</option> -->
+<!-- 											</select> -->
+<!-- 										</td> -->
+<!-- 									</tr> -->
+<!-- 								</table> -->
+<!-- 							</div> -->
+
+<!-- 							<table id="htmlTable" class="scroll"></table> -->
+<%-- 							<iframe id="msgFrame" src="<%=ctxPath %>/bottom.gas" style="padding-top:10px; width:100%; height:30px;" border="0" frameborder="0" framespacing="0" hspace="0" vspace="10" scrolling="no" noresize></iframe> --%>
+<!-- 						</div> -->
+<!-- 					</div> -->
+<!-- 				</form> -->
+<!-- 				<form id="hideForm" name="hideForm" method="post"> -->
+<!-- 					<input type="hidden" id="hid_csrfToken" name="hid_csrfToken"> -->
+<!-- 				</form>				 -->
+<!-- 			</div> -->
+<!-- 		</div> -->
+	</body>
+</html>
+<script type="text/javascript">
+var datarow = {xcod_knd:"",xcod_code:"",xcod_ename:"",xcod_hname:""};
+
+function fnSetDocumentReady(){
+	initMenus();
+	$('#ST').slideDown('fast');
+	
+	init();
+}
+
+function init(){
+	doSearch();
+//	cn = ['','Middle Category Code','Middle Category Name','Use'];
+//	
+//	cm = [
+//		{name:'xcod_knd'  ,index:'xcod_knd'  , sortable:false, formatter: "string", width:80, align:"center", editable:false, hidden:true},
+//		{name:'xcod_code' ,index:'xcod_code' , sortable:false, formatter: "string", width:150,align:"center", editable:false},
+//		{name:'xcod_ename',index:'xcod_ename', sortable:false, formatter: "string", width:150,align:"center", editable:false},
+//		{name:'xcod_hname',index:'xcod_hname', sortable:false, formatter: "select", width:80, align:"center", editable:true, edittype:"select",
+//			editoptions:{value:"Y:Y;N:N"}
+//		}
+//	];
+//	
+//	gridParam = {
+//		viewEdit : [{
+//			url          : "doSearchSwitchToBudgetCheck.do",
+//			colNames     : cn,
+//			colModel     : cm,
+//			height       : "100%",
+//			rowNum		 : 10,
+//			rownumbers   : true,
+//			multiselect  : true,
+//			cellEdit     : true,
+//			fnMerge      : false,
+//			paramJson    : "",
+//			completeFc	 : "addGridRow();initAfterMenus();"
+//		}]
+//	};
+//		
+//	commonJqGridInit(gridParam);
+}
+
+function doSearch(msgFlag){
+	doCommonAjax("doSearchSwitchToBudgetCheck.do", "", "doSearchCallBack(jsonData.sendResult);");
+//	doCommonSearch("doSearchSwitchToBudgetCheck.do", util.jsonToString(params), "addGridRow();initAfterMenus();", "htmlTable", msgFlag);
+}
+
+function doSearchCallBack(result){
+//	loadJsonSet(result);
+//	if(msgFlag == "Y") setBottomMsg(result.message, false);
+	
+	var tmpSwitchTag = "";
+	var tmpSwitchY   = "";
+	var tmpSwitchN   = "";
+	
+	$.each(result.BUDGET, function(index, optionData){
+		tmpSwitchY = optionData.budget_switch == "Y" ? "selected" : "";
+		tmpSwitchN = optionData.budget_switch == "N" ? "selected" : "";
+		
+		tmpSwitchTag += "	<tr>";
+		tmpSwitchTag += "		<th style=\"font-size:15px;\">"+optionData.budget_name+"</th>";
+		tmpSwitchTag += "		<td align=\"center\" style=\"height:46px;\">";
+		tmpSwitchTag += "			<input type=\"hidden\" name=\"budget_code\" value=\""+optionData.budget_code+"\" >";
+		tmpSwitchTag += "			<select name=\"budget_switch\" style=\"width:85px;height:35px;font-size:15pt;font-weight:bold;color:#EBB52D;background-color:#2d2d2d;display:block;border:solid 1px #b4b4b4;text-align:center\">";
+		tmpSwitchTag += "				<option value=\"Y\" "+tmpSwitchY+">&nbsp;&nbsp;ON</option>";
+		tmpSwitchTag += "				<option value=\"N\" "+tmpSwitchN+">&nbsp;OFF</option>";
+		tmpSwitchTag += "			</select>";
+		tmpSwitchTag += "		</td>";
+		tmpSwitchTag += "	</tr>";
+//		alertUI(index + " : " + +":"++":"+optionData.budget_switch);
+	});
+	
+	$("#budget_check_switch").html(tmpSwitchTag);
+}
+
+function retrieve(gubn){
+	switch(gubn){
+		case "save" :
+			doSave();
+			break;
+	}
+}
+
+function doSave(){
+	
+	var budgetCodeList   = $("input[name=budget_code]");
+	var budgetSwitchList = $("select[name=budget_switch]");
+	
+	var data, uParams = [];
+	
+	for(var i=0; i<budgetCodeList.length; i++){
+		data = {
+			xcod_hname      : $(budgetSwitchList[i]).val(),
+			xcod_updt_empno : sess_empno,
+			xcod_knd        : "X0020",
+			xcod_code       : $(budgetCodeList[i]).val()
+		};
+		
+		uParams.push(data);
+	}
+	
+	confirmUI('<fmt:message key="MSG.CNF.0004"/>');
+	$("#pop_yes").click(function(){
+		$.unblockUI({
+			onUnblock: function(){
+				var params = {
+						params : util.jsonToList(uParams)
+					};
+					doCommonAjax("doSaveSwitchToBudgetCheck.do", params, "doSaveCallBack(jsonData.sendResult);");
+			}
+		});
+	});
+	
+//	var selectInfoRow = jQuery("#htmlTable").jqGrid('getGridParam','selarrrow');
+//	
+//	var data, uParams = [];
+//	
+//	for(var i=0; i<selectInfoRow.length; i++){
+//		if(selectInfoRow[i]){
+//			data = {
+//				xcod_knd 	: "X0020"	,
+//				xcod_code	: getColValue("xcod_code", selectInfoRow[i]),
+//				xcod_hname	: getColValue("xcod_hname", selectInfoRow[i]),
+//				xcod_updt_empno	: sess_empno
+//			};
+//			
+//			uParams.push(data);
+//		}
+//	}
+//	var params = {
+//		params : util.jsonToList(uParams)
+//	};
+//	
+//	doCommonAjax("doSaveSwitchToBudgetCheck.do", params,"saveCallBack(jsonData.sendResult);");
+}
+
+function doSaveCallBack(result){
+	setBottomMsg(result.message, true);
+	doSearch("N");
+}
+
+</script>

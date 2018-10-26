@@ -1,0 +1,321 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="com.hncis.common.util.*" %>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XLV03";
+
+	String strSav = JSPMessageSource.getMessage("BUTTON.SAVE",locale);
+	
+	String strBtn = "";
+	strBtn = strSav+"/save";
+	
+	String tempPath     = request.getServletPath().toString();
+	String stepHelpUrl  = StringUtil.getStepHelp(tempPath);
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>LIST</title>
+	</head>
+	<body>
+		<div id="wrap">
+	    	<form name="frm" id="frm">
+	    		<input type="hidden" id="help_url" name="help_url" value="<%=stepHelpUrl%>">
+		    	<%@ include file="../include/hncis_header.gas"%>
+		        <div id="contents_wrap">
+		        	<%@ include file="../include/hncis_left.gas"%>
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,"XLV03"
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+						
+						<div class="vehicle_tbl">
+							<table>
+								<colgroup>
+								  <col style="width:80px;" />
+								  <col style="width:120px;" />
+								  <col style="width:80px;" />
+								  <col style="width:120px;" />
+								   <col style="width:80px;" />
+								  <col style="width:120px;" />
+								  <col style="width:80px;" />
+								  <col style="width:120px;" />
+								</colgroup>
+								<tr>
+									<th><fmt:message key="rm_days"/></th> 
+									<td colspan="7">
+										<input type="text" id="use_day" name="use_day" class="inputOnlyNumber" style="width:143px;"/>
+									</td>
+								</tr>
+								<tr>
+									<th><fmt:message key="year1"/></th> 
+									<td>
+										<input type="text" id="year1" name="year1" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+									<th><fmt:message key="year2"/></th> 
+									<td>
+										<input type="text" id="year2" name="year2" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+									<th><fmt:message key="year3"/></th> 
+									<td>
+										<input type="text" id="year3" name="year3" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+									<th><fmt:message key="year4"/></th> 
+									<td>
+										<input type="text" id="year4" name="year4" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+								</tr>
+								<tr>
+									<th><fmt:message key="year5"/></th> 
+									<td>
+										<input type="text" id="year5" name="year5" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+									<th><fmt:message key="year6"/></th> 
+									<td>
+										<input type="text" id="year6" name="year6" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+									<th><fmt:message key="year7"/></th> 
+									<td>
+										<input type="text" id="year7" name="year7" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+									<th><fmt:message key="year8"/></th> 
+									<td>
+										<input type="text" id="year8" name="year8" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+								</tr>
+								<tr>
+									<th><fmt:message key="year9"/></th> 
+									<td>
+										<input type="text" id="year9" name="year9" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+									<th><fmt:message key="year10"/></th> 
+									<td>
+										<input type="text" id="year10" name="year10" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+									<th><fmt:message key="year11"/></th> 
+									<td>
+										<input type="text" id="year11" name="year11" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+									<th><fmt:message key="year12"/></th> 
+									<td>
+										<input type="text" id="year12" name="year12" class="inputOnlyNumber" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+								</tr>
+								<tr>
+									<th><fmt:message key="year13"/></th> 
+									<td>
+										<input type="text" id="year13" name="year13" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+									<th><fmt:message key="year14"/></th> 
+									<td>
+										<input type="text" id="year14" name="year14" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+									<th><fmt:message key="year15"/></th> 
+									<td>
+										<input type="text" id="year15" name="year15" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+									<th><fmt:message key="year16"/></th> 
+									<td>
+										<input type="text" id="year16" name="year16" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+								</tr>
+								<tr>
+									<th><fmt:message key="year17"/></th> 
+									<td>
+										<input type="text" id="year17" name="year17" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+									<th><fmt:message key="year18"/></th> 
+									<td>
+										<input type="text" id="year18" name="year18" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+									<th><fmt:message key="year19"/></th> 
+									<td>
+										<input type="text" id="year19" name="year19" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+									<th><fmt:message key="year20"/></th> 
+									<td>
+										<input type="text" id="year20" name="year20" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+								</tr>
+								<tr>
+									<th><fmt:message key="year21"/></th> 
+									<td>
+										<input type="text" id="year21" name="year21" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+									<th><fmt:message key="year22"/></th> 
+									<td>
+										<input type="text" id="year22" name="year22" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+									<th><fmt:message key="year23"/></th> 
+									<td>
+										<input type="text" id="year23" name="year23" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+									<th><fmt:message key="year24"/></th> 
+									<td>
+										<input type="text" id="year24" name="year24" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+								</tr>
+								<tr>
+									<th><fmt:message key="year25"/></th> 
+									<td>
+										<input type="text" id="year25" name="year25" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+									<th><fmt:message key="year26"/></th> 
+									<td>
+										<input type="text" id="year26" name="year26" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+									<th><fmt:message key="year27"/></th> 
+									<td>
+										<input type="text" id="year27" name="year27" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+									<th><fmt:message key="year28"/></th> 
+									<td>
+										<input type="text" id="year28" name="year28" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+								</tr>
+								<tr>
+									<th><fmt:message key="year29"/></th> 
+									<td>
+										<input type="text" id="year29" name="year29" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+									<th><fmt:message key="year30"/></th> 
+									<td>
+										<input type="text" id="year30" name="year30" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+									<th><fmt:message key="year31"/></th> 
+									<td>
+										<input type="text" id="year31" name="year31" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+									<th><fmt:message key="year32"/></th> 
+									<td>
+										<input type="text" id="year32" name="year32" class="inputOnlyNumber" style="width:100%"/>
+									</td>
+								</tr>
+							</table>
+						</div>
+						<%@ include file="../include/hncis_message.gas"%>
+					</div>
+				</div>
+			</div>
+		</form>
+		</div>
+	</body>
+</html>
+		<script type="text/javascript">
+		function fnSetDocumentReady(){
+			initMenus();
+			$('#LV').slideDown('fast');
+			
+			init();
+		}
+
+		function init(){
+			
+			$(".inputOnlyNumber").numeric();
+			
+			doSearch();
+		}
+
+		function retrieve(gubn){
+			switch(gubn){
+				case "search" :
+					doSearch();
+					break;
+				case "save" :
+					doSave();
+					break;
+			}
+		}
+
+		function doSearch(msgFlag){
+			var param = {
+					corp_cd		: sess_corp_cd
+			};
+
+			var paramData = {
+				paramJson : util.jsonToString(param)
+			};
+
+			doCommonAjax("doSearchLvToLeaveDayInfo.do", paramData, "searchCallBack(jsonData.sendResult);");
+		}
+
+		/**
+		 * callback
+		 */
+		function searchCallBack(result){
+			loadJsonSet(result);
+			setBottomMsg(result.message, false);
+		}
+
+		function doSave(){
+
+			var param = {
+					use_day   : $("#use_day").val(), 
+					year1     : $("#year1").val(), 
+					year2  	  : $("#year2").val(), 
+					year3  	  : $("#year3").val(), 
+					year4  	  : $("#year4").val(), 
+					year5  	  : $("#year5").val(), 
+					year6  	  : $("#year6").val(), 
+					year7  	  : $("#year7").val(), 
+					year8  	  : $("#year8").val(), 
+					year9  	  : $("#year9").val(), 
+					year10 	  : $("#year10").val(), 
+					year11 	  : $("#year11").val(), 
+					year12 	  : $("#year12").val(), 
+					year13 	  : $("#year13").val(), 
+					year14 	  : $("#year14").val(), 
+					year15 	  : $("#year15").val(), 
+					year16 	  : $("#year16").val(), 
+					year17 	  : $("#year17").val(), 
+					year18 	  : $("#year18").val(), 
+					year19 	  : $("#year19").val(), 
+					year20 	  : $("#year20").val(), 
+					year21 	  : $("#year21").val(), 
+					year22 	  : $("#year22").val(), 
+					year23 	  : $("#year23").val(), 
+					year24 	  : $("#year24").val(), 
+					year25 	  : $("#year25").val(), 
+					year26 	  : $("#year26").val(), 
+					year27 	  : $("#year27").val(), 
+					year28 	  : $("#year28").val(), 
+					year29 	  : $("#year29").val(), 
+					year30 	  : $("#year30").val(), 
+					year31 	  : $("#year31").val(), 
+					year32 	  : $("#year32").val(), 
+					updr_eeno     	: sess_empno,
+					corp_cd	  : sess_corp_cd
+			};
+
+			confirmUI('<fmt:message key="MSG.CNF.0004"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramJson : util.jsonToString(param)
+							};
+							doCommonAjax("doUpdateLvToLeaveDayInfo.do", paramData, "doUpdateCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function doUpdateCallBack(result){
+			alertUI(result.message);
+			doSearch();
+		}
+		
+		function pageStepHelpPopup(){
+			if(popup != null ){
+				popup.close();
+			}
+			
+			popup = popUpWindow3($("#help_url").val());
+		}
+		</script>

@@ -1,0 +1,2652 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BusinessTravel">
+	<insert id="insertBtToRequestByBasic" parameterClass="BgabGascbt01">
+		/*
+		businessTravel.xml :: insertBtToRequestByBasic */
+		INSERT INTO BGAB_GASCBT01$corp_cd$
+		(
+		DOC_NO ,
+		EENO ,
+		PTT_YMD ,
+		DOM_ABRD_SCN_CD ,
+		NAT_G_SCN_CD ,
+		DEST_NAT_CD ,
+		DEST_DTL_SBC ,
+		SNB_RSON_SBC ,
+		VSIT_PURP_SBC ,
+		STRT_YMD ,
+		FNH_YMD ,
+		BUDG_TYPE ,
+		BUDG_NO ,
+		BUDG_TEXT ,
+		VISA_YN ,
+		PTN_SBC ,
+		PRCT_SBC ,
+		PLN_ALTR_SBC ,
+		IF_ID ,
+		PGS_ST_CD ,
+		ACPC_PGS_ST_CD ,
+		RDCS_EENO ,
+		RDCS_YMD ,
+		ACPC_EENO ,
+		ACPC_YMD ,
+		RPTS_EENO ,
+		RPTS_YMD ,
+		INP_YMD ,
+		IPE_EENO ,
+		MDFY_YMD ,
+		UPDR_EENO
+		)
+		VALUES
+		(
+		#doc_no# ,
+		#eeno# ,
+		#ptt_ymd# ,
+		#dom_abrd_scn_cd# ,
+		#nat_g_scn_cd# ,
+		#dest_nat_cd# ,
+		#dest_dtl_sbc# ,
+		#snb_rson_sbc# ,
+		#vsit_purp_sbc# ,
+		#strt_ymd# ,
+		#fnh_ymd# ,
+		#budg_type# ,
+		#budg_no# ,
+		#budg_text# ,
+		#visa_yn# ,
+		#ptn_sbc# ,
+		#prct_sbc# ,
+		#pln_altr_sbc# ,
+		#if_id# ,
+		#pgs_st_cd# ,
+		'0' ,
+		#rdcs_eeno# ,
+		#rdcs_ymd# ,
+		#acpc_eeno# ,
+		#acpc_ymd# ,
+		#rpts_eeno# ,
+		#rpts_ymd# ,
+		DATE_FORMAT(SYSDATE(),'%Y%m%d') ,
+		#ipe_eeno# ,
+		DATE_FORMAT(SYSDATE(),'%Y%m%d') ,
+		#updr_eeno#
+		)
+	</insert>
+
+	<update id="updateBtToRequestByBasic" parameterClass="BgabGascbt01">
+		/* businessTravel.xml :: updateBtToRequestByBasic */
+		UPDATE BGAB_GASCBT01$corp_cd$ SET
+		EENO = #eeno# ,
+		PTT_YMD = #ptt_ymd# ,
+		DOM_ABRD_SCN_CD = #dom_abrd_scn_cd# ,
+		NAT_G_SCN_CD = #nat_g_scn_cd# ,
+		DEST_NAT_CD = #dest_nat_cd# ,
+		DEST_DTL_SBC = #dest_dtl_sbc# ,
+		VSIT_PURP_SBC = #vsit_purp_sbc# ,
+		STRT_YMD = #strt_ymd# ,
+		FNH_YMD = #fnh_ymd# ,
+		BUDG_TYPE = #budg_type# ,
+		BUDG_NO = #budg_no# ,
+		BUDG_TEXT = #budg_text# ,
+		VISA_YN = #visa_yn# ,
+		PTN_SBC = #ptn_sbc# ,
+		PRCT_SBC = #prct_sbc# ,
+		PLN_ALTR_SBC = #pln_altr_sbc# ,
+		MDFY_YMD = DATE_FORMAT(SYSDATE(),'%Y%m%d') ,
+		UPDR_EENO = #updr_eeno#
+		WHERE DOC_NO = #doc_no#
+	</update>
+
+	<insert id="insertBtToRequestByTraveler" parameterClass="BgabGascbt02">
+		/*
+		businessTravel.xml :: insertBtToRequestByTraveler */
+		INSERT INTO
+		BGAB_GASCBT02$corp_cd$ (
+		DOC_NO ,
+		SEQ ,
+		EENO ,
+		VISA_YN ,
+		COST_CD ,
+		PGS_ST_CD ,
+		FLHT_UTZ_AMT ,
+		BZTP_LODG_EXP ,
+		RENT_AMT ,
+		VS_PTT_EXP ,
+		ETC_AMT ,
+
+		PASS_COUNTRY ,
+		PASS_NUMBER ,
+		BIRTH_YMD ,
+		ISSUE_YMD ,
+		EXPIRE_YMD ,
+
+		INP_YMD ,
+		IPE_EENO ,
+		MDFY_YMD ,
+		UPDR_EENO,
+		H_GUBN,
+		EENM,
+		DEPT_NM,
+		POSITION
+		)VALUES(
+		#doc_no# ,
+		(SELECT A.SEQ FROM (SELECT IFNULL(MAX(SEQ), 0) + 1 AS SEQ
+		FROM BGAB_GASCBT02$corp_cd$
+		WHERE DOC_NO = #doc_no#)A) ,
+		#eeno# ,
+		#visa_yn# ,
+		#cost_cd# ,
+		#pgs_st_cd# ,
+		IFNULL(#flht_utz_amt#, 0) ,
+		IFNULL(#bztp_lodg_exp#, 0) ,
+		IFNULL(#rent_amt#, 0) ,
+		IFNULL(#vs_ptt_exp#, 0) ,
+		IFNULL(#etc_amt#, 0) ,
+
+		#pass_country# ,
+		#pass_number# ,
+		#birth_ymd# ,
+		#issue_ymd# ,
+		#expire_ymd# ,
+
+		DATE_FORMAT(SYSDATE(),'%Y%m%d') ,
+		#ipe_eeno# ,
+		DATE_FORMAT(SYSDATE(),'%Y%m%d') ,
+		#updr_eeno#,
+		#h_gubn#,
+		#eenm#,
+		#dept_nm#,
+		#position#
+		)
+	</insert>
+
+	<update id="updateBtToRequestByTraveler" parameterClass="BgabGascbt02">
+		/* businessTravel.xml :: updateBtToRequestByTraveler */
+		UPDATE BGAB_GASCBT02$corp_cd$ SET
+		SEQ = #seq# ,
+		VISA_YN = #visa_yn# ,
+		COST_CD = #cost_cd# ,
+		flht_utz_amt = IFNULL(#flht_utz_amt#, 0) ,
+		bztp_lodg_exp = IFNULL(#bztp_lodg_exp#, 0) ,
+		rent_amt = IFNULL(#rent_amt#, 0) ,
+		vs_ptt_exp = IFNULL(#vs_ptt_exp#, 0) ,
+		etc_amt = IFNULL(#etc_amt#, 0) ,
+
+		PASS_COUNTRY = #pass_country# ,
+		PASS_NUMBER = #pass_number# ,
+		BIRTH_YMD = #birth_ymd# ,
+		ISSUE_YMD = #issue_ymd# ,
+		EXPIRE_YMD = #expire_ymd# ,
+
+		MDFY_YMD = DATE_FORMAT(SYSDATE(),'%Y%m%d') ,
+		UPDR_EENO = #updr_eeno#,
+		H_GUBN = #h_gubn#,
+		EENM = #eenm#,
+		DEPT_NM = #dept_nm#,
+		POSITION = #position#
+		WHERE DOC_NO = #doc_no#
+		AND EENO = #eeno#
+	</update>
+
+	<insert id="insertBtToRequestBySchedule" parameterClass="BgabGascbt03">
+		/*
+		businessTravel.xml :: insertBtToRequestBySchedule */
+		INSERT INTO
+		BGAB_GASCBT03$corp_cd$ (
+		DOC_NO ,
+		ADSC_YMD ,
+		STRT_TIM ,
+		FNH_TIM ,
+		SEQ ,
+		DEST_DTL_SBC ,
+		REM_SBC ,
+		INP_YMD ,
+		IPE_EENO ,
+		MDFY_YMD ,
+		UPDR_EENO
+		)VALUES(
+		#doc_no# ,
+		#adsc_ymd# ,
+		#strt_tim# ,
+		#fnh_tim# ,
+		#seq# ,
+		#dest_dtl_sbc# ,
+		#rem_sbc# ,
+		DATE_FORMAT(SYSDATE(),'%Y%m%d') ,
+		#ipe_eeno# ,
+		DATE_FORMAT(SYSDATE(),'%Y%m%d') ,
+		#updr_eeno#
+		)
+	</insert>
+
+	<update id="updateBtToRequestBySchedule" parameterClass="BgabGascbt03">
+		/* businessTravel.xml :: updateBtToRequestBySchedule */
+		UPDATE BGAB_GASCBT03$corp_cd$ SET
+		ADSC_YMD = #adsc_ymd# ,
+		STRT_TIM = #strt_tim# ,
+		FNH_TIM = #fnh_tim# ,
+		SEQ = #seq# ,
+		DEST_DTL_SBC = #dest_dtl_sbc# ,
+		REM_SBC = #rem_sbc# ,
+		MDFY_YMD = DATE_FORMAT(SYSDATE(),'%Y%m%d') ,
+		UPDR_EENO = #updr_eeno#
+		WHERE DOC_NO = #doc_no#
+		AND ADSC_YMD = #adsc_ymd_old#
+		AND STRT_TIM =
+		#strt_tim_old#
+		AND FNH_TIM = #fnh_tim_old#
+	</update>
+
+	<delete id="deleteBtToRequestByBasic" parameterClass="BgabGascbt01">
+		/*
+		businessTravel.xml :: deleteBtToRequestByBasic */
+		DELETE FROM
+		BGAB_GASCBT01$corp_cd$
+		WHERE DOC_NO = #doc_no#
+	</delete>
+
+	<delete id="deleteBtToRequestByTraveler" parameterClass="BgabGascbt02">
+		/* businessTravel.xml :: deleteBtToRequestByTraveler */
+		DELETE FROM
+		BGAB_GASCBT02$corp_cd$
+		WHERE DOC_NO = #doc_no#
+		<isNotEmpty property="eeno" prepend="and">
+			EENO = #eeno#
+		</isNotEmpty>
+	</delete>
+
+	<delete id="deleteBtToRequestBySchedule" parameterClass="BgabGascbt03">
+		/* businessTravel.xml :: deleteBtToRequestBySchedule */
+		DELETE FROM
+		BGAB_GASCBT03$corp_cd$
+		WHERE DOC_NO = #doc_no#
+		<isNotEmpty property="adsc_ymd" prepend="and">
+			ADSC_YMD =
+			#adsc_ymd#
+		</isNotEmpty>
+		<isNotEmpty property="strt_tim" prepend="and">
+			STRT_TIM =
+			#strt_tim#
+		</isNotEmpty>
+		<isNotEmpty property="fnh_tim" prepend="and">
+			FNH_TIM = #fnh_tim#
+		</isNotEmpty>
+	</delete>
+
+	<select id="selectBtToRequestByBasic" parameterClass="BgabGascbt01"
+		resultClass="BgabGascbt01">
+		/* businessTravel.xml :: selectBtToRequestByBasic */
+		SELECT
+		DOC_NO ,
+		EENO ,
+		Z002.XUSR_NAME AS EE_NM ,
+		Z002.XUSR_STEP_NAME AS POA_NM ,
+		Z002.XUSR_DEPT_CODE AS OPS_CD ,
+		Z002.XUSR_DEPT_NAME AS OPS_NM ,
+		Z002.XUSR_WORK_PHONE_NO AS TEL_NO ,
+		DATE_FORMAT( CAST( PTT_YMD AS DATE), '%Y-%m-%d' ) AS PTT_YMD,
+		DOM_ABRD_SCN_CD ,
+		NAT_G_SCN_CD ,
+		DEST_NAT_CD ,
+		DEST_DTL_SBC ,
+		SNB_RSON_SBC ,
+		VSIT_PURP_SBC ,
+		DATE_FORMAT( CAST( STRT_YMD AS DATE ), '%Y-%m-%d' ) AS STRT_YMD ,
+		DATE_FORMAT( CAST( FNH_YMD AS DATE ), '%Y-%m-%d' ) AS FNH_YMD ,
+		BUDG_TYPE ,
+		BUDG_NO ,
+		BUDG_TEXT ,
+		VISA_YN ,
+		PTN_SBC ,
+		PRCT_SBC ,
+		PLN_ALTR_SBC ,
+		IF_ID ,
+		PGS_ST_CD ,
+		Z005.XCOD_HNAME PGS_ST_NM,
+		ACPC_PGS_ST_CD ,
+		RDCS_EENO ,
+		RDCS_YMD ,
+		ACPC_EENO ,
+		ACPC_YMD ,
+		RPTS_EENO ,
+		RPTS_YMD ,
+		INP_YMD ,
+		IPE_EENO ,
+		MDFY_YMD ,
+		UPDR_EENO
+		FROM BGAB_GASCBT01$corp_cd$ BT01
+		LEFT OUTER JOIN(
+		SELECT XCOD_CODE, XCOD_HNAME
+		FROM BGAB_GASCZ005$corp_cd$
+		WHERE XCOD_KND = 'X0031' AND LOCALE = #locale#) Z005
+		ON Z005.XCOD_CODE = BT01.PGS_ST_CD
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON BT01.EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		<isNotEmpty property="if_id" prepend="and">
+			IF_ID = #if_id#
+		</isNotEmpty>
+		<isEmpty property="if_id" prepend="and">
+			DOC_NO = #doc_no#
+		</isEmpty>
+	</select>
+
+	<select id="selectBtToRequestByTraveler" resultClass="BgabGascbt02" parameterClass="BgabGascbt02">
+		/* businessTravel.xml :: selectBtToRequestByTraveler */
+		SELECT
+		DOC_NO ,
+		SEQ ,
+		EENO ,
+		CASE WHEN EENO = '00000000' THEN '' ELSE Z002.XUSR_NAME END AS EE_NM ,
+		CASE WHEN EENO = '00000000' THEN 'technician/consultant' ELSE
+		Z002.XUSR_STEP_NAME END AS POA_NM ,
+		CASE WHEN EENO = '00000000' THEN '' ELSE Z002.XUSR_DEPT_CODE END AS OPS_CD,
+		CASE WHEN EENO = '00000000' THEN 'HMC' ELSE Z002.XUSR_DEPT_NAME END AS OPS_NM ,
+		VISA_YN ,
+		COST_CD ,
+		'' AS COST_INFO ,
+		PGS_ST_CD ,
+		Z005.XCOD_HNAME AS PGS_ST_NM ,
+		IFNULL(TEMP_TERM, 0) AS TEMP_TERM ,
+		IFNULL(TEMP_AMT01, 0) AS TEMP_AMT01 ,
+		IFNULL(TEMP_AMT02, 0) AS TEMP_AMT02 ,
+		IFNULL(TEMP_AMT03, 0) AS TEMP_AMT03 ,
+		IFNULL(TEMP_AMT04, 0) AS TEMP_AMT04 ,
+		IFNULL(TEMP_AMT05, 0) AS TEMP_AMT05 ,
+		IFNULL(TEMP_AMT06, 0) AS TEMP_AMT06 ,
+		IFNULL(PRVS_AMT, 0) AS PRVS_AMT ,
+		IFNULL(FLHT_UTZ_AMT, 0) AS FLHT_UTZ_AMT ,
+		IFNULL(BZTP_LODG_EXP, 0) AS BZTP_LODG_EXP ,
+		IFNULL(RENT_AMT, 0) AS RENT_AMT ,
+		IFNULL(VS_PTT_EXP, 0) AS VS_PTT_EXP ,
+		IFNULL(ETC_AMT, 0) AS ETC_AMT ,
+
+		BT02.PASS_COUNTRY ,
+		BT02.PASS_NUMBER ,
+		DATE_FORMAT( CAST( BT02.BIRTH_YMD AS DATE), '%Y-%m-%d' ) AS BIRTH_YMD ,
+		DATE_FORMAT( CAST( BT02.ISSUE_YMD AS DATE), '%Y-%m-%d' ) AS ISSUE_YMD ,
+		DATE_FORMAT( CAST( BT02.EXPIRE_YMD AS DATE), '%Y-%m-%d' ) AS EXPIRE_YMD ,
+
+		INP_YMD ,
+		IPE_EENO ,
+		MDFY_YMD ,
+		UPDR_EENO,
+		PO_NO,
+		IFNULL(TOT_AMT, 0) AS TOT_AMT,
+		H_GUBN,
+		POSITION,
+		DEPT_NM,
+		EENM
+		FROM BGAB_GASCBT02$corp_cd$ BT02
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$
+		Z002
+		ON BT02.EENO = Z002.XUSR_EMPNO
+		LEFT OUTER JOIN(
+		SELECT XCOD_CODE, XCOD_HNAME
+		FROM BGAB_GASCZ005$corp_cd$
+		WHERE XCOD_KND = 'X0018'
+		  AND LOCALE = #locale#) Z005
+		ON Z005.XCOD_CODE = BT02.PGS_ST_CD
+		WHERE DOC_NO = #doc_no#
+		<isNotEqual property="seq" compareValue="0">
+			AND SEQ = #seq#
+		</isNotEqual>
+		<isNotEmpty property="eeno">
+			AND EENO = #eeno#
+		</isNotEmpty>
+		<isNotEmpty property="h_gubn">
+		    AND IFNULL(h_gubn, 'H') = #h_gubn#
+		</isNotEmpty>
+		ORDER BY SEQ
+	</select>
+
+	<select id="selectBtToRequestByVirtualTraveler" resultClass="BgabGascbt02" parameterClass="BgabGascbt02">
+		/* businessTravel.xml :: selectBtToRequestByVirtualTraveler */
+		SELECT  DOC_NO AS VT_DOC_NO ,
+				SEQ AS VT_SEQ ,
+				EENO AS VT_EENO ,
+				VISA_YN AS VT_VISA_YN,
+				COST_CD AS VT_COST_CD,
+				'' AS VT_COST_INFO ,
+				PGS_ST_CD AS VT_PGS_ST_CD,
+				Z005.XCOD_HNAME AS VT_PGS_ST_NM ,
+				IFNULL(TEMP_TERM, 0) AS VT_TEMP_TERM ,
+				IFNULL(TEMP_AMT01, 0) AS VT_TEMP_AMT01 ,
+				IFNULL(TEMP_AMT02, 0) AS VT_TEMP_AMT02 ,
+				IFNULL(TEMP_AMT03, 0) AS VT_TEMP_AMT03 ,
+				IFNULL(TEMP_AMT04, 0) AS VT_TEMP_AMT04 ,
+				IFNULL(TEMP_AMT05, 0) AS VT_TEMP_AMT05 ,
+				IFNULL(TEMP_AMT06, 0) AS VT_TEMP_AMT06 ,
+				IFNULL(PRVS_AMT, 0) AS VT_PRVS_AMT ,
+				IFNULL(FLHT_UTZ_AMT, 0) AS VT_FLHT_UTZ_AMT ,
+				IFNULL(BZTP_LODG_EXP, 0) AS VT_BZTP_LODG_EXP ,
+				IFNULL(RENT_AMT, 0) AS VT_RENT_AMT ,
+				IFNULL(VS_PTT_EXP, 0) AS VT_VS_PTT_EXP ,
+				IFNULL(ETC_AMT, 0) AS VT_ETC_AMT ,
+				BT02.PASS_COUNTRY AS VT_PASS_COUNTRY,
+				BT02.PASS_NUMBER AS VT_PASS_NUMBER,
+				DATE_FORMAT( CAST( BT02.BIRTH_YMD AS DATE), '%Y-%m-%d' ) AS VT_BIRTH_YMD ,
+				DATE_FORMAT( CAST( BT02.ISSUE_YMD AS DATE), '%Y-%m-%d' ) AS VT_ISSUE_YMD ,
+				DATE_FORMAT( CAST( BT02.EXPIRE_YMD AS DATE), '%Y-%m-%d' ) AS VT_EXPIRE_YMD ,
+				INP_YMD ,
+				IPE_EENO ,
+				MDFY_YMD ,
+				UPDR_EENO,
+				PO_NO AS VT_,
+				IFNULL(TOT_AMT, 0) AS VT_TOT_AMT,
+				H_GUBN AS VT_H_GUBN,
+				POSITION AS VT_POA_NM,
+				DEPT_NM AS VT_OPS_NM,
+				EENM AS VT_EE_NM
+		FROM BGAB_GASCBT02$corp_cd$ BT02
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$
+		Z002
+		ON BT02.EENO = Z002.XUSR_EMPNO
+		LEFT OUTER JOIN(
+		SELECT XCOD_CODE, XCOD_HNAME
+		FROM BGAB_GASCZ005$corp_cd$
+		WHERE XCOD_KND = 'X0018') Z005
+		ON Z005.XCOD_CODE = BT02.PGS_ST_CD
+		WHERE DOC_NO = #doc_no#
+		<isNotEqual property="seq" compareValue="0">
+			AND SEQ = #seq#
+		</isNotEqual>
+		<isNotEmpty property="eeno">
+			AND EENO = #eeno#
+		</isNotEmpty>
+		<isNotEmpty property="h_gubn">
+		    AND IFNULL(h_gubn, 'H') = #h_gubn#
+		</isNotEmpty>
+		ORDER BY SEQ
+	</select>
+
+	<select id="selectBtToRequestBySchedule" resultClass="BgabGascbt03"
+		parameterClass="BgabGascbt03">
+		/* businessTravel.xml :: selectBtToRequestBySchedule */
+		SELECT
+		DOC_NO ,
+		SEQ ,
+		DATE_FORMAT( CAST( ADSC_YMD AS DATE), '%Y-%m-%d' ) AS ADSC_YMD_OLD,
+		CONCAT(SUBSTR(STRT_TIM, 1, 2), ':', SUBSTR(STRT_TIM, 3, 2)) AS STRT_TIM_OLD ,
+		CONCAT(SUBSTR(FNH_TIM, 1, 2), ':', SUBSTR(FNH_TIM, 3, 2) AS FNH_TIM_OLD ,
+		DATE_FORMAT( CAST( ADSC_YMD AS DATE), '%Y-%m-%d' ) AS ADSC_YMD,
+		CONCAT(SUBSTR(STRT_TIM, 1, 2), ':', SUBSTR(STRT_TIM, 3, 2)) AS STRT_TIM ,
+		CONCAT(SUBSTR(FNH_TIM, 1, 2), ':', SUBSTR(FNH_TIM, 3, 2)) AS FNH_TIM ,
+		DEST_DTL_SBC ,
+		REM_SBC ,
+		INP_YMD ,
+		IPE_EENO ,
+		MDFY_YMD ,
+		UPDR_EENO
+		FROM BGAB_GASCBT03$corp_cd$ BT03
+		WHERE DOC_NO = #doc_no#
+		ORDER BY SEQ
+	</select>
+
+	<select id="selectCountBtToList" resultClass="String"
+		parameterClass="BgabGascbt01">
+		/* businessTravel.xml :: selectCountBtToList */
+		SELECT
+		COUNT(DOC_NO)
+		FROM (
+		SELECT
+		BT01.DOC_NO,
+		DATE_FORMAT( CAST( BT01.PTT_YMD AS DATE), '%Y-%m-%d' ) AS PTT_YMD,
+		BT01.EENO,
+		Z002.XUSR_NAME AS EE_NM ,
+		Z002.XUSR_STEP_NAME AS POA_NM ,
+		Z002.XUSR_DEPT_NAME AS OPS_NM ,
+		V_CD.XCOD_HNAME AS DEST_NAT_CD,
+		DATE_FORMAT( CAST( BT01.STRT_YMD AS DATE), '%Y-%m-%d' ) AS STRT_YMD,
+		DATE_FORMAT( CAST( BT01.FNH_YMD AS DATE), '%Y-%m-%d' ) AS FNH_YMD,
+		Z005.XCOD_HNAME PGS_ST_NM
+		FROM BGAB_GASCBT01$corp_cd$ BT01
+		LEFT OUTER JOIN(
+		SELECT XCOD_CODE, XCOD_HNAME
+		FROM BGAB_GASCZ005$corp_cd$
+		WHERE XCOD_KND = 'X0031' AND LOCALE = #locale#) Z005
+		ON Z005.XCOD_CODE = BT01.PGS_ST_CD
+		LEFT OUTER JOIN(
+		SELECT XCOD_CODE, XCOD_HNAME
+		FROM BGAB_GASCZ005$corp_cd$
+		WHERE XCOD_KND = 'VISIT') V_CD
+		ON V_CD.XCOD_CODE = BT01.DEST_NAT_CD
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON BT01.EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		<isNotEmpty property="eeno" prepend="and">
+			EENO = #eeno#
+		</isNotEmpty>
+		<isNotEmpty property="ee_nm" prepend="and">
+			Z002.XUSR_NAME LIKE CONCAT('%', #ee_nm#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="strt_ymd" prepend="and">
+			PTT_YMD BETWEEN #strt_ymd# AND #fnh_ymd#
+		</isNotEmpty>
+		<isNotEmpty property="ops_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #ops_cd#
+		</isNotEmpty>
+		<isNotEmpty property="pgs_st_cd" prepend="and">
+			Z005.XCOD_CODE = #pgs_st_cd#
+		</isNotEmpty>
+		<isNotEmpty property="doc_no" prepend="and">
+			BT01.DOC_NO = #doc_no#
+		</isNotEmpty>
+		<isNotEmpty property="plac_work" prepend="and">
+        BT01.DEST_NAT_CD = #plac_work#
+        </isNotEmpty>
+        <isNotEmpty property="key_gubun" prepend="and">
+		BT01.DOM_ABRD_SCN_CD = #key_gubun#
+		</isNotEmpty>
+		UNION
+		SELECT
+		BT01.DOC_NO,
+		DATE_FORMAT( CAST( BT01.PTT_YMD AS DATE),'%Y-%m-%d' ) AS PTT_YMD,
+		BT01.EENO,
+		Z002.XUSR_NAME AS EE_NM ,
+		Z002.XUSR_STEP_NAME AS POA_NM ,
+		Z002.XUSR_DEPT_NAME AS OPS_NM ,
+		V_CD.XCOD_HNAME AS DEST_NAT_CD,
+		DATE_FORMAT( CAST( BT01.STRT_YMD AS DATE),'%Y-%m-%d' ) AS STRT_YMD,
+		DATE_FORMAT( CAST( BT01.FNH_YMD AS DATE),'%Y-%m-%d' ) AS FNH_YMD,
+		Z005.XCOD_HNAME PGS_ST_NM
+		FROM
+		BGAB_GASCBT01$corp_cd$ BT01
+		LEFT OUTER JOIN
+		(
+		SELECT
+		XCOD_CODE,
+		XCOD_HNAME
+		FROM
+		BGAB_GASCZ005$corp_cd$
+		WHERE
+		XCOD_KND = 'X0031' AND LOCALE = #locale#
+		) Z005
+		ON Z005.XCOD_CODE = BT01.PGS_ST_CD
+		LEFT OUTER JOIN
+		(
+		SELECT
+		XCOD_CODE,
+		XCOD_HNAME
+		FROM
+		BGAB_GASCZ005$corp_cd$
+		WHERE
+		XCOD_KND = 'VISIT'
+		) V_CD
+		ON V_CD.XCOD_CODE = BT01.DEST_NAT_CD
+		LEFT OUTER JOIN
+		BGAB_GASCZ002$corp_cd$ Z002
+		ON BT01.EENO = Z002.XUSR_EMPNO,
+		BGAB_GASCBT02$corp_cd$ BT02
+		WHERE
+		1 = 1
+		AND BT01.DOC_NO = BT02.DOC_NO
+		<isNotEmpty property="plac_work" prepend="and">
+        BT01.DEST_NAT_CD = #plac_work#
+        </isNotEmpty>
+		<isNotEmpty property="ipe_eeno" prepend="and">
+			BT02.EENO = #ipe_eeno#
+		</isNotEmpty>
+		<isNotEmpty property="ee_nm" prepend="and">
+			Z002.XUSR_NAME LIKE CONCAT('%', #ee_nm#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="strt_ymd" prepend="and">
+			PTT_YMD BETWEEN #strt_ymd# AND #fnh_ymd#
+		</isNotEmpty>
+		<isNotEmpty property="ops_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #ops_cd#
+		</isNotEmpty>
+		<isNotEmpty property="pgs_st_cd" prepend="and">
+			Z005.XCOD_CODE = #pgs_st_cd#
+		</isNotEmpty>
+		<isNotEmpty property="doc_no" prepend="and">
+			BT02.DOC_NO = #doc_no#
+		</isNotEmpty>
+		<isNotEmpty property="key_gubun" prepend="and">
+        BT01.DOM_ABRD_SCN_CD = #key_gubun#
+        </isNotEmpty>
+
+		) TEMP
+	</select>
+
+	<select id="selectBtToList" resultClass="BgabGascbt01" parameterClass="BgabGascbt01">
+		/* businessTravel.xml :: selectBtToList */
+		SELECT *
+		  FROM (SELECT   @ROWNUM := @ROWNUM + 1 AS rnum, k.*
+		          FROM  (SELECT   DOC_NO
+		                        , PTT_YMD
+		                        , EENO
+		                        , EE_NM
+		                        , POA_NM
+		                        , OPS_NM
+		                        , DEST_NAT_CD
+		                        , DEST_NAT_NM
+		                        , STRT_YMD
+		                        , FNH_YMD
+		                        , PGS_ST_NM
+		                        , ACPC_PGS_ST_CD
+		                        , PGS_ST_CD
+		                        , DOM_ABRD_SCN_CD
+		                        , DOM_ABRD_SCN_NM
+		                        , PO_NO
+		                        , VEN_PGS_ST_CD
+		                   FROM   (SELECT   BT01.DOC_NO
+		                                  , DATE_FORMAT( CAST( BT01.PTT_YMD AS DATE ), '%Y-%m-%d' ) AS PTT_YMD
+		                                  , BT01.EENO
+		                                  , Z002.XUSR_NAME AS EE_NM
+		                                  , Z002.XUSR_STEP_NAME AS POA_NM
+		                                  , Z002.XUSR_DEPT_NAME AS OPS_NM
+					                      , BT01.DEST_NAT_CD AS DEST_NAT_CD
+					                      , CONCAT(V_CD.XCOD_HNAME, ' ', DEST_DTL_SBC) AS DEST_NAT_NM
+		                                  , DATE_FORMAT( CAST( BT01.STRT_YMD AS DATE ), '%Y-%m-%d' ) AS STRT_YMD
+		                                  , DATE_FORMAT( CAST( BT01.FNH_YMD AS DATE ), '%Y-%m-%d' ) AS FNH_YMD
+		                                  , Z005.XCOD_HNAME PGS_ST_NM
+		                                  , BT01.ACPC_PGS_ST_CD ACPC_PGS_ST_CD
+		                                  , BT01.PGS_ST_CD PGS_ST_CD
+		                                  , DOM_ABRD_SCN_CD
+		                                  , DOM_ABRD.XCOD_HNAME AS DOM_ABRD_SCN_NM
+		                                  , BT01.PO_NO
+		                                  , BT01.VEN_PGS_ST_CD
+		                             FROM   BGAB_GASCBT01$corp_cd$ BT01
+		                             LEFT   OUTER JOIN   (SELECT   XCOD_CODE
+		                                                         , XCOD_HNAME
+		                                                    FROM   BGAB_GASCZ005$corp_cd$
+		                                                   WHERE   XCOD_KND = 'X0031' AND LOCALE = #locale#) Z005
+		                                                      ON   Z005.XCOD_CODE = BT01.PGS_ST_CD
+		                             LEFT   OUTER JOIN   (SELECT   XCOD_CODE
+		                                                         , XCOD_HNAME
+		                                                    FROM   BGAB_GASCZ005$corp_cd$
+		                                                   WHERE   XCOD_KND = 'visit'
+		                                                     AND   LOCALE = #locale#) V_CD
+		                                                      ON   V_CD.XCOD_CODE = BT01.DEST_NAT_CD
+		                             LEFT   OUTER JOIN   (SELECT   XCOD_CODE
+		                                                         , XCOD_HNAME
+		                                                    FROM   BGAB_GASCZ005$corp_cd$
+		                                                   WHERE   XCOD_KND = 'place_type' AND LOCALE = #locale#) DOM_ABRD
+		                                            ON   DOM_ABRD.XCOD_CODE = BT01.DOM_ABRD_SCN_CD
+		                             LEFT   OUTER JOIN   BGAB_GASCZ002$corp_cd$ Z002
+		                                            ON   BT01.EENO = Z002.XUSR_EMPNO
+		                            WHERE   1 = 1
+									<isNotEmpty property="eeno" prepend="and">
+									EENO = #eeno#
+									</isNotEmpty>
+									<isNotEmpty property="ee_nm" prepend="and">
+									Z002.XUSR_NAME LIKE CONCAT('%', #ee_nm#, '%')
+									</isNotEmpty>
+									<isNotEmpty property="strt_ymd" prepend="and">
+									PTT_YMD BETWEEN #strt_ymd# AND #fnh_ymd#
+									</isNotEmpty>
+									<isNotEmpty property="ops_cd" prepend="and">
+									Z002.XUSR_DEPT_CODE = #ops_cd#
+									</isNotEmpty>
+									<isNotEmpty property="pgs_st_cd" prepend="and">
+									Z005.XCOD_CODE = #pgs_st_cd#
+									</isNotEmpty>
+									<isNotEmpty property="doc_no" prepend="and">
+									BT01.DOC_NO = #doc_no#
+									</isNotEmpty>
+		                            <isNotEmpty property="plac_work" prepend="and">
+				                    BT01.DEST_NAT_CD = #plac_work#
+				                    </isNotEmpty>
+		                            <isNotEmpty property="key_gubun" prepend="and">
+				                    BT01.DOM_ABRD_SCN_CD = #key_gubun#
+				                    </isNotEmpty>
+		                UNION
+		                 SELECT   BT01.DOC_NO
+		                        , DATE_FORMAT( CAST( BT01.PTT_YMD AS DATE ), '%Y-%m-%d' ) AS PTT_YMD
+		                        , BT01.EENO
+		                        , Z002.XUSR_NAME AS EE_NM
+		                        , Z002.XUSR_STEP_NAME AS POA_NM
+		                        , Z002.XUSR_DEPT_NAME AS OPS_NM
+		                        , BT01.DEST_NAT_CD AS DEST_NAT_CD
+		                        , CONCAT(V_CD.XCOD_HNAME, ' ', DEST_DTL_SBC) AS DEST_NAT_NM
+		                        , DATE_FORMAT( CAST( BT01.STRT_YMD AS DATE ), '%Y-%m-%d' ) AS STRT_YMD
+		                        , DATE_FORMAT( CAST( BT01.FNH_YMD AS DATE ), '%Y-%m-%d' ) AS FNH_YMD
+		                        , Z005.XCOD_HNAME PGS_ST_NM
+		                        , BT01.ACPC_PGS_ST_CD ACPC_PGS_ST_CD
+		                        , BT01.PGS_ST_CD PGS_ST_CD
+		                        , DOM_ABRD_SCN_CD
+		                        , DOM_ABRD.XCOD_HNAME AS DOM_ABRD_SCN_NM
+		                        , BT01.PO_NO
+		                        , BT01.VEN_PGS_ST_CD
+		                   FROM   BGAB_GASCBT01$corp_cd$ BT01
+		                   LEFT   OUTER JOIN   (SELECT   XCOD_CODE
+		                                               , XCOD_HNAME
+		                                          FROM   BGAB_GASCZ005$corp_cd$
+		                                         WHERE   XCOD_KND = 'X0031' AND LOCALE = #locale#) Z005
+		                                  ON   Z005.XCOD_CODE = BT01.PGS_ST_CD
+		                   LEFT   OUTER JOIN   (SELECT   XCOD_CODE
+		                                               , XCOD_HNAME
+		                                          FROM  BGAB_GASCZ005$corp_cd$
+		                                         WHERE XCOD_KND = 'visit' AND LOCALE = #locale#) V_CD
+		                                  ON   V_CD.XCOD_CODE = BT01.DEST_NAT_CD
+		                   LEFT   OUTER JOIN   (SELECT   XCOD_CODE
+		                                               , XCOD_HNAME
+		                                          FROM   BGAB_GASCZ005$corp_cd$
+		                                         WHERE   XCOD_KND = 'place_type' AND LOCALE = #locale#) DOM_ABRD
+		                                  ON   DOM_ABRD.XCOD_CODE = BT01.DOM_ABRD_SCN_CD
+		                   LEFT   OUTER JOIN   BGAB_GASCZ002$corp_cd$ Z002
+		                                  ON   BT01.EENO = Z002.XUSR_EMPNO
+		                        , BGAB_GASCBT02$corp_cd$ BT02
+		                  WHERE   1 = 1
+		                    AND   BT01.DOC_NO = BT02.DOC_NO
+		                    <isNotEmpty property="plac_work" prepend="and">
+		                    BT01.DEST_NAT_CD = #plac_work#
+		                    </isNotEmpty>
+		                    <isNotEmpty property="ipe_eeno" prepend="and">
+		                    BT02.EENO = #ipe_eeno#
+		                    </isNotEmpty>
+		                    <isNotEmpty property="ee_nm" prepend="and">
+		                    Z002.XUSR_NAME LIKE CONCAT('%', #ee_nm#, '%')
+		                    </isNotEmpty>
+		                    <isNotEmpty property="strt_ymd" prepend="and">
+		                    PTT_YMD BETWEEN #strt_ymd# AND #fnh_ymd#
+		                    </isNotEmpty>
+		                    <isNotEmpty property="pgs_st_cd" prepend="and">
+		                    Z005.XCOD_CODE = #pgs_st_cd#
+		                    </isNotEmpty>
+		                    <isNotEmpty property="ops_cd" prepend="and">
+		                    Z002.XUSR_DEPT_CODE = #ops_cd#
+		                    </isNotEmpty>
+		                    <isNotEmpty property="doc_no" prepend="and">
+		                    BT02.DOC_NO = #doc_no#
+		                    </isNotEmpty>
+		                    <isNotEmpty property="key_gubun" prepend="and">
+		                    BT01.DOM_ABRD_SCN_CD = #key_gubun#
+		                    </isNotEmpty>
+							ORDER BY PTT_YMD DESC, STRT_YMD DESC
+				) TEMP
+		    ) k,
+			(SELECT @ROWNUM := 0) r
+		) j 
+		WHERE rnum between #startRow# AND #endRow#
+	</select>
+
+
+	<select id="selectBtToExcelList" resultClass="BgabGascbt01" parameterClass="BgabGascbt01">
+		/* businessTravel.xml :: selectBtToExcelList */
+		SELECT *
+		FROM (
+			SELECT k.*
+			FROM(
+				SELECT
+					DOC_NO,
+					PTT_YMD,
+					EENO,
+					EE_NM ,
+					POA_NM ,
+					OPS_NM ,
+					DEST_NAT_CD,
+					DEST_NAT_NM,
+					STRT_YMD,
+					FNH_YMD,
+					DOM_ABRD_SCN_NM,
+					TOT_AMT,
+					COST_CD,
+					BUDG_NO,
+					SNB_RSON_SBC,
+					VSIT_PURP_SBC,
+					PO_NO
+				FROM (
+					SELECT
+						BT01.DOC_NO,
+						DATE_FORMAT( CAST( BT01.PTT_YMD AS DATE),'%Y-%m-%d' ) AS PTT_YMD,
+						BT01.EENO,
+						Z002.XUSR_NAME AS EE_NM ,
+						Z002.XUSR_STEP_NAME AS POA_NM ,
+						Z002.XUSR_DEPT_NAME AS OPS_NM ,
+		                BT01.DEST_NAT_CD AS DEST_NAT_CD,
+		                V_CD.XCOD_HNAME  AS DEST_NAT_NM,
+						DATE_FORMAT( CAST( BT01.STRT_YMD) AS DATE ) AS STRT_YMD,
+						DATE_FORMAT( CAST( BT01.FNH_YMD) AS DATE ) AS FNH_YMD,
+						DOM_ABRD.XCOD_HNAME AS DOM_ABRD_SCN_NM,
+						(SELECT SUM(TOT_AMT) FROM BGAB_GASCBT02$corp_cd$ WHERE DOC_NO = BT01.DOC_NO) AS TOT_AMT,
+						Z002.XUSR_COST_CD AS COST_CD,
+						BT01.budg_no,
+						snb_rson_sbc,
+						VSIT_PURP_SBC,
+						'' AS PO_NO
+					FROM BGAB_GASCBT01$corp_cd$ BT01
+					LEFT OUTER JOIN(
+						SELECT XCOD_CODE, XCOD_HNAME
+						FROM BGAB_GASCZ005$corp_cd$
+						WHERE XCOD_KND = 'X0031'
+						  AND LOCALE = #locale#) Z005
+					ON Z005.XCOD_CODE = BT01.PGS_ST_CD
+					LEFT OUTER JOIN(
+						SELECT XCOD_CODE, XCOD_HNAME
+						FROM BGAB_GASCZ005$corp_cd$
+						WHERE XCOD_KND = 'VISIT'
+						AND LOCALE = #locale#) V_CD
+					ON V_CD.XCOD_CODE = BT01.DEST_NAT_CD
+					LEFT OUTER JOIN(
+						SELECT XCOD_CODE, XCOD_HNAME
+						FROM BGAB_GASCZ005$corp_cd$
+						WHERE XCOD_KND = 'place_type'
+						AND LOCALE = #locale#) DOM_ABRD
+					ON DOM_ABRD.XCOD_CODE = BT01.DOM_ABRD_SCN_CD
+					LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+					ON BT01.EENO = Z002.XUSR_EMPNO
+					WHERE 1 = 1
+					<isNotEmpty property="eeno" prepend="and">
+						EENO = #eeno#
+					</isNotEmpty>
+					<isNotEmpty property="ee_nm" prepend="and">
+						Z002.XUSR_NAME LIKE CONCAT('%', #ee_nm#, '%')
+					</isNotEmpty>
+					<isNotEmpty property="strt_ymd" prepend="and">
+						PTT_YMD BETWEEN #strt_ymd# AND #fnh_ymd#
+					</isNotEmpty>
+					<isNotEmpty property="ops_cd" prepend="and">
+						Z002.XUSR_DEPT_CODE = #ops_cd#
+					</isNotEmpty>
+					<isNotEmpty property="pgs_st_cd" prepend="and">
+						Z005.XCOD_CODE = #pgs_st_cd#
+					</isNotEmpty>
+					<isNotEmpty property="doc_no" prepend="and">
+						BT01.DOC_NO = #doc_no#
+					</isNotEmpty>
+					<isNotEmpty property="plac_work" prepend="and">
+                    BT01.DEST_NAT_CD = #plac_work#
+                    </isNotEmpty>
+
+					UNION
+
+					SELECT
+						BT01.DOC_NO,
+						DATE_FORMAT( CAST( BT01.PTT_YMD AS DATE),'%Y-%m-%d' ) AS PTT_YMD,
+						BT01.EENO,
+						Z002.XUSR_NAME AS EE_NM ,
+						Z002.XUSR_STEP_NAME AS POA_NM ,
+						Z002.XUSR_DEPT_NAME AS OPS_NM ,
+		                BT01.DEST_NAT_CD AS DEST_NAT_CD,
+		                V_CD.XCOD_HNAME  AS DEST_NAT_NM,
+						DATE_FORMAT( CAST( BT01.STRT_YMD AS DATE),'%Y-%m-%d' ) AS STRT_YMD,
+						DATE_FORMAT( CAST( BT01.FNH_YMD AS DATE),'%Y-%m-%d' ) AS FNH_YMD,
+						DOM_ABRD.XCOD_HNAME AS DOM_ABRD_SCN_NM,
+						(SELECT SUM(TOT_AMT) FROM BGAB_GASCBT02$corp_cd$ WHERE DOC_NO = BT01.DOC_NO) AS TOT_AMT,
+						Z002.XUSR_COST_CD AS COST_CD,
+						BT01.budg_no,
+						snb_rson_sbc,
+						VSIT_PURP_SBC,
+						'' AS PO_NO
+					FROM BGAB_GASCBT01$corp_cd$ BT01
+					LEFT OUTER JOIN
+					(
+						SELECT XCOD_CODE
+							 , XCOD_HNAME
+						  FROM BGAB_GASCZ005$corp_cd$
+						 WHERE XCOD_KND = 'X0031'
+						   AND LOCALE = #locale#
+					) Z005
+					ON Z005.XCOD_CODE = BT01.PGS_ST_CD
+					LEFT OUTER JOIN
+					(
+					SELECT XCOD_CODE
+						 , XCOD_HNAME
+					  FROM BGAB_GASCZ005$corp_cd$
+					 WHERE XCOD_KND = 'VISIT'
+					   AND LOCALE = #locale#
+					) V_CD
+					ON V_CD.XCOD_CODE = BT01.DEST_NAT_CD
+					LEFT OUTER JOIN(
+						SELECT XCOD_CODE, XCOD_HNAME
+						FROM BGAB_GASCZ005$corp_cd$
+						WHERE XCOD_KND = 'place_type'
+						AND LOCALE = #locale#) DOM_ABRD
+					ON DOM_ABRD.XCOD_CODE = BT01.DOM_ABRD_SCN_CD
+					LEFT OUTER JOIN
+					BGAB_GASCZ002$corp_cd$ Z002
+					ON BT01.EENO = Z002.XUSR_EMPNO,
+					BGAB_GASCBT02$corp_cd$ BT02
+					WHERE 1 = 1
+					AND BT01.DOC_NO = BT02.DOC_NO
+					<isNotEmpty property="plac_work" prepend="and">
+                    BT01.DEST_NAT_CD = #plac_work#
+                    </isNotEmpty>
+					<isNotEmpty property="ipe_eeno" prepend="and">
+						BT02.EENO = #ipe_eeno#
+					</isNotEmpty>
+					<isNotEmpty property="strt_ymd" prepend="and">
+						PTT_YMD BETWEEN #strt_ymd# AND #fnh_ymd#
+					</isNotEmpty>
+					<isNotEmpty property="pgs_st_cd" prepend="and">
+						Z005.XCOD_CODE = #pgs_st_cd#
+					</isNotEmpty>
+					<isNotEmpty property="doc_no" prepend="and">
+						BT02.DOC_NO = #doc_no#
+					</isNotEmpty>
+				) TEMP
+				ORDER BY DOC_NO DESC
+			) k
+		) j
+	</select>
+
+	<select id="selectBtToComboListByReport" parameterClass="commonCode"
+		resultClass="commonCode">
+		/* businessTravel.xml :: selectBtToComboListByReport */
+		SELECT xcod_hname AS "key",
+		xcod_code AS value,
+		xcod_ename AS name
+		FROM BGAB_GASCZ005$corp_cd$
+		WHERE xcod_knd = #codknd#
+		ORDER BY CAST(xcod_order AS UNSIGNED)
+	</select>
+
+	<select id="selectBtToReport" resultClass="BgabGascbt04"
+		parameterClass="BgabGascbt04">
+		/* businessTravel.xml :: selectBtToReport */
+		SELECT
+		DOC_NO ,
+		EENO ,
+		SEQ ,
+		PRVS_SCN_CD ,
+		PRVS_DTL_CD ,
+		DATE_FORMAT( CAST( STRT_YMD AS DATE),'%Y-%m-%d' ) AS STRT_YMD,
+		DATE_FORMAT( CAST( FNH_YMD AS DATE),'%Y-%m-%d' ) AS FNH_YMD,
+		STL_WAY_CD ,
+		CURR_CD ,
+		APL_XR ,
+		PRVS_AMT ,
+		NATV_CURR_AMT ,
+		IFNULL(ARSL_REFL_YN, 'N') AS ARSL_REFL_YN ,
+		REM_SBC ,
+		INP_YMD ,
+		IPE_EENO ,
+		MDFY_YMD ,
+		UPDR_EENO
+		FROM BGAB_GASCBT04$corp_cd$ BT04
+		WHERE DOC_NO = #doc_no#
+		<isNotEmpty property="eeno" prepend="and">
+			EENO = #eeno#
+		</isNotEmpty>
+		<isNotEqual property="seq" compareValue="0">
+			SEQ = #seq#
+		</isNotEqual>
+		<isNotEmpty property="stl_way_cd" prepend="and">
+			<isNotEqual property="stl_way_cd" compareValue="BT003">
+				STL_WAY_CD
+				!= 'BT003'
+			</isNotEqual>
+			<isEqual property="stl_way_cd" compareValue="BT003">
+				STL_WAY_CD =
+				#stl_way_cd#
+			</isEqual>
+		</isNotEmpty>
+		ORDER BY DOC_NO, EENO, SEQ
+	</select>
+
+	<select id="selectBtToReportCard" resultClass="BgabGascbt04"
+		parameterClass="BgabGascbt04">
+		/* businessTravel.xml :: selectBtToReportCard */
+		SELECT DOC_NO AS
+		OWN_DOC_NO
+		, EENO AS OWN_EENO
+		, SEQ AS OWN_SEQ
+		, PRVS_SCN_CD AS OWN_PRVS_SCN_CD
+		, PRVS_DTL_CD AS OWN_PRVS_DTL_CD
+		, DATE_FORMAT( CAST( STRT_YMD AS DATE),'%Y-%m-%d' ) AS OWN_STRT_YMD
+		, DATE_FORMAT( CAST( FNH_YMD AS DATE),'%Y-%m-%d' ) AS OWN_FNH_YMD
+		, STL_WAY_CD AS OWN_STL_WAY_CD
+		, CURR_CD AS OWN_CURR_CD
+		, APL_XR AS OWN_APL_XR
+		, PRVS_AMT AS OWN_PRVS_AMT
+		, NATV_CURR_AMT AS OWN_NATV_CURR_AMT
+		, IFNULL(ARSL_REFL_YN, 'N') AS OWN_ARSL_REFL_YN
+		, REM_SBC AS OWN_REM_SBC
+		, VENDOR_CD AS OWN_VENDOR_CD
+		, PO_NO AS OWN_PO_NO
+		, INP_YMD
+		, IPE_EENO
+		, MDFY_YMD
+		, UPDR_EENO
+		, Z005.XCOD_ENAME AS OWN_DTL_NM
+		FROM BGAB_GASCBT04$corp_cd$ BT04
+		LEFT OUTER JOIN(
+		SELECT XCOD_CODE, XCOD_ENAME
+		FROM BGAB_GASCZ005$corp_cd$
+		WHERE XCOD_KND = 'X0014') Z005
+		ON Z005.XCOD_CODE = BT04.PRVS_DTL_CD
+		WHERE DOC_NO = #doc_no#
+		<isNotEmpty property="eeno" prepend="and">
+			EENO = #eeno#
+		</isNotEmpty>
+		<isNotEqual property="seq" compareValue="0">
+			SEQ = #seq#
+		</isNotEqual>
+		<isNotEmpty property="stl_way_cd" prepend="and">
+			<isNotEqual property="stl_way_cd" compareValue="BT003">
+				STL_WAY_CD != 'BT003'
+			</isNotEqual>
+			<isEqual property="stl_way_cd" compareValue="BT003">
+				STL_WAY_CD = #stl_way_cd#
+			</isEqual>
+		</isNotEmpty>
+		ORDER BY DOC_NO, EENO, SEQ
+	</select>
+
+	<select id="selectBtToReportVendor" resultClass="BgabGascbt04"
+		parameterClass="BgabGascbt04">
+		/* businessTravel.xml :: selectBtToReportVendor */
+		SELECT DOC_NO AS
+		VOU_DOC_NO
+		, EENO AS VOU_EENO
+		, SEQ AS VOU_SEQ
+		, PRVS_SCN_CD AS VOU_PRVS_SCN_CD
+		, PRVS_DTL_CD AS VOU_PRVS_DTL_CD
+		, DATE_FORMAT( CAST( STRT_YMD AS DATE),'%Y-%m-%d' ) AS VOU_STRT_YMD
+		, DATE_FORMAT( CAST( FNH_YMD AS DATE),'%Y-%m-%d' ) AS VOU_FNH_YMD
+		, STL_WAY_CD AS VOU_STL_WAY_CD
+		, CURR_CD AS VOU_CURR_CD
+		, APL_XR AS VOU_APL_XR
+		, PRVS_AMT AS VOU_PRVS_AMT
+		, NATV_CURR_AMT AS VOU_NATV_CURR_AMT
+		, IFNULL(ARSL_REFL_YN, 'N') AS VOU_ARSL_REFL_YN
+		, REM_SBC AS VOU_REM_SBC
+		, VENDOR_CD AS VOU_VENDOR_CD
+		, PO_NO AS VOU_PO_NO
+		, INP_YMD
+		, IPE_EENO
+		, MDFY_YMD
+		, UPDR_EENO
+		FROM BGAB_GASCBT04$corp_cd$ BT04
+		WHERE DOC_NO = #doc_no#
+		<isNotEmpty property="eeno" prepend="and">
+			EENO = #eeno#
+		</isNotEmpty>
+		<isNotEqual property="seq" compareValue="0">
+			SEQ = #seq#
+		</isNotEqual>
+		<isNotEmpty property="stl_way_cd" prepend="and">
+			<isNotEqual property="stl_way_cd" compareValue="BT003">
+				STL_WAY_CD != 'BT003'
+			</isNotEqual>
+			<isEqual property="stl_way_cd" compareValue="BT003">
+				STL_WAY_CD = #stl_way_cd#
+			</isEqual>
+		</isNotEmpty>
+		ORDER BY DOC_NO, EENO, SEQ
+	</select>
+
+	<select id="selectBtToReportByExcel" resultClass="BgabGascbt04"
+		parameterClass="BgabGascbt04">
+		/* businessTravel.xml :: selectBtToReportByExcel */
+		SELECT
+		BT01.DOM_ABRD_SCN_CD ,
+		BT01.NAT_G_SCN_CD ,
+		BT01.INP_YMD ,
+		BT01.BUDG_NO ,
+		BT04.DOC_NO ,
+		BT04.EENO ,
+		Z002.XUSR_NAME AS EENM ,
+		BT04.SEQ ,
+		BT04.PRVS_SCN_CD ,
+		BT04.PRVS_DTL_CD ,
+		Z005.XCOD_ENAME AS PRVS_DTL_NM ,
+		DATE_FORMAT( CAST( BT04.STRT_YMD AS DATE ),'%Y-%m-%d' ) AS STRT_YMD ,
+		DATE_FORMAT( CAST( BT04.FNH_YMD AS DATE ),'%Y-%m-%d' ) AS FNH_YMD ,
+		BT04.STL_WAY_CD ,
+		BT04.CURR_CD ,
+		BT04.APL_XR ,
+		BT04.PRVS_AMT ,
+		BT04.NATV_CURR_AMT ,
+		BT02.COST_CD
+		FROM BGAB_GASCBT01$corp_cd$ BT01, BGAB_GASCBT02$corp_cd$ BT02, BGAB_GASCBT04$corp_cd$ BT04
+		LEFT
+		OUTER JOIN(
+		SELECT XUSR_EMPNO, XUSR_NAME
+		FROM BGAB_GASCZ002$corp_cd$) Z002
+		ON Z002.XUSR_EMPNO = BT04.EENO
+		LEFT OUTER JOIN(
+		SELECT XCOD_CODE, XCOD_ENAME
+		FROM BGAB_GASCZ005$corp_cd$
+		WHERE XCOD_KND = 'X0014') Z005
+		ON Z005.XCOD_CODE = BT04.PRVS_DTL_CD
+		WHERE BT04.DOC_NO = BT02.DOC_NO
+		AND BT04.EENO = BT02.EENO
+		AND BT02.DOC_NO = BT01.DOC_NO
+		AND BT04.DOC_NO = #doc_no#
+		<isNotEmpty property="eeno" prepend="and">
+			BT04.EENO = #eeno#
+		</isNotEmpty>
+		<isNotEmpty property="seq" prepend="and">
+			BT04.SEQ = #seq#
+		</isNotEmpty>
+		ORDER BY BT04.DOC_NO, BT04.EENO, BT04.SEQ
+	</select>
+
+	<insert id="insertBtToReport" parameterClass="BgabGascbt04">
+		/*
+		businessTravel.xml :: insertBtToReport */
+		INSERT INTO BGAB_GASCBT04$corp_cd$ (
+		DOC_NO ,
+		EENO ,
+		SEQ ,
+		PRVS_SCN_CD ,
+		PRVS_DTL_CD ,
+		STRT_YMD ,
+		FNH_YMD ,
+		STL_WAY_CD ,
+		CURR_CD ,
+		APL_XR ,
+		PRVS_AMT ,
+		NATV_CURR_AMT ,
+		REM_SBC ,
+		VENDOR_CD ,
+		INP_YMD ,
+		IPE_EENO ,
+		MDFY_YMD ,
+		UPDR_EENO
+		)VALUES(
+		#doc_no# ,
+		#eeno# ,
+		#seq# ,
+		#prvs_scn_cd# ,
+		#prvs_dtl_cd# ,
+		#strt_ymd# ,
+		#fnh_ymd# ,
+		#stl_way_cd# ,
+		#curr_cd# ,
+		#apl_xr# ,
+		#prvs_amt# ,
+		#natv_curr_amt# ,
+		#rem_sbc# ,
+		#vendor_cd# ,
+		DATE_FORMAT(SYSDATE(),'%Y%m%d') ,
+		#ipe_eeno# ,
+		DATE_FORMAT(SYSDATE(),'%Y%m%d') ,
+		#updr_eeno#
+		)
+	</insert>
+
+	<update id="updateBtToReport" parameterClass="BgabGascbt04">
+		/* businessTravel.xml :: updateBtToReport */
+		UPDATE BGAB_GASCBT04$corp_cd$ SET
+		PRVS_SCN_CD = #prvs_scn_cd#,
+		PRVS_DTL_CD = #prvs_dtl_cd#,
+		STRT_YMD = #strt_ymd#,
+		FNH_YMD = #fnh_ymd#,
+		STL_WAY_CD = #stl_way_cd#,
+		CURR_CD = #curr_cd#,
+		APL_XR = #apl_xr#,
+		PRVS_AMT = #prvs_amt#,
+		NATV_CURR_AMT = #natv_curr_amt#,
+		REM_SBC = #rem_sbc#,
+		VENDOR_CD = #vendor_cd#,
+		MDFY_YMD = DATE_FORMAT(SYSDATE(),'%Y%m%d') ,
+		UPDR_EENO = #updr_eeno#
+		WHERE DOC_NO = #doc_no#
+		AND EENO = #eeno#
+		AND SEQ = #seq#
+	</update>
+
+	<delete id="deleteBtToReport" parameterClass="BgabGascbt04">
+		/* businessTravel.xml :: deleteBtToReport */
+		DELETE FROM BGAB_GASCBT04$corp_cd$
+		WHERE DOC_NO = #doc_no#
+		<isNotEmpty property="eeno" prepend="and">
+			EENO = #eeno#
+		</isNotEmpty>
+		<isNotEmpty property="seq" prepend="and">
+			SEQ = #seq#
+		</isNotEmpty>
+	</delete>
+
+	<select id="selectMaxSeqBtToReport" resultClass="String"
+		parameterClass="BgabGascbt02">
+		/* businessTravel.xml :: selectMaxSeqBtToReport */
+		SELECT IFNULL(MAX(SEQ), 0)+1
+		FROM BGAB_GASCBT04$corp_cd$
+		WHERE DOC_NO = #doc_no#
+		AND EENO = #eeno#
+	</select>
+
+	<insert id="insertBtToFile" parameterClass="BgabGascZ011Dto">
+		/* businessTravel.xml
+		:: insertBtToFile */
+		INSERT INTO BGAB_GASCZ011$corp_cd$ (
+		DOC_NO ,
+		EENO ,
+		SEQ ,
+		AFFR_SCN_CD ,
+		OGC_FIL_NM ,
+		FIL_NM ,
+		FIL_MGN_QTY ,
+		INP_YMD ,
+		IPE_EENO
+		)VALUES(
+		#doc_no# ,
+		#eeno# ,
+		#seq# ,
+		#affr_scn_cd# ,
+		#ogc_fil_nm# ,
+		#fil_nm# ,
+		#fil_mgn_qty# ,
+		DATE_FORMAT(SYSDATE(),'%Y%m%d') ,
+		#ipe_eeno#
+		)
+	</insert>
+
+	<select id="selectBtToFile" resultClass="BgabGascZ011Dto"
+		parameterClass="BgabGascZ011Dto">
+		/* businessTravel.xml :: selectBtToFile */
+		SELECT
+		DOC_NO ,
+		EENO ,
+		SEQ ,
+		AFFR_SCN_CD ,
+		FIL_NM ,
+		OGC_FIL_NM ,
+		FIL_MGN_QTY ,
+		INP_YMD ,
+		IPE_EENO
+		FROM BGAB_GASCZ011$corp_cd$
+		WHERE DOC_NO = #doc_no#
+		AND EENO = #eeno#
+		AND SEQ =
+		#seq#
+		AND AFFR_SCN_CD = #affr_scn_cd#
+		<isNotEmpty property="ogc_fil_nm" prepend="and">
+			OGC_FIL_NM =
+			#ogc_fil_nm#
+		</isNotEmpty>
+		ORDER BY FIL_NM
+	</select>
+
+	<delete id="deleteBtToFile" parameterClass="BgabGascZ011Dto">
+		/* businessTravel.xml
+		:: deleteBtToFile */
+		DELETE FROM BGAB_GASCZ011$corp_cd$
+		WHERE DOC_NO = #doc_no#
+		AND EENO = #eeno#
+		AND SEQ = #seq#
+		AND AFFR_SCN_CD = #affr_scn_cd#
+		AND
+		OGC_FIL_NM = #ogc_fil_nm#
+	</delete>
+
+	<update id="approveBtToRequest" parameterClass="BgabGascbt01">
+		/*
+		businessTravel.xml :: approveBtToRequest */
+		UPDATE BGAB_GASCBT01$corp_cd$
+		SET
+		PGS_ST_CD = #pgs_st_cd# ,
+		IF_ID = #if_id# ,
+		RPTS_EENO = #rpts_eeno# ,
+		RPTS_YMD = DATE_FORMAT(SYSDATE(),'%Y%m%d') ,
+		UPDR_EENO = #updr_eeno# ,
+		MDFY_YMD = DATE_FORMAT(SYSDATE(),'%Y%m%d')
+		WHERE DOC_NO = #doc_no#
+	</update>
+	
+	<update id="approveCancelBtToRequest" parameterClass="bgabGasctr01">
+		/* approveCancelBtToRequest */
+		update BGAB_GASCBT01$corp_cd$
+		set	    pgs_st_cd	= #pgs_st_cd#
+			   ,mdfy_ymd	= DATE_FORMAT( SYSDATE(),'%Y%m%d' )       
+			   ,updr_eeno	= #updr_eeno#
+		where doc_no = #doc_no#
+	</update>
+
+	<update id="confirmBtToRequest" parameterClass="BgabGascbt01">
+		/* businessTravel.xml :: confirmBtToRequest */
+		UPDATE BGAB_GASCBT01$corp_cd$
+		SET
+		PGS_ST_CD = #pgs_st_cd# ,
+		<isEqual property="mode" compareValue="check">
+			ACPC_PGS_ST_CD = #acpc_pgs_st_cd# ,
+		</isEqual>
+		<isEqual property="mode" compareValue="checkCancel">
+			ACPC_PGS_ST_CD = #acpc_pgs_st_cd# ,
+		</isEqual>
+		<isEqual property="mode" compareValue="confirm">
+			ACPC_PGS_ST_CD = #acpc_pgs_st_cd# ,
+			<isEqual property="acpc_pgs_st_cd" compareValue="C">
+				ACPC_EENO = #updr_eeno# ,
+				ACPC_YMD = DATE_FORMAT(SYSDATE(),'%Y%m%d') ,
+			</isEqual>
+			<isEqual property="acpc_pgs_st_cd" compareValue="3">
+				ACPC2_EENO = #updr_eeno# ,
+				ACPC2_YMD = DATE_FORMAT(SYSDATE(),'%Y%m%d') ,
+			</isEqual>
+		</isEqual>
+		<isEqual property="mode" compareValue="confirmCancel">
+			ACPC_EENO = '' ,
+			ACPC_YMD = '' ,
+			ACPC2_EENO = '' ,
+			ACPC2_YMD = '' ,
+			RPTS_EENO = '' ,
+			RPTS_YMD = '' ,
+			RDCS_EENO = '' ,
+			RDCS_YMD = '' ,
+			IF_ID = '' ,
+			SNB_RSON_SBC = #snb_rson_sbc# ,
+			ACPC_PGS_ST_CD = '0' ,
+		</isEqual>
+		<isEqual property="mode" compareValue="forceConfirm">
+			ACPC_EENO = #updr_eeno# ,
+			ACPC_YMD = DATE_FORMAT(SYSDATE(),'%Y%m%d') ,
+		</isEqual>
+		UPDR_EENO = #updr_eeno# ,
+		MDFY_YMD = DATE_FORMAT(SYSDATE(),'%Y%m%d')
+		WHERE DOC_NO = #doc_no#
+	</update>
+
+	<update id="updateInfoBtToReject" parameterClass="BgabGascbt01">
+   		UPDATE	BGAB_GASCBT01$corp_cd$
+		SET 	PGS_ST_CD  = #pgs_st_cd#
+				,IF_ID     = ''
+				,RPTS_EENO = ''
+				,RPTS_YMD  = ''
+				,RDCS_EENO = ''
+				,RDCS_YMD  = ''
+				,ACPC_EENO = ''
+				,ACPC_YMD  = ''
+				,SNB_RSON_SBC = #snb_rson_sbc#
+				,UPDR_EENO = #updr_eeno#
+				,MDFY_YMD  = DATE_FORMAT(SYSDATE(),'%Y%m%d')
+		WHERE	1 = 1
+		AND		DOC_NO = #doc_no#
+
+	</update>
+
+	<select id="selectTravelerToBudget" resultClass="BgabGascbtDto"
+		parameterClass="BgabGascbt01">
+		/* businessTravel.xml :: selectTravelerToBudget */
+		SELECT BT01.DOC_NO, BT01.DOM_ABRD_SCN_CD, BT01.NAT_G_SCN_CD,
+		BT01.STRT_YMD, BT01.FNH_YMD, BT01.BUDG_NO, BT02.EENO, BT02.SEQ,
+		BT02.COST_CD,
+		BT02.FLHT_UTZ_AMT, BT02.BZTP_LODG_EXP, BT02.RENT_AMT, BT02.VS_PTT_EXP,BT02.ETC_AMT,
+		Z002.XUSR_DEPT_CODE AS DEPT_CODE, Z002.XUSR_STEP_CODE AS STEP_CODE,
+		T_PAY.POA_G1_AMT, T_PAY.POA_G2_AMT, T_PAY.POA_G3_AMT,
+		T_PAY.POA_G4_AMT, T_PAY.POA_G5_AMT,
+		TN_PAY.POA_G1_AMT AS POA_G1_AMT_D, TN_PAY.POA_G2_AMT AS POA_G2_AMT_D, TN_PAY.POA_G3_AMT
+		AS POA_G3_AMT_D, TN_PAY.POA_G4_AMT AS POA_G4_AMT_D, TN_PAY.POA_G5_AMT
+		AS POA_G5_AMT_D,
+		(
+		SELECT IFNULL(SUM(PRVS_AMT), 0)
+		FROM BGAB_GASCBT01$corp_cd$ S_BT01, BGAB_GASCBT02$corp_cd$ S_BT02
+		WHERE S_BT01.DOC_NO = S_BT02.DOC_NO
+		AND S_BT01.PGS_ST_CD != '0'
+		AND S_BT02.COST_CD = BT02.COST_CD
+		AND S_BT01.BUDG_NO = BT01.BUDG_NO
+		AND IFNULL(S_BT02.TOT_ARSL_REFL_YN, 'N') != 'Y'
+		) AS H_BUDGET,
+		(
+		SELECT IFNULL(SUM(NATV_CURR_AMT), 0)
+		FROM BGAB_GASCBT01$corp_cd$ S_BT01, BGAB_GASCBT02$corp_cd$ S_BT02, BGAB_GASCBT04$corp_cd$ S_BT04
+		WHERE S_BT01.DOC_NO = S_BT02.DOC_NO
+		AND S_BT02.DOC_NO = S_BT04.DOC_NO
+		AND S_BT02.EENO = S_BT04.EENO
+		AND S_BT01.PGS_ST_CD != '0'
+		AND S_BT02.COST_CD = BT02.COST_CD
+		AND S_BT01.BUDG_NO = BT01.BUDG_NO
+		AND IFNULL(S_BT02.TOT_ARSL_REFL_YN, 'N') != 'Y'
+		AND IFNULL(S_BT04.ARSL_REFL_YN, 'N') = 'Y'
+		) AS H_MINUS_BUDGET
+		FROM BGAB_GASCBT01$corp_cd$ BT01
+		LEFT OUTER JOIN(
+		SELECT NAT_G_SCN_CD, SUM(POA_G1_AMT) AS POA_G1_AMT, SUM(POA_G2_AMT) AS
+		POA_G2_AMT,
+		SUM(POA_G3_AMT) AS POA_G3_AMT, SUM(POA_G4_AMT) AS POA_G4_AMT, SUM(POA_G5_AMT) AS
+		POA_G5_AMT
+		FROM BGAB_GASCBT06$corp_cd$
+		WHERE PRVS_SCN_CD IN('AIR', 'PIC')
+		GROUP BY NAT_G_SCN_CD) T_PAY
+		ON T_PAY.NAT_G_SCN_CD = BT01.NAT_G_SCN_CD
+		LEFT
+		OUTER JOIN(
+		SELECT NAT_G_SCN_CD, SUM(POA_G1_AMT) AS POA_G1_AMT, SUM(POA_G2_AMT) AS
+		POA_G2_AMT,
+		SUM(POA_G3_AMT) AS POA_G3_AMT, SUM(POA_G4_AMT) AS POA_G4_AMT, SUM(POA_G5_AMT) AS
+		POA_G5_AMT
+		FROM BGAB_GASCBT06$corp_cd$
+		WHERE PRVS_SCN_CD NOT IN('AIR', 'PIC')
+		GROUP BY NAT_G_SCN_CD) TN_PAY
+		ON TN_PAY.NAT_G_SCN_CD = BT01.NAT_G_SCN_CD
+		,
+		BGAB_GASCBT02$corp_cd$ BT02
+		LEFT OUTER JOIN(
+		SELECT XUSR_EMPNO, XUSR_DEPT_CODE, XUSR_STEP_CODE, XUSR_COST_CD
+		FROM BGAB_GASCZ002$corp_cd$) Z002
+		ON Z002.XUSR_EMPNO = BT02.EENO
+		WHERE BT01.DOC_NO =
+		BT02.DOC_NO
+		AND BT01.DOC_NO = #doc_no#
+		ORDER BY Z002.XUSR_DEPT_CODE
+	</select>
+
+
+
+	<update id="updateTravelerToBudget" parameterClass="BgabGascbtDto">
+		/*
+		businessTravel.xml :: updateTravelerToBudget */
+		UPDATE BGAB_GASCBT02$corp_cd$
+		SET
+		PRVS_AMT = #t_budget#,
+		TEMP_TERM = #temp_term#,
+		TEMP_AMT01 = #temp_amt01#,
+		TEMP_AMT02 = #temp_amt02#,
+		TEMP_AMT03 = #temp_amt03#,
+		TEMP_AMT04 = #temp_amt04#,
+		TEMP_AMT05 = #temp_amt05#,
+		TEMP_AMT06 = #temp_amt06#
+		WHERE DOC_NO = #doc_no#
+		AND EENO = #eeno#
+		AND SEQ = #seq#
+	</update>
+
+	<update id="updateBtToReportBySapYn" parameterClass="BgabGascbt04">
+		/* businessTravel.xml :: updateBtToReportBySapYn */
+		UPDATE BGAB_GASCBT04$corp_cd$ SET
+		ARSL_REFL_YN = #arsl_refl_yn# ,
+		<isEqual property="arsl_refl_yn" compareValue="Y">
+			ARSL_REFL_YMD = DATE_FORMAT(SYSDATE(),'%Y%m%d')
+		</isEqual>
+		<isNotEqual property="arsl_refl_yn" compareValue="Y">
+			ARSL_REFL_YMD = ''
+		</isNotEqual>
+		WHERE DOC_NO = #doc_no#
+		AND EENO = #eeno#
+		AND SEQ = #seq#
+	</update>
+
+	<select id="selectCountBtToReportBySapYn" resultClass="String"
+		parameterClass="BgabGascbt04">
+		/* businessTravel.xml :: selectCountBtToReportBySapYn */
+		SELECT COUNT(EENO)
+		FROM BGAB_GASCBT04$corp_cd$
+		WHERE DOC_NO = #doc_no#
+		AND EENO = #eeno#
+		AND IFNULL(ARSL_REFL_YN, 'N') = 'N'
+	</select>
+
+	<update id="updateBtToTravelerBySapYn" parameterClass="BgabGascbt02">
+		/* businessTravel.xml :: updateBtToTravelerBySapYn */
+		UPDATE BGAB_GASCBT02$corp_cd$ SET
+		TOT_ARSL_REFL_YN = #tot_arsl_refl_yn#
+		WHERE DOC_NO = #doc_no#
+		AND EENO = #eeno#
+	</update>
+
+	<select id="selectCountCountryManagement" resultClass="String"
+		parameterClass="BgabGascz005Dto">
+		/* businessTravel.xml :: selectCountCountryManagement */
+		SELECT COUNT(XCOD_KND)
+		FROM BGAB_GASCZ005$corp_cd$
+		WHERE 1 = 1
+		AND LOCALE = #locale#
+		<isNotEmpty property="xcod_knd" prepend="and">
+			XCOD_KND =
+			#xcod_knd#
+		</isNotEmpty>
+		<isNotEmpty property="xcod_ename" prepend="and">
+			XCOD_ENAME =
+			#xcod_ename#
+		</isNotEmpty>
+	</select>
+
+	<select id="selectCountryManagement" resultClass="bgabgascz005dto"
+		parameterClass="BgabGascz005Dto">
+		/* businessTravel.xml :: selectCountryManagement */
+		SELECT * FROM (
+		SELECT @ROWNUM := @ROWNUM + 1 AS rnum, k.*
+		FROM(
+		SELECT
+		XCOD_CODE AS XCOD_CODE_OLD ,
+		XCOD_CODE ,
+		XCOD_HNAME ,
+		XCOD_ENAME ,
+		XCOD_APLY_FLAG ,
+		XCOD_ORDER
+		FROM BGAB_GASCZ005$corp_cd$
+		WHERE 1 = 1
+		AND LOCALE = #locale#
+		<isNotEmpty property="xcod_knd" prepend="and">
+			XCOD_KND = #xcod_knd#
+		</isNotEmpty>
+		<isNotEmpty property="xcod_ename" prepend="and">
+			XCOD_ENAME = #xcod_ename#
+		</isNotEmpty>
+		ORDER BY XCOD_ORDER
+		) k,
+		(SELECT @ROWNUM := 0) r
+		) j
+		WHERE rnum between #startRow# AND #endRow#
+	</select>
+
+	<insert id="insertListToCountryManagement" parameterClass="BgabGascz005Dto">
+		/*
+		businessTravel.xml :: insertListToCountryManagement */
+		INSERT INTO
+		BGAB_GASCZ005$corp_cd$(
+		xcod_knd ,
+		xcod_code ,
+		xcod_hname ,
+		xcod_ename ,
+		xcod_aply_flag ,
+		xcod_order ,
+		xcod_entr_empno ,
+		xcod_entr_date ,
+		xcod_updt_empno ,
+		xcod_updt_date,
+		locale
+		)VALUES(
+		#xcod_knd# ,
+		#xcod_code# ,
+		#xcod_hname# ,
+		#xcod_ename# ,
+		#xcod_aply_flag# ,
+		#xcod_order# ,
+		#ipe_eeno# ,
+		SYSDATE() ,
+		#updr_eeno# ,
+		SYSDATE() ,
+		#locale#
+		)
+	</insert>
+
+	<update id="updateListToCountryManagement" parameterClass="BgabGascz005Dto">
+		/*
+		businessTravel.xml :: updateListToCountryManagement */
+		UPDATE
+		BGAB_GASCZ005$corp_cd$ SET
+		xcod_code = #xcod_code#,
+		xcod_hname = #xcod_hname#,
+		xcod_ename = #xcod_ename#,
+		xcod_aply_flag = #xcod_aply_flag#,
+		xcod_order = #xcod_order#,
+		xcod_updt_empno = #updr_eeno#,
+		xcod_updt_date = SYSDATE()
+		WHERE xcod_knd = #xcod_knd#
+		AND xcod_code = #xcod_code_old#
+	</update>
+
+	<update id="deleteListToCountryManagement" parameterClass="BgabGascz005Dto">
+		/*
+		businessTravel.xml :: deleteListToCountryManagement */
+		DELETE FROM
+		BGAB_GASCZ005$corp_cd$
+		WHERE xcod_knd = #xcod_knd#
+		AND xcod_code = #xcod_code#
+	</update>
+
+	<select id="selectCountBtToSapMngrByTravler" resultClass="String"
+		parameterClass="BgabGascbtDto">
+		/* businessTravel.xml :: selectCountBtToSapMngrByTravler */
+		SELECT
+		COUNT(BT02.DOC_NO)
+		FROM BGAB_GASCBT01$corp_cd$ BT01
+		LEFT OUTER JOIN(
+		SELECT XCOD_CODE, XCOD_HNAME
+		FROM BGAB_GASCZ005$corp_cd$
+		WHERE XCOD_KND = 'VISIT') Z005
+		ON Z005.XCOD_CODE = BT01.DEST_NAT_CD,
+		BGAB_GASCBT02$corp_cd$ BT02
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON BT02.EENO =
+		Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		AND BT01.DOC_NO = BT02.DOC_NO
+		<isNotEmpty property="doc_no" prepend="and">
+			BT02.DOC_NO =
+			#doc_no#
+		</isNotEmpty>
+		<isNotEmpty property="eeno" prepend="and">
+			BT02.EENO = #eeno#
+		</isNotEmpty>
+		<isNotEmpty property="ee_nm" prepend="and">
+			Z002.XUSR_NAME LIKE CONCAT('%', #ee_nm#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="dept_code" prepend="and">
+			Z002.XUSR_DEPT_CODE = #dept_code#
+		</isNotEmpty>
+		<isNotEmpty property="pgs_st_cd" prepend="and">
+			BT02.PGS_ST_CD =
+			#pgs_st_cd#
+		</isNotEmpty>
+		<isNotEmpty property="plac_work" prepend="and">
+			Z002.XUSR_PLAC_WORK = #plac_work#
+		</isNotEmpty>
+	</select>
+
+	<select id="selectBtToSapMngrByTravler" resultClass="BgabGascbtDto" parameterClass="BgabGascbtDto">
+		/* businessTravel.xml :: selectBtToSapMngrByTravler */
+		SELECT * FROM (
+		SELECT @ROWNUM := @ROWNUM + 1 AS rnum, k.*
+		FROM(
+		SELECT
+		BT02.DOC_NO ,
+		BT02.SEQ ,
+		BT02.PGS_ST_CD ,
+		Z005_S.XCOD_HNAME AS PGS_ST_NM ,
+		BT02.EENO ,
+		CASE WHEN IFNULL(Z002.XUSR_NAME, '') = ''
+		     THEN BT02.EENM
+			 ELSE Z002.XUSR_NAME
+		 END AS EE_NM ,
+        CASE WHEN IFNULL(Z002.XUSR_STEP_NAME, '') = ''
+		     THEN BT02.POSITION
+			 ELSE Z002.XUSR_STEP_NAME
+		 END AS POA_NM ,
+        Z002.XUSR_DEPT_CODE AS OPS_CD ,
+        CASE WHEN IFNULL(Z002.XUSR_DEPT_NAME, '') = ''
+		     THEN DEPT_NM
+			 ELSE Z002.XUSR_DEPT_NAME
+		 END AS OPS_NM ,
+		BT02.VISA_YN ,
+		BT02.COST_CD ,
+		Z005.XCOD_HNAME AS DEST_NAT_CD ,
+		DATE_FORMAT( CAST( BT01.STRT_YMD AS DATE), '%Y-%m-%d' ) AS STRT_YMD ,
+		DATE_FORMAT( CAST( BT01.FNH_YMD AS DATE), '%Y-%m-%d' ) AS FNH_YMD ,
+		IFNULL(BT02.PRVS_AMT, 0) AS PRVS_AMT ,
+		BT02.TOT_ARSL_REFL_YN ,
+		IFNULL(TEMP_TERM, 0) AS TEMP_TERM ,
+		IFNULL(TEMP_AMT01, 0) AS TEMP_AMT01 ,
+		IFNULL(TEMP_AMT02, 0) AS TEMP_AMT02 ,
+		IFNULL(TEMP_AMT03, 0) AS TEMP_AMT03 ,
+		IFNULL(TEMP_AMT04, 0) AS TEMP_AMT04 ,
+		IFNULL(TEMP_AMT05, 0) AS TEMP_AMT05 ,
+		IFNULL(TEMP_AMT06, 0) AS TEMP_AMT06,
+		IFNULL(BT01.BUDG_TYPE, 'D') AS BUDG_TYPE,
+		BT01.BUDG_NO,
+		BT01.BUDG_TEXT,
+		IFNULL(BT02.H_GUBN, 'H') AS H_GUBN,
+		BT01.EENO AS REQ_EENO,
+		IFNULL(BT02.TOT_AMT,0) TOT_AMT,
+		BT02.PO_NO
+		FROM BGAB_GASCBT01$corp_cd$ BT01
+		LEFT OUTER JOIN(
+		SELECT XCOD_CODE, XCOD_HNAME
+		FROM BGAB_GASCZ005$corp_cd$
+		WHERE XCOD_KND = 'VISIT'
+		  AND LOCALE = #locale#) Z005
+		ON Z005.XCOD_CODE = BT01.DEST_NAT_CD,
+		BGAB_GASCBT02$corp_cd$ BT02
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON BT02.EENO = Z002.XUSR_EMPNO
+		LEFT OUTER JOIN(
+		SELECT XCOD_CODE, XCOD_HNAME
+		FROM BGAB_GASCZ005$corp_cd$
+		WHERE XCOD_KND = 'X0018'
+		  AND LOCALE = #locale#) Z005_S
+		ON Z005_S.XCOD_CODE = BT02.PGS_ST_CD
+		WHERE 1 = 1
+		AND BT01.DOC_NO = BT02.DOC_NO
+		<isNotEmpty property="doc_no" prepend="and">
+			BT02.DOC_NO = #doc_no#
+		</isNotEmpty>
+		<isNotEmpty property="eeno" prepend="and">
+			BT02.EENO = #eeno#
+		</isNotEmpty>
+		<isNotEmpty property="ee_nm" prepend="and">
+			Z002.XUSR_NAME LIKE CONCAT('%', #ee_nm#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="dept_code" prepend="and">
+			Z002.XUSR_DEPT_CODE = #dept_code#
+		</isNotEmpty>
+		<isNotEmpty property="pgs_st_cd" prepend="and">
+			BT02.PGS_ST_CD = #pgs_st_cd#
+		</isNotEmpty>
+		<isNotEmpty property="plac_work" prepend="and">
+			Z002.XUSR_PLAC_WORK = #plac_work#
+		</isNotEmpty>
+		ORDER BY BT02.DOC_NO DESC, BT02.SEQ
+		) k,
+		(SELECT @ROWNUM := 0) r
+		) j
+		WHERE rnum between #startRow# AND #endRow#
+	</select>
+
+	<select id="selectExpenseManagement" resultClass="BgabGascbt06"
+		parameterClass="BgabGascbt06">
+		/* businessTravel.xml :: selectExpenseManagement */
+		SELECT * FROM (
+		SELECT @ROWNUM := @ROWNUM + 1 AS rnum, k.*
+		FROM(
+		SELECT
+		PRVS_SCN_CD AS PRVS_SCN_CD_OLD ,
+		PRVS_SCN_CD ,
+		NAT_G_SCN_CD AS NAT_G_SCN_CD_OLD ,
+		NAT_G_SCN_CD ,
+		POA_G1_AMT ,
+		POA_G2_AMT ,
+		POA_G3_AMT ,
+		POA_G4_AMT ,
+		POA_G6_AMT
+		FROM BGAB_GASCBT06$corp_cd$
+		WHERE 1 = 1
+		<isNotEmpty property="prvs_scn_cd" prepend="and">
+			PRVS_SCN_CD = #prvs_scn_cd#
+		</isNotEmpty>
+		<isNotEmpty property="nat_g_scn_cd" prepend="and">
+			NAT_G_SCN_CD = #nat_g_scn_cd#
+		</isNotEmpty>
+		ORDER BY NAT_G_SCN_CD, PRVS_SCN_CD
+		) k,
+		(SELECT @ROWNUM := 0) r
+		) j
+		WHERE rnum between #startRow# AND #endRow#
+	</select>
+
+	<select id="selectCountExpenseManagement" resultClass="String"
+		parameterClass="BgabGascbt06">
+		/* businessTravel.xml :: selectCountExpenseManagement */
+		SELECT
+		COUNT(NAT_G_SCN_CD)
+		FROM BGAB_GASCBT06$corp_cd$
+		WHERE 1 = 1
+		<isNotEmpty property="prvs_scn_cd" prepend="and">
+			PRVS_SCN_CD =
+			#prvs_scn_cd#
+		</isNotEmpty>
+		<isNotEmpty property="nat_g_scn_cd" prepend="and">
+			NAT_G_SCN_CD =
+			#nat_g_scn_cd#
+		</isNotEmpty>
+	</select>
+
+	<select id="selectBudgetView" resultClass="BgabGascbt02"
+		parameterClass="BgabGascbt02">
+		/* businessTravel.xml :: selectBudgetView */
+		SELECT *
+		  FROM (
+				SELECT @ROWNUM := @ROWNUM + 1 AS rnum, k.*
+				  FROM (
+						BT02.COST_CD, BT01.BUDG_NO,
+						IFNULL(SUM(BT02.FLHT_UTZ_AMT), 0)
+						 +IFNULL(SUM(BT02.BZTP_LODG_EXP), 0)
+						 +IFNULL(SUM(BT02.RENT_AMT), 0)
+						 +IFNULL(SUM(BT02.VS_PTT_EXP), 0)
+						 +IFNULL(SUM(BT02.ETC_AMT), 0) PRVS_AMT,
+						(
+						SELECT IFNULL(SUM(NATV_CURR_AMT), 0)
+						FROM BGAB_GASCBT01$corp_cd$ S_BT01, BGAB_GASCBT02$corp_cd$ S_BT02, BGAB_GASCBT04$corp_cd$ S_BT04
+						WHERE S_BT01.DOC_NO = S_BT02.DOC_NO
+						AND S_BT02.DOC_NO = S_BT04.DOC_NO
+						AND S_BT02.EENO = S_BT04.EENO
+						AND S_BT01.PGS_ST_CD != '0'
+						AND S_BT02.COST_CD = #cost_cd#
+						AND S_BT01.BUDG_NO = #budg_no#
+						AND IFNULL(S_BT02.TOT_ARSL_REFL_YN, 'N') != 'Y'
+						AND IFNULL(S_BT04.ARSL_REFL_YN, 'N') = 'Y'
+						) AS NATV_CURR_AMT,
+						(
+						SELECT XUSR_COST_NM
+						  FROM(
+								SELECT XUSR_COST_NM
+								   FROM BGAB_GASCZ002$corp_cd$
+								  WHERE XUSR_COST_CD = #cost_cd#
+									AND XUSR_RETR_FLAG = 'N'
+									ORDER BY XUSR_COST_CD
+									
+								)TEMP
+								WHERE @ROWNUM := @ROWNUM + 1 AS = 1 
+							  ) AS COST_NM
+				  		FROM BGAB_GASCBT01$corp_cd$ BT01, BGAB_GASCBT02$corp_cd$ BT02
+						WHERE BT01.DOC_NO = BT02.DOC_NO
+						AND BT01.PGS_ST_CD != '0'
+						AND IFNULL(BT02.TOT_ARSL_REFL_YN, 'N') != 'Y'
+						AND BT02.COST_CD = #cost_cd#
+						AND BT01.BUDG_NO = #budg_no#
+						and SUBSTR(ptt_ymd,1,4) = #key_year#
+						GROUP BY BT02.COST_CD, BT01.BUDG_NO
+						ORDER BY BT02.COST_CD
+					) k,
+					(SELECT @ROWNUM := 0) r
+			) j
+			WHERE rnum between #startRow# AND #endRow#
+	</select>
+
+	<select id="selectCountBudgetView" resultClass="String"
+		parameterClass="BgabGascbt02">
+		/* businessTravel.xml :: selectCountBudgetView */
+		SELECT COUNT(COST_CD)
+		FROM(
+		SELECT
+		BT02.COST_CD, BT01.BUDG_NO,
+		IFNULL(SUM(BT02.PRVS_AMT), 0) AS PRVS_AMT
+		FROM BGAB_GASCBT01$corp_cd$ BT01, BGAB_GASCBT02$corp_cd$ BT02
+		WHERE BT01.DOC_NO = BT02.DOC_NO
+		AND BT01.PGS_ST_CD != '0'
+		AND IFNULL(BT02.TOT_ARSL_REFL_YN, 'N') != 'Y'
+		AND BT02.COST_CD = #cost_cd#
+		AND BT01.BUDG_NO = #budg_no#
+		GROUP BY BT02.COST_CD, BT01.BUDG_NO
+		) TEMP
+	</select>
+
+	<insert id="insertListToExpenseManagement" parameterClass="BgabGascbt06">
+		/*
+		businessTravel.xml :: insertListToExpenseManagement */
+		INSERT INTO
+		BGAB_GASCBT06$corp_cd$(
+		nat_g_scn_cd ,
+		prvs_scn_cd ,
+		poa_g1_amt ,
+		poa_g2_amt ,
+		poa_g3_amt ,
+		poa_g4_amt ,
+		poa_g6_amt ,
+		inp_ymd ,
+		ipe_eeno ,
+		mdfy_ymd ,
+		updr_eeno
+		)VALUES(
+		#nat_g_scn_cd# ,
+		#prvs_scn_cd# ,
+		#poa_g1_amt# ,
+		#poa_g2_amt# ,
+		#poa_g3_amt# ,
+		#poa_g4_amt# ,
+		#poa_g6_amt# ,
+		DATE_FORMAT(SYSDATE(),'%Y%m%d') ,
+		#ipe_eeno# ,
+		DATE_FORMAT(SYSDATE(),'%Y%m%d') ,
+		#updr_eeno#
+		)
+	</insert>
+
+	<update id="updateListToExpenseManagement" parameterClass="BgabGascbt06">
+		/*
+		businessTravel.xml :: updateListToExpenseManagement */
+		UPDATE
+		BGAB_GASCBT06$corp_cd$ SET
+		nat_g_scn_cd = #nat_g_scn_cd# ,
+		prvs_scn_cd = #prvs_scn_cd# ,
+		poa_g1_amt = #poa_g1_amt# ,
+		poa_g2_amt = #poa_g2_amt# ,
+		poa_g3_amt = #poa_g3_amt# ,
+		poa_g4_amt = #poa_g4_amt# ,
+		poa_g6_amt = #poa_g6_amt# ,
+		mdfy_ymd = DATE_FORMAT(SYSDATE(),'%Y%m%d') ,
+		updr_eeno = #updr_eeno#
+		WHERE nat_g_scn_cd = #nat_g_scn_cd_old#
+		AND prvs_scn_cd = #prvs_scn_cd_old#
+	</update>
+
+	<delete id="deleteListToExpenseManagement" parameterClass="BgabGascbt06">
+		/*
+		businessTravel.xml :: deleteListToExpenseManagement */
+		DELETE FROM
+		BGAB_GASCBT06$corp_cd$
+		WHERE NAT_G_SCN_CD = #nat_g_scn_cd#
+		AND PRVS_SCN_CD = #prvs_scn_cd#
+	</delete>
+
+	<update id="updateBtToTravelerByStatus" parameterClass="BgabGascbt02">
+		/*
+		businessTravel.xml :: updateBtToTravelerByStatus */
+		UPDATE
+		BGAB_GASCBT02$corp_cd$ SET
+		pgs_st_cd = #pgs_st_cd# ,
+		mdfy_ymd = DATE_FORMAT(SYSDATE(),'%Y%m%d') ,
+		updr_eeno = #updr_eeno#
+		WHERE doc_no = #doc_no#
+		AND eeno = #eeno#
+		AND SEQ = #seq#
+	</update>
+
+	<select id="selectBtToTravlerExcelInfo" parameterClass="BgabGascbt02"
+		resultClass="BgabGascbtDto">
+		/* businessTravel.xml :: selectBtToTravlerExcelInfo */
+		SELECT
+		BT02.DOC_NO ,
+		BT02.EENO ,
+		BT02.COST_CD ,
+		Z002.XUSR_NAME AS EE_NM ,
+		Z002.XUSR_STEP_NAME AS POA_NM ,
+		Z002.XUSR_DEPT_CODE AS OPS_CD ,
+		Z002.XUSR_DEPT_NAME AS OPS_NM ,
+		BT01.IF_ID ,
+		BT01.BUDG_NO ,
+		BT01.VSIT_PURP_SBC ,
+		DATE_FORMAT( CAST( BT01.STRT_YMD AS DATE), '%Y-%m-%d' ) AS STRT_YMD ,
+		DATE_FORMAT( CAST( BT01.FNH_YMD AS DATE), '%Y-%m-%d' ) AS FNH_YMD ,
+		Z005.XCOD_HNAME AS DEST_NAT_NM ,
+		(SELECT XUSR_NAME FROM BGAB_GASCZ002$corp_cd$
+		WHERE XUSR_DEPT_CODE = '60000010'
+		AND XUSR_STEP_CODE = '51'
+		AND XUSR_RETR_FLAG = 'N' ) AS COORDI_NM ,
+		(SELECT XUSR_NAME FROM BGAB_GASCZ002$corp_cd$
+		WHERE XUSR_DEPT_CODE = '60000010'
+		AND XUSR_STEP_CODE = '30'
+		AND XUSR_RETR_FLAG = 'N' ) AS MANAGER_NM
+		FROM BGAB_GASCBT01$corp_cd$ BT01
+		LEFT OUTER
+		JOIN(
+		SELECT XCOD_CODE, XCOD_HNAME
+		FROM BGAB_GASCZ005$corp_cd$
+		WHERE XCOD_KND = 'VISIT'
+		  AND LOCALE = #locale#) Z005
+		ON Z005.XCOD_CODE = BT01.DEST_NAT_CD,
+		BGAB_GASCBT02$corp_cd$ BT02
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON BT02.EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		AND BT01.DOC_NO = BT02.DOC_NO
+		AND BT02.DOC_NO = #doc_no#
+		AND BT02.EENO = #eeno#
+	</select>
+
+	<select id="selectBtToTravlersExcelList" parameterClass="BgabGascbt02"
+		resultClass="BgabGascbtDto">
+		/* businessTravel.xml :: selectBtToTravlersExcelList */
+		SELECT
+		BT02.DOC_NO ,
+		BT02.EENO ,
+		BT02.COST_CD ,
+		Z002.XUSR_NAME AS EE_NM ,
+		Z002.XUSR_STEP_NAME AS POA_NM ,
+		Z002.XUSR_DEPT_CODE AS OPS_CD ,
+		Z002.XUSR_DEPT_NAME AS OPS_NM
+		FROM BGAB_GASCBT02$corp_cd$ BT02
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON BT02.EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		AND BT02.DOC_NO = #doc_no#
+	</select>
+
+	<select id="selectBtToExpenseExcelList" parameterClass="BgabGascbt02"
+		resultClass="BgabGascbt04">
+		/* businessTravel.xml :: selectBtToExpenseExcelList */
+		SELECT
+		PRVS_SCN_CD ,
+		PRVS.XCOD_ENAME as PRVS_SCN_NM ,
+		PRVS_DTL_CD ,
+		CONCAT(DATE_FORMAT( CAST( STRT_YMD AS DATE ),'%Y-%m-%d' ), '~', DATE_FORMAT( CAST( FNH_YMD AS DATE ),'%Y-%m-%d' )) AS STRT_YMD ,
+		STL_WAY_CD ,
+		CURR_CD ,
+		CURR.XCOD_ENAME as CURR_NM ,
+		APL_XR ,
+		PRVS_AMT ,
+		NATV_CURR_AMT ,
+		REM_SBC
+		FROM BGAB_GASCBT04$corp_cd$ BT04
+		LEFT OUTER JOIN(
+		SELECT XCOD_CODE, XCOD_ENAME, XCOD_HNAME
+		FROM BGAB_GASCZ005$corp_cd$
+		WHERE XCOD_KND = 'X0014') PRVS
+		ON PRVS.XCOD_CODE = BT04.PRVS_DTL_CD
+		LEFT
+		OUTER JOIN(
+		SELECT XCOD_CODE, XCOD_ENAME, XCOD_HNAME
+		FROM BGAB_GASCZ005$corp_cd$
+		WHERE XCOD_KND = 'X0016') CURR
+		ON CURR.XCOD_CODE = BT04.CURR_CD
+		WHERE 1 = 1
+		AND DOC_NO = #doc_no#
+		AND EENO = #eeno#
+	</select>
+	<select id="selectListBtToVoucherList" parameterClass="BgabGascbtVoucherExcelDto"
+		resultClass="BgabGascbtVoucherExcelDto">
+		/* businessTravel.xml :: selectListBtToVoucherList */
+		SELECT B.DOC_NO,
+		B.EENO,
+		D.XUSR_NAME AS EE_NM,
+		D.XUSR_DEPT_NAME AS OPS_NM,
+		D.XUSR_STEP_NAME AS POS_NM,
+		E.XCOD_HNAME AS NAT_G_SCN_CD,
+		C.COST_CD,
+		F.XCOD_HNAME AS PRVS_SCN_CD,
+		G.XCOD_ENAME AS PRVS_DTL_CD,
+		DATE_FORMAT( CAST( A.STRT_YMD AS DATE ), '%Y-%m-%d' ) AS STRT_YMD,
+		DATE_FORMAT( CAST( A.FNH_YMD AS DATE ), '%Y-%m-%d' ) AS FNH_YMD,
+		A.NATV_CURR_AMT
+		FROM BGAB_GASCBT04$corp_cd$ A
+		LEFT OUTER JOIN BGAB_GASCBT01$corp_cd$ B
+		ON
+		A.DOC_NO=B.DOC_NO
+		AND A.EENO=B.EENO
+		LEFT OUTER JOIN BGAB_GASCBT02$corp_cd$ C
+		ON
+		A.DOC_NO=C.DOC_NO
+		AND A.EENO=C.EENO
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ D
+		ON
+		A.EENO=D.XUSR_EMPNO
+		LEFT OUTER JOIN
+		(
+		SELECT XCOD_CODE,XCOD_HNAME
+		FROM BGAB_GASCZ005$corp_cd$
+		WHERE XCOD_KND='VISIT'
+		) E
+		ON B.DEST_NAT_CD=E.XCOD_CODE
+		LEFT OUTER JOIN
+		(
+		SELECT XCOD_CODE,XCOD_HNAME
+		FROM BGAB_GASCZ005$corp_cd$
+		WHERE XCOD_KND='X0013'
+		) F
+		ON A.PRVS_SCN_CD=F.XCOD_CODE
+		LEFT OUTER JOIN
+		(
+		SELECT XCOD_CODE,XCOD_ENAME
+		FROM BGAB_GASCZ005$corp_cd$
+		WHERE XCOD_KND='X0014'
+		) G
+		ON A.PRVS_DTL_CD=G.XCOD_CODE
+		WHERE
+		A.STL_WAY_CD='BT003'
+		AND A.DOC_NO = #doc_no#
+		AND A.EENO = #eeno#
+	</select>
+
+	<update id="updateBtToReportBySapYnForVoucher" parameterClass="BgabGascbtVoucherExcelDto">
+		/* businessTravel.xml :: updateBtToReportBySapYnForVoucher */
+		UPDATE BGAB_GASCBT04$corp_cd$ SET
+		ARSL_REFL_YN = 'Y',
+		ARSL_REFL_YMD = DATE_FORMAT(SYSDATE(),'%Y%m%d')
+		WHERE DOC_NO = #doc_no#
+		AND EENO =
+		#eeno#
+	</update>
+	<update id="updateBtToTravelerBySapYnForVoucher" parameterClass="BgabGascbtVoucherExcelDto">
+		/* businessTravel.xml :: updateBtToTravelerBySapYnForVoucher */
+		UPDATE BGAB_GASCBT02$corp_cd$ SET
+		TOT_ARSL_REFL_YN = 'Y'
+		WHERE DOC_NO = #doc_no#
+		AND EENO = #eeno#
+	</update>
+
+	<select id="selectCountBtCustomerToList" resultClass="String"
+		parameterClass="BgabGascbt01">
+		/* businessTravel.xml :: selectCountBtCustomerToList */
+		SELECT
+		COUNT(DOC_NO)
+		FROM (
+		SELECT
+		BT01.DOC_NO,
+		DATE_FORMAT( CAST( BT01.PTT_YMD AS DATE),'%Y-%m-%d' ) AS PTT_YMD,
+		BT01.EENO,
+		Z002.XUSR_NAME AS EE_NM ,
+		Z002.XUSR_STEP_NAME AS POA_NM ,
+		Z002.XUSR_DEPT_NAME AS OPS_NM ,
+		V_CD.XCOD_HNAME AS DEST_NAT_CD,
+		DATE_FORMAT( CAST( BT01.STRT_YMD AS DATE ),'%Y-%m-%d' ) AS STRT_YMD,
+		DATE_FORMAT( CAST( BT01.FNH_YMD AS DATE ),'%Y-%m-%d' ) AS FNH_YMD,
+		Z005.XCOD_HNAME PGS_ST_NM
+		FROM BGAB_GASCBT01$corp_cd$ BT01
+		LEFT OUTER JOIN(
+		SELECT XCOD_CODE, XCOD_HNAME
+		FROM BGAB_GASCZ005$corp_cd$
+		WHERE XCOD_KND = 'X0031') Z005
+		ON Z005.XCOD_CODE = BT01.PGS_ST_CD
+		LEFT OUTER JOIN(
+		SELECT XCOD_CODE, XCOD_HNAME
+		FROM BGAB_GASCZ005$corp_cd$
+		WHERE XCOD_KND = 'VISIT') V_CD
+		ON V_CD.XCOD_CODE = BT01.DEST_NAT_CD
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON BT01.EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		<isNotEmpty property="eeno" prepend="and">
+			EENO = #eeno#
+		</isNotEmpty>
+		<isNotEmpty property="ee_nm" prepend="and">
+			Z002.XUSR_NAME LIKE CONCAT('%', #ee_nm#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="strt_ymd" prepend="and">
+			PTT_YMD BETWEEN #strt_ymd# AND #fnh_ymd#
+		</isNotEmpty>
+		<isNotEmpty property="ops_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #ops_cd#
+		</isNotEmpty>
+		<isNotEmpty property="pgs_st_cd" prepend="and">
+			Z005.XCOD_CODE = #pgs_st_cd#
+		</isNotEmpty>
+		<isNotEmpty property="doc_no" prepend="and">
+			BT01.DOC_NO = #doc_no#
+		</isNotEmpty>
+		AND Z002.XUSR_PLAC_WORK = #plac_work#
+		UNION
+		SELECT
+		BT01.DOC_NO,
+		DATE_FORMAT( CAST( BT01.PTT_YMD AS DATE ),'%Y-%m-%d' ) AS PTT_YMD,
+		BT01.EENO,
+		Z002.XUSR_NAME AS EE_NM ,
+		Z002.XUSR_STEP_NAME AS POA_NM ,
+		Z002.XUSR_DEPT_NAME AS OPS_NM ,
+		V_CD.XCOD_HNAME AS DEST_NAT_CD,
+		DATE_FORMAT( CAST( BT01.STRT_YMD AS DATE ),'%Y-%m-%d' ) AS STRT_YMD,
+		DATE_FORMAT( CAST( BT01.FNH_YMD AS DATE ),'%Y-%m-%d' ) AS FNH_YMD,
+		Z005.XCOD_HNAME PGS_ST_NM
+		FROM
+		BGAB_GASCBT01$corp_cd$ BT01
+		LEFT OUTER JOIN
+		(
+		SELECT
+		XCOD_CODE,
+		XCOD_HNAME
+		FROM
+		BGAB_GASCZ005$corp_cd$
+		WHERE
+		XCOD_KND = 'X0031'
+		) Z005
+		ON Z005.XCOD_CODE = BT01.PGS_ST_CD
+		LEFT OUTER JOIN
+		(
+		SELECT
+		XCOD_CODE,
+		XCOD_HNAME
+		FROM
+		BGAB_GASCZ005$corp_cd$
+		WHERE
+		XCOD_KND = 'VISIT'
+		) V_CD
+		ON V_CD.XCOD_CODE = BT01.DEST_NAT_CD
+		LEFT OUTER JOIN
+		BGAB_GASCZ002$corp_cd$ Z002
+		ON BT01.EENO = Z002.XUSR_EMPNO,
+		BGAB_GASCBT02$corp_cd$ BT02
+		WHERE
+		1 = 1
+		AND BT01.DOC_NO = BT02.DOC_NO
+		AND Z002.XUSR_PLAC_WORK = #plac_work#
+		<isNotEmpty property="strt_ymd" prepend="and">
+			PTT_YMD BETWEEN #strt_ymd# AND #fnh_ymd#
+		</isNotEmpty>
+		<isNotEmpty property="pgs_st_cd" prepend="and">
+			Z005.XCOD_CODE = #pgs_st_cd#
+		</isNotEmpty>
+		<isNotEmpty property="doc_no" prepend="and">
+			BT02.DOC_NO = #doc_no#
+		</isNotEmpty>
+
+		) TEMP
+	</select>
+
+	<select id="selectListBtCustomerToList" resultClass="BgabGascbt01"
+		parameterClass="BgabGascbt01">
+		/* businessTravel.xml :: selectListBtCustomerToList */
+		SELECT * FROM (
+		SELECT @ROWNUM := @ROWNUM + 1 AS rnum, k.*
+		FROM(
+		SELECT
+		DOC_NO,
+		PTT_YMD,
+		EENO,
+		EE_NM ,
+		POA_NM ,
+		OPS_NM ,
+		DEST_NAT_CD,
+		STRT_YMD,
+		FNH_YMD,
+		PGS_ST_NM,
+		ACPC_PGS_ST_CD,
+		PGS_ST_CD,
+		DOM_ABRD_SCN_NM,
+		DOM_ABRD_SCN_CD,
+		VEN_PGS_ST_CD
+		FROM (
+		SELECT
+		BT01.DOC_NO,
+		DATE_FORMAT( CAST( BT01.PTT_YMD AS DATE ),'%Y-%m-%d' ) AS PTT_YMD,
+		BT01.EENO,
+		Z002.XUSR_NAME AS EE_NM ,
+		Z002.XUSR_STEP_NAME AS POA_NM ,
+		Z002.XUSR_DEPT_NAME AS OPS_NM ,
+		V_CD.XCOD_HNAME AS DEST_NAT_CD,
+		DATE_FORMAT( CAST( BT01.STRT_YMD AS DATE ),'%Y-%m-%d' ) AS STRT_YMD,
+		DATE_FORMAT( CAST( BT01.FNH_YMD AS DATE ),'%Y-%m-%d' ) AS FNH_YMD,
+		Z005.XCOD_HNAME PGS_ST_NM,
+		BT01.ACPC_PGS_ST_CD ACPC_PGS_ST_CD,
+		BT01.PGS_ST_CD PGS_ST_CD,
+		DOM_ABRD.XCOD_HNAME AS DOM_ABRD_SCN_NM,
+		DOM_ABRD_SCN_CD,
+		VEN_PGS_ST_CD
+		FROM BGAB_GASCBT01$corp_cd$ BT01
+		LEFT OUTER JOIN(
+		SELECT XCOD_CODE, XCOD_HNAME
+		FROM BGAB_GASCZ005$corp_cd$
+		WHERE XCOD_KND = 'X0031') Z005
+		ON Z005.XCOD_CODE = BT01.PGS_ST_CD
+		LEFT OUTER JOIN(
+		SELECT XCOD_CODE, XCOD_HNAME
+		FROM BGAB_GASCZ005$corp_cd$
+		WHERE XCOD_KND = 'VISIT') V_CD
+		ON V_CD.XCOD_CODE = BT01.DEST_NAT_CD
+		LEFT OUTER JOIN(
+		SELECT XCOD_CODE, XCOD_HNAME
+		FROM BGAB_GASCZ005$corp_cd$
+		WHERE XCOD_KND = 'place_type') DOM_ABRD
+		ON DOM_ABRD.XCOD_CODE = BT01.DOM_ABRD_SCN_CD
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON BT01.EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		  AND  BT01.DOM_ABRD_SCN_CD  != 'PT003'
+		<isNotEmpty property="eeno" prepend="and">
+			EENO = #eeno#
+		</isNotEmpty>
+		<isNotEmpty property="ee_nm" prepend="and">
+			Z002.XUSR_NAME LIKE CONCAT('%', #ee_nm#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="strt_ymd" prepend="and">
+			PTT_YMD BETWEEN #strt_ymd# AND #fnh_ymd#
+		</isNotEmpty>
+		<isNotEmpty property="ops_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #ops_cd#
+		</isNotEmpty>
+		<isNotEmpty property="pgs_st_cd" prepend="and">
+			Z005.XCOD_CODE = #pgs_st_cd#
+		</isNotEmpty>
+		<isNotEmpty property="doc_no" prepend="and">
+			BT01.DOC_NO = #doc_no#
+		</isNotEmpty>
+		AND Z002.XUSR_PLAC_WORK = #plac_work#
+
+		UNION
+
+		SELECT
+		BT01.DOC_NO,
+		DATE_FORMAT( CAST( BT01.PTT_YMD AS DATE ) AS PTT_YMD,
+		BT01.EENO,
+		Z002.XUSR_NAME AS EE_NM ,
+		Z002.XUSR_STEP_NAME AS POA_NM ,
+		Z002.XUSR_DEPT_NAME AS OPS_NM ,
+		V_CD.XCOD_HNAME AS DEST_NAT_CD,
+		DATE_FORMAT( CAST( BT01.STRT_YMD AS DATE),'%Y-%m-%d' ) AS STRT_YMD,
+		DATE_FORMAT( CAST( BT01.FNH_YMD AS DATE),'%Y-%m-%d' ) AS FNH_YMD,
+		Z005.XCOD_HNAME PGS_ST_NM,
+		BT01.ACPC_PGS_ST_CD ACPC_PGS_ST_CD,
+		BT01.PGS_ST_CD PGS_ST_CD,
+		DOM_ABRD.XCOD_HNAME AS DOM_ABRD_SCN_NM,
+		DOM_ABRD_SCN_CD,
+		VEN_PGS_ST_CD
+		FROM
+		BGAB_GASCBT01$corp_cd$ BT01
+		LEFT OUTER JOIN
+		(
+		SELECT
+		XCOD_CODE,
+		XCOD_HNAME
+		FROM
+		BGAB_GASCZ005$corp_cd$
+		WHERE
+		XCOD_KND = 'X0031'
+		) Z005
+		ON Z005.XCOD_CODE = BT01.PGS_ST_CD
+		LEFT OUTER JOIN
+		(
+		SELECT
+		XCOD_CODE,
+		XCOD_HNAME
+		FROM
+		BGAB_GASCZ005$corp_cd$
+		WHERE
+		XCOD_KND = 'VISIT'
+		) V_CD
+		ON V_CD.XCOD_CODE = BT01.DEST_NAT_CD
+		LEFT OUTER JOIN(
+		SELECT XCOD_CODE, XCOD_HNAME
+		FROM BGAB_GASCZ005$corp_cd$
+		WHERE XCOD_KND = 'place_type') DOM_ABRD
+		ON DOM_ABRD.XCOD_CODE = BT01.DOM_ABRD_SCN_CD
+		LEFT OUTER JOIN
+		BGAB_GASCZ002$corp_cd$ Z002
+		ON BT01.EENO = Z002.XUSR_EMPNO,
+		BGAB_GASCBT02$corp_cd$ BT02
+		WHERE 1 = 1
+		AND  BT01.DOM_ABRD_SCN_CD  != 'PT003'
+		AND BT01.DOC_NO = BT02.DOC_NO
+		AND Z002.XUSR_PLAC_WORK = #plac_work#
+		<isNotEmpty property="eeno" prepend="and">
+			BT01.EENO = #eeno#
+		</isNotEmpty>
+		<isNotEmpty property="ee_nm" prepend="and">
+			Z002.XUSR_NAME LIKE CONCAT('%', #ee_nm#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="strt_ymd" prepend="and">
+			PTT_YMD BETWEEN #strt_ymd# AND #fnh_ymd#
+		</isNotEmpty>
+		<isNotEmpty property="ops_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #ops_cd#
+		</isNotEmpty>
+		<isNotEmpty property="pgs_st_cd" prepend="and">
+			Z005.XCOD_CODE = #pgs_st_cd#
+		</isNotEmpty>
+		<isNotEmpty property="doc_no" prepend="and">
+			BT01.DOC_NO = #doc_no#
+		</isNotEmpty>
+		) TEMP
+		ORDER BY DOC_NO DESC
+		) k,
+		(SELECT @ROWNUM := 0) r
+		) j
+		WHERE rnum between #startRow# AND #endRow#
+	</select>
+
+
+	<select id="selectFlightConfirmListBtToRequest" parameterClass="BgabGascbt07"
+		resultClass="BgabGascbt07">
+		/* businessTravel.xml :: selectFlightConfirmListBtToRequest */
+		SELECT DOC_NO AS FLT_DOC_NO
+		, SEQ AS FLT_SEQ
+		, DATE_FORMAT( CAST( FLT_YMD AS DATE ),'%Y-%m-%d' ) AS FLT_FLT_YMD
+		, AIR_LINES AS FLT_AIR_LINES
+		, FLIGHT AS FLT_FLIGHT
+		, FLT_FROM AS FLT_FLT_FROM
+		, FLT_TO AS FLT_FLT_TO
+		, DEPARTURE_TIME AS FLT_DEPARTURE_TIME
+		, ARRIVE_TIME AS FLT_ARRIVE_TIME
+		, SEAT AS FLT_SEAT
+		, ETC_AMT AS FLT_ETC_AMT
+		FROM BGAB_GASCBT07$corp_cd$
+		WHERE DOC_NO = #doc_no#
+	</select>
+
+	<insert id="insertFlightConfirmBtToRequest" parameterClass="BgabGascbt07">
+		/* businessTravel.xml :: insertFlightConfirmBtToRequest */
+		INSERT INTO BGAB_GASCBT07$corp_cd$ (
+		DOC_NO
+		, SEQ
+		, FLT_YMD
+		, AIR_LINES
+		, FLIGHT
+		, FLT_FROM
+		, FLT_TO
+		, DEPARTURE_TIME
+		, ARRIVE_TIME
+		, SEAT
+		, ETC_AMT
+		, IPE_EENO
+		, INP_YMD
+		) VALUES (
+		#doc_no#
+		, (SELECT A.SEQ FROM (SELECT IFNULL(MAX(SEQ), 0) + 1 AS SEQ
+		FROM BGAB_GASCBT07$corp_cd$
+		WHERE DOC_NO = #doc_no#)A)
+		, #flt_ymd#
+		, #air_lines#
+		, #flight#
+		, #flt_from#
+		, #flt_to#
+		, #departure_time#
+		, #arrive_time#
+		, #seat#
+		, #etc_amt#
+		, #ipe_eeno#
+		, DATE_FORMAT(SYSDATE(),'%Y%m%d')
+		)
+	</insert>
+
+	<update id="updateFlightConfirmBtToRequest" parameterClass="BgabGascbt07">
+		/* businessTravel.xml :: updateFlightConfirmBtToRequest */
+		UPDATE BGAB_GASCBT07$corp_cd$ SET
+		FLT_YMD = #flt_ymd#
+		, AIR_LINES = #air_lines#
+		, FLIGHT = #flight#
+		, FLT_FROM = #flt_from#
+		, FLT_TO = #flt_to#
+		, DEPARTURE_TIME = #departure_time#
+		, ARRIVE_TIME = #arrive_time#
+		, SEAT = #seat#
+		, ETC_AMT = #etc_amt#
+		, MDFY_YMD = DATE_FORMAT(SYSDATE(),'%Y%m%d')
+		, UPDR_EENO = #updr_eeno#
+		WHERE DOC_NO = #doc_no#
+		AND SEQ = #seq#
+	</update>
+
+	<delete id="deleteFlightConfirmBtToRequest" parameterClass="BgabGascbt07">
+		/* businessTravel.xml :: deleteFlightConfirmBtToRequest */
+		DELETE FROM BGAB_GASCBT07$corp_cd$
+		WHERE DOC_NO = #doc_no#
+		<isNotEmpty property="seq">
+			AND SEQ = #seq#
+		</isNotEmpty>
+	</delete>
+
+	<select id="selectHotelConfirmListBtToRequest" parameterClass="BgabGascbt08"
+		resultClass="BgabGascbt08">
+		/* businessTravel.xml :: selectHotelConfirmListBtToRequest */
+		SELECT DOC_NO AS HTL_DOC_NO
+		, SEQ AS HTL_SEQ
+		, DATE_FORMAT( CAST( CHECK_IN_YMD AS DATE ),'%Y-%m-%d' ) AS HTL_CHECK_IN_YMD
+		, DATE_FORMAT( CAST( CHECK_OUT_YMD AS DATE ),'%Y-%m-%d' ) AS HTL_CHECK_OUT_YMD
+		, HOTEL_NAME AS HTL_HOTEL_NAME
+		, HOTEL_ADDR AS HTL_HOTEL_ADDR
+		, HOTEL_PHONE AS HTL_HOTEL_PHONE
+		, PAY_FORM AS HTL_PAY_FORM
+		, CONFIRMATION AS HTL_CONFIRMATION
+		, MEAL_YN AS HTL_MEAL_YN
+		, ETC_AMT AS HTL_ETC_AMT
+		FROM BGAB_GASCBT08$corp_cd$
+		WHERE DOC_NO = #doc_no#
+	</select>
+
+	<insert id="insertHotelConfirmBtToRequest" parameterClass="BgabGascbt08">
+		/* businessTravel.xml :: insertHotelConfirmBtToRequest */
+		INSERT INTO BGAB_GASCBT08$corp_cd$ (
+		DOC_NO
+		, SEQ
+		, CHECK_IN_YMD
+		, CHECK_OUT_YMD
+		, HOTEL_NAME
+		, HOTEL_ADDR
+		, HOTEL_PHONE
+		, PAY_FORM
+		, CONFIRMATION
+		, MEAL_YN
+		, ETC_AMT
+		, INP_YMD
+		, IPE_EENO
+		) VALUES (
+		#doc_no#
+		, (SELECT A.SEQ FROM(SELECT IFNULL(MAX(SEQ), 0) + 1 AS SEQ
+		FROM BGAB_GASCBT08$corp_cd$
+		WHERE DOC_NO = #doc_no#)A)
+		, #check_in_ymd#
+		, #check_out_ymd#
+		, #hotel_name#
+		, #hotel_addr#
+		, #hotel_phone#
+		, #pay_form#
+		, #confirmation#
+		, #meal_yn#
+		, #etc_amt#
+		, DATE_FORMAT(SYSDATE(),'%Y%m%d')
+		, #ipe_eeno#
+		)
+	</insert>
+
+	<update id="updateHotelConfirmBtToRequest" parameterClass="BgabGascbt08">
+		/* businessTravel.xml :: updateHotelConfirmBtToRequest */
+		UPDATE BGAB_GASCBT08$corp_cd$ SET
+		CHECK_IN_YMD = #check_in_ymd#
+		, CHECK_OUT_YMD = #check_out_ymd#
+		, HOTEL_NAME = #hotel_name#
+		, HOTEL_ADDR = #hotel_addr#
+		, HOTEL_PHONE = #hotel_phone#
+		, PAY_FORM = #pay_form#
+		, CONFIRMATION = #confirmation#
+		, MEAL_YN = #meal_yn#
+		, ETC_AMT = #etc_amt#
+		, MDFY_YMD = DATE_FORMAT(SYSDATE(),'%Y%m%d')
+		, UPDR_EENO = #updr_eeno#
+		WHERE DOC_NO = #doc_no#
+		AND SEQ = #seq#
+	</update>
+
+	<delete id="deleteHotelConfirmBtToRequest" parameterClass="BgabGascbt08">
+		/* businessTravel.xml :: deleteHotelConfirmBtToRequest */
+		DELETE FROM BGAB_GASCBT08$corp_cd$
+		WHERE DOC_NO = #doc_no#
+		<isNotEmpty property="seq">
+			AND SEQ = #seq#
+		</isNotEmpty>
+	</delete>
+
+	<select id="selectRentCarListBtToRequest" parameterClass="BgabGascbt09"
+		resultClass="BgabGascbt09">
+		/* businessTravel.xml :: selectRentCarListBtToRequest */
+		SELECT DOC_NO AS RENT_DOC_NO
+		, SEQ AS RENT_SEQ
+		, DATE_FORMAT( CAST( CHECK_IN_YMD AS DATE ),'%Y-%m-%d' ) AS RENT_CHECK_IN_YMD
+		, DATE_FORMAT( CAST( CHECK_OUT_YMD AS DATE ),'%Y-%m-%d' ) AS RENT_CHECK_OUT_YMD
+		, CAR_COMPANY AS RENT_CAR_COMPANY
+		, CAR_TYPE AS RENT_CAR_TYPE
+		, CAR_PHONE AS RENT_CAR_PHONE
+		, PAY_FORM AS RENT_PAY_FORM
+		, CONFIRMATION AS RENT_CONFIRMATION
+		, AIR_YN AS RENT_AIR_YN
+		, ETC_AMT AS RENT_ETC_AMT
+		FROM BGAB_GASCBT09$corp_cd$
+		WHERE DOC_NO = #doc_no#
+	</select>
+
+	<insert id="insertRentCarBtToRequest" parameterClass="BgabGascbt09">
+		/* businessTravel.xml :: insertRentCarBtToRequest */
+		INSERT INTO BGAB_GASCBT09$corp_cd$ (
+		DOC_NO
+		, SEQ
+		, CHECK_IN_YMD
+		, CHECK_OUT_YMD
+		, CAR_COMPANY
+		, CAR_TYPE
+		, CAR_PHONE
+		, PAY_FORM
+		, CONFIRMATION
+		, AIR_YN
+		, ETC_AMT
+		, INP_YMD
+		, IPE_EENO
+		) VALUES (
+		#doc_no#
+		, (SELECT IFNULL(MAX(SEQ), 0) + 1
+		FROM BGAB_GASCBT09$corp_cd$
+		WHERE DOC_NO = #doc_no#)
+		, #check_in_ymd#
+		, #check_out_ymd#
+		, #car_company#
+		, #car_type#
+		, #car_phone#
+		, #pay_form#
+		, #confirmation#
+		, #air_yn#
+		, #etc_amt#
+		, DATE_FORMAT(SYSDATE(),'%Y%m%d')
+		, #ipe_eeno#
+		)
+	</insert>
+
+	<update id="updateRentCarBtToRequest" parameterClass="BgabGascbt09">
+		/* businessTravel.xml :: updateRentCarBtToRequest */
+		UPDATE BGAB_GASCBT09$corp_cd$ SET
+		CHECK_IN_YMD = #check_in_ymd#
+		, CHECK_OUT_YMD = #check_out_ymd#
+		, CAR_COMPANY = #car_company#
+		, CAR_TYPE = #car_type#
+		, CAR_PHONE = #car_phone#
+		, PAY_FORM = #pay_form#
+		, CONFIRMATION = #confirmation#
+		, AIR_YN = #air_yn#
+		, ETC_AMT = #etc_amt#
+		, MDFY_YMD = DATE_FORMAT(SYSDATE(),'%Y%m%d')
+		, UPDR_EENO = #updr_eeno#
+		WHERE DOC_NO = #doc_no#
+		AND SEQ = #seq#
+	</update>
+
+	<delete id="deleteRentCarBtToRequest" parameterClass="BgabGascbt09">
+		/* businessTravel.xml :: deleteRentCarBtToRequest */
+		DELETE FROM BGAB_GASCBT09$corp_cd$
+		WHERE DOC_NO = #doc_no#
+		<isNotEmpty property="seq">
+			AND SEQ = #seq#
+		</isNotEmpty>
+	</delete>
+
+	<update id="updateCompleteFinalPO" parameterClass="BgabGascbt04">
+		/* updateCompleteFinalPO */
+		UPDATE BGAB_GASCBT04$corp_cd$
+		   SET PO_NO = #po_no#
+		 WHERE DOC_NO = #doc_no#
+		   AND SEQ = #seq#
+	</update>
+
+	<update id="updateTravelerTempPo" parameterClass="BgabGascbt02">
+		/* updateTravelerTempPo */
+		UPDATE BGAB_GASCBT02$corp_cd$
+		   SET PO_NO = #po_no#
+		  	 , TOT_AMT = #tot_amt#
+		 WHERE DOC_NO = #doc_no#
+		 <isNotEqual property="seq" compareValue="0">
+		   AND SEQ = #seq#
+		 </isNotEqual>
+	</update>
+
+	<select id="selectDummyVendorInfo" parameterClass="BgabGascz005Dto" resultClass="BgabGascz005Dto">
+		/* selectDummyVendorInfo */
+		SELECT XCOD_CODE
+		     , XCOD_HNAME
+		  FROM BGAB_GASCZ005$corp_cd$
+		 WHERE XCOD_KND = #xcod_knd#
+	</select>
+
+	<select id="selectTravelRejectSubmitPoSearch" parameterClass="BgabGascbt02" resultClass="BgabGascbt02">
+		/* selectTaxiRejectSubmitPoSearch */
+		SELECT A.DOC_NO
+		     , B.PO_NO
+		     , B.SEQ
+		  FROM BGAB_GASCBT01$corp_cd$ A
+		  LEFT OUTER JOIN BGAB_GASCBT02$corp_cd$ B
+		    ON A.DOC_NO = B.DOC_NO
+		 WHERE 1=1
+		 <isNotEmpty property="if_id">
+		   AND IF_ID = #if_id#
+		 </isNotEmpty>
+		 <isNotEmpty property="doc_no">
+		   AND A.DOC_NO = #doc_no#
+		 </isNotEmpty>
+	</select>
+
+	<select id="selectBTToSendMail" resultClass="BgabGascZ011Dto" parameterClass="BgabGascZ011Dto">
+		/* businessTravel.xml :: selectBTToSendMail */
+		SELECT DOC_NO
+		     , EENO
+			 , SEQ
+			 , AFFR_SCN_CD
+			 , FIL_NM
+			 , OGC_FIL_NM
+			 , FIL_MGN_QTY
+		  FROM BGAB_GASCZ011$corp_cd$
+		 WHERE DOC_NO = #doc_no#
+		   AND AFFR_SCN_CD = #affr_scn_cd#
+		 ORDER BY DOC_NO, SEQ
+	</select>
+
+	<update id="vendorCheckToRequest" parameterClass="BgabGascbt01">
+		/* businessTravel.xml :: vendorCheckToRequest */
+		UPDATE BGAB_GASCBT01$corp_cd$
+		SET VEN_PGS_ST_CD = #ven_pgs_st_cd# ,
+			ACPC_PGS_ST_CD = #acpc_pgs_st_cd# ,
+		UPDR_EENO = #updr_eeno# ,
+		MDFY_YMD = DATE_FORMAT(SYSDATE(),'%Y%m%d')
+		WHERE DOC_NO = #doc_no#
+	</update>
+
+	<update id="vendorSaveToRequest" parameterClass="BgabGascbt01">
+		/* businessTravel.xml :: vendorSaveToRequest */
+		UPDATE BGAB_GASCBT01$corp_cd$
+		SET prct_sbc = #prct_sbc# ,
+			UPDR_EENO = #updr_eeno# ,
+			MDFY_YMD = DATE_FORMAT(SYSDATE(),'%Y%m%d')
+		WHERE DOC_NO = #doc_no#
+	</update>
+
+	<select id="selectConfirmToExpenseCount" parameterClass="BgabGascbt02" resultClass="String">
+		/* selectConfirmToExpenseCount */
+		SELECT CASE WHEN COUNT(1) = 0
+		            THEN 'Y'
+					ELSE 'N'
+			    END CNT
+		  FROM  BGAB_GASCBT02$corp_cd$
+		 WHERE DOC_NO = #doc_no#
+		   AND PGS_ST_CD != '3'
+	</select>
+</sqlMap>

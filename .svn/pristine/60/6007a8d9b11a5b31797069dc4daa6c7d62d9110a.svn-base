@@ -1,0 +1,584 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId	   = "XSM03";
+	String getDate     = CurrentDateTime.getDate();
+	String getFromDate = CurrentDateTime.getDashDate(getDate, 0);
+	String getToDate   = CurrentDateTime.getDashDate(getDate, +7);
+	String isAdminAuth = sess_mstu_gubb.equals("M") ? "true" : "false";
+	
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH", locale);
+	String strDel = JSPMessageSource.getMessage("BUTTON.DELETE",locale);
+	String strExl = JSPMessageSource.getMessage("BUTTON.EXCEL",locale);
+	
+	String strBtn = "";
+	strBtn = strSch+"/search@"+strDel+"/delete@"+strExl+"/excel";
+%>
+
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<script type="text/javascript">
+			var isAdmAuth = "<%=isAdminAuth%>";
+		</script>
+		<script type="text/javascript" src='./js/xsm_reg.js'></script>
+		<script type="text/javascript" src='./js/xsm_util.js'></script>
+		<script type="text/javascript" src='<%=ctxPath%>/script/js/navigation.js'></script>
+		<link rel='stylesheet' href='<%=ctxPath%>/script/css/conference.css' type='text/css'>
+	</head>
+	<body>
+		<div id="wrap">
+			<form name="frm" method="post">
+				<input type="hidden" id="gubun" name="gubun">
+				<input type="hidden" id="codeKnd" name="codeKnd">
+				<input type="hidden" id="jsonData" name="jsonData">
+				<input type="hidden" id="nSource" name="nSource">
+				<input type="hidden" id="nTarget" name="nTarget">
+				<input type="hidden" id="pagingIndex" name="pagingIndex" value="0">
+				<input type="hidden" id="menuId" name="menuId" value="<%=menuId%>">
+				<input type="hidden" id="curYmd" name="curYmd" value="<%=getDate%>">
+				<input type="hidden" id="KEY_PARAM_DAY" name="KEY_PARAM_DAY">
+				<input type="hidden" id="KEY_GUBUN" name="KEY_GUBUN">
+				<input type="hidden" id="p_regn_cd" name="p_regn_cd">
+				<input type="hidden" id="p_bd_cd" name="p_bd_cd">
+				<input type="hidden" id="p_corm_fl_cd" name="p_corm_fl_cd">
+				<input type="hidden" id="p_corm_cd" name="p_corm_cd">
+				<input type="hidden" id="p_corm_nm" name="p_corm_nm">
+				<input type="hidden" id="p_from_ymd" name="p_from_ymd">
+				<input type="hidden" id="p_to_ymd" name="p_to_ymd">
+				<input type="hidden" id="p_from_time" name="p_from_time">
+				<input type="hidden" id="p_to_time" name="p_to_time">
+				<input type="hidden" id="hid_doc_no" name="hid_doc_no">
+				<input type="hidden" id="hid_key_no" name="hid_key_no">
+				<input type="hidden" id="etc_user" name="etc_user">
+				<input type="hidden" id="etc_org" name="etc_org">
+				<input type="hidden" id="etc_user_data" name="etc_user_data">
+				<input type="hidden" id="etc_org_data1" name="etc_org_data1">
+				<input type="hidden" id="etc_org_data2" name="etc_org_data2">
+				<select id="KEY_FROM_TIME" name="KEY_FROM_TIME" style="display:none"></select>
+				<select id="KEY_TO_TIME" name="KEY_TO_TIME" style="display:none"></select>
+				
+				<%@ include file="../include/hncis_header.gas"%>
+				<div id="contents_wrap">
+	        		<%@ include file="../include/hncis_left.gas"%>
+	            	<div id="contents">
+						<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							, menuId
+							, strBtn
+							, null
+							, null
+							, null
+							, request)
+						%>
+						<div class="search_area">
+							<table>
+								<colgroup>
+									<col width="60px">
+									<col width="160px">
+									<col width="60px">
+									<col width="160px">
+									<col width="60px">
+									<col width="120px">
+									<col width="60px">
+									<col width="160px">
+									<col width="60px">
+									<col width="*">
+								</colgroup>
+								<tr>
+									<td align="left"><fmt:message key="svc_ar"/></td>
+									<td align="left">
+										<select id="KEY_REGN_CD" name="KEY_REGN_CD" style="width:140px">
+											<option value="">전 체</option>
+										</select>
+									</td>
+									<td align="left"><fmt:message key="bld"/></td>
+									<td align="left">
+										<select id="KEY_BD_CD" name="KEY_BD_CD" style="width:140px" disabled>
+											<option value="">전 체</option>
+										</select>
+									</td>
+									<td align="left"><fmt:message key="floor"/></td>
+									<td align="left">
+										<select id="KEY_CORM_FL_CD" name="KEY_CORM_FL_CD" style="width:90px" disabled>
+											<option value="">전 체</option>
+										</select>
+									</td>
+									<td align="left"><fmt:message key="mt_rm"/></td>
+									<td align="left">
+										<select id="KEY_CORM_CD" name="KEY_CORM_CD" style="width:140px" disabled>
+											<option value="">전 체</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td align="left"><fmt:message key="type"/></td>
+									<td align="left">
+										<select id="KEY_PTT_GUBUN" style="width:110px"></select>										
+									</td>
+									<td align="left"><fmt:message key="state"/></td>
+									<td align="left">
+										<select id="KEY_PGS_ST_CD" style="width:80px"></select>
+									</td>
+									<td align="left"><fmt:message key="schedule"/></td>
+									<td align="left" colspan="6">
+										<input type="text" id="KEY_FROM_YMD" name="KEY_FROM_YMD" style="width:80px;" class="mr5" value="<%=getFromDate%>">
+										<fmt:message key="from"/>
+										<input type="text" id="KEY_TO_YMD" name="KEY_TO_YMD" style="width:80px" class="mr5" value="<%=getToDate%>">
+										<fmt:message key="to"/>
+									</td>
+								</tr>
+							</table> 
+						</div>
+						<div style="margin-bottom:30px; padding-top: 10px; min-height: 450px; max-width: 1800px">
+				            <div class="col_cont">
+				                 <div class="col_table" style="overflow-x: scroll;overflow-y: hidden;">
+				                 	<table style="width:1500px;table-layout:fixed;">
+										<colgroup>
+											<col width="30px">
+											<col width="250px">
+											<col width="260px">
+											<col width="100px">
+											<col width="100px">
+											<col width="330px">
+											<col width="60px">
+											<col width="70px">
+											<col width="70px">
+											<col width="70px">
+										</colgroup>
+				                        <thead>
+				                            <tr>
+				                                <th><input type="checkbox" class='allChk'/></th>
+				                                <th><fmt:message key="mt_title"/></th>
+				                                <th><fmt:message key="mt_ymd"/></th>
+				                                <th><fmt:message key="mt_spr_nm"/></th>
+				                                <th><fmt:message key="dept_nm"/></th>
+				                                <th><fmt:message key="mt_plc"/></th>
+				                                <th><fmt:message key="attend_psrn"/></th>
+				                                <th><fmt:message key="type"/></th>
+				                                <th><fmt:message key="rsvt_st"/></th>
+				                                <th class="last"><fmt:message key="mt_st"/></th>
+				                            </tr>
+				                        </thead>
+				                        <tbody id="listTbody">
+				                        </tbody>
+				                    </table>
+				                 </div>
+				                 <div class="page" style="width:970px">
+				                    <ul id="navigation" class="navigation"></ul>
+				                 </div>
+				                 <div>
+				                 	<table id="htmlTable1" class="scroll"></table>
+				                 </div>
+				             </div>
+						</div>
+						<%@ include file="../include/hncis_message.gas"%>
+					</div>
+				</div>
+			</form> 
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+			<img id="loading_progress_img" src="../../images/common/progress_bar.gif" width="362" height="131" style="display:none" />
+		</div>
+	</body>
+</html>
+		<script type="text/javascript">
+		var curPage = 0;
+		var initYn = "Y";
+		var columnCnt = 10;
+
+		function fnSetDocumentReady(){
+			initMenus();
+			$('#SM').slideDown('fast');
+
+			//공통 콤보 조회
+			var sCode  = "KEY_REGN_CD:SM001:Z;";
+				sCode += "KEY_PTT_GUBUN:SM007:A;KEY_PGS_ST_CD:SM008:A;";
+				sCode += "KEY_FROM_TIME:SM005:S;KEY_TO_TIME:SM006:S;";
+			var sCallBack = "init()";
+			var sUrl = "doSearchComboByXsm.do";
+			getCommonCode(sCode, "N", sCallBack, sUrl);
+		}
+
+		function init(){
+			$("#KEY_REGN_CD").val(sess_plac_work);
+			doBdCdComboInfo();
+		}
+
+		$(function(){
+			//근무지역 변경 이벤트
+			$("#KEY_REGN_CD").change(function(){
+				$("#KEY_BD_CD option:gt(0)").remove();
+				$("#KEY_CORM_FL_CD option:gt(0)").remove();
+				$("#KEY_CORM_CD option:gt(0)").remove();
+				$("#KEY_BD_CD").attr("disabled", true);
+				$("#KEY_CORM_FL_CD").attr("disabled", true);
+				$("#KEY_CORM_CD").attr("disabled", true);
+				doBdCdComboInfo();
+			});
+
+			//건물 변경 이벤트
+			$("#KEY_BD_CD").change(function(){
+				$("#KEY_CORM_FL_CD option:gt(0)").remove();
+				$("#KEY_CORM_CD option:gt(0)").remove();
+				$("#KEY_CORM_CD").attr("disabled", true);
+				if($(this).val() != ""){
+					doCormFlComboInfo();
+				}
+			});
+			
+			//층수 변경 이벤트
+			$("#KEY_CORM_FL_CD").change(function(){
+				$("#KEY_CORM_CD option:gt(0)").remove();
+				$("#KEY_CORM_CD").attr("disabled", true);
+				if($(this).val() != ""){
+					doCormComboInfo();
+				}
+			});
+			
+		    //리스트 초기화
+			$("#listTbody").html(init_grid(columnCnt, 0, 15, "Y"));
+			
+			$("#KEY_FROM_YMD").datepicker({
+				dateFormat: "yy/mm/dd",
+				showOn: "button",
+				buttonImage: "../../images/sub/ico_datepicker.gif",
+				buttonImageOnly: true
+			});
+			
+			$("#KEY_TO_YMD").datepicker({
+				dateFormat: "yy/mm/dd",
+				showOn: "button",
+				buttonImage: "../../images/sub/ico_datepicker.gif",
+				buttonImageOnly: true
+			});
+		});
+
+		/**
+		 * 건물 콤보 조회
+		 */
+		function doBdCdComboInfo(){
+			var paramData = {
+				regn_cd : $("#KEY_REGN_CD").val(),
+				code1 : "KEY_BD_CD",
+				code2 : "A"		
+			};
+			var sCallBack = 'doBdCdComboInfoCallBack();';
+			var sUrl = "selectBuildingComboByXsm05.do";
+			getCommonCode(util.jsonToString(paramData), "N", sCallBack, sUrl);
+		}
+
+		function doBdCdComboInfoCallBack(){
+			$("#KEY_BD_CD").attr("disabled", false);
+			
+			if(initYn == "Y"){
+				initYn = "N";
+				retrieve("search");
+			}
+		}
+
+		/**
+		 * 층수 콤보 조회
+		 */
+		function doCormFlComboInfo(){
+			var paramData = {
+				regn_cd : $("#KEY_REGN_CD").val(),
+				bd_cd : $("#KEY_BD_CD").val(),
+				code1 : "KEY_CORM_FL_CD",
+				code2 : "A",		
+				code3 : "FL"		
+			};
+			var sCallBack = 'doCormFlComboInfoCallBack();';
+			var sUrl = "doSearchConferenceComboByXsm06.do";
+			getCommonCode(util.jsonToString(paramData), "N", sCallBack, sUrl);
+		}
+
+		function doCormFlComboInfoCallBack(){
+			$("#KEY_CORM_FL_CD").attr("disabled", false);
+		}
+
+		/**
+		 * 회의실 콤보 조회
+		 */
+		function doCormComboInfo(){
+			var paramData = {
+				regn_cd : $("#KEY_REGN_CD").val(),
+				bd_cd : $("#KEY_BD_CD").val(),
+				corm_fl_cd : $("#KEY_CORM_FL_CD").val(),
+				code1 : "KEY_CORM_CD",
+				code2 : "A",		
+				code3 : "CD"		
+			};
+			var sCallBack = 'doCormComboInfoCallBack();';
+			var sUrl = "doSearchConferenceComboByXsm06.do";
+			getCommonCode(util.jsonToString(paramData), "N", sCallBack, sUrl);
+		}
+
+		function doCormComboInfoCallBack(){
+			$("#KEY_CORM_CD").attr("disabled", false);
+		}
+
+		/**
+		 * 업무 호출
+		 */
+		function retrieve(btnFlag, pIdx){
+			$("#gubun").val(btnFlag);
+			switch(btnFlag){
+				case "search" :
+					 block_open();
+		             curPage = typeof(pIdx) == "undefined" ? "1" : pIdx;
+					 doSearch();
+					 break;
+				case "delete" :
+					curPage = typeof(pIdx) == "undefined" ? "1" : pIdx;
+					doDelete();
+					break;
+				case "excel" :
+					doExcel();
+					break;
+			}
+		}
+
+		function doSearch(reFlag){
+		    if(typeof(reFlag) == "undefined"){
+		        reFlag = "N";
+		    }
+		    var fromYmd = selectNum($("#KEY_FROM_YMD").val());
+		    var toYmd = selectNum($("#KEY_TO_YMD").val());
+		    if(fromYmd > toYmd){
+		    	alertUI('<fmt:message key="MSG.VAL.0033"/>');
+		    	$("#KEY_FROM_YMD").select();
+		    	return;
+		    }
+
+		    var paramData = {
+		        regn_cd : $("#KEY_REGN_CD").val(),
+		        bd_cd : $("#KEY_BD_CD").val(),
+		        corm_fl_cd : $("#KEY_CORM_FL_CD").val(),
+		        corm_cd : $("#KEY_CORM_CD").val(),
+		        cnf_from_ymd : fromYmd,
+		        cnf_to_ymd : toYmd,
+		        gubun : $("#KEY_PTT_GUBUN").val(),
+		        pgs_st_cd : $("#KEY_PGS_ST_CD").val(),
+		        cur_page : curPage
+		    };
+		    var form_data = {
+		        paramJson : util.jsonToString(paramData)
+		    };
+		    var params = {
+		        url : "doSearchMyReservationList.do",
+		        data : form_data,
+		        callback : "doSearchCallBack(data, '"+reFlag+"')"
+		    };
+		    Con.ajax(params);
+		}
+
+		//리스트
+		function doSearchCallBack(result, reFlag){
+			block_close();
+		    var html = "";
+		    var list = result.list;
+		    var listLen = result.list.length;
+
+		    //조회값이 없을경우 테이블 초기화
+		    if(listLen == 0){
+		    	result.numOfPage = "1";
+		    	pageNavigation(result);
+		    	$("#listTbody").html(init_grid(columnCnt, 0, 15, "Y"));
+		    	return;
+		    }
+		    
+		    var r = 0;
+			var scd = new Date();
+		    var diffTime = ""+numPad(scd.getHours())+numPad(scd.getMinutes());
+		    for(r = 0; r<listLen; r++){
+		        html += "<tr id='tr"+r+"'>";
+		        html += "<td><input type='checkbox' id='tdChk"+r+"' name='tdChk' value='"+list[r].doc_no+"'/></td>";
+		    	html += "<td id='doc_no"+r+"' style='display:none'>"+list[r].doc_no+"</td>";
+		        html += "<td id='regn_cd"+r+"' style='display:none'>"+list[r].regn_cd+"</td>";
+		        html += "<td id='bd_cd"+r+"' style='display:none'>"+list[r].bd_cd+"</td>";
+		        html += "<td id='corm_fl_cd"+r+"' style='display:none'>"+list[r].corm_fl_cd+"</td>";
+		        html += "<td id='corm_cd"+r+"' style='display:none'>"+list[r].corm_cd+"</td>";
+		        html += "<td id='corm_nm"+r+"' style='display:none'>"+list[r].corm_nm+"</td>";
+		        html += "<td id='pgs_st_cd"+r+"' style='display:none'>"+list[r].pgs_st_cd+"</td>";
+		        html += "<td id='cnf_st_cd"+r+"' style='display:none'>"+list[r].cnf_st_cd+"</td>";
+		        html += "<td id='org_from_ymd"+r+"' style='display:none'>"+list[r].cnf_from_ymd+"</td>";
+		        html += "<td id='org_to_ymd"+r+"' style='display:none'>"+list[r].cnf_to_ymd+"</td>";
+		        html += "<td id='org_from_time"+r+"' style='display:none'>"+list[r].cnf_from_time+"</td>";
+		        html += "<td id='org_to_time"+r+"' style='display:none'>"+list[r].cnf_to_time+"</td>";
+		        var cnfTitle = list[r].cnf_title;
+		        if(cnfTitle == ""){
+		        	html += "<td id='cnf_title"+r+"' style='padding-left:5px;text-align:left'></td>";
+		        }else{
+		        	var orgCnfTilte = cnfTitle;
+		        	var chgCnfTitle = "";
+		        	if(cnfTitle.length >= 23){
+		        		chgCnfTitle = cnfTitle.substring(0, 23) + "...";
+		        	}else{
+		        		chgCnfTitle = orgCnfTilte;
+		        	}
+		        	html += "<td id='cnf_title"+r+"' style='padding-left:5px;text-align:left' title='"+orgCnfTilte+"'>"+chgCnfTitle+"</td>";
+		        }
+		        
+		        //예약일시 시간 셋팅
+		        var revFromDate = list[r].cnf_from_ymd + " " + list[r].cnf_from_time;
+		        var revToDate = list[r].cnf_to_ymd + " " + list[r].cnf_to_time;
+		        var revProcTIme = list[r].cnf_proc_time;
+		        html += "<td id='resv_ymd"+r+"' style='padding-left:5px;text-align:left'>";
+		        if(list[r].gubun == "회의주관자" || list[r].gubun == "신청자"){
+		        	//회의주관자, 신청자
+		        	html += "<a href='#' onclick='detailReservationPop(\""+r+"\", \"1\")'>" + revFromDate + " ~ " + revToDate + " ("+revProcTIme+")" + "</a>";
+		        }else{
+		        	//참석자
+		        	html += "<a href='#' onclick='detailReservationPop(\""+r+"\", \"2\")'>" + revFromDate + " ~ " + revToDate + " ("+revProcTIme+")" + "</a>";
+		        }
+		        html += "</td>";
+		        html += "<td id='cnf_eenm"+r+"'>"+list[r].cnf_eenm+"</td>";
+		        html += "<td id='cnf_dept_name"+r+"'>"+list[r].cnf_dept_name+"</td>";
+		        var cormPlace = list[r].regn_nm+"/"+list[r].bd_nm+"/"+list[r].corm_fl_cd+"층/"+list[r].corm_nm;
+		        html += "<td id='place"+r+"' style='padding-left:5px;text-align:left'>"+cormPlace+"</td>";
+		        html += "<td id='cnf_attde_cnt"+r+"'>"+(Number(list[r].cnf_attde_cnt))+"</td>";
+		        html += "<td id='gubun"+r+"'>"+list[r].gubun+"</td>";
+		        html += "<td id='pgs_st_nm"+r+"'>"+list[r].pgs_st_nm+"</td>";
+		        html += "<td id='cnf_st_nm"+r+"'>"+list[r].cnf_st_nm+"</td>";
+		        html += "</td>";
+		        html += "</tr>";
+		    }
+		    
+		    html += init_grid(columnCnt, r, 15);
+		    $("#listTbody").html(html);
+		    pageNavigation(result);
+		}
+
+		function doDelete(){
+		    var paramList = [];
+		    var idx = 0;
+		    var stFlag = true;
+		    
+			var scd = new Date();
+		    var diffTime = ""+numPad(scd.getHours())+numPad(scd.getMinutes());
+		    
+			$("input:checkbox[name='tdChk']").each(function(){
+				if(this.checked){
+					var toYmd = selectNum(getTdIdValue("listTbody", idx, "org_to_ymd"));
+					var toTime = selectNum(getTdIdValue("listTbody", idx, "org_to_time"));
+					var gubun = getTdIdValue("listTbody", idx, "gubun");
+					if(isAdmAuth == "false"){
+						if((Number(getCurrentToDate()+diffTime) > Number(toYmd+toTime))){
+							alertUI((idx+1) + ' <fmt:message key="MSG.ROW.0067"/>');
+							stFlag = false;
+							return stFlag;
+						}else if(gubun != "회의주관자" && gubun != "신청자"){
+							alertUI((idx+1) + ' <fmt:message key="MSG.ROW.0068"/>');
+							stFlag = false;
+							return stFlag; //false -> each for break, true -> each for continue;
+						}
+					    var data = {
+				            doc_no : this.value,
+				            cur_page : curPage
+				        };
+					    paramList.push(data);
+					}else{
+					    var data = {
+				            doc_no : this.value,
+				            cur_page : curPage
+				        };
+					    paramList.push(data);				
+					}
+				}
+				idx++;
+			});
+			
+			if(stFlag == true && paramList.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0022"/>');
+				return;
+			}
+
+			if(stFlag){
+				if(confirm('<fmt:message key="MSG.CNF.0033"/>')){
+				    var form_data = {
+				        paramJson : util.jsonToList(paramList)
+				    };
+				    var params = {
+				        url : "doDeleteMyReservationList.do",
+				        data : form_data,
+				        callback : "doDeleteCallBack(data.sendResult, '"+curPage+"')"
+				    };
+				    Con.ajax(params);
+				}
+			}
+		}
+
+		function doDeleteCallBack(rs, curPage){
+			if(rs.code1 == 'Y'){
+				alertUI(rs.message, true, "retrieve('search', '"+curPage+"');");
+			}else{
+				alertUI(rs.message);
+			}
+		}
+
+		function detailReservationPop(idx, flag){
+			var docNo = getTdIdValue("listTbody", idx, "doc_no");
+			var regnCd = getTdIdValue("listTbody", idx, "regn_cd");
+			var bdCd = getTdIdValue("listTbody", idx, "bd_cd");
+			var cormFlCd = getTdIdValue("listTbody", idx, "corm_fl_cd");
+			var cormCd = getTdIdValue("listTbody", idx, "corm_cd");
+			
+			$("#hid_doc_no").val(docNo);
+		    $("#p_regn_cd").val(regnCd);
+		    $("#p_bd_cd").val(bdCd);
+		    $("#p_corm_fl_cd").val(cormFlCd);
+		    $("#p_corm_cd").val(cormCd);
+			cormReservationView(flag);
+		}
+
+		//엑셀다운로드
+		function doExcel(){
+		    var fromYmd = selectNum($("#KEY_FROM_YMD").val());
+		    var toYmd = selectNum($("#KEY_TO_YMD").val());
+		    if(fromYmd > toYmd){
+		    	alertUI('<fmt:message key="MSG.VAL.0033"/>');
+		    	$("#KEY_FROM_YMD").select();
+		    	return;
+		    }
+
+		    var paramData = {
+		        regn_cd : $("#KEY_REGN_CD").val(),
+		        bd_cd : $("#KEY_BD_CD").val(),
+		        corm_fl_cd : $("#KEY_CORM_FL_CD").val(),
+		        corm_cd : $("#KEY_CORM_CD").val(),
+		        cnf_from_ymd : fromYmd,
+		        cnf_to_ymd : toYmd,
+		        gubun : $("#KEY_PTT_GUBUN").val(),
+		        pgs_st_cd : $("#KEY_PGS_ST_CD").val(),
+		        cur_page : curPage
+		    };
+		    
+//			var excelCn = ["회의제목", "회의시작일자", "회의시작시간", "회의종료일자", "회의종료시간", "사용시간", "회의장소", "회의주관자", "부서명", "참석자", "참석자수(명)", "예약상태", "회의상태"];
+			var excelCn = ['<fmt:message key="mt_title"/>',				//회의제목 
+			               '<fmt:message key="mt_strt_ymd"/>',			//회의시작일자 
+			               '<fmt:message key="mt_strt_tm"/>',			//회의시작시간 
+			               '<fmt:message key="mt_end_ymd"/>',			//회의종료일자
+			               '<fmt:message key="mt_end_tm"/>',			//회의종료시간
+			               '<fmt:message key="use_tm"/>',				//사용시간 
+			               '<fmt:message key="mt_plc"/>',				//회의장소 
+			               '<fmt:message key="mt_spr_nm"/>',			//회의주관자 
+			               '<fmt:message key="dept_nm"/>',				//부서명 
+			               '<fmt:message key="attend_psrn_nm"/>',		//참석자 
+			               '<fmt:message key="attend_psrn_cnt"/>',		//참석자수(명) 
+			               '<fmt:message key="rsvt_st"/>',				//예약상태 
+			               '<fmt:message key="mt_st"/>'];				//회의상태
+			var excelCm = ["cnf_title", "cnf_from_ymd", "cnf_from_time", "cnf_to_ymd", "cnf_to_time", "cnf_proc_time", "corm_nm", "cnf_eenm", "cnf_dept_name", "cnf_attde_name", "cnf_attde_cnt", "pgs_st_nm", "cnf_st_nm"];
+			var excelFm = ["string", "string", "string", "string", "string", "string", "string", "string", "string", "string", "integer", "string", "string"];
+			var params  = [
+				{name : "fileName",		value : "my_reservation_excel_"+$("#datetime").val() },
+				{name : "header",		value : util.jsonToArray(excelCn)},
+				{name : "headerName",	value : util.jsonToArray(excelCm)},
+				{name : "fomatter",		value : util.jsonToArray(excelFm)},
+				{name : "paramJson",	value : util.jsonToString(paramData)},
+				{name : "firstUseYn",	value : "Y"},
+				{name : "page",			value : "1"}
+			];
+			gridToExcel("#htmlTable1", "doSearchMyReservationExcel.excel", params);
+		}
+		</script>

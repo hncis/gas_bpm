@@ -1,0 +1,233 @@
+@charset 'euc-kr';
+/*-------------------------------------------------- ±âº»¼Ó¼º --------------------------------------------------------------*/
+
+img 			{border:0;color: #CCCCCC;}
+p, li			{margin-top:0px; margin-bottom:0px;}
+td,tr 			{font-family:"Verdana, Geneva, sans-serif"; color:#666666; font-size: 9pt; line-height:160%;}
+
+body 			{margin: 0px;
+				SCROLLBAR-FACE-COLOR: #F4F4F4; 
+				SCROLLBAR-HIGHLIGHT-COLOR: #fafafa; 
+				SCROLLBAR-SHADOW-COLOR: #bdbdbd; COLOR: black; 
+				SCROLLBAR-3DLIGHT-COLOR: #ffffff; 
+				SCROLLBAR-ARROW-COLOR: #89a0bc; 
+				SCROLLBAR-TRACK-COLOR: #FCFCFC; 
+				SCROLLBAR-DARKSHADOW-COLOR: #ffffff;}
+      		
+textarea		{color : #666666; font-size:9pt; font-family:Verdana, Geneva, sans-serif, serif;  border: 1px solid #C7C7C7; word-break:break-all;}
+select			{color : #666666; font-size:8pt; font-family:Verdana, Geneva, sans-serif, serif;}
+input			{color : #666666; font-size:9pt; font-family:Verdana, Geneva, sans-serif, serif; border: 1px solid #C7C7C7; word-break:break-all;  padding:2,3,0,1;}
+form			{color : #666666; font-size:9pt; font-family:Verdana, Geneva, sans-serif, Times, serif; margin:0px; padding:0px;}
+
+A:link			{text-decoration:none; color:#666666;}
+A:visited		{text-decoration:none; color:#666666;}
+A:active		{text-decoration:none; color:666666;}
+A:hover			{text-decoration:none; color:F66321;}
+
+.input1		{border: 0px;}
+
+/*
+	* Description : My menu
+	* Writer : ¾çÁö¿µ
+	* Updated : 2011-12
+*/
+.minput	{background-color:#F5EED2; color : #666666; font-size:9pt; font-family:"Verdana, Geneva, sans-serif";}
+
+
+/*
+	* Description : left, sub padding
+	* Writer : ¾çÁö¿µ
+	* Updated : 2011-12
+*/
+.leftpadding	{padding: 0,0,17,17;} /* leftpadding */
+.subpadding		{padding-top:5px; padding-left:17px; padding-bottom:17px;} /* subpadding */
+
+
+/*
+	* Description : topÇÁ·¹ÀÓ menu
+	* Writer : ¾çÁö¿µ
+	* Updated : 2011-12
+*/
+.topbg					{background-image:url(/images/new_main/topbg.gif); background-repeat:repeat-x;}
+.topbg01				{height:18px; background-image:url(/images/new_main/topbg01.gif); background-repeat:repeat-x;}
+.topbg02				{
+	height:28px;
+	background-image:url(/images/new_main/topimg01.gif);
+	color: #FFFFFF;
+	text-align: center;
+}
+.topbg03				{
+	height:28px;
+	background-image:url(/images/new_main/topimg02.gif);
+	color: #FFFFFF;
+	text-align: center;
+}
+.topbg04				{
+	height:29px;
+	background-image:url(/images/new_main/mainimgbg.gif);
+}
+.topbg05				{
+	height:22px;
+	text-align: center;
+	font-weight: bold;
+}
+.topbg05 a:hover		{
+	color: #FE504F;
+}
+
+.topbg06				{
+	height:20px;
+	background-image:url(/images/new_main/mainbanerbg.gif);
+	color: #FFFFFF;	
+	text-align: left;
+	vertical-align: middle;
+	word-spacing: normal;
+}
+.topbg07				{
+	background-image:url(/images/new_main/mainbanerbg1.gif);
+	height:31;
+	color: #FFFFFF;	
+	text-align: left;
+	vertical-align: middle;
+}
+.topbg08				{
+	background-image:url(/images/new_main/topbg.gif);
+	color: #FFFFFF;	
+}
+.topbg09				{
+	background-image:url(/images/new_main/boardicon.gif);
+	color: #FFFFFF;	
+}
+
+/*
+	* Description : mainÄÁÅÙÃ÷ title bg & box
+	* Writer : ¾çÁö¿µ
+	* Updated : 2011-12
+*/
+.mtitlebg01		{width:22px; background-image:url(/images/new_main/mtitlebg01.gif);}
+.mtitlebg02		{height:23px; font-size: 9pt; color: #555555; font-family:"Verdana, Geneva, sans-serif";font-weight: bold; background-image:url(/images/new_main/mtitlebg02.gif); background-repeat: repeat-x; padding:4,20,0,0;}
+.mtitlebg03		{width:35px; background-image:url(/images/new_main/mtitlebg03.gif);}
+.mtableborder 	{height:130px; border: #D8D8D8; border-style: solid; border-top-width: 0px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; padding: 10,10,7,10; vertical-align:top;}
+.mtablefullborder 	{height:138px; border: #D8D8D8; border-style: solid; border-top-width: 0px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; padding: 10,10,7,10; vertical-align:top;}
+.mtablebott		{width:770px; height:3px; background-image:url(/images/new_main/mtablebott.gif); background-repeat: no-repeat;}
+
+/*
+	* Description : subÄÁÅÙÃ÷ title bg
+	* Writer : ¾çÁö¿µ
+	* Updated : 2011-12
+*/
+.stitlebg01		{width:22px; background-image:url(/images/new_main/stitlebg01.gif);}
+.stitlebg02		{height:23px; font-size: 9pt; color: #555555; font-family:"Verdana, Geneva, sans-serif";font-weight: bold; background-image:url(/images/new_main/stitlebg02.gif); background-repeat: repeat-x; padding:4,20,0,0;}
+.stitlebg03		{width:8px; background-image:url(/images/new_main/stitlebg03.gif);}
+
+.stableborder 	{height:478px; border: #D8D8D8; border-style: solid; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; padding: 10,10,7,10; vertical-align:top;}
+
+/*
+	* Description : sub left tree (depth)
+	* Writer : ¾çÁö¿µ
+	* Updated : 2011-12
+*/
+.lefttit			{width:174px; height:35px; background-image:url(/images/new_main/lefttit.gif); font-size: 10pt;color: #FFFFFF; font-family:"±¼¸²", "±¼¸²Ã¼", "Gulim", "Gulimche"; font-weight:bold; padding: 0,0,0,27;}
+
+.left01				{width:174px; height:23px; background-image:url(/images/new_main/left01.gif); color : #666666; font-size:9pt; font-family:"µ¸¿ò","µ¸¿òÃ¼","Times New Roman", "Times", "serif"; font-weight:bold; padding: 3,0,0,26;}
+.left01 A:link		{color: #666666; text-decoration: none;}
+.left01 A:visited	{color: #666666; text-decoration: none;}
+.left01 A:active	{color: #666666; text-decoration: none;}
+.left01 A:hover		{color: #000000; text-decoration: none;}
+
+.left02				{width:174px; height:23px; background-image:url(/images/new_main/left02.gif); color : #666666; font-size:9pt; font-family:"µ¸¿ò","µ¸¿òÃ¼","Times New Roman", "Times", "serif"; padding: 2,0,0,26;}
+.left02 A:link		{color: #666666; text-decoration: none;}
+.left02 A:visited	{color: #666666; text-decoration: none;}
+.left02 A:active	{color: #666666; text-decoration: none;}
+.left02 A:hover		{color: #fe504f; text-decoration: none; font-weight:bold;}
+
+.left03				{width:174px; height:19px; background-image:url(/images/new_main/left03.gif); color: #828282; font-size:9pt; font-family:"µ¸¿ò","µ¸¿òÃ¼","Times New Roman", "Times", "serif"; padding: 2,0,0,26;}
+.left03 A:link		{color: #828282; text-decoration: none;}
+.left03 A:visited	{color: #828282; text-decoration: none;}
+.left03 A:active	{color: #828282; text-decoration: none;}
+.left03 A:hover		{color: #04bdee; text-decoration: none;}
+
+.leftbg				{width:174px; background-image:url(/images/new_main/leftbg.gif); background-repeat:repeat-y;}
+.leftbott			{width:174px; height:8px; background-image:url(/images/new_main/leftbott.gif);}
+
+.space				{height:20px;}
+
+
+/*
+	* Description : icon (red, yellow, green)
+	* Writer : ¾çÁö¿µ
+	* Updated : 2007-10-2
+*/
+.box01		{width:13px; height:37px; background-image:url(/images/new_main/box01.gif);}
+.box02		{height:37px; background-image:url(/images/new_main/box02.gif); background-repeat:repeat-x; color: #FFFFFF; font-size:9pt; font-family:"µ¸¿ò","µ¸¿òÃ¼","Times New Roman", "Times", "serif"; font-weight:bold; text-align:center; padding-bottom:3px;}
+.box03		{width:14px; height:37px; background-image:url(/images/new_main/box03.gif);}
+.box04		{width:13px; background-image:url(/images/new_main/box04.gif); background-repeat:repeat-y;}
+.box05		{width:14px; background-image:url(/images/new_main/box05.gif); background-repeat:repeat-y;}
+.box06		{width:13px; height:14px; background-image:url(/images/new_main/box06.gif);}
+.box07		{height:14px; background-image:url(/images/new_main/box07.gif); background-repeat:repeat-x;}
+.box08		{width:14px; height:14px; background-image:url(/images/new_main/box08.gif);}
+.boximg		{text-align:center;}
+
+
+/*-------------------------------------------------- text --------------------------------------------------------------*/
+
+/*
+	* Description : text
+	* Writer : ¾çÁö¿µ
+	* Updated : 2011-12
+*/
+.text01	{font-size: 9pt; color: #ffffff; font-family:"Verdana, Geneva, sans-serif";  padding-top:4px;}
+.text02	{font-size: 9pt; color: #F66321; font-family:"Verdana, Geneva, sans-serif"; font-weight: bold;}
+.text03	{font-size: 8pt; color: #000000; padding-top:12px; line-height:160%;}
+.text04	{font-size: 8pt; color: #F66321; font-weight: bold; line-height:160%;}
+
+/*------------------------------- old version css --------------------------*/
+
+/*
+	* Description : text
+	* Writer : ¹èÈ¿ºÀ
+	* Updated : 2011-12
+*/
+.hd_label	{color: #0f365f; font-family: ±¼¸²; font-size: 9pt; font-weight: bold; line-height: 130%;}
+.trN {
+	font-family: µ¸¿ò, ±¼¸²Ã¼, courier, arial;
+	color: #444444;
+	font-size: 9pt;
+	line-height: 19px;
+	background-color: #ffffff;
+	text-align: center;
+}
+.input_box3 {
+	font-family: ±¼¸², verdana, arial;
+	font-size: 9pt;
+	color: #444444;
+	background-color: #FFFFFF;
+	border-style: none;
+}
+.trTh {
+	font-family: µ¸¿ò, ±¼¸²Ã¼, courier, arial;
+	text-align: center;
+	color: #000000;
+	font-size: 9pt;
+	line-height: 19px;
+	background-color: #E9F4FF;
+}
+.trTh2 {
+	font-family: µ¸¿ò, ±¼¸²Ã¼, courier, arial;
+	text-align: center;
+	color: #000000;
+	font-size: 9pt;
+	line-height: 19px;
+	background-color: #CCCCCC;
+}
+.board_01 {
+     background: #F0F0F0;
+     border: #DADADA 1px solid;padding:3px;
+}
+.board_02 {
+	background: #FFFFFF;
+	padding-top:4px;
+	padding-bottom:4px;
+	width: 785px;
+	height: 100%;
+}

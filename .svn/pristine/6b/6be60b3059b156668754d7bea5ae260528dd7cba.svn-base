@@ -1,0 +1,1099 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XGS01";
+	String hid_doc_no = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_doc_no")));
+	String hid_eeno = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_eeno")));
+	String hid_view_nm = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_view_nm")));
+	String hid_cond = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_cond")));
+	String temp_doc_no 		= StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_doc_no")).trim());
+
+	if(StringUtil.isEmpty(hid_doc_no)){
+		temp_doc_no = StringUtil.getDocNo();
+	}
+
+	String strNew = JSPMessageSource.getMessage("BUTTON.NEW",locale);
+	String strSav = JSPMessageSource.getMessage("BUTTON.SAVE", locale);
+	String strDel = JSPMessageSource.getMessage("BUTTON.DELETE", locale);
+	String strReq = JSPMessageSource.getMessage("BUTTON.REQUEST", locale);
+	String strRqc = JSPMessageSource.getMessage("BUTTON.REQUESTCANCEL", locale);
+	String strPrn = JSPMessageSource.getMessage("BUTTON.PRINT", locale);
+	String strBck = JSPMessageSource.getMessage("BUTTON.BACK", locale);
+
+	String strBtn = "";
+	//strBtn = "신규/new@저장/save@삭제/delete@신청/request@신청취소/requestCancel@인쇄/print";
+	strBtn = strNew+"/new@"+strSav+"/save@"+strDel+"/delete@"+strReq+"/request@"+strRqc+"/requestCancel";
+	if(!"".equals(hid_doc_no)){
+		strBtn += "@"+strBck+"/back";
+	}
+	String yy = CurrentDateTime.getDate().substring(0, 4);
+	String mm = CurrentDateTime.getDate().substring(4, 6);
+	String dd = CurrentDateTime.getDate().substring(6, 8);
+	String yymmdd = yy + "-" + mm + "-" + dd;
+
+	String tempPath     = request.getServletPath().toString();
+	String stepHelpUrl  = StringUtil.getStepHelp(tempPath);
+%>
+<html>
+	<head>
+		<title>전산용품</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	</head>
+	<body>
+		<div id="wrap">
+			<form name="mainForm" id="mainForm">
+				<input type="hidden" id="nSource" name="nSource">
+				<input type="hidden" id="hid_doc_no" name="hid_doc_no" value="<%=hid_doc_no%>">
+				<input type="hidden" id="hid_eeno" name="hid_eeno" value="<%=hid_eeno%>">
+				<input type="hidden" id="hid_view_nm" name="hid_view_nm" value="<%=hid_view_nm%>">
+				<input type="hidden" id="hid_cond" name="hid_cond" value="<%=hid_cond%>">
+				<input type="hidden" id="temp_doc_no" name="temp_doc_no" value="<%=temp_doc_no%>">
+				<input type="hidden" id="help_url" name="help_url" value="<%=stepHelpUrl%>">
+
+				<%@ include file="../include/hncis_header.gas"%>
+				<div id="contents_wrap">
+					<%@ include file="../include/hncis_left.gas"%>
+					<div id="contents">
+						<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,menuId
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+		                <div class="con_t_area mt10">
+		                	<h3><fmt:message key="basic_info"/></h3>
+		                </div>
+		                <div class="search_area">
+		                	<table>
+		                        <colgroup>
+		                        	<col style="width:110px;" />
+		                            <col style="width:158px;" />
+		                            <col style="width:73px;" />
+		                            <col style="width:158px;" />
+		                            <col style="width:80px;" />
+		                            <col style="width:158px;" />
+		                            <col style="width:73px;" />
+		                            <col style="width:158px;" />
+		                        </colgroup>
+		                        <tbody>
+		                            <tr>
+										<th class="div_nameF"><fmt:message key="eeno"/></th>
+										<td class="inputF">
+											<input type="text" id="eeno" name="eeno" style="width:140px; ime-mode:disabled;" onkeyup="setInsaInfo();" value="<%=sess_empno %>" class="disabled">
+										</td>
+										<th class="div_name"><fmt:message key="eenm"/></th>
+										<td class="inputS">
+											<input type="text" id="ee_nm" name="ee_nm" style="width:140px;" class="disabled">
+										</td>
+										<th class="div_name"><fmt:message key="position"/></th>
+										<td class="inputT">
+											<input type="text" id="poa_nm" name="poa_nm" style="width:140px;" class="disabled">
+										</td>
+										<th class="div_nameF"><fmt:message key="dept_nm"/></th>
+										<td class="inputF">
+											<input type="text" id="ops_nm" name="ops_nm" style="width:140px;" class="disabled">
+											<input type="hidden" id="ops_cd" name="ops_cd" readonly>
+											<input type="hidden" id="keyOpsCd" name="keyOpsCd" readonly>
+										</td>
+									</tr>
+									<tr>
+										<th class="div_nameF"><fmt:message key="req_ymd"/></th>
+										<td class="inputF">
+											<input type="text" id="ptt_ymd" name="ptt_ymd" style="width:140px;" value="<%=yymmdd%>"  class="disabled">
+										</td>
+										<th class="div_name"><fmt:message key="doc_no"/></th>
+										<td class="inputS">
+											<input type="text" id="doc_no" name="doc_no" style="width:140px;" class="disabled">
+										</td>
+										<th class="div_name"><fmt:message key="tel_no"/></th>
+										<td class="inputT">
+											<input type="text" id="tel_no" name="tel_no" style="width:140px;" class="disabled"/>
+										</td>
+<!-- 										<th class="div_name">지역</th> -->
+<!-- 										<td class="inputT"> -->
+											<input type="hidden" id="plac_work" name="plac_work" style="width:140px;" class="disabled" value="xgs"/>
+<!-- 											<input type="text" id="plac_work_nm" name="plac_work_nm" style="width:140px;" class="disabled"/> -->
+<!-- 										</td> -->
+									</tr>
+		                        </tbody>
+		                    </table>
+		                </div>
+		                <div class="con_t_area">
+		                	<h3 class="fl"><fmt:message key="computer_supplies_req_list"/></h3>
+		                	<div class="btn_area mt0">
+			                    <ul class="btns fr">
+			                        <li><a href="javascript:addRow();"><fmt:message key="BUTTON.ADD"/><span></span></a></li>
+			                        <li><a href="javascript:listDelete();"><fmt:message key="BUTTON.DELETE"/><span></span></a></li>
+			                    </ul>
+			                </div>
+		                </div>
+		                <div id="div_layer"></div>
+		                <div class="jq_tbl">
+		                	<table id="htmlTable" class="scroll"></table>
+		                </div>
+	                	<%@ include file="../include/hncis_message.gas"%>
+	            	</div>
+	            	<div class="clear"></div>
+				</div>
+			</form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+			<form id="fileForm" name="fileForm">
+				<input type="hidden" id="file_doc_no" name="file_doc_no">
+				<input type="hidden" id="hid_use_yn"  name="hid_use_yn">
+				<input type="hidden" id="file_status"  name="file_status">
+				<input type="hidden" id="file_eeno" name="file_eeno">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+		</div>
+	</body>
+</html>
+		<script type="text/javascript">
+		var saveCode;
+		var comboVal;
+		var comboVal1;
+		var comboVal2;
+		var comboVal3;
+		var comboVal4;
+		var lastsel;
+		var fnMerge;
+
+		function fnSetDocumentReady(){
+			initMenus('1850');
+			$('#GS').slideDown('fast');
+			if($("#hid_doc_no").val() != ""){
+				$("#doc_no").val($("#hid_doc_no").val());
+				$("#eeno").val($("#hid_eeno").val());
+			}
+			$(".inputOnlyNumber").numeric();
+			setInsaInfo();
+			sess_auth = $("#work_auth").val();
+//			chk_auth();
+		}
+
+		function setInsaInfo(){
+		
+			if($("#eeno").val() != ""){
+				$("#nSource").val($("#eeno").val());
+				if(saveCode == $("#nSource").val()){ return; }
+				saveCode = $("#nSource").val();
+
+				var keyData = {
+						xusr_empno : $("#eeno").val(),
+						corp_cd	: sess_corp_cd
+				};
+				paramData = {
+					paramJson : util.jsonToString(keyData)
+				};
+				doCommonAjax("/doSearchToUserInfo.do", paramData, "insaCallBack(jsonData.sendResult)");
+			}
+		}
+
+		function insaCallBack(result){
+			setBottomMsg(result.message, false);
+// 			$("#eeno").val(result.xusr_empno);
+			$("#ee_nm").val(result.xusr_name);
+			$("#poa_nm").val(result.xusr_step_name);
+			$("#ops_nm").val(result.xusr_dept_name);
+			$("#ops_cd").val(result.xusr_dept_code);
+			$("#keyOpsCd").val(result.xusr_dept_nm_cd);
+			$("#keyOpsNm").val(result.xusr_dept_nm_dept);
+			$("#tel_no").val(result.xusr_tel_no);
+//			$("#plac_work").val(result.xusr_plac_work);
+//			$("#plac_work_nm").val(result.xusr_plac_work_nm);
+
+			chk_auth();
+			
+//			ProdutoMultiCombo1();
+//			getCommonCode("prod_cd::Z:PD;", "Y", "ProdutoMultiCombo1();", "/hncis/generalService/getGeneralServiceCombo.do");
+		}
+
+		function cearInsa(){
+			if($("#eeno").val() == ""){
+				saveCode = "";
+				$("#nSource").val("");
+				$("#eeno").val("");
+				$("#ee_nm").val("");
+				$("#ops_nm").val("");
+				$("#ops_cd").val("");
+				$("#poa_nm").val("");
+				$("#tel_no").val("");
+				$("#keyOpsCd").val("");
+				$("#keyOpsNm").val("");
+// 				$("#plac_work").val("");
+// 				$("#plac_work_nm").val("");
+			}
+		}
+
+		function chk_auth(){
+			var frm = document.mainForm;
+			with(frm){
+				if(Number(sess_auth) > 4 || sess_mstu == "M"){
+					if($("#hid_doc_no").val() != ""){
+						readOnlyStyle("eeno", 1);
+					}else{
+						readOnlyStyle("eeno", 2);
+					}
+				}else{
+					readOnlyStyle("eeno", 1);
+				}
+				readOnlyStyle("ee_nm", 1);
+				readOnlyStyle("poa_nm", 1);
+				readOnlyStyle("ops_nm", 1);
+				readOnlyStyle("ptt_ymd", 1);
+				readOnlyStyle("doc_no", 1);
+				readOnlyStyle("tel_no", 1);
+			}
+
+			ProdutoMultiCombo1();
+		}
+
+		function ProdutoMultiCombo1(){
+			getCommonCode("seqc_1:"+$("#plac_work").val()+":Z:S1:GS;", "Y", "doComboCallback1(jsonData.sendResult);", "/hncis/generalService/getGeneralServiceCombo.do");
+		}
+
+		function doComboCallback1(result){
+			comboVal1 = result;
+			ProdutoMultiCombo2();
+		}
+
+		function ProdutoMultiCombo2(){
+			getCommonCode("seqc_2:"+$("#plac_work").val()+":Z:S2:GS;", "Y", "doComboCallback2(jsonData.sendResult);", "/hncis/generalService/getGeneralServiceCombo.do");
+		}
+
+		function doComboCallback2(result){
+			comboVal2 = result;
+			getCommonCode("prod_cd:"+$("#plac_work").val()+":Z:PD:GS;", "Y", "init();", "/hncis/generalService/getGeneralServiceCombo.do");
+		}
+
+
+		var gridParam;
+		var gridName = "htmlTable";
+		var datarow = {doc_no:"", seq_no:"", prod_cd:"", seqc_1:"", seqc_2:"", remark:"" , pgs_st_cd:"", pgs_st_nm:"", hid_seqc_1:"", hid_seqc_2:"", hid_seqc_3:"",pop_img:"",ogc_fil_nm:""};
+		function init(){
+			$("#"+gridName).GridUnload();
+// 			var cn = ["", "", "대분류", "중분류", "소분류","사진", "설명", "진행상태코드", "", "진행상태", "", "",""];
+			var cn = [ '' // ""
+		          ,'' // ""
+		          ,'<fmt:message key="lrg_cd"/>' // "대분류"
+		          ,'<fmt:message key="mdl_cd"/>' // "중분류"
+		          ,'<fmt:message key="sml_cd"/>' // "소분류"
+		          ,'<fmt:message key="pctr"/>' // "사진"
+		          ,'<fmt:message key="exp"/>' // "설명"
+		          ,'진행상태 코드' // "진행상태코드"
+		          ,'' // ""
+		          ,'<fmt:message key="pgs_st_nm"/>' // "진행상태"
+		          ,'' // ""
+		          ,'' // ""
+		          ,'' // ""
+		          ];
+			var cm = [{name:"doc_no", index:"doc_no", sortable:false, formatter:"string", width:0, align:"center", editable:false, frozen:false, hidden: true},
+			          {name:"seq_no", index:"seq_no", sortable:false, formatter:"string", width:0, align:"center", editable:false, frozen:false, hidden: true},
+			          {name:"prod_cd",index:"prod_cd", formatter:"select", width:160, align:"center", editable:true, sortable:true, edittype:"select", fixed: true,
+			        	  	//Discipline
+							editoptions:{value:getComboValue('prod_cd'),
+								dataInit: function(elem) {
+									$(elem).width(160);
+								},
+								dataEvents:[{type:'change',
+										fn:function(e){
+											var row = $(e.target).closest('tr.jqgrow');
+											var rowId = row.attr('id');
+					                        var cbs = jQuery("#jqg_"+gridName+"_"+rowId);
+					                        if(!cbs.is(":checked")){
+					                        	jQuery("#"+gridName).jqGrid("setSelection", rowId, true);
+					                        }
+					                        $("#htmlTable").setCell(rowId,'ogc_fil_nm','');
+											multiComboController(gridName, $(e.target).closest('tr.jqgrow'), 0, "prod_cd:seqc_1", "comboVal1", "seqc_1");
+											multiComboController(gridName, $(e.target).closest('tr.jqgrow'), 0, "seqc_1:seqc_2" , "comboVal2", "seqc_2");
+//											multiComboController(gridName, $(e.target).closest('tr.jqgrow'), 0, "seqc_2:seqc_3" , "comboVal3", "seqc_3");
+										}
+						        	},
+						        	{type:'focus',
+										fn:function(e){
+//											multiComboController(gridName, $(e.target).closest('tr.jqgrow'), 0, "prod_cd:seqc_1", "comboVal1", "seqc_1");
+//											multiComboController(gridName, $(e.target).closest('tr.jqgrow'), 0, "prod_cd:seqc_2", "comboVal2", "seqc_2");
+//											multiComboController(gridName, $(e.target).closest('tr.jqgrow'), 0, "prod_cd:seqc_3", "comboVal3", "seqc_3");
+						        		}
+						        	}
+					        	]
+							}
+						},
+			          {name:"seqc_1", index:"seqc_1", sortable:false, formatter:"select", width:160, align:"center", editable:true, edittype:'select',
+							editoptions:{value:getComboValueMulti1('seqc_1'),
+								dataInit: function(elem) {
+									$(elem).width(160);
+								},
+								dataEvents:[{type:'change',
+										fn:function(e){
+											var row = $(e.target).closest('tr.jqgrow');
+											var rowId = row.attr('id');
+					                        var cbs = jQuery("#jqg_"+gridName+"_"+rowId);
+					                        if(!cbs.is(":checked")){
+					                        	jQuery("#"+gridName).jqGrid("setSelection", rowId, true);
+					                        }
+					                        $("#htmlTable").setCell(rowId,'ogc_fil_nm','');
+					                        $("#htmlTable").setCell(rowId,'hid_seqc_1',getColValue("seqc_1",rowId, gridName));
+
+											multiComboController(gridName, $(e.target).closest('tr.jqgrow'), 0, "seqc_1:seqc_2" , "comboVal2", "seqc_2");
+//											multiComboController(gridName, $(e.target).closest('tr.jqgrow'), 0, "seqc_2:seqc_3" , "comboVal3", "seqc_3");
+										}
+						        	},
+								    {type:"focus",
+								    	fn:function(e){
+//								    		multiComboController(gridName, $(e.target).closest('tr.jqgrow'), 0, "prod_cd:seqc_1", "comboVal1", "seqc_1");
+//											multiComboController(gridName, $(e.target).closest('tr.jqgrow'), 0, "prod_cd:seqc_2", "comboVal2", "seqc_2");
+//											multiComboController(gridName, $(e.target).closest('tr.jqgrow'), 0, "prod_cd:seqc_3", "comboVal3", "seqc_3");
+								    	}
+								    }
+								]
+							}
+			          },
+			          {name:"seqc_2", index:"seqc_2", sortable:false, formatter:"select", width:160, align:"center", editable:true, edittype:'select',
+							editoptions:{value:getComboValueMulti2('seqc_2'),
+								dataInit: function(elem) {
+									$(elem).width(160);
+								},
+								dataEvents:[{type:'change',
+										fn:function(e){
+											var row = $(e.target).closest('tr.jqgrow');
+											var rowId = row.attr('id');
+					                        var cbs = jQuery("#jqg_"+gridName+"_"+rowId);
+					                        if(!cbs.is(":checked")){
+					                        	jQuery("#"+gridName).jqGrid("setSelection", rowId, true);
+					                        }
+					                        $("#htmlTable").setCell(rowId,'hid_seqc_2',getColValue("seqc_2",rowId, gridName));
+					                        doSearchByGeneralService3FileName(rowId);
+										}
+						        	},
+								    {type:"focus",
+								    	fn:function(e){
+//								    		multiComboController(gridName, $(e.target).closest('tr.jqgrow'), 0, "prod_cd:seqc_1", "comboVal1", "seqc_1");
+//											multiComboController(gridName, $(e.target).closest('tr.jqgrow'), 0, "prod_cd:seqc_2", "comboVal2", "seqc_2");
+//											multiComboController(gridName, $(e.target).closest('tr.jqgrow'), 0, "prod_cd:seqc_3", "comboVal3", "seqc_3");
+								    	}
+								    }
+								]
+							}
+					  },
+					  {name:"pop_img",  index:"pop_img", sortable:false,	formatter:"string",	width:60,  align:"center",	editable:false,	frozen : false},
+					  {name:"remark", index:"remark", sortable:false, formatter:"string", width:310, align:"left", editable:false, frozen:false},
+					  {name:"ogc_fil_nm", index:"ogc_fil_nm", sortable:false, formatter:"string", width:0, align:"center", editable:false, frozen:false, hidden:true},
+			          {name:"pgs_st_cd", index:"pgs_st_cd", sortable:false, formatter:"string", width:0, align:"center", editable:false, frozen:false, hidden:true},
+			          {name:"pgs_st_nm", index:"pgs_st_nm", sortable:false, formatter:"string", width:100, align:"center", editable:false, frozen:false},
+			          {name:"hid_seqc_1", index:"hid_seqc_1", sortable:false, formatter:"string", width:55, align:"center", editable:false, frozen:false, hidden:true},
+			          {name:"hid_seqc_2", index:"hid_seqc_2", sortable:false, formatter:"string", width:55, align:"center", editable:false, frozen:false, hidden:true},
+			          {name:"hid_seqc_3", index:"hid_seqc_3", sortable:false, formatter:"string", width:55, align:"center", editable:false, frozen:false, hidden:true}
+			];
+
+			gridParam = {
+				viewEdit : [{
+					gridName     : gridName,
+					url          : "/doSearchToEmpty.do",
+					colNames     : cn,
+					colModel     : cm,
+					height       : "100%",
+					rownumbers   : true,
+					multiselect  : true,
+					cellEdit     : true,
+					fnMerge      : false,
+					shrinkToFit  : false,
+//					beforeEditFc : "beforeEditRow(id,name,val,iRow,iCol);",
+					selectCellFc : "selectCellFcRow(rowid, iCol);setChangeImg();",
+					completeFc   : "addGridRow(15, 'htmlTable', 'datarow');setChangeImg();"
+				}]
+			};
+			commonJqGridInit(gridParam, "N");
+
+			if($("#hid_doc_no").val() != ""){
+				doSearch1("Y");
+			} else {
+				setTimeout('setBottomMsg("",false);',10);
+			}
+		}
+
+		function selectCellFcRow(rowid, iCol){
+			setChangeImg();
+			if(iCol == 7){
+				if(getColValue("ogc_fil_nm",rowid, gridName) != ''){
+					imgPreview(rowid);
+				}
+			}
+			multiComboController(gridName, rowid, 0, "prod_cd:seqc_1", "comboVal1", "seqc_1", rowid);
+			multiComboController(gridName, rowid, 0, "seqc_1:seqc_2", "comboVal2", "seqc_2", rowid);
+			//multiComboController(gridName, rowid, 0, "seqc_2:seqc_3", "comboVal3", "seqc_3", rowid);
+		}
+
+		function multiComboController(gridName, row, multiCnt, arrayStr, comboValArrayStr, comboKeyArrayStr, iRow){
+			var rowId;
+			if(typeof(row) == "object"){
+				rowId = row.attr('id');
+			}else{
+				rowId = iRow;
+			}
+			var arrCol = arrayStr.split(":");
+			var arrCombo = comboValArrayStr.split(":");
+			var arrComboKey = comboKeyArrayStr.split(":");
+			var colValue = getColValue(arrCol[multiCnt],rowId, gridName);
+			var comboVal = arrCombo[multiCnt];
+
+			if(typeof(comboVal) == 'undefined'){return;}
+			if(multiCnt == 0){
+				if(colValue == ''){
+					$("select#" + rowId +"_"+ arrCol[multiCnt]).html('<option role="option" value=""></option>');
+
+					switch(arrCol[multiCnt]){
+					case "seqc_1" :
+						$("select#" + rowId +"_seqc_1").html('<option role="option" value=""></option>');
+					case "seqc_2" :
+						$("select#" + rowId +"_seqc_2").html('<option role="option" value=""></option>');
+					case "seqc_3" :
+						$("select#" + rowId +"_seqc_3").html('<option role="option" value=""></option>');
+					}
+
+				}else{
+					var comboValTemp="";
+					$.each(eval(comboVal),function(targetNm,optionData){
+						$.each(eval(optionData),function(index,optionData){
+			    			if(targetNm==arrComboKey[multiCnt]&&colValue == optionData.key){
+			    				comboValTemp += '<option role="option" value="' +
+					            optionData.value + '">' +
+								optionData.name + '</option>';
+			        		}
+						});
+					});
+					var orgSelect = jQuery('#' + rowId + '_'+arrCol[multiCnt+1])[0];
+//					var orgValue = getColValue(arrCol[multiCnt+1],rowId, gridName);
+					var orgValue = getColValue('hid_'+arrCol[multiCnt+1],rowId, gridName);
+					$("select#" + rowId +"_"+ arrCol[multiCnt+1]).html(comboValTemp);
+					jQuery(orgSelect).val(orgValue);
+					$("#"+gridName).setCell(rowId,'hid_'+arrCol[multiCnt+1],getColValue(arrCol[multiCnt+1],rowId, gridName));
+				}
+				if(arrCol[multiCnt] == 'seqc_1'){
+					doSearchByGeneralService3FileName(rowId);
+				}
+			}else if(multiCnt == 1){
+				if(colValue == ''){
+					$("select#" + rowId +"_"+ arrCol[multiCnt]).html('<option role="option" value=""></option>');
+				}else{
+					var comboValTemp="";
+					$.each(eval(comboVal),function(targetNm,optionData){
+						$.each(eval(optionData),function(index,optionData){
+			    			if(targetNm==arrComboKey[multiCnt]&&colValue == optionData.key){
+			    				comboValTemp += '<option role="option" value="' +
+					            optionData.value + '">' +
+								optionData.name + '</option>';
+			        		}
+						});
+					});
+					var orgSelect = jQuery('#' + rowId + '_'+arrCol[multiCnt+1])[0];
+					var orgValue = getColValue(arrCol[multiCnt+1],rowId, gridName);
+					$("select#" + rowId +"_"+ arrCol[multiCnt+1]).html(comboValTemp);
+					jQuery(orgSelect).val(orgValue);
+				}
+			}else if(multiCnt == 2){
+
+			}
+		}
+
+		function retrieve(btnFlag){
+			switch(btnFlag){
+			   case "save" :
+				   	doSave();
+					break;
+			   case "delete" :
+				    doDelete();
+					break;
+			   case "request" :
+				    doRequest();
+					break;
+			   case "requestCancel" :
+				    doRequestCancel();
+					break;
+			   case "back" :
+				    doBack();
+				    break;
+			   case "new" :
+				    doNew();
+				    break;
+			   case "print" :
+				    doPrint();
+				    break;
+			}
+		}
+
+		function doSave(){
+			var gubnNm = "", callBack = "", basic_mode = "";
+			if($("#doc_no").val() == ""){
+				basic_mode = "I";
+				gubnNm = '<fmt:message key="save"/>';
+				callBack = "insertCallBack(jsonData.sendResult);";
+			}else{
+				basic_mode = "U";
+				gubnNm = '<fmt:message key="save"/>';
+				callBack = "modifyCallBack(jsonData.sendResult);";
+			}
+
+			var paramVo = {
+				basic_mode : basic_mode,
+				doc_no : $("#doc_no").val(),
+				eeno : $("#eeno").val(),
+				dept_cd : $("#ops_cd").val(),
+				gs_type : "GS",
+				corp_cd	: sess_corp_cd
+			};
+
+			var paramsI = [];
+			var paramsU = [];
+			var selectRow = jQuery("#"+gridName).jqGrid("getGridParam", "selarrrow");
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}else{
+				for(var i = 0; i < selectRow.length; i++){
+					var rowId = selectRow[i];
+					if(rowId){
+						var pgsStCd = getColValue("pgs_st_cd", rowId, gridName);
+						if(pgsStCd == "Z" || pgsStCd == "3" || pgsStCd == "2"){
+							alertUI(gubnNm+'<fmt:message key="MSG.STAT.0001"/>');
+							return;
+						}
+//						if(getColValue("prod_cd", rowId, gridName) == ""){
+//							alertUI("Please select protuto.");
+//							return;
+//						}
+						if(getColValue("seq_no", rowId, gridName) != ""){
+							list = {
+								doc_no : $("#doc_no").val(),
+								seq_no : getColValue("seq_no", rowId, gridName),
+								region_cd : $("#plac_work").val(),
+								prod_cd : getColValue("prod_cd", rowId, gridName),
+								seqc_1 : getColValue("seqc_1", rowId, gridName),
+								seqc_2 : getColValue("seqc_2", rowId, gridName),
+								corp_cd	: sess_corp_cd
+//								seqc_3 : getColValue("seqc_3", rowId, gridName),
+//								seqc_3 : changeToUni(getColValue("seqc_4", rowId, gridName)),
+//								seqc_4 : changeToUni(getColValue("seqc_4", rowId, gridName))
+//								expt_ymd : trimChar(getColValue("expt_ymd", rowId, gridName), "-"),
+//								expt_time : selectNum(getColValue("expt_time", rowId, gridName))
+							};
+							paramsU.push(list);
+						}else{
+							list = {
+								doc_no : $("#doc_no").val(),
+								region_cd : $("#plac_work").val(),
+								prod_cd : getColValue("prod_cd", rowId, gridName),
+								seqc_1 : getColValue("seqc_1", rowId, gridName),
+								seqc_2 : getColValue("seqc_2", rowId, gridName),
+								corp_cd	: sess_corp_cd
+//								seqc_3 : getColValue("seqc_3", rowId, gridName),
+//								seqc_3 : changeToUni(getColValue("seqc_4", rowId, gridName)),
+//								seqc_4 : changeToUni(getColValue("seqc_4", rowId, gridName))
+//								expt_ymd : trimChar(getColValue("expt_ymd", rowId, gridName), "-"),
+//								expt_time : selectNum(getColValue("expt_time", rowId, gridName))
+							};
+							paramsI.push(list);
+						}
+					}
+				}
+			}
+
+			confirmUI(gubnNm+'<fmt:message key="MSG.CNF.0001"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramsV : util.jsonToString(paramVo),
+								paramsI : util.jsonToList(paramsI),
+								paramsU : util.jsonToList(paramsU)
+						};
+						doCommonAjax("doInsertByRequest.do", paramData, callBack);
+					}
+				});
+			});
+		}
+
+		function insertCallBack(result){
+			setBottomMsg(result.message, true);
+			$("#doc_no").val(result.code);
+			doSearch1("Y");
+		}
+
+		function modifyCallBack(result){
+			setBottomMsg(result.message, true);
+			doSearch2();
+		}
+
+		function doSearch1(flag){
+			var paramVo = {
+				doc_no : $("#doc_no").val(),
+				gs_type : "GS",
+				corp_cd	: sess_corp_cd
+			};
+
+			var paramData = {
+				paramJson : util.jsonToString(paramVo),
+			};
+
+			doCommonAjax("doSearchByRequestInfo.do", paramData, "searchCallBack1(jsonData.sendResult, '"+flag+"');");
+		}
+
+		function searchCallBack1(result, flag){
+			setBottomMsg(result.message, false);
+
+			$("#eeno").val(result.eeno);
+			$("#ee_nm").val(result.eenm);
+			$("#poa_nm").val(result.pos_nm);
+			$("#ops_cd").val(result.dept_cd);
+			$("#ops_nm").val(result.dept_nm);
+			$("#ptt_ymd").val(result.ptt_ymd);
+
+			if(flag == "Y"){
+				doSearch2();
+			}
+		}
+
+		function doSearch2(){
+			var params = {
+				doc_no : $("#doc_no").val(),
+				corp_cd	: sess_corp_cd,
+				locale : $("#lo").val()
+			};
+
+			doCommonSearch("doSearchByRequestList.do", util.jsonToString(params), "searchCallBack2();");
+		}
+
+		function searchCallBack2(){
+			setBottomMsg('<fmt:message key="SEARCH.0000"/>', false);
+			addGridRow(15, gridName, datarow);
+			setChangeImg();
+		}
+
+		function doDelete(){
+			if($("#doc_no").val() == ""){
+				alertUI('<fmt:message key="MSG.STAT.0047"/>');
+				return;
+			}
+
+			var paramList = [];
+			var selectRow = jQuery("#"+gridName).jqGrid("getGridParam", "selarrrow");
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}else{
+				for(var i = 0; i < selectRow.length; i++){
+					var rowId = selectRow[i];
+					if(rowId){
+						var pgsStCd = getColValue("pgs_st_cd", rowId, gridName);
+						if(pgsStCd == "Z" || pgsStCd == "3" || pgsStCd == "2"){
+							alertUI('<fmt:message key="MSG.STAT.0003"/>');
+							return;
+						}
+						list = {
+							doc_no  : getColValue("doc_no", rowId, gridName),
+							seq_no  : getColValue("seq_no", rowId, gridName),
+							corp_cd	: sess_corp_cd
+						};
+						paramList.push(list);
+					}
+				}
+			}
+
+			var paramVo = {
+				doc_no : $("#doc_no").val(),
+				seq_no  : getColValue("seq_no", rowId, gridName),
+				corp_cd	: sess_corp_cd
+			};
+
+			confirmUI('<fmt:message key="MSG.CNF.0002"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramV : util.jsonToString(paramVo),
+								paramD : util.jsonToList(paramList)
+						};
+						doCommonAjax("doDeleteByRequest.do", paramData, "deleteCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function deleteCallBack(result){
+			mainForm.reset();
+			setBottomMsg(result.message, true);
+			$("#eeno").val(sess_empno);
+			saveCode = "";
+			$("#hid_doc_no").val("");
+			$("#hid_eeno").val("");
+			$("#doc_no").val(result.code);
+
+			$("#"+gridName).trigger("reloadGrid");
+			setInsaInfo();
+			setTimeout("addRow()" , 100);
+		}
+
+		function doRequest(){
+			if($("#doc_no").val() == ""){
+				alertUI('<fmt:message key="MSG.STAT.0047"/>');
+				return;
+			}
+
+			var paramList = [];
+			var selectRow = jQuery("#"+gridName).jqGrid("getGridParam", "selarrrow");
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}else{
+				for(var i = 0; i < selectRow.length; i++){
+					var rowId = selectRow[i];
+					if(rowId){
+						var pgsStCd = getColValue("pgs_st_cd", rowId, gridName);
+						if(pgsStCd != "0"){
+							alertUI('<fmt:message key="MSG.STAT.0005"/>');
+							return;
+						}
+						list = {
+							doc_no  : getColValue("doc_no", rowId, gridName),
+							seq_no  : getColValue("seq_no", rowId, gridName),
+							eeno	: $("#eeno").val(),
+							corp_cd	: sess_corp_cd
+						};
+						paramList.push(list);
+					}
+				}
+			}
+
+			confirmUI('<fmt:message key="MSG.CNF.0005"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramJson : util.jsonToList(paramList)
+						};
+						doCommonAjax("doUpdateByRequest.do", paramData, "setBottomMsg(jsonData.sendResult.message, true);doSearch2();");
+					}
+				});
+			});
+		}
+
+		function doRequestCancel(){
+			if($("#doc_no").val() == ""){
+				alertUI('<fmt:message key="MSG.STAT.0047"/>');
+				return;
+			}
+
+			var paramList = [];
+			var selectRow = jQuery("#"+gridName).jqGrid("getGridParam", "selarrrow");
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}else{
+				for(var i = 0; i < selectRow.length; i++){
+					var rowId = selectRow[i];
+					if(rowId){
+						var pgsStCd = getColValue("pgs_st_cd", rowId, gridName);
+						if(pgsStCd != "Z"){
+							alertUI('<fmt:message key="MSG.STAT.0006"/>');
+							return;
+						}
+						list = {
+							doc_no  : getColValue("doc_no", rowId, gridName),
+							seq_no  : getColValue("seq_no", rowId, gridName),
+							corp_cd	: sess_corp_cd
+						};
+						paramList.push(list);
+					}
+				}
+			}
+
+			confirmUI('<fmt:message key="MSG.CNF.0006"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramJson : util.jsonToList(paramList)
+						};
+						doCommonAjax("doUpdateByRequestCancel.do", paramData, "setBottomMsg(jsonData.sendResult.message, true);doSearch2();");
+					}
+				});
+			});
+		}
+
+		function listDelete(){
+			var rowId = jQuery("#"+gridName).jqGrid("getGridParam", "selrow");
+
+			if(rowId == "" || rowId == null){
+				alertUI('<fmt:message key="MSG.SEL.0022"/>');
+				return;
+			}else if(getColValue("doc_no", rowId, gridName) == ""){
+				alertUI('<fmt:message key="MSG.STAT.0047"/>');
+				return;
+			}else if(getColValue("pgs_st_cd", rowId, gridName) != "0"){
+				alertUI('<fmt:message key="MSG.STAT.0003"/>');
+				return;
+			}
+
+			var paramVo = {
+				doc_no : getColValue("doc_no", rowId, gridName),
+				seq_no : getColValue("seq_no", rowId, gridName),
+				corp_cd	: sess_corp_cd
+			};
+
+			confirmUI('<fmt:message key="MSG.CNF.0002"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramJson : util.jsonToString(paramVo),
+						};
+						doCommonAjax("doDeleteByRequestList.do", paramData, "setBottomMsg(jsonData.sendResult.message, true);doSearch2();");
+					}
+				});
+			});
+		}
+
+		function addRow(){
+			var gridRowId = jQuery("#"+gridName).getDataIDs().length;
+			jQuery("#"+gridName).jqGrid("addRowData", gridRowId+1, datarow);
+		}
+
+		function doBack(){
+		    var form = $("<form/>");
+		    form.attr("method" , "post");
+		    form.attr("id"     , "submitForm").attr("name", "submitForm");
+		    form.attr("action" , $("#hid_view_nm").val() + ".gas");
+		    var inp1 = $("<input type='hidden' id='hid_cond' name='hid_cond'/>").val($("#hid_cond").val());
+		    var token = $("<input type='hidden' id='hid_csrfToken' name='hid_csrfToken'/>").val($("#csrfToken").val());
+		    form.append(inp1, token);
+		    $("body").append(form);
+		    form.submit();
+		    form.remove();
+		}
+
+		function getComboValueMulti1(comboName){
+			var returnVal;
+			if(typeof(comboVal1) == 'undefined'){
+				returnVal = ":";
+			}
+			else{
+				var i = 0;
+				$.each(eval(comboVal1),function(targetNm,optionData){
+					if(targetNm == comboName){
+						$.each(eval(optionData),function(index,optionData){
+							if(i == 0){
+								returnVal = returnVal + optionData.value + ":" + optionData.name;
+							}else{
+								returnVal = returnVal + ";" + optionData.value + ":" + optionData.name;
+							}
+							i++;
+						});
+					}
+			      });
+				if(typeof(returnVal) == 'undefined'){
+					returnVal = '';
+				}
+				else{
+					returnVal = returnVal.replace("undefined", "");
+				}
+			}
+			return returnVal;
+		}
+
+		function getComboValueMulti2(comboName){
+			var returnVal;
+			if(typeof(comboVal2) == 'undefined'){
+				returnVal = ":";
+			}
+			else{
+				var i = 0;
+				$.each(eval(comboVal2),function(targetNm,optionData){
+					if(targetNm == comboName){
+						$.each(eval(optionData),function(index,optionData){
+							if(i == 0){
+								returnVal = returnVal + optionData.value + ":" + optionData.name;
+							}else{
+								returnVal = returnVal + ";" + optionData.value + ":" + optionData.name;
+							}
+							i++;
+						});
+					}
+				});
+				if(typeof(returnVal) == 'undefined'){
+					returnVal = '';
+				}
+				else{
+					returnVal = returnVal.replace("undefined", "");
+				}
+			}
+			return returnVal;
+		}
+
+		function getComboValueMulti3(comboName){
+			var returnVal;
+			if(typeof(comboVal3) == 'undefined'){
+				returnVal = ":";
+			}
+			else{
+				var i = 0;
+				$.each(eval(comboVal3),function(targetNm,optionData){
+					if(targetNm == comboName){
+						$.each(eval(optionData),function(index,optionData){
+							if(i == 0){
+								returnVal = returnVal + optionData.value + ":" + optionData.name;
+							}else{
+								returnVal = returnVal + ";" + optionData.value + ":" + optionData.name;
+							}
+							i++;
+						});
+					}
+				});
+				if(typeof(returnVal) == 'undefined'){
+					returnVal = '';
+				}
+				else{
+					returnVal = returnVal.replace("undefined", "");
+				}
+			}
+			return returnVal;
+		}
+
+		function setMiltiComboList(rowId,colNm){
+			if(typeof(comboVal1) == 'undefined'){return;}
+			if(colNm == 'seqc_1'){
+				var colValue = getColValue('prod_cd',rowId);
+				if(colValue == ''){
+					$("select#" + rowId +"_"+ colNm).html('<option role="option" value=""></option>');
+				}else{
+					comboValTemp="";
+					$.each(eval(comboVal1),function(targetNm,optionData){
+						$.each(eval(optionData),function(index,optionData){
+			    			if(targetNm=='seqc_1'&&colValue == optionData.key){
+			    				comboValTemp += '<option role="option" value="' +
+					            optionData.value + '">' +
+								optionData.name + '</option>';
+			        		}
+						});
+					});
+					$("select#" + rowId +"_"+ colNm).html(comboValTemp);
+				}
+			}else if(colNm == 'seqc_2'){
+				var colValue = getColValue('prod_cd',rowId);
+				if(colValue == ''){
+					$("select#" + rowId +"_"+ colNm).html('<option role="option" value=""></option>');
+				}else{
+					comboValTemp="";
+					$.each(eval(comboVal2),function(targetNm,optionData){
+						$.each(eval(optionData),function(index,optionData){
+			    			if(targetNm=='seqc_2'&&colValue == optionData.key){
+			    				comboValTemp += '<option role="option" value="' +
+					            optionData.value + '">' +
+								optionData.name + '</option>';
+			        		}
+						});
+					});
+					$("select#" + rowId +"_"+ colNm).html(comboValTemp);
+				}
+			}else if(colNm == 'seqc_3'){
+				var colValue = getColValue('prod_cd',rowId);
+				alertUI(colValue);
+				if(colValue == ''){
+					$("select#" + rowId +"_"+ colNm).html('<option role="option" value=""></option>');
+				}else{
+					comboValTemp="";
+					$.each(eval(comboVal3),function(targetNm,optionData){
+						$.each(eval(optionData),function(index,optionData){
+			    			if(targetNm=='seqc_3'&&colValue == optionData.key){
+			    				comboValTemp += '<option role="option" value="' +
+					            optionData.value + '">' +
+								optionData.name + '</option>';
+			        		}
+						});
+					});
+					$("select#" + rowId +"_"+ colNm).html(comboValTemp);
+
+				}
+			}
+		}
+
+		function doNew(){
+			$("#hid_doc_no").val("");
+			$("#hid_eeno").val("");
+			$("#ptt_ymd").val("");
+			$("#doc_no").val("");
+			$("#tel_no").val("");
+// 			$("#plac_work").val("");
+// 			$("#plac_work_nm").val("");
+
+			$("#eeno").val(sess_empno);
+			saveCode = "";
+			setInsaInfo();
+		}
+
+		function setChangeImg(){
+			var gridId = jQuery('#'+gridName).jqGrid('getDataIDs');
+			for(var i = 1 ; i <= gridId.length ; i++){
+				if(getColValue("seqc_2", i, gridName) != ""){
+					var imgSrc = '<span onClick="imgPreview(\''+i+'\');"><fmt:message key="preview"/></span>';
+					jQuery('#'+gridName).jqGrid("setRowData", i, {pop_img:imgSrc});
+				}
+			}
+		}
+		function imgPreview(rowId){
+			var fileNm = getColValue("ogc_fil_nm",rowId, gridName);
+			if(fileNm == ''){
+				alertUI('<fmt:message key="MSG.VAL.0004"/>');
+				return;
+			} else {
+				fileNm = ctxPath + "/upload/" + sess_corp_cd + "/generalService/" + fileNm;
+			}
+
+			$("#layer_pic").remove();
+			var picDiv = $("<div/>");
+		    picDiv.attr("id", "layer_pic");
+		    picDiv.addClass("pic_div2 div_border");
+
+		    $("#div_layer").append(picDiv.load("./xgs_img_preview.gas", function(){$("#previewImg").attr("src",fileNm);}));
+		}
+
+		function doSearchByGeneralService3FileName(rowId){
+//			if(getColValue("ogc_fil_nm",rowId, gridName) != ''){return;}
+			var params = {
+				region_cd : "xgs"
+				, catg_1 : getColValue("seqc_1",rowId, gridName)
+				, catg_3 : getColValue("seqc_2",rowId, gridName),
+				corp_cd	: sess_corp_cd
+			};
+
+			paramData = {
+				paramJson : util.jsonToString(params)
+			};
+			doCommonAjax("doSearchByGeneralService3FileName.do", paramData, "doSearchByGeneralService3FileNameCallBack(jsonData.sendResult, '"+rowId+"')");
+		}
+
+		function doSearchByGeneralService3FileNameCallBack(result, rowId){
+			if(result.ogc_fil_nm != ''){
+				$("#htmlTable").setCell(rowId,'ogc_fil_nm',result.ogc_fil_nm);
+				var imgSrc = '<span onClick="imgPreview(\''+rowId+'\');"><fmt:message key="preview"/></span>';
+				jQuery('#'+gridName).jqGrid("setRowData", rowId, {pop_img:imgSrc});
+			}else {
+				$("#htmlTable").setCell(rowId,'ogc_fil_nm',null);
+//				jQuery('#'+gridName).jqGrid("setRowData", rowId, {pop_img:''});
+			}
+		}
+
+		function doPrint(){
+			$.printPreview.loadPrintPreview();
+		}
+
+		function pageStepHelpPopup(){
+			if(popup != null ){
+				popup.close();
+			}
+
+			popup = popUpWindow3($("#help_url").val());
+		}
+		</script>

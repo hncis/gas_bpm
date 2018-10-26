@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project name="gasc" default="deploy_test" basedir=".">
+	
+	<property name="app.name" value="gasc"/>
+	<property name="demo.target" value="F:/"/>
+	<property name="build.classpath" value="C:/Program Files/Java/jdk1.7.0_17/lib"/>
+	
+	<path id="classpath">
+		<fileset dir="WebContent/WEB-INF/lib">
+			<include name="*.jar"/>
+		</fileset>
+		<fileset dir="${build.classpath}">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	
+	<target name="init">
+		<echo message="init" />
+		<tstamp></tstamp>
+	</target>
+	
+	<!-- directory 생성  -->
+	<target name="prepare" description="Creates the Web Application's war directory" depends="init">
+		<echo message="Crreating ${app.name}'s war directory ..." />
+		<mkdir dir="${basedir}/deploy" />
+		<mkdir dir="${basedir}/deploy/WebContent/WEB-INF" />
+		<mkdir dir="${basedir}/deploy/WebContent/WEB-INF/classes" />
+		<!--mkdir dir="${basedir}/deploy/WebContent/apidoc" /-->
+	</target>
+	
+	<target name="build_test" description="Builds the Web Application" depends="prepare">
+		<!-- java 소스 컴파일-->
+		<echo message="Building ${app.name} ..." />
+		<javac srcdir="${basedir}/src" destdir="${basedir}/deploy/WebContent/WEB-INF/classes" encoding="utf-8">
+			<include name="**/*.java"/>
+			<classpath refid="classpath"/>
+		</javac>
+		
+		<!-- classpath에 위치해야 하는 resource 파일 복사-->
+		<echo message="Resource File Copy.."/>
+		<copy todir="${basedir}/deploy/WebContent/WEB-INF/classes">
+			<fileset dir="${basedir}/src">
+				<include name="**/*.properties" />
+				<include name="**/*.xml" />
+			</fileset>
+		</copy>
+		
+		<!-- Web 관련 파일 복사-->
+		<echo message="WebContent Copy.."/>
+		<copy todir="${basedir}/deploy/WebContent">
+			<fileset dir="${basedir}/WebContent">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+		
+		<!-- 서버의 설정이 저장된 설정파일로 교체-->
+		<echo message="Config file replace.."/>
+		<copy file="${basedir}/backup/jdbc.properties.test" 
+			tofile="${basedir}/deploy/WebContent/WEB-INF/classes/jdbc.properties" overwrite="yes"/>
+		<copy file="${basedir}/backup/log4j.xml.test" 
+			tofile="${basedir}/deploy/WebContent/WEB-INF/classes/log4j.xml" overwrite="yes"/>
+		<copy file="${basedir}/backup/systemArea.properties.test" 
+			tofile="${basedir}/deploy/WebContent/WEB-INF/classes/systemArea.properties" overwrite="yes"/>
+		<copy file="${basedir}/backup/quartzContext.xml.test" 
+			tofile="${basedir}/deploy/WebContent/WEB-INF/classes/com/hncis/config/quartzContext.xml" overwrite="yes"/>
+		
+		<!--
+		<echo message="Remove file.."/>
+		<delete file="${basedir}/deploy/WebContent/WEB-INF/classes/jdbc.properties" />
+		<delete file="${basedir}/deploy/WebContent/WEB-INF/classes/log4j.xml" />
+		<delete file="${basedir}/deploy/WebContent/WEB-INF/classes/systemArea.properties" />
+		<delete file="${basedir}/deploy/WebContent/WEB-INF/classes/com/hncis/config/quartzContext.xml" />
+		-->
+	</target>
+	
+	<target name="build_real_batch" description="Builds the Web Application" depends="prepare">
+		<!-- java 소스 컴파일-->
+		<echo message="Building ${app.name} ..." />
+		<javac srcdir="${basedir}/src" destdir="${basedir}/deploy/WebContent/WEB-INF/classes" encoding="utf-8">
+			<include name="**/*.java"/>
+			<classpath refid="classpath"/>
+		</javac>
+		
+		<!-- classpath에 위치해야 하는 resource 파일 복사-->
+		<echo message="Resource File Copy.."/>
+		<copy todir="${basedir}/deploy/WebContent/WEB-INF/classes">
+			<fileset dir="${basedir}/src">
+				<include name="**/*.properties" />
+				<include name="**/*.xml" />
+			</fileset>
+		</copy>
+		
+		<!-- Web 관련 파일 복사-->
+		<echo message="WebContent Copy.."/>
+		<copy todir="${basedir}/deploy/WebContent">
+			<fileset dir="${basedir}/WebContent">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+		
+		<!-- 서버의 설정이 저장된 설정파일로 교체-->
+		<echo message="Config file replace.."/>
+		<copy file="${basedir}/backup/jdbc.properties.real" 
+			tofile="${basedir}/deploy/WebContent/WEB-INF/classes/jdbc.properties" overwrite="yes"/>
+		<copy file="${basedir}/backup/log4j.xml.real" 
+			tofile="${basedir}/deploy/WebContent/WEB-INF/classes/log4j.xml" overwrite="yes"/>
+		<copy file="${basedir}/backup/systemArea.properties.real" 
+			tofile="${basedir}/deploy/WebContent/WEB-INF/classes/systemArea.properties" overwrite="yes"/>
+		<copy file="${basedir}/backup/quartzContext.xml.real_batch" 
+			tofile="${basedir}/deploy/WebContent/WEB-INF/classes/com/hncis/config/quartzContext.xml" overwrite="yes"/>
+		
+		<!--
+		<echo message="Remove file.."/>
+		<delete file="${basedir}/deploy/WebContent/WEB-INF/classes/jdbc.properties" />
+		<delete file="${basedir}/deploy/WebContent/WEB-INF/classes/log4j.xml" />
+		<delete file="${basedir}/deploy/WebContent/WEB-INF/classes/systemArea.properties" />
+		<delete file="${basedir}/deploy/WebContent/WEB-INF/classes/com/hncis/config/quartzContext.xml" />
+		-->
+	</target>
+	
+	<target name="build_real" description="Builds the Web Application" depends="prepare">
+			<!-- java 소스 컴파일-->
+			<echo message="Building ${app.name} ..." />
+			<javac srcdir="${basedir}/src" destdir="${basedir}/deploy/WebContent/WEB-INF/classes" encoding="utf-8">
+				<include name="**/*.java"/>
+				<classpath refid="classpath"/>
+			</javac>
+			
+			<!-- classpath에 위치해야 하는 resource 파일 복사-->
+			<echo message="Resource File Copy.."/>
+			<copy todir="${basedir}/deploy/WebContent/WEB-INF/classes">
+				<fileset dir="${basedir}/src">
+					<include name="**/*.properties" />
+					<include name="**/*.xml" />
+				</fileset>
+			</copy>
+			
+			<!-- Web 관련 파일 복사-->
+			<echo message="WebContent Copy.."/>
+			<copy todir="${basedir}/deploy/WebContent">
+				<fileset dir="${basedir}/WebContent">
+					<include name="**/*" />
+				</fileset>
+			</copy>
+			
+			<!-- 서버의 설정이 저장된 설정파일로 교체-->
+			<echo message="Config file replace.."/>
+			<copy file="${basedir}/backup/jdbc.properties.real" 
+				tofile="${basedir}/deploy/WebContent/WEB-INF/classes/jdbc.properties" overwrite="yes"/>
+			<copy file="${basedir}/backup/log4j.xml.real" 
+				tofile="${basedir}/deploy/WebContent/WEB-INF/classes/log4j.xml" overwrite="yes"/>
+			<copy file="${basedir}/backup/systemArea.properties.real" 
+				tofile="${basedir}/deploy/WebContent/WEB-INF/classes/systemArea.properties" overwrite="yes"/>
+			<copy file="${basedir}/backup/quartzContext.xml.real" 
+				tofile="${basedir}/deploy/WebContent/WEB-INF/classes/com/hncis/config/quartzContext.xml" overwrite="yes"/>
+		</target>
+	
+	<!-- app.name으로  war 파일을 생성한다. -->
+	<target name="deploy_test" description="Packages the Web Application's web archive file" depends="build_test">
+		<echo message="DPackaging ${app.name}'s web archive file ..." />
+		<delete file="${basedir}/deploy/${app.name}.war" />
+		<jar jarfile="${basedir}/deploy/${app.name}.war">
+			<fileset dir="${basedir}/deploy/WebContent" includes="**" />
+		</jar>
+		<delete dir="${basedir}/deploy/WebContent" />
+	</target>
+	
+	<target name="deploy_real" description="Packages the Web Application's web archive file" depends="build_real">
+		<echo message="DPackaging ${app.name}'s web archive file ..." />
+		<delete file="${basedir}/deploy/${app.name}.war" />
+		<jar jarfile="${basedir}/deploy/${app.name}.war">
+			<fileset dir="${basedir}/deploy/WebContent" includes="**" />
+		</jar>
+		<delete dir="${basedir}/deploy/WebContent" />
+	</target>
+	
+	<target name="deploy_real_batch" description="Packages the Web Application's web archive file" depends="build_real_batch">
+		<echo message="DPackaging ${app.name}'s web archive file ..." />
+		<delete file="${basedir}/deploy/${app.name}.war" />
+		<jar jarfile="${basedir}/deploy/${app.name}.war">
+			<fileset dir="${basedir}/deploy/WebContent" includes="**" />
+		</jar>
+		<delete dir="${basedir}/deploy/WebContent" />
+	</target>
+	
+	<!-- war 파일을 ftp로 업로드하고 deploy 디렉토리 삭제 -->
+	<!--
+	<target name="deploy" description="Deploys the WEb Application" depends="package">
+		<echo message="Deploying Web Application Server ${app.name} ..." />
+		<ftp server="10.127.3.101"
+			userid="appadmin"
+			password="p@ssw0rd"
+			remotedir="${demo.target}">
+			<fileset dir="${basedir}/deploy" />
+		</ftp>
+	</target>
+	
+	
+	<target name="ftp_upload" description="Deploys the WEb Application">
+		<echo message="Ftp Uploading ${app.name} ..." />
+		<ftp server="10.127.3.101"
+			userid="appadmin"
+			password="p@ssw0rd"
+			remotedir="${demo.target}">
+			<fileset dir="${basedir}/deploy" />
+		</ftp>
+	</target>
+	-->
+	
+</project>

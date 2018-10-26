@@ -1,0 +1,62 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+	String ctxPath = request.getContextPath();
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>GASC OPEN EVENT</title>
+		<link rel='stylesheet' type="text/css" media="screen" href="<%=ctxPath%>/script/css/global_common.css" rel="stylesheet" />
+		<link rel='stylesheet' type="text/css" media="screen" href="<%=ctxPath%>/script/css/global_sub.css" rel="stylesheet" />
+		<style type="text/css">
+			#event_pop_wrap{position:relative; width:691px; height:630px; background:#67921d url(../../images/hncis_event/event_pop_bg.jpg) 0 0 no-repeat;}
+			#event_pop_wrap h1{position:absolute; width:0; height:0; font-size:0;}
+			#event_pop_wrap .period{position:absolute; top:263px; left:26px; width:639px; height:33px; padding-top:12px; text-align:center; font-size:16px; color:#000;}
+			#event_pop_wrap li{position:absolute; width:190px; height:110px; padding:20px 10px 0 0;}
+			#event_pop_wrap li em{font-size:16px; color:#000;}
+			#event_pop_wrap li p {margin-top:5px; font-size:12px; color:#666;}
+			#event_pop_wrap li .event_btn{height: 28px; padding:0 10px 0 10px; margin-top:10px; border:1px solid #c0a31d; background-color:#f9d633; color:#222; font-family:hmcM, 'ModernH-Medium', Verdana, sans-serif;}
+			#event_pop_wrap li.event01{top:308px; left:145px;}
+			#event_pop_wrap li.event02{top:308px; left:465px;}
+			#event_pop_wrap li.event03{top:439px; left:145px;}
+			#event_pop_wrap li.event04{top:439px; left:465px;}
+			#event_pop_wrap .close_day{position:absolute; bottom:0; width:100%; height:24px; padding-top:6px; background-color:#33490e; text-align:right}
+			#event_pop_wrap .close_day input, #event_pop_wrap .close_day label{vertical-align:middle;}
+			#event_pop_wrap .close_day label{margin-right:26px; margin-left:5px; font-size:12px; color:#fff;}
+		</style>
+		<script>
+			var ctxPath = "<%=ctxPath%>";
+		</script>
+		<script type="text/javascript" src='./js/event_pop.js'></script>
+	</head>
+	<body>
+		<div id="event_pop_wrap">
+	    	<h1>NEW General Affairs Support Center Open Event</h1>
+	        <p class="period">Period : 2016  March, 14th. ~ April 14th.</p>
+	        <ol>
+	        	<li class="event01">
+	            	<em>Visitor 1000</em>
+	                <p>O Milésimo visitante ganha um brinde GASC.</p>
+	            </li>
+	            <li class="event02">
+	            	<em>The Best Department</em>
+	                <p>O Departamento mais participativo ganha um brinde GASC</p>
+	            </li>
+	            <li class="event03">
+	            	<em>The Best Comment</em>
+	                <p>O Comentário mais curtido ganha um brinde GASC.</p>
+	                <input type="button" class="event_btn" value="Comentar" onclick="fnCommentPop();"/>
+	            </li>
+	            <li class="event04">
+	            	<em>Quiz</em>
+	                <p>Respondendo corretamente ganha um brinde GASC.</p>
+	                <input type="button" class="event_btn" value="Partícipe" onclick="fnQuizPop();"/>
+	            </li>
+	        </ol>
+	        <div class="close_day"><input type="checkbox" id="day_ch" onclick="fnSetCookies(this.checked);"/><label for="day_ch">Day window does not open</label></div>
+	    </div>
+<!-- 		<form id="hideForm" name="hideForm" method="post"> -->
+<!-- 			<input type="hidden" id="hid_csrfToken" name="hid_csrfToken"/> -->
+<!-- 		</form> -->
+	</body>
+</html>

@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Training">
+
+	<insert id="insertInfoTRToReqeust" parameterClass="bgabGasctr01">
+		/* insertInfoTrToReqeust */
+		insert into BGAB_GASCTR01$corp_cd$(
+			    doc_no
+			   ,eeno
+			   ,eenm
+			   ,position
+			   ,ops_cd
+			   ,ops_nm
+			   ,req_date
+			   ,pgs_st_cd
+			   ,pgs_st_nm
+			   ,ph_no
+			   ,title
+			   ,amount
+			   ,from_ymd
+			   ,to_ymd
+			   ,place
+			   ,description
+			   ,inp_ymd
+			   ,ipe_eeno
+			   ,mdfy_ymd
+			   ,updr_eeno
+			)values(
+			  #doc_no#
+			 ,#eeno#
+			 ,#eenm#
+			 ,#position#
+			 ,#ops_cd#
+			 ,#ops_nm#
+			 ,DATE_FORMAT( SYSDATE() ,'%Y%m%d' )
+			 ,#pgs_st_cd#
+			 ,(select xcod_hname from bgab_gascz005$corp_cd$ where xcod_knd='TR02' and xcod_code=#pgs_st_cd# and locale=#locale#)
+			 ,#ph_no#
+			 ,#title#
+			 ,#amount#
+			 ,#from_ymd#
+			 ,#to_ymd#
+			 ,#place#
+			 ,#description#
+			 ,DATE_FORMAT( SYSDATE() ,'%Y%m%d' )
+			 ,#eeno#
+			 ,DATE_FORMAT( SYSDATE() ,'%Y%m%d' )
+			 ,#eeno#
+			)
+	</insert>
+
+	<update id="updateInfoTRToRequest" parameterClass="bgabGasctr01">
+		/* updateInfoTrToRequest */
+		update BGAB_GASCTR01$corp_cd$
+		set	    title	    = #title#
+			   ,amount	    = #amount#
+			   ,from_ymd	= #from_ymd#
+			   ,to_ymd		= #to_ymd#
+			   ,place		= #place#
+			   ,description	= #description#
+			   ,mdfy_ymd	= DATE_FORMAT( SYSDATE() ,'%Y%m%d' )
+			   ,updr_eeno	= #updr_eeno#
+			   ,snb_rson_sbc= ''
+			   ,pgs_st_cd	=#pgs_st_cd#
+			   ,pgs_st_nm	=(select xcod_hname from bgab_gascz005$corp_cd$ where xcod_knd='TR02' and xcod_code=#pgs_st_cd# and locale=#locale#)
+		where doc_no = #doc_no#
+	</update>
+
+	<delete id="deleteInfoTRToRequest" parameterClass="bgabGasctr01">
+		/* deleteInfoTrToRequest */
+		delete from BGAB_GASCTR01$corp_cd$
+		 where doc_no     = #doc_no#
+	</delete>
+
+	<select id="selectInfoTRToRequest" parameterClass="bgabGasctr01" resultClass="bgabGasctr01">
+		/* selectInfoTRToRequest */
+		select *
+		  from (
+		  	 select t.*
+			   from (
+			 	  select doc_no
+						,eeno
+						,eenm
+						,position
+						,ops_cd
+						,DATE_FORMAT( CAST( req_date AS DATE),'%Y-%m-%d' ) as req_date
+						,ph_no
+						,pgs_st_cd
+						,xcod_hname as pgs_st_nm
+						,snb_rson_sbc
+						,title
+						,DATE_FORMAT( CAST( from_ymd AS DATE),'%Y-%m-%d' ) as from_ymd
+						,DATE_FORMAT( CAST( to_ymd AS DATE),'%Y-%m-%d' ) as to_ymd
+						,amount
+						,place
+						,description
+						,if_id
+						,tr01.IPE_EENO
+				from BGAB_GASCTR01$corp_cd$ tr01
+				LEFT OUTER JOIN BGAB_GASCZ005$corp_cd$ Z005
+             	  ON XCOD_KND = 'TR02'
+                 AND Z005.XCOD_CODE = tr01.PGS_ST_CD
+             	 AND Z005.LOCALE = #locale#
+				where tr01.doc_no=#doc_no#
+				order by tr01.req_date asc
+			)t
+		) Z
+		LIMIT 1
+	</select>
+
+	<select id="selectInfoTRToRequestByIfId" parameterClass="bgabGasctr01" resultClass="bgabGasctr01">
+		/* selectInfoTRToRequestByIfId */
+		select doc_no
+				,eeno
+				,eenm
+				,position
+				,ops_cd
+				,DATE_FORMAT( CAST( req_date AS DATE),'%Y-%m-%d' ) as req_date
+				,ph_no
+				,pgs_st_cd
+				,xcod_hname as pgs_st_nm
+				,snb_rson_sbc
+				,title
+				,DATE_FORMAT( CAST( from_ymd AS DATE ),'%Y-%m-%d' ) as from_ymd
+				,DATE_FORMAT( CAST( to_ymd AS DATE ),'%Y-%m-%d' ) as to_ymd
+				,amount
+				,place
+				,description
+				,if_id
+                ,xusr_dept_name as ops_nm
+		from BGAB_GASCTR01$corp_cd$ tr01
+		LEFT OUTER JOIN BGAB_GASCZ005$corp_cd$ Z005
+		ON XCOD_KND = 'TR02'
+        AND Z005.XCOD_CODE = tr01.PGS_ST_CD
+       	AND Z005.LOCALE = #locale#
+       	LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ USR
+         ON TR01.EENO = USR.XUSR_EMPNO
+		WHERE tr01.if_id = #if_id#
+		ORDER BY tr01.req_date asc
+	</select>
+
+	<select id="selectListTRToRequest" parameterClass="bgabGasctr01" resultClass="bgabGasctr01">
+		/* selectListTRToRequest */
+		select *
+		  from (
+			select @ROWNUM := @ROWNUM + 1 AS rnum
+				 , k.*
+			  from (
+				select tr01.doc_no
+					,tr01.eeno
+					,tr01.eenm
+					,tr01.position
+					,tr01.ops_cd
+					,tr01.ops_nm
+					,DATE_FORMAT( CAST( tr01.req_date AS DATE ),'%Y-%m-%d' ) as req_date
+					,tr01.ph_no
+					,tr01.pgs_st_cd
+					,xcod_hname as pgs_st_nm
+					,tr01.title
+					,DATE_FORMAT( CAST( tr01.from_ymd AS DATE ),'%Y-%m-%d' ) as from_ymd
+					,DATE_FORMAT( CAST( tr01.to_ymd AS DATE ),'%Y-%m-%d' ) as to_ymd
+					,tr01.amount
+					,tr01.place
+					,tr01.description
+					,CONCAT(DATE_FORMAT( CAST( tr01.from_ymd AS DATE ),'%Y-%m-%d' ) , ' ~ ' , DATE_FORMAT( CAST( tr01.to_ymd AS DATE ),'%Y-%m-%d' )) as schedule
+				from BGAB_GASCTR01$corp_cd$ tr01
+				LEFT OUTER JOIN BGAB_GASCZ005$corp_cd$ Z005
+             	  ON XCOD_KND = 'TR02'
+                 AND Z005.XCOD_CODE = tr01.PGS_ST_CD
+             	 AND Z005.LOCALE = #locale#
+				where eeno=#eeno#
+				order by tr01.from_ymd desc, tr01.req_date DESC
+			)k,
+			(SELECT @ROWNUM := 0) r
+		)t
+		where t.rnum between #startRow# AND #endRow#
+	</select>
+
+	<select id="selectCountTRToAccept" parameterClass="bgabGasctr01" resultClass="java.lang.String">
+		/* selectCountTRToAccept */
+		select count(*) tot_cnt
+		from BGAB_GASCTR01$corp_cd$
+		where 1=1
+			<isNotEmpty property="ops_cd" prepend="and">
+				ops_cd = #ops_cd#
+			</isNotEmpty>
+			<isNotEmpty property="eeno" prepend="and">
+				eeno = #eeno#
+			</isNotEmpty>
+			<isNotEmpty property="eenm" prepend="and">
+				eenm like CONCAT('%' , #eenm# , '%')
+			</isNotEmpty>
+			<isNotEmpty property="from_date" prepend="and">
+				req_date between #from_date# and #to_date#
+			</isNotEmpty>
+			<isNotEmpty property="pgs_st_cd" prepend="and">
+				pgs_st_cd = #pgs_st_cd#
+			</isNotEmpty>
+			<isNotEmpty property="title" prepend="and">
+				title like CONCAT('%' , #title# , '%')
+			</isNotEmpty>
+	</select>
+
+	<select id="selectListTRToAccept" parameterClass="bgabGasctr01" resultClass="bgabGasctr01">
+		/* selectListTRToAccept */
+		select *
+		  from (
+			select @ROWNUM := @ROWNUM + 1 AS rnum
+				 , k.*
+			  from (
+				select tr01.doc_no
+					 , tr01.eeno
+					 , tr01.eenm
+					 , tr01.position
+					 , tr01.ops_cd
+					 , tr01.ops_nm
+					 , DATE_FORMAT( CAST( tr01.req_date AS DATE ),'%Y-%m-%d' ) as req_date
+					 , tr01.ph_no
+					 , tr01.pgs_st_cd
+					 , XCOD_HNAME as pgs_st_nm
+					 , tr01.title
+					 , DATE_FORMAT( CAST( tr01.from_ymd AS DATE ),'%Y-%m-%d' ) as from_ymd
+					 , DATE_FORMAT( CAST( tr01.to_ymd AS DATE ),'%Y-%m-%d' ) as to_ymd
+					 , tr01.amount
+					 , tr01.place
+					 , tr01.description
+					 , CONCAT(DATE_FORMAT( CAST( tr01.from_ymd AS DATE ),'%Y-%m-%d' ) , ' ~ ' , DATE_FORMAT( CAST( tr01.to_ymd AS DATE ),'%Y-%m-%d' )) as schedule
+				from BGAB_GASCTR01$corp_cd$ tr01
+				LEFT OUTER JOIN BGAB_GASCZ005$corp_cd$ Z005
+             	  ON XCOD_KND = 'TR02'
+                 AND Z005.XCOD_CODE = tr01.PGS_ST_CD
+             	 AND Z005.LOCALE = #locale#
+				where 1=1
+					<isNotEmpty property="ops_cd" prepend="and">
+						ops_cd = #ops_cd#
+					</isNotEmpty>
+					<isNotEmpty property="eeno" prepend="and">
+						eeno = #eeno#
+					</isNotEmpty>
+					<isNotEmpty property="eenm" prepend="and">
+						eenm like CONCAT('%' , #eenm# , '%')
+					</isNotEmpty>
+					<isNotEmpty property="from_date" prepend="and">
+						req_date between #from_date# and #to_date#
+					</isNotEmpty>
+					<isNotEmpty property="pgs_st_cd" prepend="and">
+						pgs_st_cd = #pgs_st_cd#
+					</isNotEmpty>
+					<isNotEmpty property="title" prepend="and">
+						title like CONCAT('%' , #title# , '%')
+					</isNotEmpty>
+				order by tr01.from_ymd desc, tr01.req_date asc
+			)k,
+			(SELECT @ROWNUM := 0) r
+		)t
+		where t.rnum between #startRow# and #endRow#
+	</select>
+
+	<update id="approveTRToRequest" parameterClass="bgabGasctr01">
+		/* approveTRToRequest */
+		update BGAB_GASCTR01$corp_cd$
+		set	    pgs_st_cd	= #pgs_st_cd#
+			   ,pgs_st_nm	= (select xcod_hname from bgab_gascz005$corp_cd$ where xcod_knd='TR02' and xcod_code=#pgs_st_cd# and locale=#locale#)
+			   ,mdfy_ymd	= DATE_FORMAT( SYSDATE(),'%Y%m%d' )
+			   ,updr_eeno	= #updr_eeno#
+		where doc_no = #doc_no#
+	</update>
+
+	<update id="approveCancelTRToRequest" parameterClass="bgabGasctr01">
+		/* approveCancelTRToRequest */
+		update BGAB_GASCTR01$corp_cd$
+		set	    pgs_st_cd	= #pgs_st_cd#
+			   ,pgs_st_nm	= (select xcod_hname from bgab_gascz005$corp_cd$ where xcod_knd='TR02' and xcod_code=#pgs_st_cd# and locale=#locale#)
+			   ,mdfy_ymd	= DATE_FORMAT( SYSDATE(),'%Y%m%d' )
+			   ,updr_eeno	= #updr_eeno#
+		where doc_no = #doc_no#
+	</update>
+
+	<update id="confirmTRToRequest" parameterClass="bgabGasctr01">
+		/* confirmTRToRequest */
+		update BGAB_GASCTR01$corp_cd$
+		set	    pgs_st_cd	= #pgs_st_cd#
+			   ,pgs_st_nm	= (select xcod_hname from bgab_gascz005$corp_cd$ where xcod_knd='TR02' and xcod_code=#pgs_st_cd# and locale=#locale#)
+			   ,mdfy_ymd	= DATE_FORMAT( SYSDATE(),'%Y%m%d' )
+			   ,updr_eeno	= #updr_eeno#
+			   ,acpc_eeno	= #updr_eeno#
+			   ,acpc_ymd	= SYSDATE()
+		where doc_no = #doc_no#
+	</update>
+
+	<update id="confirmCancelTRToRequest" parameterClass="bgabGasctr01">
+		/* confirmCancelTRToRequest */
+		update BGAB_GASCTR01$corp_cd$
+		set	    snb_rson_sbc= #snb_rson_sbc#
+			   ,pgs_st_nm	= (select xcod_hname from bgab_gascz005$corp_cd$ where xcod_knd='TR02' and xcod_code=#pgs_st_cd# and locale=#locale#)
+			   ,pgs_st_cd	= #pgs_st_cd#
+			   ,mdfy_ymd	= DATE_FORMAT( SYSDATE(), '%Y%m%d' )
+			   ,updr_eeno	= #updr_eeno#
+		where doc_no = #doc_no#
+	</update>
+
+	<update id="updateInfoTrToReject" parameterClass="BgabGasctr01">
+		/* updateInfoTrToReject */
+   		UPDATE	BGAB_GASCTR01$corp_cd$
+		SET 	PGS_ST_CD  = #pgs_st_cd#
+				,IF_ID     = ''
+				,RPTS_EENO = ''
+				,RPTS_YMD  = ''
+				,RDCS_EENO = ''
+				,RDCS_YMD  = ''
+				,ACPC_EENO = ''
+				,ACPC_YMD  = ''
+				,SNB_RSON_SBC = #snb_rson_sbc#
+				,UPDR_EENO = #updr_eeno#
+				,MDFY_YMD  = DATE_FORMAT(SYSDATE(),'%Y%m%d')
+		WHERE	DOC_NO = #doc_no#
+	</update>
+</sqlMap>

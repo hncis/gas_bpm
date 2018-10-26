@@ -1,0 +1,399 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XST11";
+
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH",locale);
+	String strSav = JSPMessageSource.getMessage("BUTTON.SAVE",locale);
+	String strDel = JSPMessageSource.getMessage("BUTTON.DELETE", locale);
+	String strAdd = JSPMessageSource.getMessage("BUTTON.ADD", locale);
+	
+	String strBtn = "";
+	strBtn = strSch+"/search@"+strSav+"/save@"+strDel+"/delete@"+strAdd+"/addrow";
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>BusinessTravel - code Management</title>
+	</head>
+	<body>
+		<div id="wrap">
+	    	<form name="testForm" id="testForm">
+		    	<%@ include file="../include/hncis_header.gas"%>
+		        <div id="contents_wrap">
+		        	<%@ include file="../include/hncis_left.gas"%>
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,"XST11"
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+		                <div class="search_area">
+		                	<table>
+		                        <colgroup>
+		                        	<col style="width:50px;" />
+		                            <col style="width:200px;" />
+		                            <col style="width:50px;" />
+		                            <col style="width:auto;" />
+		                        </colgroup>
+		                        <tbody>
+		                            <tr>
+										<th><fmt:message key="code"/></th>
+										<td colspan="3">
+											<select id="key_code_knd" onchange="doSearch();"></select>
+<!-- 											<input type="text" id="key_code_knd" name="key_code_knd" value="00000" style="width:100px"  onkeyup="enterKey();"> -->
+										</td>
+<!-- 										<th><fmt:message key="eenm"/></th> -->
+<!-- 										<td> -->
+<!-- 											<input type="text" id="key_code_hname" name="key_code_hname" style="width:100px" onkeyup="enterKey();"> -->
+<!-- 										</td> -->
+									</tr>
+		                        </tbody>
+		                    </table>
+		                </div>
+		                <div class="jq_tbl">
+			                <table id="htmlTable" class="scroll"></table>
+							<div id="htmlPager" class="scroll"></div>
+						</div>
+		                <%@ include file="../include/hncis_message.gas"%>
+		            </div>
+		            <div class="clear"></div>
+		        </div>
+	        </form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+	    </div>
+		<%-- <div id="wrap">
+			<div id="GASC">
+				<form name="testForm" id="testForm">
+					<%@ include file="../include/leftMenuSys.gas"%>
+					<div id="container_wrap">
+						<div id="container">
+							<%=CommonGasc.getTitleAndButtonNew(sess_empno
+								,"XST11"
+								,"search/search@저장/save@삭제/delete"
+								,null
+								,null
+								,null
+								,request)
+							%>
+							<div id="basic_info">
+								<table>
+									<tr>
+										<td width="50px">Code</td>
+										<td>
+											<input type="text" id="key_code_knd" name="key_code_knd" value="00000" style="width:100px"  onkeyup="enterKey();">
+										</td>
+									</tr>
+								</table>
+							</div>
+							<table id="htmlTable" class="scroll"></table>
+							<div id="htmlPager" class="scroll"></div>
+							<iframe id="msgFrame" src="<%=ctxPath %>/bottom.gas" style="padding-top:10px; width:100%; height:30px;" border="0" frameborder="0" framespacing="0" hspace="0" vspace="10" scrolling="no" noresize></iframe>
+						</div>
+					</div>
+				</form>
+				<form id="hideForm" name="hideForm" method="post">
+					<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+				</form>				
+			</div>
+		</div> --%>
+	</body>
+</html>
+		<script type="text/javascript">
+		function fnSetDocumentReady(){
+			initMenus();
+			$('#ST').slideDown('fast');
+// 			init();
+			
+			getCommonCode("key_code_knd:0000:Z;", "N", "init();");
+		}
+
+		/**
+		 * process init() loading
+		 */
+		var params;
+		var fnMerge;
+		var gridParam;
+		var gridName = "htmlTable";
+		var datarow  = {xcod_knd_old:"", xcod_code_old:"", xcod_knd:"", xcod_code:"", xcod_hname:"", xcod_ename:"", xcod_order:"", xcod_aply_flag:""};
+		function init(){
+			//set grid parameter
+			var params = {
+					xcod_knd : $("#key_code_knd").val().toUpperCase(),
+					corp_cd  : sess_corp_cd,
+					locale	 : sess_locale
+				};
+			gridParam = {
+				viewEdit : [{
+					gridName     : gridName,
+					url          : "doSearchCodeManagement.do",
+// 					colNames     : ["", "", "코드 종류", "코드", "내용", "임시 내용", "정렬 순서", "사용여부"],
+					colNames     : ['' // ""
+								  ,'' // ""
+								  ,'<fmt:message key="cd_type"/>' // "코드 종류"
+								  ,'<fmt:message key="code"/>' // "코드"
+								  ,'<fmt:message key="contents"/>' // "내용"
+								  ,'<fmt:message key="tmp_contents"/>' // "임시 내용"
+								  ,'<fmt:message key="sort_no"/>' // "정렬순서"
+								  ,'<fmt:message key="use_yn"/>' // "사용여부"
+			 		 ],
+					colModel     : [{name:"xcod_knd_old",	index:"xcod_knd_old"	, sortable:false,		formatter:"string",	width:"0",		align:"center",	editable:false,	frozen:false, hidden : true},
+					                {name:"xcod_code_old",	index:"xcod_code_old"	, sortable:false,		formatter:"string",	width:"0",		align:"center",	editable:false,	frozen:false, hidden : true},
+					                {name:"xcod_knd",		index:"xcod_knd"		, sortable:false,		formatter:"string",	width:"120",	align:"center",	editable:true,	frozen:false, hidden : true},
+					            	{name:"xcod_code",		index:"xcod_code"		, sortable:false,		formatter:"string",	width:"200",	align:"center",	editable:true,	frozen:false},
+					            	{name:"xcod_hname",		index:"xcod_hname"		, sortable:false,		formatter:"string",	width:"325",	align:"left",	editable:true,	frozen:false},
+					            	{name:"xcod_ename",		index:"xcod_ename"		, sortable:false,		formatter:"string",	width:"130",	align:"left",	editable:true,	frozen:false},
+					            	{name:"xcod_order",		index:"xcod_order"		, sortable:false,		formatter:"string",	width:"150",	align:"center",	editable:true,	frozen:false},
+					            	{name:"xcod_aply_flag",	index:"xcod_aply_flag"	, sortable:false,		edittype:"select", formatter:"select",	width:"150", align:"center",	editable:true,	
+					            		editoptions:{value:"Y:Y;N:N"}
+					            	}
+					            	],
+					height       : "100%",
+					rownumbers   : true,
+					multiselect  : true,
+					cellEdit     : true,
+					fnMerge      : false,
+					completeFc   : "addGridRow();initAfterMenus();",
+					dblClickRowFc : "celldbClickAction(rowId,iRow,iCol,e);",
+					pager		 : "htmlPager",
+					paramJson    : params
+				}]
+			};
+			
+			//common jqGrid call...
+			commonJqGridInit(gridParam);
+			
+			//method overliding
+			jQuery("#"+gridName).jqGrid("navGrid","#htmlPager",{edit:false,add:false,del:false,search:false,refresh:false});
+			
+			setGridColumnOptions(gridName);
+		}
+
+		function retrieve(gubn){
+			switch(gubn){
+				case "search" :
+					doSearch();
+					break;
+				case "save" :
+					doInsert();
+					break;
+				case "edit" :
+					doModify();
+					break;
+				case "delete" :
+					doDelete();
+					break;
+				case "addrow" :
+					fnAddRow();
+					break;
+			}
+		}
+
+		function fnAddRow(){
+			var gridRowId = $("#htmlTable").getDataIDs().length;
+			jQuery("#htmlTable").jqGrid("addRowData", gridRowId+1, datarow);
+		}
+
+
+		function doSearch(msgFlag){
+			
+//			if($("#key_code_knd").val() == ""){
+//				alertUI("Please enter code.");
+//				$("#key_code_knd").focus();
+//				return;
+//			}
+			var params = {
+				xcod_knd : $("#key_code_knd").val().toUpperCase(),
+				corp_cd  : sess_corp_cd,
+				locale	 : sess_locale
+			};
+			
+			doCommonSearch("doSearchCodeManagement.do", util.jsonToString(params), "loadCallBack();initAfterMenus();", gridName, msgFlag);
+		}
+
+		function doInsert(){
+			var paramsI = [];	
+			var paramsU = [];
+			var selectRow = jQuery("#"+gridName).jqGrid("getGridParam", "selarrrow");
+			
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}else{
+				for(var i = 0; i < selectRow.length; i++){
+					var rowId = selectRow[i];
+					if(rowId){
+						if(getColValue("xcod_code" , rowId, gridName) == ""){
+							alertUI('<fmt:message key="MSG.INP.0029"/>');
+							return;
+						}else if(getColValue("xcod_hname" , rowId, gridName) == ""){
+							alertUI('<fmt:message key="MSG.INP.0032"/>');
+							return;
+						}
+						
+						if($.trim(getColValue("xcod_knd_old", rowId, gridName)) != ""){
+							list ={
+								xcod_knd      	: $("#key_code_knd").val(),
+								xcod_knd_old   	: getColValue("xcod_knd_old"  , rowId, gridName),
+								xcod_code   	: getColValue("xcod_code" , rowId, gridName),
+								xcod_code_old  	: getColValue("xcod_code_old" , rowId, gridName),
+								xcod_hname      : changeToUni(getColValue("xcod_hname", rowId, gridName)),
+								xcod_ename      : getColValue("xcod_ename", rowId, gridName),
+								xcod_order      : getColValue("xcod_order", rowId, gridName),
+								xcod_aply_flag  : getColValue("xcod_aply_flag", rowId, gridName),
+								corp_cd         : sess_corp_cd,
+								ipe_eeno    	: sess_empno,
+								updr_eeno   	: sess_empno,
+								locale			: sess_locale
+							};
+							paramsU.push(list);
+						}else{
+							list ={
+								xcod_knd      	: $("#key_code_knd").val(),
+								xcod_code   	: getColValue("xcod_code" , rowId, gridName),
+								xcod_hname      : changeToUni(getColValue("xcod_hname", rowId, gridName)),
+								xcod_ename      : getColValue("xcod_ename", rowId, gridName),
+								xcod_order      : getColValue("xcod_order", rowId, gridName),
+								xcod_aply_flag  : getColValue("xcod_aply_flag", rowId, gridName),
+								corp_cd         : sess_corp_cd,
+								ipe_eeno    	: sess_empno,
+								updr_eeno   	: sess_empno,
+								locale			: sess_locale
+							};
+							paramsI.push(list);
+						}
+					}
+				}
+			}
+			
+			confirmUI('<fmt:message key="MSG.CNF.0004"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramsI : util.jsonToList(paramsI),
+								paramsU	: util.jsonToList(paramsU)
+							};
+						doCommonAjax("doInsertCodeManagement.do", paramData, "submitCallBack('save', jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function doModify(){
+			var params = [];
+			var selectRow = jQuery("#"+gridName).jqGrid("getGridParam", "selarrrow");
+			
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}else{
+				for(var i = 0; i < selectRow.length; i++){
+					var rowId = selectRow[i];
+					if(rowId){
+						if(getColValue("xcod_knd" , rowId, gridName) == ""){
+							alertUI('<fmt:message key="MSG.INP.0031"/>');
+							return;
+						}else if(getColValue("xcod_code" , rowId, gridName) == ""){
+							alertUI('<fmt:message key="MSG.INP.0029"/>');
+							return;
+						}else if(getColValue("xcod_hname" , rowId, gridName) == ""){
+							alertUI('<fmt:message key="MSG.INP.0032"/>');
+							return;
+						}
+						list ={
+							xcod_knd      	: getColValue("xcod_knd"  , rowId, gridName),
+							xcod_code   	: getColValue("xcod_code" , rowId, gridName),
+							xcod_hname      : getColValue("xcod_hname", rowId, gridName),
+							xcod_order      : getColValue("xcod_order", rowId, gridName),
+							xcod_aply_flag  : getColValue("xcod_aply_flag", rowId, gridName),
+							corp_cd         : sess_corp_cd,
+							updr_eeno   	: sess_empno
+						};
+						params.push(list);
+					}
+				}
+			}
+			
+			confirmUI('<fmt:message key="MSG.CNF.0003"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramJson : util.jsonToList(params)
+							};
+							doCommonAjax("doModifyCodeManagement.do", paramData, "submitCallBack('edit', jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function doDelete(){
+			var params = [];
+			var selectRow = jQuery("#"+gridName).jqGrid("getGridParam", "selarrrow");
+			
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}else{
+				for(var i = 0; i < selectRow.length; i++){
+					var rowId = selectRow[i];
+					if(rowId){
+						list ={
+							xcod_knd      	: getColValue("xcod_knd_old"  , rowId, gridName),
+							xcod_code   	: getColValue("xcod_code_old" , rowId, gridName),
+							corp_cd			: sess_corp_cd
+						};
+						params.push(list);
+					}
+				}
+			}
+			
+			confirmUI('<fmt:message key="MSG.CNF.0002"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramJson : util.jsonToList(params)
+							};
+							doCommonAjax("doDeleteCodeManagement.do", paramData, "submitCallBack('delete', jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		/**
+		 * addRow $.IDs.length + 1
+		 * datarow colModel keyName:"", ....
+		 */
+		function addRow(){
+			var gridRowId = jQuery("#"+gridName).getDataIDs().length;
+			for(var i = 1; i <= 10 - gridRowId ; i++){
+				jQuery("#"+gridName).jqGrid("addRowData", gridRowId+i, datarow);
+			}
+		}
+
+		/**
+		 * callback
+		 */
+		function loadCallBack(){
+			addGridRow();
+		}
+
+		function submitCallBack(id, result){
+			setBottomMsg(result.message, true);
+			doSearch("N");
+		}
+		function celldbClickAction(rowId,iRow,iCol,e){
+			if(getColValue("xcod_knd",rowId) == "00000"){
+				$("#key_code_knd").val(getColValue("xcod_code",rowId));
+				doSearch();
+			}
+		}
+
+		</script>

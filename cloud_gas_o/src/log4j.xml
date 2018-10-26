@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
+
+    <!-- ConsoleAppender -->
+    <appender name="console" class="org.apache.log4j.ConsoleAppender">
+        <param name="Encoding" value="UTF-8" />
+        <param name="Target" value="System.out" />
+        <!-- ref.) attr : Encoding, ImmediateFlush, Target, Threshold -->
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %5p [%c] %m%n" />
+        </layout>
+    </appender>
+    
+    <appender name="console-infolog" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %5p %m%n" />
+        </layout>
+    </appender>
+    
+    <!-- FileAppender -->
+	<appender name="appLog" class="org.apache.log4j.FileAppender">
+        <param name="Encoding" value="UTF-8" />
+		<param name="File" value="C:/hncis/logs/app.log" />
+        <param name="ImmediateFlush" value="true" />
+        <param name="Append" value="true" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %5p [%c] %m%n" />
+        </layout>
+    </appender>
+    
+    <!-- RollingFileAppender -->
+	<appender name="sqlLog" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="C:/hncis/logs/sql.log" />
+        <param name="Append" value="true" />
+        <param name="MaxFileSize" value="1000KB" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %5p [%c] %m%n" />
+        </layout>
+    </appender>    
+    
+    <!-- DailyRollingFileAppender -->
+    <appender name="dailyRollingFile" class="org.apache.log4j.DailyRollingFileAppender">
+        <!-- ref.) attr : FileAppender + DatePattern -->
+        <!--param name="File" value="C:/DES/workspace/projects/engineer/src/main/webapp/WEB-INF/logs/sample.log" /-->
+        <param name="File" value="C:/hncis/logs/hncis_console.log" />
+        <param name="Append" value="true" />
+        <!--
+            SimpleDateFormat 을 따름. ex.) .yyyy-ww : 첫날 기준 매주마다,
+            .yyyy-MM            : 월단위 
+            .yyyy-MM-ww         : 주단위 
+            .yyyy-MM-dd         : 일단위 
+            .yyyy-MM-dd-a       : 12시간단위 
+            .yyyy-MM-dd-HH      : 시간단위 
+            .yyyy-MM-dd-HH-mm   : 매분마다
+        -->
+        <param name="DatePattern" value="'.'yyyy-MM-dd" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %5p [%c] %m%n" />
+        </layout>
+    </appender>
+
+    <!-- log SQL with timing information, post execution -->
+    <logger name="com.hncis">
+        <level value="INFO" />
+		<appender-ref ref="console"/>
+		<appender-ref ref="dailyRollingFile" />
+    </logger>
+	
+	<!-- 3rdparty Loggers -->
+	<logger name="org.springframework.core">
+		<level value="INFO" />
+	</logger>
+	
+	<logger name="org.springframework.beans">
+		<level value="INFO" />
+	</logger>
+	
+	<logger name="org.springframework.context">
+		<level value="INFO" />
+	</logger>
+
+	<logger name="org.springframework.web">
+		<level value="INFO" />
+	</logger>
+    
+    <!--  SQL Result Log -->
+    <logger name="jdbc.sqltiming" additivity="false">  
+        <level value="INFO"/>
+        <appender-ref ref="console" />  
+    </logger>
+    
+    <logger name="java.sql" additivity="false">
+        <level value="INFO" />
+        <appender-ref ref="console" />
+    </logger>
+    
+    <logger name="jdbc.sqlonly" additivity="false">
+        <level value="INFO" />
+        <appender-ref ref="console"/>   
+    </logger>
+
+    <logger name="jdbc.resultsettable" additivity="false">
+        <level value="INFO" />
+        <appender-ref ref="console"/>   
+    </logger>
+    
+    <logger name="jdbc.connection" additivity="false">  
+        <level value="WARN"/>
+    </logger> 
+    
+    <logger name="jdbc.audit" additivity="false">  
+        <level value="WARN"/>
+    </logger>
+     
+    <logger name="jdbc.resultset" additivity="false">  
+        <level value="WARN"/>
+    </logger>
+    
+    <root>
+        <priority value ="INFO" />
+        <appender-ref ref="console" />
+    </root>
+</log4j:configuration>

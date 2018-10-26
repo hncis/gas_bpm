@@ -1,0 +1,822 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId = "XVE01";
+	String hid_apply_date = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_apply_date")));
+	String hid_eeno       = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_eeno")));
+	String hid_type       = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_type")));
+	String hid_doc_no     = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_doc_no")));
+	String temp_doc_no    = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_doc_no")));
+	String hid_csrfToken  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_csrfToken")));
+	String hid_cond 	  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_cond")));
+	String hid_view_nm    = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_view_nm")));
+	String param1         = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("param1")));
+
+	if(StringUtil.isEmpty(hid_doc_no)){
+		temp_doc_no = StringUtil.getDocNo();
+	}
+
+	if(!"".equals(param1)){
+		hid_type = param1;
+	}
+
+	if("1".equals(hid_type)){
+		menuId = "XVE11";
+	}else if("2".equals(hid_type)){
+		menuId = "XVE12";
+	}else if("3".equals(hid_type)){
+		menuId = "XVE13";
+	}else if("4".equals(hid_type)){
+		menuId = "XVE14";
+	}else if("5".equals(hid_type)){
+		menuId = "XVE15";
+	}
+
+	String strNew = JSPMessageSource.getMessage("BUTTON.NEW",locale);
+	String strSav = JSPMessageSource.getMessage("BUTTON.SAVE", locale);
+	String strDel = JSPMessageSource.getMessage("BUTTON.DELETE", locale);
+	String strReq = JSPMessageSource.getMessage("BUTTON.REQUEST", locale);
+	String strRqc = JSPMessageSource.getMessage("BUTTON.REQUESTCANCEL", locale);
+	String strCfm = JSPMessageSource.getMessage("BUTTON.CONFIRM", locale);
+	String strCfc = JSPMessageSource.getMessage("BUTTON.CONFIRMCANCEL", locale);
+	String strCpy = JSPMessageSource.getMessage("BUTTON.COPY");
+	String strPrn = JSPMessageSource.getMessage("BUTTON.PRINT", locale);
+	String strBck = JSPMessageSource.getMessage("BUTTON.BACK", locale);
+
+	String strBtn = "";
+	strBtn = strNew+"/new@"+strSav+"/save@"+strDel+"/delete@"+strReq+"/request@"+strRqc+"/requestCancel@"+strCfm+"/confirm@"+strCfc+"/reject";
+	if(!"".equals(hid_doc_no)){
+		strBtn += "@"+strBck+"/back";
+	}
+
+	String approveStepLevel = CommonGasc.getApproveStepLevel(menuId, request);
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>방문</title>
+	</head>
+	<body>
+		<div id="wrap">
+		<form name="frm" id="frm">
+			<input type="hidden" id="gubun" name="gubun">
+			<input type="hidden" id="nSource" name="nSource">
+			<input type="hidden" id="sses_eeno" name="sses_eeno" value="<%=sess_empno%>">
+			<input type="hidden" id="sses_eenm" name="sses_eenm" value="<%=sess_name%>">
+			<input type="hidden" id="hid_apply_date" name="hid_apply_date" value="<%=hid_apply_date%>">
+			<input type="hidden" id="hid_eeno" name="hid_eeno" value="<%=hid_eeno%>">
+			<input type="hidden" id="hid_type" name="hid_type" value="<%=hid_type%>">
+			<input type="hidden" id="hid_doc_no" name="hid_doc_no" value="<%=hid_doc_no%>">
+			<input type="hidden" id="hid_eeno" name="hid_eeno" value="<%=hid_eeno%>">
+			<input type="hidden" id="temp_doc_no" name="temp_doc_no" value="<%=temp_doc_no%>">
+			<input type="hidden" id="hid_cond" name="hid_cond" value="<%=hid_cond%>">
+			<input type="hidden" id="hid_view_nm" name="hid_view_nm" value="<%=hid_view_nm%>">
+			<input type="hidden" id="hid_param1" name="hid_param1" value="<%=param1%>">
+			<input type="hidden" id="if_id" name="if_id">
+			<input type="hidden" id="cancel_yn" name="cancel_yn">
+			<input type="hidden" id="approveStepLevel" value="<%=approveStepLevel%>">
+			<input type="hidden" id="hid_approve_str">
+			<input type="hidden" id="help_url" name="help_url">
+
+			<%@ include file="../include/hncis_header.gas"%>
+			<div id="contents_wrap">
+				<%@ include file="../include/hncis_left.gas"%>
+				<div id="contents">
+					<%=CommonGasc.getTitleAndButtonNew(sess_empno
+						,menuId
+						,strBtn
+						,""
+						,""
+						,null
+						,"Y"
+						,request)
+					%>
+					<div class="con_t_area mt10">
+	                	<h3><fmt:message key="basic_info"/></h3>
+	                </div>
+					<div class="search_area">
+						<table>
+							<colgroup>
+	                        	<col style="width:110px;" />
+	                            <col style="width:158px;" />
+	                            <col style="width:73px;" />
+	                            <col style="width:158px;" />
+	                            <col style="width:80px;" />
+	                            <col style="width:158px;" />
+	                            <col style="width:73px;" />
+	                            <col style="width:158px;" />
+	                        </colgroup>
+							<tr>
+								<th><fmt:message key="eeno"/></th>
+								<td><input type="text" id="eeno" style="width:140px" onkeyup="setInsaInfo();">
+									<input type="hidden" id="eeno_temp"></td>
+								<th><fmt:message key="eenm"/></th>
+								<td><input type="text" id="keyEenm" style="width:140px" class="disabled" readOnly></td>
+								<th><fmt:message key="position"/></th>
+								<td><input type="text" id="keyPosition" style="width:140px" class="disabled" readOnly></td>
+								<th><fmt:message key="dept_nm"/></th>
+								<td>
+									<input type="hidden" id="keyOpsCd" readOnly>
+									<input type="text" id="keyOpsNm" style="width:140px" class="disabled" readOnly>
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="req_ymd"/></th>
+								<td><input type="text" id="apply_date" style="width:140px" class="disabled" readOnly></td>
+								<th><fmt:message key="doc_no"/></th>
+								<td><input type="text" id="doc_no" style="width:140px" class="disabled" readOnly></td>
+								<th><fmt:message key="pgs_st_nm"/></th>
+								<td>
+									<input type="hidden" id="pgs_st_cd" name="pgs_st_cd">
+									<input type="text" id="pgs_st_nm" name="pgs_st_nm" style="width:140px" class="disabled" readOnly>
+								</td>
+								<th><fmt:message key="tel_no"/></th>
+								<td><input type="text" id="keyTelNo" style="width:140px" class="disabled" readOnly></td>
+							</tr>
+							<tr>
+								<th class="div_nameF"><fmt:message key="rtn_rsn"/></th>
+								<td class="inputF" colspan="7">
+									<input type="text" id="snb_rson_sbc" name="snb_rson_sbc" style="width:843px" class="disabled">
+								</td>
+							</tr>
+						</table>
+					</div>
+
+					<div class="con_t_area">
+	                	<h3><fmt:message key="req_info"/></h3>
+	                </div>
+	                <div class="search_area">
+		                <table>
+		                	<colgroup>
+		                		<col width="60px"/>
+		                		<col width="200px"/>
+		                		<col width="60px"/>
+		                		<col width="auto"/>
+		                	</colgroup>
+		                	<tr>
+								<th><fmt:message key="type"/></th>
+								<td><select id="type" onchange="changeType(this.value)" style="width: 150px"></select></td>
+								<th><fmt:message key="rsn"/></th>
+								<td><input type="text" id="reason" style="width: 632px;"></td>
+							</tr>
+		                </table>
+		            </div>
+
+					<iframe id="ifra" name="ifra" src="" style="padding-top:10px; z-index: -1;" width="100%" height="400px" border="0" frameborder="0" framespacing="0" hspace="0" vspace="10" scrolling="no" noresize></iframe>
+
+					<div class="search_area">
+		                <table>
+		                	<%-- <tr>
+								<th width="80px"><fmt:message key="rsn"/></th>
+								<td><input type="text" id="reason"></td>
+							</tr> --%>
+							<tr>
+								<th width="80px"><fmt:message key="rem_sbc"/></th>
+								<td><textarea id="remark" class="sub_textarea" rows="8" cols=""></textarea></td>
+							</tr>
+		                </table>
+		            </div>
+					<%@ include file="../include/hncis_message.gas"%>
+				</div>
+				<div class="clear"></div>
+			</div>
+		</form>
+		<form id="hideForm" name="hideForm" method="post">
+			<input type="hidden" id="hid_csrfToken"	name="hid_csrfToken">
+		</form>
+		</div>
+	</body>
+</html>
+		<script type="text/javascript">
+		function fnSetDocumentReady(){
+			initMenus();
+
+			if($("#hid_eeno").val() != ""){
+				$("#eeno").val($("#hid_eeno").val());
+				$("#eeno_temp").val($("#hid_eeno").val());
+				$("#apply_date").val($("#hid_apply_date").val());
+			}else{
+				$("#eeno").val($("#sses_eeno").val());
+				$("#req_yn").val("Y");
+			}
+
+			if($("#hid_doc_no").val() != ""){
+				frm.type.style.backgroundColor = "#e2e2e2";
+				frm.type.disabled = true;
+			}
+
+			if($("#doc_no").val() == ""){
+				$("#hid_doc_no").val($("#temp_doc_no").val());
+			}
+
+			if($("#hid_doc_no").val() != ""){
+				$("#doc_no").val($("#hid_doc_no").val());
+			}
+
+			$(".inputOnlyNumber").numeric();
+
+			sess_auth = $("#work_auth").val();
+
+			setInsaInfo();
+		}
+
+		var saveCode = "";
+		function cearInsa(){
+			if($("#eeno").val() == ""){
+				saveCode = "";
+				$("#nSource").val("");
+				$("#eeno").val("");
+				$("#keyEenm").val("");
+				$("#keyOpsCd").val("");
+				$("#keyOpsNm").val("");
+			}
+		}
+
+		function setInsaInfo(){
+			if($("#eeno").val() != ""){
+				$("#nSource").val($("#eeno").val());
+				if(saveCode == $("#nSource").val()){ return; }
+				saveCode = $("#nSource").val();
+
+				var keyData = {
+						xusr_empno : $("#eeno").val(),
+						corp_cd		: sess_corp_cd
+				};
+				paramData = {
+					paramJson : util.jsonToString(keyData)
+				};
+				doCommonAjax("/doSearchToUserInfo.do", paramData, "insaCallBack(jsonData.sendResult)");
+			}
+		}
+
+		function insaCallBack(result){
+// 			$("#eeno").val(result.xusr_empno);
+			$("#keyEenm").val(result.xusr_name);
+			$("#keyOpsCd").val(result.xusr_dept_code);
+			$("#keyOpsNm").val(result.xusr_dept_name);
+			$("#odu_regn_cd").val(result.xusr_plac_work);
+			$("#keyTelNo").val(result.xusr_tel_no);
+			$("#keyPosition").val(result.xusr_step_name);
+
+//			init();
+			getCommonCode("type:X3001:Z;", "N", "init()");		//목적
+		}
+
+
+		/**
+		 * process init() loading
+		 */
+		function init(){
+			initAfterMenus();
+
+			if(Number(sess_auth) > 4 || sess_mstu == "M"){
+
+			}else{
+				readOnlyStyle("eeno", 1);
+			}
+
+			if($("#hid_eeno").val() != ""){
+				$("#type").val($("#hid_type").val());
+				changeType($("#hid_type").val());
+			}else{
+				if($("#hid_param1").val() == ""){
+					$("#type").val(5);
+					changeType("5");
+				}else{
+					$("#type").val($("#hid_param1").val());
+					changeType($("#hid_param1").val());
+				}
+			}
+		}
+
+		function retrieve(gubun){
+			switch(gubun){
+				case "save" :
+				case "edit" :
+				case "delete" :
+					if(!processValidation(gubun))return;
+					doCudAction(gubun);
+					break;
+				case "request" :
+				case "requestCancel" :
+					if(!processValidation(gubun))return;
+					doApprove(gubun);
+					break;
+				case "confirm" :
+					if(!processValidation(gubun))return;
+					doConfirm();
+					break;
+				case "reject" :
+					doReject();
+					break;
+				case "confirmCancel" :
+					if(!processValidation(gubun))return;
+					doConfirmCancel();
+					break;
+				case "back" :
+				    doBack();
+				    break;
+				case "ebook" :
+					fnEBook();
+					break;
+				case "copy" :
+					fnCopy();
+					break;
+				case "new" :
+				    doNew();
+				    break;
+			   case "print" :
+				    doPrint();
+			}
+		}
+
+		function doCudAction(gubun){
+			if($("#pgs_st_cd").val() == '2'){
+				if(gubun == 'save'){
+					alertUI('<fmt:message key="MSG.STAT.0002"/>');
+					return;
+				} else if(gubun == 'edit'){
+					alertUI('<fmt:message key="MSG.STAT.0004"/>');
+					return;
+				} else if(gubun == 'delete'){
+					alertUI('<fmt:message key="MSG.STAT.0003"/>');
+					return;
+				}
+			}
+			
+			if($("#reason").val() == "" && gubun != 'delete'){
+ 				alertUI('<fmt:message key="MSG.INP.0067"/>');
+ 				return;
+ 			}
+
+			ifra.doCudAction(gubun);
+			
+			/* var strConfirm = '';
+			if(gubun == 'save'){
+				strConfirm = '<fmt:message key="MSG.CNF.0004"/>';
+			} else if(gubun == 'edit'){
+				strConfirm = '<fmt:message key="MSG.CNF.0003"/>';
+			} else if(gubun == 'delete'){
+				strConfirm = '<fmt:message key="MSG.CNF.0002"/>';
+			}
+
+			confirmUI(strConfirm);
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						ifra.doCudAction(gubun);
+					}
+				});
+			}); */
+		}
+
+		function doApprove(gubun){
+			var confirmStr = '';
+			if(gubun == "request"){
+				confirmStr = '<fmt:message key="MSG.CNF.0005"/>';
+			}else if(gubun == "requestCancel"){
+				confirmStr = '<fmt:message key="MSG.CNF.0006"/>';
+			}
+
+			confirmUI(confirmStr);
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						ifra.doApprove(gubun);
+					}
+				});
+			});
+
+		}
+
+		function doConfirm(gubun){
+			confirmUI('<fmt:message key="MSG.CNF.0007"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						ifra.doConfirm(gubun);
+					}
+				});
+			});
+		}
+
+		function doConfirmCancel(gubun){
+			confirmUI('<fmt:message key="MSG.CNF.0029"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						ifra.doConfirmCancel(gubun);
+					}
+				});
+			});
+		}
+
+		function fnCopy(){
+			confirmUI('<fmt:message key="MSG.CNF.0015"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						ifra.fnCopy();
+					}
+				});
+			});
+		}
+
+		function processValidation(gubun){
+			var pgs_st_cd = $("#pgs_st_cd").val();
+			var cancel_yn = $("#cancel_yn").val();
+			var flag      = false;
+
+			if(pgs_st_cd == ""){
+				if(gubun == "save"){
+					flag  = true;
+				}else{
+					alertUI('<fmt:message key="MSG.STAT.0047"/>');
+				}
+			}else if(gubun == "save" ){
+				if( sess_mstu == "M" || sess_auth == 5 ){
+					flag = true;
+				}else if($("#eeno").val() == sess_empno && pgs_st_cd == "0"){
+					flag = true;
+				}else if($("#eeno").val() != sess_empno){
+					alertUI('<fmt:message key="MSG.STAT.0015"/>');
+				}else if(pgs_st_cd != "0"){
+					alertUI('<fmt:message key="MSG.STAT.0002"/>');
+				}
+			}else if((sess_mstu == "M" || sess_auth == 5) && gubun == "edit"){
+				flag = true;
+			}else if(pgs_st_cd == "0"){
+				if(gubun != "save"){
+					if(gubun == "request" || gubun == "edit" || gubun == "delete" || gubun == "travelerDelete" || gubun == "scheduleDelete" || gubun == "forceConfirm" ){
+						flag = true;
+					}else if(gubun == "requestCancel"){
+						alertUI('<fmt:message key="MSG.STAT.0006"/>');
+					}else if(gubun == "confirm"){
+						alertUI('<fmt:message key="MSG.STAT.0009"/>');
+					}else if(gubun == "reject"){
+						alertUI('<fmt:message key="MSG.STAT.0011"/>');
+					}else{
+						alertUI('<fmt:message key="MSG.STAT.0030"/>');
+					}
+				}else{
+					alertUI('<fmt:message key="MSG.STAT.0025"/>');
+				}
+			}else if(pgs_st_cd == "A"){
+				if( sess_mstu == "M" || sess_auth == 5 ){
+					if(gubun == "delete"){
+						flag = true;
+					}else{
+						flag = true;
+					}
+				}else{
+					if(gubun == "cancel"){
+						flag = true;
+					}else if(cancel_yn == "Y"){
+						if(gubun == "requestCancel"){
+							flag = true;
+						}else if(gubun == "delete"){
+							alertUI('<fmt:message key="MSG.STAT.0003"/>');
+						}else if(gubun == "request"){
+							alertUI('<fmt:message key="MSG.STAT.0005"/>');
+						}else{
+							alertUI('<fmt:message key="MSG.STAT.0006"/>');
+						}
+					}else{
+						alertUI('<fmt:message key="MSG.STAT.0014"/>');
+					}
+				}
+			}else if(pgs_st_cd == "Z"){
+				if( sess_mstu == "M" || sess_auth == 5 ){
+					if(gubun == "delete"){
+						flag = true;
+					}else{
+						flag = true;
+					}
+				}else{
+					if(gubun == "confirm" || gubun == "reject" || gubun == "confirmCancel" || gubun == "cancel"){
+						flag = true;
+						if(gubun == "confirm"){
+							if((sess_mstu == "M" || sess_auth == 5)){
+								flag = true;
+							}else if((sess_mstu == "M" || sess_auth == 6)){
+								flag = true;
+							}else{
+								flag = false;
+								alertUI('<fmt:message key="MSG.STAT.0021"/>');
+							}
+						}
+					}else if(gubun == "requestCancel"){
+						if( $("#apprLev1").val() == "" ){
+							flag = true;
+						}else{
+							alertUI('<fmt:message key="MSG.STAT.0006"/>');
+						}
+					}else if(gubun == "delete"){
+						alertUI('<fmt:message key="MSG.STAT.0003"/>');
+					}else if(gubun == "request"){
+						alertUI('<fmt:message key="MSG.STAT.0005"/>');
+					}else{
+						alertUI('<fmt:message key="MSG.STAT.0007"/>');
+					}
+				}
+			}else if(pgs_st_cd == "3"){
+				if( sess_mstu == "M" || sess_auth == 5 ){
+					if(gubun == "delete"){
+						flag = true;
+					}else if(gubun == "request"){
+						alertUI('<fmt:message key="MSG.STAT.0005"/>');
+					}else if(gubun == "requestCancel"){
+						alertUI('<fmt:message key="MSG.STAT.0006"/>');
+					}else if(gubun == "confirm"){
+						alertUI('<fmt:message key="MSG.STAT.0009"/>');
+					}else if(gubun == "reject"){
+						alertUI('<fmt:message key="MSG.STAT.0011"/>');
+					}
+				}else{
+					if(gubun == "confirmCancel" || gubun == "cancel"){
+						flag = true;
+					}
+					/* else if(gubun == "requestCancel" && $("#type").val() == "5" && $("#eeno").val() == sess_empno){
+						flag = true;
+					} */
+					else if(gubun == "delete"){
+						alertUI('<fmt:message key="MSG.STAT.0003"/>');
+					}else if(gubun == "request"){
+						alertUI('<fmt:message key="MSG.STAT.0005"/>');
+					}else if(gubun == "requestCancel"){
+						alertUI('<fmt:message key="MSG.STAT.0006"/>');
+					}else{
+						alertUI('<fmt:message key="MSG.STAT.0008"/>');
+					}
+				}
+			}else if(pgs_st_cd == "C"){
+				if( sess_mstu == "M" || sess_auth == 5 ){
+					if(gubun == "delete"){
+						flag = true;
+					}else{
+						flag = true;
+					}
+				}else{
+					alertUI('<fmt:message key="MSG.STAT.0003"/>');
+				}
+			}
+			return flag;
+		}
+
+		function changeType(value){
+// 			SubmitClear();
+			var src = "";
+			if(value == "1"){
+				src = ctxPath + "/hncis/security/xve01_vehicle_entrance.gas?csrfToken=" + $("#csrfToken").val();
+				$(".sub_title").html("차량출입신청");
+			}else if(value == "2"){
+				src = ctxPath + "/hncis/security/xve01_material_leave.gas?csrfToken=" + $("#csrfToken").val();
+			}else if(value == "3"){
+				src = ctxPath + "/hncis/security/xve01_it_devices.gas?csrfToken=" + $("#csrfToken").val();
+				$(".sub_title").text("IT장비 반입신청");
+			}else if(value == "4"){
+				src = ctxPath + "/hncis/security/xve01_film.gas?csrfToken=" + $("#csrfToken").val();
+			}else if(value == "5"){
+				src = ctxPath + "/hncis/security/xve01_entrance.gas?csrfToken=" + $("#csrfToken").val();
+				$(".sub_title").html("방문신청");
+			}
+
+//			if(value == "5"){
+//				$("#confirm").attr("style","display:none;");
+//				$("#reject").attr("style","display:none;");
+//			}else{
+//				$("#confirm").attr("style","");
+//				$("#reject").attr("style","");
+//			}
+			$("#ifra").attr("src", src);
+		}
+
+		function doSearchRequestInfo(ifId){
+			var params = {
+				if_id : ifId,
+				type  : $("#type").val(),
+				corp_cd	: sess_corp_cd
+			};
+
+			var paramData = {
+				paramJson : util.jsonToString(params)
+			};
+
+			doCommonAjax("doSearchToSecurityRequest.do", paramData,"loadCallBack1(jsonData.sendResult);");
+		}
+
+		function loadCallBack1(result){
+			$("#hid_approve_str").val(result.code);
+			fnSubmitInfoSettings($("#pgs_st_cd").val(), $("#if_id").val(), result.code, "snb_rson_sbc", $("#approveStepLevel").val());
+		}
+
+		//function displaySubmit(doc, argStr, appcNo){
+//			if(argStr == null || argStr == ""){
+//				return;
+//			}
+		//
+//			var mainArray = new Array();
+//			mainArray = argStr.split('#');
+		//
+//			var totLevel = mainArray[0];
+		//
+//			if(typeof($("#cancel_yn").val()) !="undefined"){
+//				$("#cancel_yn").val(mainArray[1]);
+//			}
+		//
+//			for (var i=0; i<doc.all.SUBMIT_TITLE.length ;i++ ){
+//				doc.all.SUBMIT_TITLE[i].innerText = ' ';
+//				doc.all.SUBMIT_DATA[i].innerText = ' ';
+//			}
+		//
+//			var varArray1 = new Array();
+//			var varArray2 = new Array();
+//			var data = '';
+		//
+//			varArray1 = mainArray[2].split('|');
+		//
+//			if(Number(totLevel) > 0){
+//				if($("#type").val() == "1" || $("#type").val() == "5" ){
+//					doc.all.SUBMIT_TITLE[1].style.display = "none";
+//					doc.all.SUBMIT_TITLE[2].style.display = "none";
+//					doc.all.SUBMIT_DATA[1].style.display = "none";
+//					doc.all.SUBMIT_DATA[2].style.display = "none";
+//				}else if($("#type").val() == "2" || $("#type").val() == "3"){
+//					doc.all.SUBMIT_TITLE[2].style.display = "none";
+//					doc.all.SUBMIT_DATA[2].style.display = "none";
+//				}else{
+//					if(varArray1.length == 4){
+//						doc.all.SUBMIT_TITLE[2].style.display = "none";
+//						doc.all.SUBMIT_DATA[2].style.display = "none";
+//					}
+//				}
+//			}
+		//
+//			for (var i=0; i<varArray1.length ;i++ ){
+//				doc.all.SUBMIT_TITLE[i].innerText = " ";
+//				doc.all.SUBMIT_DATA[i].innerText = " ";
+//			}
+		//
+//			var tempStr = mainArray[2];
+//			tempStr = trimChar(tempStr,"@");
+//			tempStr = trimChar(tempStr,"|");
+//			if (trimChar(tempStr)=="") return;
+		//
+//			var cellNo = 0;
+//			for (var i=0; i<varArray1.length ;i++ ){
+//				if(i == 0 || i == 1){
+//					cellNo = i + 3;
+//				}else{
+//					cellNo = i - 2;
+//				}
+		//
+//				if (i < doc.all.SUBMIT_TITLE.length){
+//					varArray2 = varArray1[i].split('@');
+//					data = '';
+//					doc.all.SUBMIT_DATA[cellNo].innerText = '';
+//					for (var j=0; j<varArray2.length ;j++ ){
+//						if (j==0){
+//							if(varArray2[0] != ""){
+//								doc.all.SUBMIT_TITLE[cellNo].innerText = varArray2[0];
+//							}
+//						}else{
+//							data += varArray2[j];
+//							if (j < 3){
+//								data += '\n';
+//							}else{
+//								doc.all.SUBMIT_DATA[cellNo].innerText += data;
+//							}
+//						}
+//					}
+//				}
+//			}
+		//}
+
+		function SubmitClear(){
+			displaySubmitClear(document);
+		}
+
+		function sbcReadonlySet(){
+// 			if($("#pgs_st_cd").val() == "Z" || $("#pgs_st_cd").val() == "3" || $("#pgs_st_cd").val() == "A"){
+			if($("#pgs_st_cd").val() == "A"){
+				if(Number(sess_auth) > 4 || sess_mstu == "M"){
+					readOnlyStyle("snb_rson_sbc", 2);
+				}else{
+					readOnlyStyle("snb_rson_sbc", 1);
+				}
+			}else{
+				readOnlyStyle("snb_rson_sbc", 1);
+			}
+		}
+
+		function doBack(){
+		    var form = $("<form/>");
+		    form.attr("method" , "post");
+		    form.attr("id"     , "submitForm").attr("name", "submitForm");
+		    form.attr("action" , $("#hid_view_nm").val() + ".gas");
+		    var inp1 = $("<input type='hidden' id='hid_cond' name='hid_cond'/>").val($("#hid_cond").val());
+		    var token = $("<input type='hidden' id='hid_csrfToken' name='hid_csrfToken'/>").val($("#csrfToken").val());
+		    form.append(inp1, token);
+		    $("body").append(form);
+		    form.submit();
+		    form.remove();
+		}
+
+		function doNew(){
+			var doc_no = getTmpDocNo();
+			$("#hid_doc_no").val(doc_no);
+			$("#doc_no").val(doc_no);
+			$("#temp_doc_no").val(doc_no);
+
+			changeType($("#type").val());
+			$("#reason").val("");
+			$("#remark").html("");
+
+			frm.type.style.backgroundColor = "#ffffff";
+			frm.type.disabled = false;
+		}
+
+		function doReject(){
+
+// 			if(!($("#pgs_st_cd").val() == 'Z' || $("#pgs_st_cd").val() == '3' || $("#pgs_st_cd").val() == 'A')){
+// 				alertUI('<fmt:message key="MSG.STAT.0011"/>');
+// 				return;
+// 			}
+			if($("#pgs_st_cd").val() != 'Z'){
+				alertUI('<fmt:message key="MSG.STAT.0011"/>');
+				return;
+			}
+
+			if($("#snb_rson_sbc").val() == ""){
+				alertUI('<fmt:message key="MSG.INP.0011"/>');
+				$("#snb_rson_sbc").focus();
+				return;
+			}
+
+// 			if($("#work_auth").val() == '5' || sess_mstu == "M"){
+// 			}
+// 			else if($("#work_auth").val() == '6'){
+// 				if(!($("#pgs_st_cd").val() == 'Z' || $("#pgs_st_cd").val() == '3' || $("#pgs_st_cd").val() == 'A')){
+// 					alertUI('<fmt:message key="MSG.STAT.0011"/>');
+// 					return;
+// 				}
+// 			}
+// 			else{
+// 				alertUI('<fmt:message key="MSG.STAT.0024"/>');
+// 				return;
+// 			}
+
+// 			if($("#snb_rson_sbc").val() == ""){
+// 				alertUI('<fmt:message key="MSG.INP.0011"/>');
+// 				$("#snb_rson_sbc").focus();
+// 				return;
+// 			}
+
+			var keyData = {
+				doc_no			 : $("#doc_no").val(),
+				eeno			 : $("#eeno").val(),
+				pgs_st_cd		 : '2',
+				snb_rson_sbc  	 : changeToUni($("#snb_rson_sbc").val()),
+				updr_eeno		 : sess_empno,
+				corp_cd			 : sess_corp_cd
+			};
+
+			confirmUI('<fmt:message key="MSG.CNF.0010"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								bsicInfo : util.jsonToString(keyData)
+							};
+							doCommonAjax("doRejectSecurityRequest.do", paramData, "setBottomMsg(jsonData.sendResult.message, true);SubmitClear();ifra.doSearch('N');");
+					}
+				});
+			});
+		}
+
+		var win;
+		function fnEBook(){
+		if(win != null){ win.close(); }
+			var url = "", width = "1136", height = "900";
+			url = ctxPath+"/manual/security.gas";
+			win = newPopWin("about:blank", width, height, "win_menual");
+
+			document.hideForm.hid_csrfToken.value = $("#csrfToken").val();
+			document.hideForm.action = url;
+			document.hideForm.target = "win_menual";
+			document.hideForm.method = "post";
+			document.hideForm.submit();
+		}
+
+		function doPrint(){
+			$.printPreview.loadPrintPreview();
+		}
+
+		function pageStepHelpPopup(){
+			if(popup != null ){
+				popup.close();
+			}
+
+			popup = popUpWindow3($("#help_url").val());
+		}
+</script>

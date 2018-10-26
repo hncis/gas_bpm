@@ -1,0 +1,619 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XFJ04";
+
+	String tempPath     = request.getServletPath().toString();
+	String stepHelpUrl  = StringUtil.getStepHelp(tempPath);
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>LIST</title>
+	</head>
+	<body>
+		<div id="wrap">
+	    	<form name="frm" id="frm">
+	    		<input type="hidden" id="help_url" name="help_url" value="<%=stepHelpUrl%>">
+
+		    	<%@ include file="../include/hncis_header.gas"%>
+		        <div id="contents_wrap">
+		        	<%@ include file="../include/hncis_left.gas"%>
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,"XFJ04"
+							,""
+							,null
+							,null
+							,null
+							,request)
+						%>
+						
+						<div class="search_area">
+							<table>
+								<tr>
+									<th style="width: 80px;"><fmt:message key="type"/></th>
+								    <td align="left">
+								    	<SELECT id="sel_type" name="sel_type" onchange="retrieve('gb_search')";></SELECT>
+								    </td>
+								</tr>
+							</table>
+						</div>
+		
+						<div style="height:300px">
+							<div class="con_t_area mt10" style="height:30px">
+			                	<h3 style="width:300px; float:left"><fmt:message key="gubun"/> / <fmt:message key="f_item"/></h3>
+			                	<div class="btn_area mt0">
+				                    <ul class="btns fr ml20">
+				                        <li><a href="javascript:fnGridRowAdd('htmlTable1');"><fmt:message key="BUTTON.ADD"/><span></span></a></li>
+				                        <li><a href="javascript:retrieve('gb_save');"><fmt:message key="BUTTON.SAVE"/><span></span></a></li>
+				                        <li><a href="javascript:retrieve('gb_delete');"><fmt:message key="BUTTON.DELETE"/><span></span></a></li>
+				                    </ul>
+				                </div>
+			                </div>
+			                <div class="jq_tbl">
+				                <table id="htmlTable1" class="scroll"></table>
+								<div id="htmlPager1" class="scroll"></div>
+							</div>
+						</div>
+					
+						<div style="height:300px">
+							<div class="con_t_area mt10" style="height:30px">
+			                	<h3 style="width:300px; float:left"><fmt:message key="f_rel"/> / <fmt:message key="f_compay"/></h3>
+			                	<div class="btn_area mt0">
+				                    <ul class="btns fr ml20">
+				                        <li><a href="javascript:fnGridRowAdd('htmlTable2');"><fmt:message key="BUTTON.ADD"/><span></span></a></li>
+				                        <li><a href="javascript:retrieve('rel_save');"><fmt:message key="BUTTON.SAVE"/><span></span></a></li>
+				                        <li><a href="javascript:retrieve('rel_delete');"><fmt:message key="BUTTON.DELETE"/><span></span></a></li>
+				                    </ul>
+				                </div>
+			                </div>
+			                <div class="jq_tbl">
+				                <table id="htmlTable2" class="scroll"></table>
+								<div id="htmlPager2" class="scroll"></div>
+							</div>
+						</div>
+				        <%@ include file="../include/hncis_message.gas"%>
+			        </div>
+		        </div>
+	        </form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken"	name="hid_csrfToken">
+				<input type="hidden" id="UPLOAD_TYPE"   name="UPLOAD_TYPE">
+			</form>
+	    </div>
+	</body>
+</html>
+
+	<script type="text/javascript">
+		var initFlag = "Y";
+		var comboVal_chk, prev_row;
+		var gridParam1, gridParam2;
+		var gridName1 = "htmlTable1";
+		var gridName2 = "htmlTable2";
+
+		var datarow1 = {hid_f_seq:"",hif_f_item:"",f_code:"",f_gubun:"",f_item:"",f_sort:"",f_use_yn:""};
+		var datarow2 = {hid_r_seq:"",r_type_nm:"",r_rel:"",r_compay:"",r_sort:"",r_use_yn:""};
+
+		function fnSetDocumentReady(){
+			setCheckBoxInfo();
+		}
+		
+		function setCheckBoxInfo(){
+			getCommonCode("chk_type1:XFJ02:Z;chk_type2:XFJ03:Z", "N", "setCheckBoxInfoCallback(jsonData.sendResult);");
+		}
+		
+		function setCheckBoxInfoCallback(jsonData){
+			comboVal_chk = jsonData;
+			
+			getCommonCode("sel_type:XFJ01:Z;", "N", "init();");
+		}
+
+		function init(){
+			var cn1 = [ '' // ""
+				  ,''
+		          ,'<fmt:message key="code"/>' // "코드"
+		          ,'<fmt:message key="gubun"/>' // "구분"
+		          ,'<fmt:message key="f_item"/>' // "경조물품"
+		          ,'<fmt:message key="sort"/>' // "정렬"
+		          ,'<fmt:message key="use_yn"/>' // "사용"
+		          ];
+			cm1 = [
+			    {name:'hid_f_seq'   , index:'hid_f_seq'   	, formatter:'string'	, width:0	, align:'left'  , editable:true, sortable:false, hidden:true},
+			    {name:'hid_f_item'  , index:'hid_f_item'   	, formatter:'string'	, width:0	, align:'left'  , editable:true, sortable:false, hidden:true},
+			    {name:'f_code'   	, index:'f_code'   		, formatter:'string'	, width:150	, align:'left'  , editable:true, sortable:false, editoptions:{maxlength:"4"}},
+			    {name:'f_gubun'   	, index:'f_gubun'   	, formatter:'string'	, width:355	, align:'left'  , editable:true, sortable:false},
+			    //{name:'f_item'   	, index:'f_item'   		, formatter:'string'	, width:355	, align:'left'  , editable:true, sortable:false},
+			    {name:"f_item"		,index:"f_item"			,formatter:checkBoxFormatter	,width:355	,align:"center"	,editable:false	,sortable:false	,edittype:"checkbox",	fixed: true	},
+				{name:'f_sort'     , index:'f_sort'     	, formatter:'string'	, width:60 	, align:'right' , editable:true, sortable:false,
+					editoptions:{
+						maxlength:"4",
+						dataEvents:[{type:'keyup',
+							fn:function(e){
+								if(!isNumeric($(e.target).val())){
+									$(e.target).val(selectNum($(e.target).val()));
+								}
+							}
+						}]
+					}
+				},
+				{name:'f_use_yn',index:'f_use_yn',width:60,align:'center',editable:true,sortable:false,
+					edittype:'select', formatter: "select",editoptions:{value:"Y:Y;N:N"}}
+			];
+
+			var cn2 = [ '' // ""
+		          ,'<fmt:message key="gubun"/>' // "구분"
+		          ,'<fmt:message key="f_rel"/>' // "관계"
+		          ,'<fmt:message key="f_compay"/>' // "회사지원금"
+		          ,'<fmt:message key="sort"/>' // "정렬"
+		          ,'<fmt:message key="use_yn"/>' // "사용"
+		          ];
+			cm2 = [
+			    {name:'hid_r_seq'    	, index:'hid_r_seq'   	, formatter:'string', width:0, align:'left'  , editable:false, sortable:false, hidden:true},
+				{name:'r_type_nm'   	, index:'r_type_nm'   	, formatter:'string', width:150, align:'center'  , editable:false, sortable:false},
+				{name:'r_rel'   		, index:'r_rel'   		, formatter:'string', width:355, align:'center'  , editable:true, sortable:false},
+				{name:"r_compay"		, index:"r_compay"		, sortable:false,formatter: "currency",  formatoptions: {
+				  	thousandsSeparator:",",
+				    decimalPlaces:0,
+				    defaultValue:""
+				  },		width:355,	align:"right",	editable:true,	frozen : false,
+					editoptions: {maxlength:"10",
+			            dataInit: function(element) {
+			     		    $(element).keyup(function(){
+			     		    	if(!isNumeric(element.value)){
+			     		    		element.value = selectNum(element.value, ",");
+			     		    	}
+			     		    });
+			            }
+			        }
+				},
+				{name:'r_sort'   		, index:'r_sort'   		, formatter:'string', width:60, align:'center'  , editable:true, sortable:false},
+				{name:'r_use_yn'		, index:'r_use_yn'		, width:60,align:'center'	, editable:true	, sortable:false,
+					edittype:'select'	, formatter: "select"	, editoptions:{value:"Y:Y;N:N"}}
+			];
+
+			var params = {
+				f_type	 	: $("#sel_type").val(),
+				corp_cd		: sess_corp_cd
+			};
+
+
+			gridParam1 = {
+				viewEdit : [{
+					gridName      : gridName1,
+					url           : "doSearchGbListToFamilyJob.do",
+					colNames      : cn1,
+					colModel      : cm1,
+					height        : '230',
+					rownumbers    : false,
+					multiselect   : true,
+					rowNum		  : "300",
+					cellEdit      : true,
+					fnMerge       : false,
+					paramJson     : params,
+					selectCellFc  : "doSearchRel('N');",
+					//selectCellFc  : "doSelectRow(rowid, iCol, cellcontent);",
+					completeFc	  : "doSearchGbListToFamilyJobCallback();"
+				}]
+			};
+
+			gridParam2 = {
+				viewEdit : [{
+					gridName      : gridName2,
+					url           : "/doSearchToEmpty.do",
+					colNames      : cn2,
+					colModel      : cm2,
+					height        : '230',
+					rownumbers    : false,
+					multiselect   : true,
+					cellEdit      : true,
+					fnMerge       : false,
+					rowNum		  : 31,
+					selectCellFc  : "beForeSet(rowid, iCol);",
+					completeFc	  : "addGridRow(10, gridName2, 'datarow2');doSearchGb('Y');"
+				}]
+			};
+
+			commonJqGridInit(gridParam1, "N");
+			commonJqGridInit(gridParam2);
+		}
+		
+		var row_no = 0;
+		function checkBoxFormatter(cellvalue, options, rowObject) {
+			if(initFlag == "Y"){
+				var selectrow = $('#htmlTable1').jqGrid('getGridParam','selrow');    // 선택된 ROW 번호
+				if(selectrow == null){
+					var comboVal2 = "";
+					var tmpNm = "";
+					row_no = row_no + 1;
+					$.each(eval(comboVal_chk),function(targetNm,optionData){
+						if($("#sel_type").val() == "A"){ 
+							tmpNm = "chk_type1";
+						}else{
+							tmpNm = "chk_type2";
+						}
+						
+						if(targetNm == tmpNm){
+							$.each(eval(optionData),function(index,optionData){
+								comboVal2 += "<input type='checkbox' name='chk" + row_no + "' value='" +  optionData.value + "' onclick='doChkCilck("+row_no+");'> " + optionData.name + " "
+							});
+						}
+				    });
+					
+					return comboVal2;
+				}else{
+					var comboVal2 = "";
+					var tmpNm = "";
+					row_no = row_no + 1;
+					$.each(eval(comboVal_chk),function(targetNm,optionData){
+						if($("#sel_type").val() == "A"){ 
+							tmpNm = "chk_type1";
+						}else{
+							tmpNm = "chk_type2";
+						}
+						
+						if(targetNm == tmpNm){
+							$.each(eval(optionData),function(index,optionData){
+								comboVal2 += "<input type='checkbox' name='chk" + row_no + "' value='" +  optionData.value + "' onclick='doChkCilck("+row_no+");'> " + optionData.name + " "
+							});
+						}
+				    });
+					
+					initFlag = "N";
+					return comboVal2;
+				}
+			}
+		}
+		
+		function doChkCilck(rowId){		
+			var cbs = jQuery("#jqg_"+gridName1+"_"+rowId);
+            if(!cbs.is(":checked")){
+            	$("#"+gridName1).jqGrid("setSelection", rowId, true);
+            }
+            
+            $("#"+gridName1).setRowData (previSRow1,false,{background:'#f8f8f8'});
+            $("#"+gridName1).setRowData (rowId,false,{background:'#B2EBF4'});
+            previSRow1 = rowId;
+            
+            doSearchRel();
+		}
+
+		function retrieve(btnFlag){
+			var f = document.frm;
+			switch(btnFlag){
+			    case "gb_search" :
+				    doSearchGb();
+					break;
+			    case "rel_search" :
+			    	doSearchRel();
+					break;
+			    case "gb_save" :
+				    doSaveGb();
+					break;
+			    case "rel_save" :
+			    	doSaveRel();
+					break;
+			    case "gb_delete" :
+				    doDeleteGb();
+					break;
+			    case "rel_delete" :
+			    	doDeleteRel();
+					break;
+			}
+		}
+
+		function doSearchGb(msgFlag){
+			row_no = 0;
+			initFlag = "Y";
+			
+			var params = {
+				f_type	 	: $("#sel_type").val(),
+				corp_cd		: sess_corp_cd
+			};
+
+			doCommonSearch("doSearchGbListToFamilyJob.do", util.jsonToString(params), "doSearchGbListToFamilyJobCallback();", gridName1, msgFlag);
+		}
+		
+		function doSearchGbListToFamilyJobCallback(){
+			addGridRow(10, gridName1, 'datarow1');
+			
+			initFlag = "N";
+			
+			gridSetCheckBox();
+		}
+
+		function gridSetCheckBox(){
+			var rowIds = $("#"+gridName1).getDataIDs();
+			
+			$.each(rowIds, function (index, rowId) {
+			      $("input:checkbox[name='chk"+rowId+"']").each(
+		    		  function(){
+			    		  //if(this.value == "A"){
+			    		  if((getColValue("hid_f_item", rowId, gridName1)).indexOf(this.value) > -1){
+			    			  this.checked = true;
+			    		  }
+		    		  }
+			      )
+		    });
+		}
+
+		function doSearchRel(){
+			var tmpType = getColValue("f_code", previSRow1, gridName1);
+
+			var params = {
+				r_type		: tmpType,
+				corp_cd	  	: sess_corp_cd
+			};
+
+			doCommonSearch("doSearchRelListToFamilyJob.do", util.jsonToString(params), "doSearchRelListToFamilyJobCallBack();", gridName2, "N");
+		}
+
+		function doSearchRelListToFamilyJobCallBack(){
+			addGridRow(10, gridName2, 'datarow2');
+		}
+
+		function doSaveGb(){
+			var params = [];
+			var data;
+			
+			var selectRow = $("#"+gridName1).jqGrid("getGridParam", "selarrrow");
+
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+
+			for(var i=0; i<selectRow.length; i++){
+				if(selectRow[i]){
+					rowId = selectRow[i];
+					
+					var tmpChkVal = "";
+					$("input:checkbox[name='chk"+rowId+"']").each(
+						function(){
+				    		if(this.checked){
+				    			if(tmpChkVal == "" ){
+				    		  		tmpChkVal = this.value; 
+				    		  	}else{
+				    		  		tmpChkVal += "," + this.value ;
+				    		  	}
+				    		}
+			    		}
+				    )
+				     
+					if(getColValue("f_code", rowId, gridName1) == ""){
+						alertUI(rowId + ' <fmt:message key="MSG.ROW.0001"/>');
+						return false;
+					}
+					if(getColValue("f_gubun", rowId, gridName1) == ""){
+						alertUI(rowId + ' <fmt:message key="MSG.ROW.0110"/>');
+						return false;
+					}
+					if(tmpChkVal == ""){
+						alertUI(rowId + ' <fmt:message key="MSG.ROW.0111"/>');
+						return false;
+					}
+					
+					data = {
+						f_type		: $("#sel_type").val(),
+						f_seq		: getColValue("hid_f_seq"	, rowId, gridName1),
+						f_code		: getColValue("f_code"   	, rowId, gridName1),
+						f_gubun		: getColValue("f_gubun"   	, rowId, gridName1),
+						f_item		: tmpChkVal,
+						f_sort		: getColValue("f_sort"		, rowId, gridName1),
+						f_use_yn    : getColValue("f_use_yn"    , rowId, gridName1),
+						inp_eeno	: sess_empno,
+						updr_eeno   : sess_empno,
+						corp_cd		: sess_corp_cd
+					};
+
+					params.push(data);
+				}
+			}
+
+			if(params.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+
+			confirmUI('<fmt:message key="MSG.CNF.0004"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var param = {
+							paramJson : util.jsonToList(params),
+						};
+						
+						doCommonAjax("doSaveGbListToFamilyJob.do", param, "doSaveGbListToFamilyJobCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+		
+		function doSaveGbListToFamilyJobCallBack(result){
+			setBottomMsg(result.message, true);
+			doSearchGb("N");
+		}
+			
+		function doDeleteGb(tgName){
+			var dParams = [];
+			var data;
+
+			var selectRow = $("#"+gridName1).jqGrid("getGridParam", "selarrrow");
+
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+
+			for(var i=0; i<selectRow.length; i++){
+				if(selectRow[i]){
+					data = {
+						f_seq		: getColValue("hid_f_seq", selectRow[i], gridName1),
+						f_code		: getColValue("f_code", selectRow[i], gridName1),
+						corp_cd		: sess_corp_cd
+					};
+
+					dParams.push(data);
+				}
+			}
+
+			if(dParams.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+
+			confirmUI('<fmt:message key="MSG.CNF.0002"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var params = {
+							paramJson : util.jsonToList(dParams)
+						};
+						doCommonAjax("doDeleteGbListToFamilyJob.do", params, "doDeleteRcToRestCenterListCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function doDeleteRcToRestCenterListCallBack(result){
+			setBottomMsg(result.message, true);
+			doSearchGb("N");
+		}
+
+
+
+		function doSaveRel(){
+			var params = [];
+			var data;
+
+			var selectRow = $("#"+gridName2).jqGrid("getGridParam", "selarrrow");
+
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+
+			for(var i=0; i<selectRow.length; i++){
+				if(selectRow[i]){
+					rowId = selectRow[i]; 
+					
+					if(getColValue("r_rel", rowId, gridName1) == ""){
+						alertUI(rowId + ' <fmt:message key="MSG.ROW.0112"/>');
+						return false;
+					}
+					if(getColValue("r_compay", rowId, gridName1) == ""){
+						alertUI(rowId + ' <fmt:message key="MSG.ROW.0113"/>');
+						return false;
+					}
+					
+					data = {
+						r_type		: getColValue("f_code", previSRow1, gridName1),
+						r_seq		: getColValue("hid_r_seq", rowId, gridName2),
+						r_rel		: getColValue("r_rel", rowId, gridName2),
+						r_compay	: selectNum(getColValue("r_compay", rowId, gridName2)),
+						r_sort		: getColValue("r_sort", rowId, gridName2),
+						r_use_yn	: getColValue("r_use_yn", rowId, gridName2),
+						updr_eeno	: sess_empno,
+						ipe_eeno	: sess_empno,
+						corp_cd		: sess_corp_cd
+					};
+
+					params.push(data);
+				}
+			}
+
+			if(params.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+
+			confirmUI('<fmt:message key="MSG.CNF.0004"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var param = {
+							paramJson : util.jsonToList(params)
+						};
+						
+						doCommonAjax("doSaveRelListToFamilyJob.do", param, "doSaveRelListToFamilyJobCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+		function doSaveRelListToFamilyJobCallBack(result){
+			setBottomMsg(result.message, true);
+			doSearchRel("N");
+		}
+
+		function doDeleteCal(tgName){
+			var dParams = [];
+			var dData;
+
+			var selectRow = $("#"+gridName2).jqGrid("getGridParam", "selarrrow");
+
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+
+			for(var i=0; i<selectRow.length; i++){
+				if(selectRow[i]){
+					dData = {
+						r_seq		: getColValue("hid_r_seq", selectRow[i], gridName2),
+						corp_cd		: sess_corp_cd
+					};
+
+					dParams.push(dData);
+				}
+			}
+
+			if(dParams.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+
+			confirmUI('<fmt:message key="MSG.CNF.0002"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var params = {
+							dParams : util.jsonToList(dParams)
+						};
+						
+						doCommonAjax("doDeleteRelListToFamilyJob.do", params, "doDeleteRelListToFamilyJobCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function doDeleteRelListToFamilyJobCallBack(result){
+			setBottomMsg(result.message, true);
+			doSearchRel("N");
+		}
+
+		function beForeSet(rowid, iCol){
+			$("#"+gridName2).setCell(rowid, 'r_type_nm', getColValue("f_gubun", previSRow1, gridName1));
+		}
+
+		function fnGridRowAdd(targetGrid){
+			var gridRowId = $("#"+targetGrid).getDataIDs().length;
+			switch(targetGrid){
+			case "htmlTable1" :
+				initFlag = "Y";
+				jQuery("#"+targetGrid).jqGrid("addRowData", gridRowId+1, datarow1);
+				initFlag = "N";
+				break;
+			case "htmlTable2" :
+				jQuery("#"+targetGrid).jqGrid("addRowData", gridRowId+1, datarow2);
+				break;
+			}
+		}
+
+		function pageStepHelpPopup(){
+			if(popup != null ){
+				popup.close();
+			}
+
+			popup = popUpWindow3($("#help_url").val());
+		}
+	</script>

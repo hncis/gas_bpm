@@ -1,0 +1,196 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String docId = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("docid")));
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title><fmt:message key="rc"/></title>
+		<style type="text/css">
+			#wrap.submit_page #contents_wrap,
+			#wrap.submit_page .any_page,
+			#wrap.submit_page #contents{width:100%}
+		</style>
+	</head>
+	<body>
+		<div id="wrap" class="submit_page">
+		<form name="frm" id="frm">
+			<input type="hidden" id="gubun" name="gubun">
+				<input type="hidden" id="nSource" name="nSource">
+				<input type="hidden" id="req_yn" name="req_yn">
+				<input type="hidden" id="if_id" name="if_id" value="<%=docId %>">
+			
+			<div id="contents_wrap" class="any_page">
+				<div id="contents">
+					<%=CommonGasc.getTitleAndButtonNew(sess_empno
+						,"XRM01"
+						,""
+						,""
+						,""
+						,null
+						,"Y"
+						,request)
+					%>
+					<div class="con_t_area mt10">
+	                	<h3><fmt:message key="basic_info"/></h3>
+	                </div>
+					<div class="search_area">
+						<table>
+							<colgroup>
+	                        	<col style="width:110px;" />
+	                            <col style="width:158px;" />
+	                            <col style="width:73px;" />
+	                            <col style="width:158px;" />
+	                            <col style="width:80px;" />
+	                            <col style="width:158px;" />
+	                            <col style="width:73px;" />
+	                            <col style="width:158px;" />
+	                        </colgroup>
+							<tr>
+								<th><fmt:message key="eeno"/></th>
+								<td><input type="text" id="eeno" style="width:140px" class="disabled" readOnly>
+								<th><fmt:message key="eenm"/></th>
+								<td><input type="text" id="keyEenm" style="width:140px" class="disabled" readOnly></td>
+								<th><fmt:message key="position"/></th>
+								<td><input type="text" id="keyPosition" style="width:140px" class="disabled" readOnly></td>
+								<th><fmt:message key="dept_nm"/></th>
+								<td>
+									<input type="hidden" id="keyOpsCd" readOnly>
+									<input type="text" id="keyOpsNm" style="width:140px" class="disabled" readOnly>
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="req_ymd"/></th>
+								<td><input type="text" id="req_date" style="width:140px" class="disabled" readOnly></td>
+								<th><fmt:message key="doc_no"/></th>
+								<td><input type="text" id="doc_no" style="width:140px" class="disabled" readOnly></td>
+								<th><fmt:message key="pgs_st_nm"/></th>
+								<td>
+									<input type="hidden" id="pgs_st_cd" name="pgs_st_cd">
+									<input type="text" id="pgs_st_nm" name="pgs_st_nm" style="width:140px" class="disabled" readOnly>
+								</td>
+								<th><fmt:message key="tel_no"/></th>
+								<td><input type="text" id="keyTelNo" style="width:140px" class="disabled" readOnly></td>
+							</tr>
+						</table>
+					</div>
+
+					<div class="con_t_area">
+	                	<h3><fmt:message key="req_info"/></h3>
+	                </div>
+	                <div class="vehicle_tbl">
+						<table>
+							<colgroup>
+							  <col style="width:140px;" />
+							  <col style="width:370px;" />
+							  <col style="width:140px;" />
+							  <col style="width:370px;" />
+							</colgroup>
+							<tr>
+								<th><fmt:message key="rm_days"/></th> 
+								<td colspan="3">
+									<input type="text" id="rm_days" name="rm_days" style="width:100px;" class="disabled" readOnly/>
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="rc"/></th> 
+								<td>
+									<input type="text" id="rc_nm" style="width:150px" class="disabled" readOnly/>
+									<input type="text" id="rm_nm" style="width:150px" class="disabled" readOnly/>
+								</td>
+								<th><fmt:message key="wish_ymd"/></th>
+								<td>
+									<input id="fr_ymd" type="text" style="width:80px" value=""  class="disabled" readonly="readonly"> ~
+									<input id="to_ymd" type="text" style="width:80px"  value="" class="disabled" readonly="readonly">
+									<input type="text" id="use_info" name="use_info" style="width:100px; text-align: center;" class="disabled" readOnly>
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="rt_amt"/></th> 
+								<td>
+									<input type="text" id="rt_amt" name="rt_amt" style="width:120px" class="disabled" readOnly/>
+								</td>
+								<th><fmt:message key="num_prsn"/></th> 
+								<td>
+									<input type="text" id="num_prsn" name="num_prsn" style="width:120px" class="disabled" readOnly/>
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="use_prps"/></th> 
+								<td colspan="3">
+									<input type="text" id="use_prps" name="use_prps" style="width:100%" class="disabled" readOnly/>
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="rem_sbc"/></th> 
+								<td colspan="3">
+									<textarea rows="8" id="rem_sbc" style="width:100%" class="disabled" readOnly></textarea>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+				<div class="clear"></div>
+			</div>
+		</form>
+		<form id="hideForm" name="hideForm" method="post">
+			<input type="hidden" id="hid_csrfToken"	name="hid_csrfToken">
+		</form>
+		</div>
+		<img id="loading_progress_img" src="<%=ctxPath %>/images/common/progress_bar.gif" width="362" height="131" style="display:none" />
+	</body>
+	<script type="text/javascript">
+	function fnSetDocumentReady(){
+		$(".sub_title").hide();
+	
+		doSearch();
+	}
+	
+	function doSearch(){
+		var param = {
+			if_id 		: $("#if_id").val(),
+			corp_cd		: sess_corp_cd,
+			locale		: sess_locale
+		};
+
+		var paramData = {
+			paramJson : util.jsonToString(param)
+		};
+
+		doCommonAjax("doSearchRcToRequestInfoByIfId.do", paramData, "doSearchCallBack(jsonData.sendResult);");
+	}
+	
+	function doSearchCallBack(result){
+		$("#eeno").val(result.eeno);
+		$("#keyEenm").val(result.eenm);
+		$("#keyPosition").val(result.step_nm);
+		$("#keyOpsNm").val(result.dept_nm);
+		$("#req_date").val(result.req_ymd);
+		$("#doc_no").val(result.doc_no);
+		$("#pgs_st_cd").val(result.pgs_st_cd);
+		$("#pgs_st_nm").val(result.pgs_st_nm);
+		$("#keyTelNo").val(result.tel_no);
+		$("#rc_nm").val(result.rc_nm);
+		$("#rm_nm").val(result.rm_nm);
+		$("#fr_ymd").val(result.fr_ymd);
+		$("#to_ymd").val(result.to_ymd);
+		$("#rt_amt").val(numberComma(result.rt_amt));
+		$("#num_prsn").val(result.num_prsn);
+		$("#use_prps").val(result.use_prps);
+		$("#rem_sbc").val(result.rem_sbc);
+		$("#rm_days").val(result.rm_days);
+		
+		fnSubmitInfoSettings($("#pgs_st_cd").val(), $("#if_id").val(), result.code, "snb_rson_sbc", "1");
+		
+		resizeIframePop("contents", "ifrm");
+		
+		doCalUseDate();
+	}
+	
+	function doCalUseDate(){
+		var itv = getDayInterval2(selectNum($("#fr_ymd").val()), selectNum($("#to_ymd").val()));
+		$("#use_info").val(itv + "박 " + (itv+1) + "일");
+	}
+	</script>
+</html>

@@ -1,0 +1,329 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId = "XST05";
+
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH",locale);
+	
+	String strBtn = "";
+	strBtn = strSch+"/search";
+%>
+<html>
+		<head>
+			<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+			<title>TABLE INFORMATION</title>
+	</head>
+	<body>
+		<div id="wrap">
+	    	<form name="viewForm" id="viewForm">
+				<input type="hidden" id="xusr_work_auth" name="xusr_work_auth"></input>
+		    	<%@ include file="../include/hncis_header.gas"%>
+		        <div id="contents_wrap">
+		        	<%@ include file="../include/hncis_left.gas"%>
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,"XST05"
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+		                <div class="search_area">
+		                	<table>
+		                        <colgroup>
+		                        	<col style="width:85px;" />
+		                            <col style="width:auto;" />
+		                        </colgroup>
+		                        <tbody>
+		                            <tr>
+										<th><fmt:message key="table_nm"/></th>
+										<td><input type="text" id="table_name" style="width:200px;ime-mode:disabled;text-transform:uppercase;" onkeydown="enterKey()"></td>
+									</tr>
+		                        </tbody>
+		                    </table>
+		                </div>
+		                <div class="tbl_info_tbl">
+							<div class="tbl_info_left">
+								<div class="con_t_area">
+				                	<h3><fmt:message key="table"/></h3>
+				                </div>
+				                <div class="jq_tbl">
+					                <table id="htmlTable" class="scroll"></table>
+									<div id="htmlPager" class="scroll" style="display:none"></div>
+								</div>
+							</div>
+							<div class="tbl_info_right">
+								<div class="con_t_area">
+				                	<h3><fmt:message key="attr"/></h3>
+				                </div>
+				                <div class="jq_tbl">
+					                <table id="htmlTable1" class="scroll"></table>
+									<div id="htmlPager1" class="scroll" style="display:none"></div>
+								</div>
+								<div class="con_t_area">
+				                	<h3><fmt:message key="indx"/></h3>
+				                </div>
+				                <div class="jq_tbl">
+					                <table id="htmlTable2" class="scroll"></table>
+									<div id="htmlPager2" class="scroll" style="display:none"></div>
+								</div>
+							</div>
+							<div class="clear"></div>
+		                </div>
+		                <%@ include file="../include/hncis_message.gas"%>
+		            </div>
+		            <div class="clear"></div>
+		        </div>
+	        </form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+	    </div>
+		<%-- <div id="wrap">
+			<div id="GASC">
+				<form name="viewForm" id="viewForm">
+					<input type="hidden" id="xusr_work_auth" name="xusr_work_auth"></input>
+					<%@ include file="/hncis/include/leftMenuSys.gas"%>
+						<div id="container_wrap">
+							<div id="container">
+								<%=CommonGasc.getTitleAndButtonNew(sess_empno
+									,"XST05"
+									,"search/search"
+									,null
+									,null
+									,null
+									,request)
+								%>
+								<div id="basic_info">
+									<table width="100%" cellpadding="0" cellspacing="0" >
+										<tr>
+											<td>Table Name&nbsp;&nbsp;&nbsp; 
+												<input type="text" id="table_name" size="20" style="ime-mode:disabled;text-transform:uppercase;" onkeydown="enterKey()">
+											</td>
+										</tr>
+									</table>
+								</div>
+								<table width="100%" cellpadding="0" cellspacing="0" >
+									<tr>
+										<td>
+											<table width="100%" border="0" cellpadding="0" cellspacing="0">
+												<tr>
+													<td class="hd_label" width="250"><img src="<%=ctxPath%>/images/bul_mainMenu.gif" align="absmiddle" border="0">&nbsp;Table</td>
+													<td width="17">&nbsp;</td>
+													<td class="hd_label" align="left"><img src="<%=ctxPath%>/images/bul_mainMenu.gif" align="absmiddle" border="0">&nbsp;Attribute</td>
+												</tr>
+											</table>
+										</td>
+									</tr>
+								</table>
+								<table width="100%" cellpadding="0" cellspacing="0" >
+									<tr>
+										<td height="5"></td>
+									</tr>
+								</table>
+								<table width="100%" cellpadding="0" cellspacing="0" >
+									<tr>
+										<td class="hd_label" width="250">
+											<table id="htmlTable" class="scroll"></table>
+											<div id="htmlPager" class="scroll" style="display:none"></div>
+										</td>
+										<td width="17">&nbsp;</td>
+										<td align="left" valign="top">						
+											<table width="100%" border="0" cellpadding="0" cellspacing="0">
+												<tr>
+													<td>
+														<table id="htmlTable1" class="scroll"></table>
+														<div id="htmlPager1" class="scroll" style="display:none"></div>
+													</td>
+												</tr>
+												<tr height="30">
+													<td class="hd_label" align="left"><img src="<%=ctxPath%>/images/bul_mainMenu.gif" align="absmiddle" border="0">&nbsp;Index</div></td>
+												</tr>
+												<tr>
+													<td>
+														<table id="htmlTable2" class="scroll"></table>
+														<div id="htmlPager2" class="scroll" style="display:none"></div>
+													</td>
+												</tr>
+											</table>
+										</td>
+									</tr>
+								</table>
+								<iframe id="msgFrame" src="<%=ctxPath %>/bottom.gas" style="width:100%; height:30px;" border="0" frameborder="0" framespacing="0" hspace="0" vspace="10" scrolling="no" noresize></iframe>
+							</div>
+						</div>
+				</form>
+				<form id="hideForm" name="hideForm" method="post">
+					<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+				</form>				
+			</div>
+		</div> --%>
+	</body>
+</html>
+			<script type="text/javascript">
+			var params; 
+			var comboVal;
+			var lastsel;
+			var fnMerge;
+			var gridParam;
+			var datarow = {table_name:""};
+			var ad_datarow = {column_name:"", primary_key:"", data_type:"", data_length:"", nullable:""};
+			var id_datarow = {key_name:"", column_name:"", seq_in_index:"", descend:""};
+
+			function fnSetDocumentReady(){
+				initMenus();
+				$('#ST').slideDown('fast');
+				init();
+			}
+
+			function init(){
+				
+				// table
+// 				cn = ['테이블명'],
+				var cn = ['<fmt:message key="table_nm"/>'],
+				cm = [{name:'table_name',index:'table_name', formatter: "string", width:200, align:"left", editable:false, frozen : false}];
+				params = {
+						
+					};
+				
+				gridParam = {
+						viewEdit : [{
+							url          : "/doSearchToEmpty.do",
+							colNames     : cn,
+							colModel     : cm,
+							width        : 230,
+							height       : 488,
+							rowNum		 : 10000,
+							rownumbers   : true,
+							multiselect  : false,
+							cellEdit     : false,
+							fnMerge      : false,
+							paramJson    : params,
+							dblClickRowFc: "searchAttribute(rowId);",
+							completeFc	 : "addGridRow(21);initAfterMenus();"
+						}]
+					};
+					
+				commonJqGridInit(gridParam);
+				
+				// attribute
+// 				ab_cn = ['컬럼명', 'Pk', '타입', '길이', 'Null'],
+				var ab_cn = ['<fmt:message key="col_nm"/>' // "컬럼명"
+					          ,'<fmt:message key="pk"/>' // "Pk"
+					          ,'<fmt:message key="t_type"/>' // "타입"
+					          ,'<fmt:message key="len"/>' // "길이"
+					          ,'<fmt:message key="null"/>' // "null"
+		          ];
+				ab_cm = [
+				         {name:'column_name',index:'column_name', sortable:false, formatter: "string", width:320, align:"center", editable:false, frozen : false},
+				         {name:'primary_key',index:'primary_key', sortable:false, formatter: "string", width:90, align:"center", editable:false, frozen : false},
+				         {name:'data_type',index:'data_type', sortable:false, formatter: "string", width:160, align:"center", editable:false, frozen : false},
+				         {name:'data_length',index:'data_length', sortable:false, formatter: "string", width:70, align:"center", editable:false, frozen : false},
+				         {name:'nullable',index:'nullable', sortable:false, formatter: "string", width:70, align:"center", editable:false, frozen : false}
+				        ];
+				ab_params = {
+						
+					};
+				
+				ab_gridParam = {
+						viewEdit : [{
+							gridName     : "htmlTable1",
+							url          : "/doSearchToEmpty.do",
+							colNames     : ab_cn,
+							colModel     : ab_cm,
+							width        : 760,
+							height       : "300",
+							rowNum		 : 10000,
+							rownumbers   : true,
+							multiselect  : false,
+							cellEdit     : false,
+							fnMerge      : false,
+							paramJson    : ab_params,
+							completeFc	 : "addGridRow(13, 'htmlTable1', 'ad_datarow');"
+						}]
+					};
+					
+				commonJqGridInit(ab_gridParam);
+				
+				// index
+// 				id_cn = ['인텍스명', '컬럼명', '컬럼위치', '정렬순서'],
+				var id_cn = ['<fmt:message key="indx_nm"/>' // "인덱스명"
+					          ,'<fmt:message key="col_nm"/>' // "컬럼명"
+					          ,'<fmt:message key="col_loc"/>' // "컬럼위치"
+					          ,'<fmt:message key="sort_no"/>' // "정렬순서"
+		          ];
+				id_cm = [
+				         {name:'key_name',index:'key_name', formatter: "string", width:210, align:"center", editable:false, frozen : false},
+				         {name:'column_name',index:'column_name', formatter: "string", width:210, align:"center", editable:false, frozen : false},
+				         {name:'seq_in_index',index:'seq_in_index', formatter: "string", width:160, align:"center", editable:false, frozen : false},
+				         {name:'descend',index:'descend', formatter: "string", width:135, align:"center", editable:false, frozen : false}
+				        ];
+				id_params = {
+						
+					};
+				
+				id_gridParam = {
+						viewEdit : [{
+							gridName     : "htmlTable2",
+							url          : "/doSearchToEmpty.do",
+							colNames     : id_cn,
+							colModel     : id_cm,
+							width        : 760,
+							height       : "115",
+							rowNum		 : 10000,
+							rownumbers   : true,
+							multiselect  : false,
+							cellEdit     : false,
+							fnMerge      : false,
+							paramJson    : id_params,
+							completeFc	 : "addGridRow(5, 'htmlTable2', 'id_datarow');"
+						}]
+					};
+					
+				commonJqGridInit(id_gridParam);
+			}
+
+			function setMerge(){
+				
+				//jQuery("#htmlTable").jqGrid('setFrozenColumns');
+			}
+
+			function searchAttribute(rowId){
+				var params = {table_name : getColValue("table_name", rowId)};
+				if(getColValue("table_name", rowId) != ""){
+					doCommonSearch("doSearchGridAttributeToTableInformation.do", util.jsonToString(params), "addGridRow(13, 'htmlTable1', 'ad_datarow');searchIndex('"+getColValue("table_name", rowId)+"')", "htmlTable1", "N");
+				}
+			}
+
+			function searchIndex(table_name){
+				var params = {table_name : table_name};
+				doCommonSearch("doSearchGridIndexToTableInformation.do", util.jsonToString(params), "addGridRow(5, 'htmlTable2', 'id_datarow');", "htmlTable2" , "N");
+			}
+
+			function retrieve(btnFlag){
+				var f = document.frm;
+				switch(btnFlag){
+				   case "search" :
+					    doSearch();
+						break;
+				}
+			}
+
+			function doSearch(msgFlag){
+				
+				var params = {
+						table_name : $('#table_name').val().toUpperCase()
+				};
+				
+				doCommonSearch("doSearchGridTableInfoToTableInformation.do", util.jsonToString(params), "addGridRow(21);clearGrid();", "htmlTable", msgFlag);
+			}
+
+			function clearGrid(){
+				$("#htmlTable1").jqGrid("clearGridData", true);
+				addGridRow(13, 'htmlTable1', 'ad_datarow');
+				$("#htmlTable2").jqGrid("clearGridData", true);
+				addGridRow(5, 'htmlTable2', 'id_datarow');
+			}
+
+			</script>

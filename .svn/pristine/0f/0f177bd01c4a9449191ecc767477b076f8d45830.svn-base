@@ -1,0 +1,191 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String hid_bod_indx 	= StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_bod_indx")));
+	String hid_gubun    	= StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_gubun")));
+	String hid_bod_group    = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_bod_group")));
+	String hid_bod_level    = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_bod_level")));
+	String hid_bsicInfo		= StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_bsicInfo")));
+%> 
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Confirm password</title>
+		<link rel="stylesheet" type="text/css" media="screen" href="../../script/css/pop_up.css" />
+	</head>
+	<body>
+		<div class="pop_wrap pt10">
+			<div class="pop_content" style="height:608px;">
+	        	<div class="div_box pop_con" style="height:608px;">
+	        	<form name="testForm" id="testForm" method="post" enctype="multipart/form-data">
+        		<input type="hidden" id="gubun"  name="gubun" value="<%=hid_gubun %>">
+				<input type="hidden" id="bod_group"  name="bod_group" value="<%=hid_bod_group %>">
+				<input type="hidden" id="bod_level"  name="bod_level" value="<%=hid_bod_level %>">
+				<input type="hidden" id="bsicInfo"  name="bsicInfo" value="<%=hid_bsicInfo %>">
+	        		<div class="pri_div">
+		        		<p class="pri_txt">Please enter password!</p>
+		        		<div class="pri_pw_input">
+		        			<label>Password</label><input type="password" id="password" name="pass" />
+		        		</div>
+						<div class="btn_area">
+							<input type="button" id="enter" class="pri_ent_btn"  value="Enter" onClick="doEnter()" />
+							<input type="button" id="cancel" class="pri_can_btn" value="Cancel" onClick="doCancel()" />
+						</div>
+					</div>
+	        	</form>
+	        	<form id="hideForm" name="hideForm">
+					<input type="hidden" id="hid_bod_indx" name="hid_bod_indx" value="<%=hid_bod_indx %>">
+					<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+					<input type="hidden" id="hid_gubun" name="hid_gubun">
+				</form>
+				<div class="box_corner box_lt"></div>
+                <div class="box_corner box_rt"></div>
+                <div class="box_corner box_lb"></div>
+                <div class="box_corner box_rb"></div>
+	        	</div>
+	        </div>
+		</div>
+		<%-- <form name="testForm" id="testForm" method="post" enctype="multipart/form-data">
+			<table align="center">
+				<tr>
+					<td align="center">
+						Please enter password!
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						<input type="hidden" id="gubun"  name="gubun" value="<%=hid_gubun %>">
+						<input type="hidden" id="bod_group"  name="bod_group" value="<%=hid_bod_group %>">
+						<input type="hidden" id="bod_level"  name="bod_level" value="<%=hid_bod_level %>">
+						<input type="hidden" id="bsicInfo"  name="bsicInfo" value="<%=hid_bsicInfo %>">
+						<input type="password" id="password" name="pass" />
+						<input type="button" id="enter"  value="enter" onClick="doEnter()" />
+						<input type="button" id="cancel" value="cancel" onClick="doCancel()" />
+					</td>
+				</tr>
+			</table>
+		</form>
+		<form id="hideForm" name="hideForm">
+			<input type="hidden" id="hid_bod_indx" name="hid_bod_indx" value="<%=hid_bod_indx %>">
+			<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			<input type="hidden" id="hid_gubun" name="hid_gubun">
+		</form> --%>
+	</body>
+</html>
+<script type="text/javascript">
+		function fnSetDocumentReady(){
+			if(!(sess_dsm_yn == "Y" || sess_mstu == "M")){
+				document.getElementById("reply").style.display = "none"; 
+			}
+			
+			$("#password").focus();
+		}
+
+		function doCancel(){
+			var gubun = $("#gubun").val();
+			var url = "";
+			
+			if(gubun != null && (gubun == "delete" || gubun == "edit")){
+				url = "xbd11.gas";
+			}else{
+				url = "xbd10.gas";
+			}
+			
+			doMoveAction(url);
+		}
+
+		function doEnter(){
+			var gubun = $("#gubun").val();
+			if(gubun == "delete"){
+				confirmUI('<fmt:message key="MSG.CNF.0002"/>');
+				$("#pop_yes").click(function(){
+					$.unblockUI({
+						onUnblock: function(){
+							confirmPassword(gubun);
+						}
+					});
+				});
+			}
+		}
+
+		function confirmPassword(gubun){
+
+			var hidBodIndx = $("#hid_bod_indx").val();
+			var password = $("#password").val();
+			var bsicInfo = { 
+					key_bod_indx : hidBodIndx,
+					bod_pass     : password
+			};
+			var paramData = { bsicInfo : util.jsonToString(bsicInfo) };
+			
+			doCommonAjax("doConfirmPasswordToBoardForClaim.do", paramData, "confirmPasswordCallBack(jsonData.sendResult, '" + gubun + "', "+hidBodIndx+");");
+		}
+
+		function confirmPasswordCallBack(result, gubun, bodIndx){
+
+			var isConfirm = result.bod_passConfirm;
+			if(!isConfirm){
+				alertUI("Your password was incorrect.");
+				return;
+			}
+			
+			var bsicInfo = { 
+					key_bod_indx : bodIndx,
+					bod_group    : $("#bod_group").val(),
+					bod_level    : $("#bod_level").val()
+			};
+			var tmp = $("#bsicInfo");
+			
+			var paramData = { bsicInfo : util.jsonToString(bsicInfo) };
+
+			if(gubun == "delete"){
+				doCommonAjax("doDeleteBDToClaim.do", paramData, "deleteCallBack(jsonData.sendResult);");
+			}else if(gubun == "edit"){
+//				doCommonAjax("doModifyBDToClaim.do", tmp, "modifyCallBack(jsonData.sendResult);");
+				
+				bsicInfo = $("#bsicInfo").val().replace(/&/g, "\"");
+
+				var frm = document.testForm;
+				frm.bsicInfo.value = bsicInfo;
+				frm.method = "post";
+				frm.action = "doModifyBDToClaim.do";
+				frm.submit();
+				
+			}else{
+				doCommonAjax("doReadBDToBoard.do", paramData, "readCallBack(jsonData.sendResult, "+bodIndx+");");
+			}
+		}
+
+		function readCallBack(result, hidBodIndx){
+			
+			hideForm.hid_bod_indx.value = hidBodIndx;
+			hideForm.hid_csrfToken.value = $("#csrfToken").val();
+			hideForm.hid_gubun.value = "read";
+			hideForm.method = "post";
+			hideForm.action = "xbd12.gas";
+			hideForm.submit();
+		}
+
+		function modifyCallBack(result){
+			setBottomMsg(result.message, true);
+
+			var url = "xbd10.gas";
+			doMoveAction(url);
+		}
+
+		function deleteCallBack(result){
+			setBottomMsg(result.message, true);
+
+			var url = "xbd10.gas";
+			doMoveAction(url);
+		}
+
+		function doMoveAction(url){
+			hideForm.hid_csrfToken.value = $("#csrfToken").val();
+			hideForm.hid_gubun.value = "edit";
+			hideForm.method = "post";
+			hideForm.action = url;
+			hideForm.submit();
+		}
+
+</script>

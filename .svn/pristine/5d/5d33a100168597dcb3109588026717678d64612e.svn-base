@@ -1,0 +1,160 @@
+
+**** ERROR file opened at , SAP-REL 710,0,0 RFC-VER 3 880476 MT-SL
+T:2588 Error in program 'javaw': ======> Connect to message server failed
+Connect_PM  MSHOST=10.121.241.106, R3NAME=EQB, GROUP=HMB_QAS
+
+LOCATION    CPIC (TCP/IP) on local host HMC-SOH-G000461
+ERROR       service '?' unknown
+
+TIME        Fri Nov 22 16:03:21 2013
+RELEASE     710
+COMPONENT   NI (network interface)
+VERSION     39
+RC          -3
+DETAIL      NiErrSet
+COUNTER     2
+
+T:2588 Error in program 'javaw': ======> Connect to message server failed
+Connect_PM  MSHOST=10.121.241.106, R3NAME=EQB, GROUP=HMB_QAS
+
+LOCATION    CPIC (TCP/IP) on local host HMC-SOH-G000461
+ERROR       service 'sapmsEQB' unknown
+
+TIME        Fri Nov 22 16:03:21 2013
+RELEASE     710
+COMPONENT   NI (network interface)
+VERSION     39
+RC          -3
+MODULE      nixxhsl.cpp
+LINE        643
+DETAIL      NiHsLGetServNo: service name cached as unknown
+COUNTER     3
+
+
+**** ERROR file opened at , SAP-REL 710,0,0 RFC-VER 3 880476 MT-SL
+T:3860 Error in program 'javaw': ======> Connect to message server failed
+Connect_PM  MSHOST=10.121.241.106, R3NAME=EQB, GROUP=HMB_QAS
+
+LOCATION    CPIC (TCP/IP) on local host HMC-SOH-G000461
+ERROR       service '?' unknown
+
+TIME        Fri Nov 22 16:05:09 2013
+RELEASE     710
+COMPONENT   NI (network interface)
+VERSION     39
+RC          -3
+DETAIL      NiErrSet
+COUNTER     2
+
+T:3860 Error in program 'javaw': ======> Connect to message server failed
+Connect_PM  MSHOST=10.121.241.106, R3NAME=EQB, GROUP=HMB_QAS
+
+LOCATION    CPIC (TCP/IP) on local host HMC-SOH-G000461
+ERROR       service 'sapmsEQB' unknown
+
+TIME        Fri Nov 22 16:05:09 2013
+RELEASE     710
+COMPONENT   NI (network interface)
+VERSION     39
+RC          -3
+MODULE      nixxhsl.cpp
+LINE        643
+DETAIL      NiHsLGetServNo: service name cached as unknown
+COUNTER     3
+
+
+**** ERROR file opened at , SAP-REL 710,0,0 RFC-VER 3 880476 MT-SL
+T:1152 Error in program 'javaw': ======> Connect to message server failed
+Connect_PM  MSHOST=10.121.241.106, R3NAME=EQB, GROUP=HMB_QAS
+
+LOCATION    CPIC (TCP/IP) on local host HMC-SOH-G000461
+ERROR       service '?' unknown
+
+TIME        Fri Nov 22 16:09:50 2013
+RELEASE     710
+COMPONENT   NI (network interface)
+VERSION     39
+RC          -3
+DETAIL      NiErrSet
+COUNTER     2
+
+T:1152 Error in program 'javaw': ======> Connect to message server failed
+Connect_PM  MSHOST=10.121.241.106, R3NAME=EQB, GROUP=HMB_QAS
+
+LOCATION    CPIC (TCP/IP) on local host HMC-SOH-G000461
+ERROR       service 'sapmsEQB' unknown
+
+TIME        Fri Nov 22 16:09:50 2013
+RELEASE     710
+COMPONENT   NI (network interface)
+VERSION     39
+RC          -3
+MODULE      nixxhsl.cpp
+LINE        643
+DETAIL      NiHsLGetServNo: service name cached as unknown
+COUNTER     3
+
+
+**** ERROR file opened at , SAP-REL 710,0,0 RFC-VER 3 880476 MT-SL
+T:5112 Error in program 'javaw': ======> Connect to message server failed
+Connect_PM  MSHOST=10.121.241.106, R3NAME=EQB, GROUP=HMB_QAS
+
+LOCATION    CPIC (TCP/IP) on local host HMC-SOH-G000461
+ERROR       service '?' unknown
+
+TIME        Fri Nov 22 16:17:57 2013
+RELEASE     710
+COMPONENT   NI (network interface)
+VERSION     39
+RC          -3
+DETAIL      NiErrSet
+COUNTER     2
+
+T:5112 Error in program 'javaw': ======> Connect to message server failed
+Connect_PM  MSHOST=10.121.241.106, R3NAME=EQB, GROUP=HMB_QAS
+
+LOCATION    CPIC (TCP/IP) on local host HMC-SOH-G000461
+ERROR       service 'sapmsEQB' unknown
+
+TIME        Fri Nov 22 16:17:57 2013
+RELEASE     710
+COMPONENT   NI (network interface)
+VERSION     39
+RC          -3
+MODULE      nixxhsl.cpp
+LINE        643
+DETAIL      NiHsLGetServNo: service name cached as unknown
+COUNTER     3
+
+
+**** ERROR file opened at , SAP-REL 710,0,0 RFC-VER 3 880476 MT-SL
+T:5836 Error in program 'javaw': ======> Connect to message server failed
+Connect_PM  MSHOST=10.121.241.106, R3NAME=EQB, GROUP=HMB_QAS
+
+LOCATION    CPIC (TCP/IP) on local host HMC-SOH-G000461
+ERROR       service '?' unknown
+
+TIME        Fri Nov 22 16:19:34 2013
+RELEASE     710
+COMPONENT   NI (network interface)
+VERSION     39
+RC          -3
+DETAIL      NiErrSet
+COUNTER     2
+
+T:5836 Error in program 'javaw': ======> Connect to message server failed
+Connect_PM  MSHOST=10.121.241.106, R3NAME=EQB, GROUP=HMB_QAS
+
+LOCATION    CPIC (TCP/IP) on local host HMC-SOH-G000461
+ERROR       service 'sapmsEQB' unknown
+
+TIME        Fri Nov 22 16:19:34 2013
+RELEASE     710
+COMPONENT   NI (network interface)
+VERSION     39
+RC          -3
+MODULE      nixxhsl.cpp
+LINE        643
+DETAIL      NiHsLGetServNo: service name cached as unknown
+COUNTER     3
+

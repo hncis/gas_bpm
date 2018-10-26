@@ -1,0 +1,635 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId = "XST02";
+
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH",locale);
+	String strSav = JSPMessageSource.getMessage("BUTTON.SAVE",locale);
+	String strDel = JSPMessageSource.getMessage("BUTTON.DELETE", locale);
+	
+	String strBtn = "";
+	strBtn = strSch+"/search@"+strSav+"/save@"+strDel+"/delete";
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>MANAGER MANAGEMENT</title>
+	</head>
+	<body>
+		<div id="wrap">
+	    	<form name="viewForm" id="viewForm">
+				<input type="hidden" id="initYn" value="N">
+		    	<%@ include file="../include/hncis_header.gas"%>
+		        <div id="contents_wrap">
+		        	<%@ include file="../include/hncis_left.gas"%>
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,"XST02"
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+		                <div class="search_area">
+		                	<table>
+		                        <colgroup>
+		                        	<!-- <col style="width:40px;" />
+		                        	<col style="width:120px;" /> -->
+		                        	<col style="width:40px;" />
+		                        	<col style="width:120px;" />
+		                        	<col style="width:80px;" />
+		                            <col style="width:auto;" />
+		                        </colgroup>
+		                        <tbody>
+		                            <tr>
+										<!-- <th>지역</th>
+										<td>
+											<select name="KEY_XDSM_PLAC" id="KEY_XDSM_PLAC" style="width:100px;">
+											</select>
+										</td> -->
+										<th><fmt:message key="sts"/></th>
+										<td>
+											<select name="KEY_XDSM_GUBN1" id="KEY_XDSM_GUBN1" style="width:100px;">
+											</select>
+										</td>
+										<th><fmt:message key="search_type"/></th>
+										<td>
+											<select name="SEARCH_GUBN" id="SEARCH_GUBN">
+												<option value=""><fmt:message key="select"/></option>
+												<option value="2"><fmt:message key="eeno"/></option>
+												<option value="3"><fmt:message key="eenm"/></option>
+													<option value="4"><fmt:message key="dept_nm"/></option>
+											</select>
+											<input type="text" name="SEARCH_VALUE" id="SEARCH_VALUE" style="width:140px">
+											<input type="text" name="hiddenValue" style="display:none">
+										</td>
+									</tr>
+		                        </tbody>
+		                    </table>
+		                </div>
+		                <div class="jq_tbl">
+			                <table id="htmlTable" class="scroll"></table>
+							<div id="htmlPager" class="scroll"></div>
+						</div>
+		                <%@ include file="../include/hncis_message.gas"%>
+		            </div>
+		            <div class="clear"></div>
+		        </div>
+	        </form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+	    </div>
+	<%-- <div id="wrap">
+		<div id="GASC">
+			<form name="viewForm" id="viewForm">
+				<input type="hidden" id="initYn" value="N">
+				<%@ include file="/hncis/include/leftMenuSys.gas"%>
+					<div id="container_wrap">
+						<div id="container">
+							<%=CommonGasc.getTitleAndButtonNew(sess_empno
+								,"XST02"
+								,"search/search@저장/save@삭제/delete"
+								,null
+								,null
+								,null
+								,request)
+							%>
+							<div id="basic_info">
+								<table border="0" width="100%" align="center" cellspacing="0" style="table-layout: fixed;">
+									<tr>
+										<td width="4%" align="center">Area</td>
+										<td width="10%" align="left">
+											<select name="KEY_XDSM_PLAC" id="KEY_XDSM_PLAC">
+											</select>
+										</td>
+										<td width="4%" align="center">Job</td>
+										<td  width="8%" align="left">
+											<select name="KEY_XDSM_GUBN1" id="KEY_XDSM_GUBN1">
+											</select>
+										</td>
+										<td width="8%" align="center">Search Type</td>
+										<td width="40%" align="left">
+											<select name="SEARCH_GUBN" id="SEARCH_GUBN">
+												<option value="">선택</option>
+												<option value="2">Id</option>
+												<option value="3">Name</option>
+													<option value="4">Department Code</option>
+											</select>
+											<input type="text" name="SEARCH_VALUE" id="SEARCH_VALUE" style="width:140px">
+											<input type="text" name="hiddenValue" style="display:none">
+										</td>
+									</tr>
+								</table>
+							</div>
+							<table id="htmlTable" class="scroll"></table>
+						<div id="htmlPager" class="scroll"></div>
+						<iframe id="msgFrame" src="<%=ctxPath %>/bottom.gas" style="width:100%; height:30px;" border="0" frameborder="0" framespacing="0" hspace="0" vspace="10" scrolling="no" noresize></iframe>
+						</div>
+					</div>
+				</form>
+				<form id="hideForm" name="hideForm" method="post">
+					<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+				</form>				
+			</div>
+		</div> --%>
+	</body>
+</html>
+		<script type="text/javascript">
+		var params; 
+		var comboVal;
+		var comboVal1;
+		var lastsel;
+		var fnMerge;
+		var gridParam;
+		var gridName1 = "htmlTable"; 
+		var datarow = {nSource:"",xdsm_plac_org:"",xdsm_plac:"",xdsm_gubn1_org:"",xdsm_gubn1:"",xdsm_gubn2_org:"",xdsm_gubn2:"",xdsm_empno_org:"",xdsm_empno:"",xusr_name:"",
+				xusr_dept_name:"",xdsm_idc_yn:"",xdsm_mgmt_scn_cd:"",xdsm_hpno:"",xawy_hpno:"",xawy_cono:"",xawy_mail:"",xdsm_rem:"",xusr_work_auth:"",menu_mgrp_cd:"",
+				xdsm_plac_h:"",xdsm_gubn1_h:"",xdsm_gubn2_h:"",xdsm_empno_h:""};
+
+		var userKeyArr = ['xusr_name','xusr_dept_name'];
+		var userColArr = ['xusr_name','xusr_dept_name'];
+
+		function fnSetDocumentReady(){
+			initMenus();
+			$('#ST').slideDown('fast');
+			var url = "getCommonCode('xdsm_plac:X0004;xdsm_gubn1:X0002;xdsm_idc_yn:X0003;xdsm_mgmt_scn_cd:X1003;', 'Y', 'setMultiCombo();');";
+			getCommonCode("KEY_XDSM_GUBN1:X0002:A;", "N", url);
+		}
+
+		function setMultiCombo(){
+			var params = {
+				codknd	: 'xza05',
+				corp_cd : sess_corp_cd,
+				locale	: $("#lo").val()
+			};
+
+			doCommonAjax("doSearchMenuToMultiCombo.do", params,"comboCallBack(jsonData.sendResult);");
+		}
+
+		function comboCallBack(jsonData){
+			comboVal1 = jsonData;
+			init();
+		}
+
+		function getComboValueMulti(comboName){
+			var returnVal;
+			if(typeof(comboVal1) == 'undefined'){
+				returnVal = ":";
+			}else{
+				var i = 0;
+				$.each(eval(comboVal1),function(targetNm,optionData){
+					if(targetNm == comboName){
+						$.each(eval(optionData),function(index,optionData){
+							if(i == 0){
+								returnVal = returnVal + optionData.value + ":" + optionData.name;
+							}else{
+								returnVal = returnVal + ";" + optionData.value + ":" + optionData.name;
+							}
+							i++;
+						});
+					}
+			      });
+				if(typeof(returnVal) == 'undefined'){
+					returnVal = '';
+				}
+				else{
+					returnVal = returnVal.replace("undefined", "");
+				}
+			}
+			return returnVal;
+		}
+
+		function setTsGridValue(rowId, iCol, cellcontent){
+			setMiltiComboList(rowId,'xdsm_gubn2');
+			
+			var colNm = jQuery('#htmlTable').jqGrid('getGridParam', 'colModel')[iCol].index;
+			
+			setMiltiComboList(rowId,colNm);
+		}
+
+		function setMiltiComboList(rowId,colNm){
+			if(typeof(comboVal1) == 'undefined'){return;}
+			if(colNm == 'xdsm_gubn2'){
+				var colValue = getColValue('xdsm_gubn1',rowId);
+				if(colValue == ''){
+					$("select#" + rowId +"_"+ colNm).html('<option role="option" value=""></option>');
+				}
+				else{
+					comboVal2="";
+					$.each(eval(comboVal1),function(targetNm,optionData){
+						$.each(eval(optionData),function(index,optionData){
+			    			if(targetNm=='MENU'&&colValue == optionData.key){
+			    				comboVal2 += '<option role="option" value="' +                                                   
+					            optionData.value + '">' +                                                   
+								optionData.name + '</option>';
+			        		}
+						});
+					});
+					$("select#" + rowId +"_"+ colNm).html(comboVal2);
+				}
+			}
+		};
+
+
+		function init(){
+			$("#htmlTable").GridUnload();
+// 			cn = ['','Area','지역','Job','업무','Job Name', '업무명', 'ID','사번','이름','부서','Show Y/N','정렬순서'
+// 			      ,'전화번호',' ',' ','Email','비고',' ',' ',' ',' ',' ',' '],
+			var cn = [ '' // ""
+		          ,'' // "Area"
+		          ,'<fmt:message key="region"/>' // "지역"
+		          ,'' // "job"
+		          ,'<fmt:message key="sts"/>' // "업무"
+		          ,'' // "job name"
+		          ,'<fmt:message key="sts_nm"/>' // "업무명"
+		          ,'' // "id"
+		          ,'<fmt:message key="eeno"/>' // "사번"
+		          ,'<fmt:message key="eenm"/>' // "이름"
+		          ,'<fmt:message key="dept_nm"/>' // "부서"
+		          ,'<fmt:message key="use_yn"/>' // "show yn"
+		          ,'<fmt:message key="sort_no"/>' // "정렬순서"
+		          ,'<fmt:message key="pn_no"/>' // "전화번호"
+		          ,'' // "" 
+		          ,'' // "" 
+		          ,'<fmt:message key="email"/>' // "email"
+		          ,'<fmt:message key="rem_sbc"/>' // "비고"
+		          ,'' // "" 
+		          ,'' // "" 
+		          ,'' // "" 
+		          ,'' // "" 
+		          ,'' // "" 
+		          ,'' // "" 
+		          ];
+			cm = [
+			    {name:'nSource'       , index:'nSource'     , formatter:'string', width:80 , align:'center', editable:false, sortable:false, hidden:true},
+			    {name:'xdsm_plac_org',	index:'xdsm_plac_org', 	sortable:false,		formatter: "string", width:0, align:"left", editable:false, hidden:true,frozen : true},
+				{name:'xdsm_plac',		index:'xdsm_plac', 		sortable:false,		width:65,align:'center',editable:true,edittype:'select', hidden:true, formatter: "select",editoptions:{value:getComboValue('xdsm_plac')}},
+				{name:'xdsm_gubn1_org',	index:'xdsm_gubn1_org', sortable:false, 	formatter: "string", width:0, align:"left", editable:false, hidden:true,frozen : true},
+				{name:'xdsm_gubn1',		index:'xdsm_gubn1', 	sortable:false,		formatter:"select",	width:75,	align:'center',	editable:true,	frozen:true,	edittype:'select', 
+					editoptions:{value:getComboValue('xdsm_gubn1'), dataInit: function(elem) {$(elem).width(70);},
+			        	dataEvents:[{type:'change', 
+							fn:function(e){
+				        		var row = $(e.target).closest('tr.jqgrow');
+			                    var rowId = row.attr('id');
+			                    var cbs = jQuery("#jqg_"+gridName1+"_"+rowId);
+		                        if(!cbs.is(":checked")){
+		                        	jQuery("#"+gridName1).jqGrid("setSelection", rowId, true);
+		                        }
+		                        
+			                    setMiltiComboList(rowId,'xdsm_gubn2');
+			        		}
+			        	},
+			        	{type:'focus', 
+							fn:function(e){
+//								var row = $(e.target).closest('tr.jqgrow');
+//			                    var rowId = row.attr('id');
+//			                    setMiltiComboList(rowId,'xdsm_gubn2');
+			        		}
+			        	}
+			        	]
+				        },
+				        editrules:{required:true}
+				},
+				{name:'xdsm_gubn2_org',	index:'xdsm_gubn2_org', sortable:false, formatter: "string", width:0, align:"left", editable:false, hidden:true,frozen : true},
+				{name:'xdsm_gubn2',	index:'xdsm_gubn2', sortable:false,		formatter: "select",	width:120,		align:'center',	editable:true,	frozen:true,
+					edittype:'select', 
+					editoptions:{value:getComboValueMulti('MENU'), 
+						dataInit: function(elem) {
+									$(elem).width(110);
+						},
+						dataEvents:[{type:'change', 
+							fn:function(e){
+				        		var row = $(e.target).closest('tr.jqgrow');
+			                    var rowId = row.attr('id');
+			                    var cbs = jQuery("#jqg_"+gridName1+"_"+rowId);
+		                        if(!cbs.is(":checked")){
+		                        	jQuery("#"+gridName1).jqGrid("setSelection", rowId, true);
+		                        }
+			        		}
+			        	},
+			        	{type:'focus', 
+							fn:function(e){
+//								var row = $(e.target).closest('tr.jqgrow');
+//			                    var rowId = row.attr('id');
+//			                    setMiltiComboList(rowId,'xdsm_gubn2');
+			        		}
+			        	}]
+						},
+				        editrules:{required:true}
+				},
+				{name:'xdsm_empno_org',	index:'xdsm_empno_org', sortable:false, formatter: "string", width:0, align:"left", editable:false, hidden:true,frozen : true},
+				{name:"xdsm_empno",		index:"xdsm_empno",		sortable:false,	formatter:"string",	 width:70,	align:"left",	editable:true,	frozen : false,
+					editoptions:{dataEvents:[{type:'keyup', 
+							fn:function(e){
+								if(!isNumeric($(e.target).val())){
+									$(e.target).val(selectNum($(e.target).val()));
+								}
+								
+								var row = $(e.target).closest('tr.jqgrow');
+								var rowId = row.attr('id');
+								searchToUserInfo(rowId, 'xdsm_empno');
+							}
+						},
+						{type:'keydown', 
+							fn:function(e){
+								var row = $(e.target).closest('tr.jqgrow');
+								var rowId = row.attr('id');
+							}
+						}]
+			        }
+				},
+				{name:'xusr_name',		index:'xusr_name', 		sortable:false, formatter: "string", width:120, align:"left", editable:false, frozen : true},
+				{name:'xusr_dept_name',	index:'xusr_dept_name', sortable:false, formatter: "string", width:160, align:"left", editable:false, frozen : true},
+				{name:'xdsm_idc_yn',	index:'xdsm_idc_yn', 	sortable:false,width:60,align:'center',editable:true,edittype:'select', formatter: "select",editoptions:{value:getComboValue('xdsm_idc_yn')}},
+				{name:'xdsm_mgmt_scn_cd',index:'xdsm_mgmt_scn_cd', sortable:false, formatter: "string", width:60, align:"center", editable:true, frozen : true},
+				{name:'xdsm_hpno',		index:'xdsm_hpno', 		sortable:false, formatter: "string", width:100, align:"center", editable:true, frozen : true},
+				{name:'xawy_hpno',		index:'xawy_hpno', 		sortable:false, formatter: "string", width:100, align:"center", editable:false, hidden:true, frozen : true},
+				{name:'xawy_cono',		index:'xawy_cono', 		sortable:false, formatter: "string", width:100, align:"center", editable:false, hidden:true, frozen : true},
+				{name:'xawy_mail',		index:'xawy_mail', 		sortable:false, formatter: "string", width:150, align:"center", editable:false, hidden:true, frozen : true},
+				{name:'xdsm_rem'		,index:'xdsm_rem', 		sortable:false, formatter: "string", width:170, align:"left", editable:true, frozen : true},
+				{name:'xusr_work_auth',	index:'xusr_work_auth', sortable:false, formatter: "string", width:0, align:"center", hidden:true, editable:false, frozen : true},
+				{name:'menu_mgrp_cd',	index:'menu_mgrp_cd',	sortable:false, formatter: "string", width:0, align:"center", hidden:true, editable:false, frozen : true},
+				{name:'xdsm_plac_h',	index:'xdsm_plac_h', 	sortable:false, formatter: "string", width:0, align:"center", hidden:true, editable:false, frozen : true},
+				{name:'xdsm_gubn1_h',	index:'xdsm_gubn1_h', 	sortable:false, formatter: "string", width:0, align:"center", hidden:true, editable:false, frozen : true},
+				{name:'xdsm_gubn2_h',	index:'xdsm_gubn2_h', 	sortable:false, formatter: "string", width:0, align:"center", hidden:true, editable:false, frozen : true},
+				{name:'xdsm_empno_h',	index:'xdsm_empno_h', 	sortable:false, formatter: "string", width:0, align:"center", hidden:true, editable:false, frozen : true}
+			];
+			
+			params = {
+				xdsm_plac		: '1',
+				xdsm_gubn1		: $('#KEY_XDSM_GUBN1').val(),
+				search_gubn		: $('#SEARCH_GUBN').val(),
+				search_value	: $('#SEARCH_VALUE').val(),
+				corp_cd			: sess_corp_cd
+			};
+			
+			gridParam = {
+				viewEdit : [{
+					gridName     : "htmlTable",
+					url          : "doSearchGridToManagerManagement.do",
+					colNames     : cn,
+					colModel     : cm,
+					height       : "100%",
+					rowNum		 : 30,
+					rownumbers   : true,
+					multiselect  : true,
+					cellEdit     : true,
+					fnMerge      : false,
+					completeFc	 : "searchCallback();",
+//					beforeEditFc : "beforeEditRow(id,name,val,iRow,iCol);",
+					selectCellFc : "setTsGridValue(rowid, iCol, cellcontent);",
+					pager		 : "htmlPager",
+					paramJson	 : params
+				}]
+			};
+			
+			commonJqGridInit(gridParam, "N");
+			
+			$("#htmlTable").setColProp('xdsm_empno', {editoptions:{dataEvents:[{type:'keyup', 
+				fn:function(e){
+					var row = $(e.target).closest("tr.jqgrow");
+		    		var rowId = row.attr("id");
+		    		var cbs = $("#jqg_" + gridName1 + "_" + rowId);
+		    		if(!cbs.is(":checked")){
+		            	jQuery("#"+gridName1).jqGrid("setSelection", rowId, true);
+		    		}
+		    		setInsaInfo(rowId, 'xdsm_empno');
+				}
+			}]
+			}});
+			
+			$("#htmlTable").jqGrid('navGrid',"#htmlPager",{edit:false,add:false,del:false,search:false,refresh:false});
+		}
+
+		function beforeEditRow(id,name,val,iRow,iCol){
+			setMiltiComboList(iRow,'xdsm_gubn2');
+		}
+
+		function setInsaInfo(rowId){
+			if(getColValue("xdsm_empno", rowId, gridName1) != ""){
+				if(getColValue("xdsm_empno", rowId, gridName1).length > 8) return;
+				if(getColValue("xdsm_empno", rowId, gridName1).length == 8){
+					if(getColValue("xdsm_empno", rowId, gridName1) == getColValue("nSource", rowId, gridName1)){ return; }
+					$("#"+gridName1).jqGrid("setCell", rowId, "nSource", getColValue("xdsm_empno", rowId, gridName1));
+					
+					var keyData = { 
+							xusr_empno : getColValue("xdsm_empno", rowId, gridName1),
+							corp_cd			: sess_corp_cd
+							
+					};
+					paramData = {
+						paramJson : util.jsonToString(keyData)
+					};
+					doCommonAjax("/doSearchToUserInfo.do", paramData, "insaCallBack(jsonData.sendResult, '"+rowId+"')");
+				}
+			}
+		}
+
+		function insaCallBack(result, rowId){
+			$("#"+gridName1).jqGrid("setCell", rowId, "xusr_name", result.xusr_name);
+			$("#"+gridName1).jqGrid("setCell", rowId, "xusr_dept_name", result.xusr_dept_name);
+		}
+
+
+		function retrieve(btnFlag){
+			var f = document.frm;
+			switch(btnFlag){
+			   case "search" :
+				    doSearch();
+					break;
+			   case "save" :
+				    doSave();
+					break;
+			   case "delete" :
+				    doDelete();
+					break;
+			}
+		}
+
+		function doSearch(msgFlag){
+
+			var params = {
+					xdsm_plac		: '1',
+					xdsm_gubn1		: $('#KEY_XDSM_GUBN1').val(),
+					search_gubn		: $('#SEARCH_GUBN').val(),
+					search_value	: $('#SEARCH_VALUE').val(),
+					corp_cd			: sess_corp_cd,
+					locale			: sess_locale
+			};
+			doCommonSearch("doSearchGridToManagerManagement.do", util.jsonToString(params), "searchCallback();initAfterMenus();", "htmlTable", msgFlag);
+		}
+
+		function searchCallback(){
+			addGridRow();
+			initAfterMenus();
+		}
+
+		function doInsert(){
+			var selectInfoRow = jQuery("#htmlTable").jqGrid('getGridParam','selarrrow');
+			var insertParams = [];
+			
+			if(selectInfoRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+			
+			for(var i=0; i<selectInfoRow.length; i++){
+				rowId = selectInfoRow[i];
+				if(rowId)	{
+					data =
+					{
+							xdsm_plac          			: getColValue("xdsm_plac", rowId),
+							xdsm_gubn1      			: getColValue("xdsm_gubn1", rowId),
+							xdsm_gubn2      			: getColValue("xdsm_gubn2", rowId),
+							xdsm_empno					: getColValue("xdsm_empno", rowId),
+							xdsm_idc_yn          		: getColValue("xdsm_idc_yn", rowId),
+							xdsm_mgmt_scn_cd          	: getColValue("xdsm_mgmt_scn_cd", rowId),
+							xdsm_hpno          			: getColValue("xdsm_hpno", rowId),
+							xdsm_rem          			: getColValue("xdsm_rem", rowId),
+							xusr_work_auth				: getColValue("xusr_work_auth", rowId),
+							menu_mgrp_cd				: getColValue("menu_mgrp_cd", rowId),
+							inp_empno      				: sess_empno,
+							upt_empno     				: sess_empno,
+							corp_cd						: sess_corp_cd
+					};
+					
+					insertParams.push(data);
+					
+				} else { alertUI('<fmt:message key="MSG.SEL.0011"/>');}
+			}
+			
+			confirmUI('<fmt:message key="MSG.CNF.0004"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramJson      	: util.jsonToList(insertParams)
+							};
+						doCommonAjax("doInsertToManagerManagement.do", paramData, "setBottomMsg(jsonData.sendResult.message, true);doSearch('N');");
+					}
+				});
+			});
+		}
+
+		function doSave(){
+			var selectInfoRow = jQuery("#htmlTable").jqGrid('getGridParam','selarrrow');
+			var iParams = [];
+			var uParams = [];
+			
+			if(selectInfoRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+			
+			for(var i=0; i<selectInfoRow.length; i++){
+				rowId = selectInfoRow[i];
+				if(rowId)	{
+					
+					if(getColValue("xdsm_plac_org", rowId, "htmlTable") != ""){
+						data =
+						{
+								xdsm_plac          			: getColValue("xdsm_plac", rowId),
+								xdsm_plac_org          		: getColValue("xdsm_plac_org", rowId),
+								xdsm_gubn1      			: getColValue("xdsm_gubn1", rowId),
+								xdsm_gubn1_org      		: getColValue("xdsm_gubn1_org", rowId),
+								xdsm_gubn2      			: getColValue("xdsm_gubn2", rowId),
+								xdsm_gubn2_org      		: getColValue("xdsm_gubn2_org", rowId),
+								xdsm_empno					: getColValue("xdsm_empno", rowId),
+								xdsm_empno_org				: getColValue("xdsm_empno_org", rowId),
+								xdsm_idc_yn          		: getColValue("xdsm_idc_yn", rowId),
+								xdsm_mgmt_scn_cd          	: getColValue("xdsm_mgmt_scn_cd", rowId),
+								xdsm_hpno          			: getColValue("xdsm_hpno", rowId),
+								xdsm_rem          			: getColValue("xdsm_rem", rowId),
+								xusr_work_auth				: getColValue("xusr_work_auth", rowId),
+								menu_mgrp_cd				: getColValue("menu_mgrp_cd", rowId),
+								upt_empno     				: sess_empno,
+								corp_cd						: sess_corp_cd
+						};
+						
+						uParams.push(data);
+					}else{
+						data =
+						{
+								xdsm_plac          			: getColValue("xdsm_plac", rowId),
+								xdsm_gubn1      			: getColValue("xdsm_gubn1", rowId),
+								xdsm_gubn2      			: getColValue("xdsm_gubn2", rowId),
+								xdsm_empno					: getColValue("xdsm_empno", rowId),
+								xdsm_idc_yn          		: getColValue("xdsm_idc_yn", rowId),
+								xdsm_mgmt_scn_cd          	: getColValue("xdsm_mgmt_scn_cd", rowId),
+								xdsm_hpno          			: getColValue("xdsm_hpno", rowId),
+								xdsm_rem          			: getColValue("xdsm_rem", rowId),
+								xusr_work_auth				: getColValue("xusr_work_auth", rowId),
+								menu_mgrp_cd				: getColValue("menu_mgrp_cd", rowId),
+								inp_empno      				: sess_empno,
+								upt_empno     				: sess_empno,
+								corp_cd						: sess_corp_cd
+						};
+						
+						iParams.push(data);
+					}
+				}
+			}
+			
+			confirmUI('<fmt:message key="MSG.CNF.0004"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								iParams : util.jsonToList(iParams),
+								uParams	: util.jsonToList(uParams)
+							};
+						doCommonAjax("doSaveToManagerManagement.do", paramData, "setBottomMsg(jsonData.sendResult.message, true);doSearch('N');");
+					}
+				});
+			});
+		}
+
+		function doDelete(){
+			var selectInfoRow = jQuery("#htmlTable").jqGrid('getGridParam','selarrrow');
+			var insertParams = [];
+			
+			if(selectInfoRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+			
+			for(var i=0; i<selectInfoRow.length; i++){
+				rowId = selectInfoRow[i];
+				if(rowId)	{
+					data =
+					{
+							xdsm_plac          			: getColValue("xdsm_plac_org", rowId),
+							xdsm_gubn1      			: getColValue("xdsm_gubn1_org", rowId),
+							xdsm_gubn2      			: getColValue("xdsm_gubn2_org", rowId),
+							xdsm_empno					: getColValue("xdsm_empno_org", rowId),
+							xdsm_idc_yn          		: getColValue("xdsm_idc_yn", rowId),
+							xdsm_mgmt_scn_cd          	: getColValue("xdsm_mgmt_scn_cd", rowId),
+							xdsm_hpno          			: getColValue("xdsm_hpno", rowId),
+							xdsm_rem          			: getColValue("xdsm_rem", rowId),
+							xusr_work_auth				: getColValue("xusr_work_auth", rowId),
+							menu_mgrp_cd				: getColValue("menu_mgrp_cd", rowId),
+							inp_empno      				: sess_empno,
+							upt_empno     				: sess_empno,
+							corp_cd						: sess_corp_cd
+					};
+					
+					insertParams.push(data);
+					
+				} else { alertUI('<fmt:message key="MSG.SEL.0011"/>');}
+			}
+			
+			confirmUI('<fmt:message key="MSG.CNF.0002"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramJson      	: util.jsonToList(insertParams)
+							};
+						doCommonAjax("doDeleteToManagerManagement.do", paramData, "setBottomMsg(jsonData.sendResult.message, true);doSearch('N');");
+					}
+				});
+			});
+		}
+		</script>

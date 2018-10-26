@@ -1,0 +1,159 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title><fmt:message key="charge_prsn_guide"/></title>
+<link rel='stylesheet' type="text/css" media="screen" href="<%=ctxPath%>/script/css/hncis_common.css" />
+<script type="text/javascript" src='<%=ctxPath%>/script/js/jsonUtil.js'></script>
+<script type="text/javascript" src='<%=ctxPath%>/script/js/common.js'></script>
+<link rel="stylesheet" type="text/css" media="screen" href="../../script/css/pop_up.css" />
+<link rel="stylesheet" type="text/css" href="<%=ctxPath%>/script/js/autocomplete/redmond.css">
+<script type="text/javascript" src="<%=ctxPath%>/script/js/autocomplete/jquery.js"></script>
+<script type="text/javascript" src="<%=ctxPath%>/script/js/autocomplete/jquery-ui.js"></script>
+</head>
+<body style="overflow-x: hidden ">
+	<div class="pop_wrap">
+			<div class="pop_header">
+	        	<div class="pop_title">
+	            	<h1><fmt:message key="charge_prsn_guide"/></h1>
+	                <a href="javascript:selfClose();" class="pop_close"></a>
+	            </div>
+	        </div>
+			<input type="hidden" id="nSource" name="nSource">
+	        <div class="pop_content" style="margin-top: 10px">
+	        	<div class="div_box pop_con">
+			        <div id="contents_wrap" class="any_page">
+			            <div id="contents">
+							<div class="search_area">
+			                	<table>
+			                        <colgroup>
+			                        	<col style="width:70px;" />
+			                            <col style="width:200px;" />
+			                            <col style="width:70px;" />
+			                            <col style="width:auto;" />
+			                            <col style="width:100px;" />
+			                        </colgroup>
+			                        <tbody>
+			                            <tr>
+											<th class="div_nameF"><fmt:message key="eeno"/></th>
+											<td class="inputF">
+												<input type="text" id="eeno" name="eeno" style="width:170px; ime-mode:disabled;">
+											</td>
+											<th class="div_name"><fmt:message key="eenm"/></th>
+											<td class="inputS">
+												<input type="text" id="ee_nm" name="ee_nm" style="width:250px;"/>
+											</td>
+											<td rowspan="2">
+												<div class="btn_area">
+								                    <ul class="btns">
+								                        <li><a href="javascript:setInsaInfo();"><fmt:message key="search"/><span></span></a></li>
+								                    </ul>
+								                </div>
+											</td>
+										</tr>
+										<tr>
+											<th class="div_name"><fmt:message key="tel_no"/></th>
+											<td class="inputT">
+												<input type="text" id="tel_no" name="tel_no" style="width:170px;" class="disabled" readonly/>
+											</td>
+											<th class="div_name"><fmt:message key="email"/></th>
+											<td class="inputT">
+												<input type="text" id="email" name="email" style="width:250px;" class="disabled" readonly/>
+											</td>
+											
+										</tr>
+			                        </tbody>
+			                    </table>
+			                </div>
+			                <iframe name="list1" src="jobPopup.gas" width="918" height="405" frameborder="0" border="0" framespacing="0" scrolling="auto"></iframe>
+			            </div>
+			            <div class="clear"></div>
+			        </div>
+	                <div class="box_corner box_lt"></div>
+	                <div class="box_corner box_rt"></div>
+	                <div class="box_corner box_lb"></div>
+	                <div class="box_corner box_rb"></div>
+	            </div>
+	        </div>
+	        
+	    </div>
+	    <input type="hidden" id="lo_cd" name="lo_cd">
+</body>
+</html>
+<script type="text/javascript">
+var ctxPath        = "<%=ctxPath%>";
+
+function fnSetDocumentReady(){
+	$("#lo_cd").val(opener.$("#lo").val());
+	$(function(){
+		  var el = jQuery('#ee_nm').autocomplete({
+		    minLength: 2,
+		    source: function( request, response ) {
+		      var keyData = { 
+		    		  eenm : request.term,
+		    		  corp_cd : sess_corp_cd,
+		    		  locale : opener.$("#lo").val()
+		      };
+		      jQuery.ajax({
+		    	  type :'POST',
+		          url: ctxPath+'/doSearchToUserInfoByPopup.do',
+		          dataType: "json",
+		          data: {
+		        	  paramJson: util.jsonToString(keyData) 
+		          },
+		          success: function( data ) {
+		            response( jQuery.map( data.sendResult.rows, function( item ) {
+		              return {
+		                //id: item.id,
+		                value: item.eenm,
+		                eenm: item.eeno,
+		                phone: item.hpno,
+		                email: item.email
+		              }
+		          }));
+		        }
+		      }).error(function(xhr, textStatus){
+		    	  alert("error textStatus="+textStatus);console.log('err', arguments)});
+		    },
+		    select: function( event, ui ) {
+		    	//alert("event="+event.value);
+		    	//alert("ui.item.value="+ui.item.value);
+		    	$("#ee_nm").val(ui.item.value);
+		    	$("#eeno").val(ui.item.eenm);
+		    	$("#tel_no").val(ui.item.phone);
+		    	$("#email").val(ui.item.email);
+		        return false;
+		    }
+		  })
+		});
+}
+
+function setInsaInfo(){
+	if($.trim($("#eeno").val()) == "" && $.trim($("#ee_nm").val()) == ""){
+		alert('<fmt:message key="MSG.INP.0075"/>');
+		return;
+	}
+
+	$("#tel_no").val("");
+	$("#email").val("");
+	
+	var keyData = { 
+		xusr_empno : $("#eeno").val(),
+		xusr_name  : $("#ee_nm").val(),
+		corp_cd	   : sess_corp_cd
+	};
+	paramData = {
+		paramJson : util.jsonToString(keyData)
+	};
+	doCommonAjax("/hncis/system/doSearchToUserInfoPopup.do", paramData, "insaCallBack(jsonData.sendResult)");
+}
+
+function insaCallBack(result){
+	$("#eeno").val(result.xusr_empno);
+	$("#ee_nm").val(result.xusr_name);
+	$("#tel_no").val(result.xusr_tel_no);
+	$("#email").val(result.xusr_mail_adr.toLowerCase());
+}
+</script>

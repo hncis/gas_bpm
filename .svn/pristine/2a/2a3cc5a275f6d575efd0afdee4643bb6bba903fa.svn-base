@@ -1,0 +1,159 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title><fmt:message key="help" /></title>
+		<link rel="stylesheet" type="text/css" media="screen" href="<%=ctxPath%>/script/css/hncis_common.css" />
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/jsonUtil.js"></script>
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/common.js"></script>
+		<link rel="stylesheet" type="text/css" media="screen" href="../../script/css/pop_up.css" />
+		<link rel="stylesheet" type="text/css" href="<%=ctxPath%>/script/js/autocomplete/redmond.css">
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/autocomplete/jquery.js"></script>
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/autocomplete/jquery-ui.js"></script>
+	</head>
+	
+	<body style="overflow-x: hidden">
+		<div class="pop_wrap info_wrap">
+			<div class="pop_header_pos">
+				<div class="pop_header">
+		        	<div class="pop_title">
+		            	<h1>출장  - 코드관리</h1>
+		                <a href="javascript:selfClose();" id="pop_tip_cls" class="pop_close"></a>
+		            </div>
+		        </div>
+		        <ul class="info_menu menuNum05">
+		        	<li><a href="#info01"><span>조회조건 확인</span></a></li>
+		        	<li><a href="#info02"><span>조회</span></a></li>
+		        	<li><a href="#info03"><span>저장</span></a></li>
+		        	<li><a href="#info04"><span>삭제</span></a></li>
+		        	<li><a href="#info05"><span>추가</span></a></li>
+		        </ul>
+	        </div>
+	        <div class="pop_info_content">
+	        	<div class="tit_area" id="info01">
+	        		<span class="info_num">01</span>
+	        		<h2>조회 조건 확인</h2>
+	        	</div>
+	        	<table class="pop_info_tbl">
+	        		<colgroup>
+	        			<col style="width:25%;"/>
+	        			<col style="width:75%;"/>
+	        		</colgroup>
+	        		<thead>
+	        			<tr>
+	        				<th>구분</th>
+	        				<th>설명</th>
+	        			</tr>
+	        		</thead>
+	        		<tbody>
+	        			<tr>
+	        				<td>대륙</td>
+	        				<td>
+	        					기본값으로 <b>"선택"</b>으로 설정
+	        					<br/>
+								<span class="txt_blue">
+									※ 코드관리 입력된 대륙코드가 콤보박스에 셋팅. 
+								</span>
+	        				</td>
+	        			</tr>
+	        		</tbody>
+	        	</table>
+	        	
+	        	<div class="tit_area" id="info02">
+	        		<span class="info_num">02</span>
+	        		<h2>조회</h2>
+	        		<p>
+	        			조회 조건 확인 후  <b>"조회"</b>버튼 클릭.
+	        		</p>
+	        	</div>
+	        	
+	        	<div class="tit_area" id="info03">
+	        		<span class="info_num">03</span>
+	        		<h2>저장</h2>
+	        	</div>
+	        	<table class="pop_info_tbl">
+	        		<colgroup>
+	        			<col style="width:25%;"/>
+	        			<col style="width:75%;"/>
+	        		</colgroup>
+	        		<thead>
+	        			<tr>
+	        				<th>구분</th>
+	        				<th>설명</th>
+	        			</tr>
+	        		</thead>
+	        		<tbody>
+	        			<tr>
+	        				<td>코드</td>
+	        				<td>중복되지 않는 값으로 영문 또는 숫자 혼합하여 입력 가능</td>
+	        			</tr>
+	        			<tr>
+	        				<td>Text1</td>
+	        				<td>코드명(Text1) 입력</td>
+	        			</tr>
+	        			<tr>
+	        				<td>Text2</td>
+	        				<td>코드명(Text2) 입력</td>
+	        			</tr>
+	        			<tr>
+	        				<td>정렬</td>
+	        				<td>
+	        					신청화면 선택박스의 출력 순서 값으로 숫자만 입력 가능
+	        					<span class="txt_blue">
+	        						※ 0에 가까운 값일수록 최상위 정렬
+	        					</span>
+	        				</td>
+	        			</tr>
+	        			<tr>
+	        				<td>사용여부</td>
+	        				<td>
+	        					"N" 또는 "Y" 선택
+	        					<span class="txt_blue">
+	        						※ “N”으로 설정할 경우 신청화면의 선택박스에 미출력 
+	        					</span>
+	        				</td>
+	        			</tr>
+	        		</tbody>
+	        	</table>
+				
+				<div class="tit_area" id="info04">
+	        		<span class="info_num">04</span>
+	        		<h2>삭제</h2>
+	        		<p>
+	        			삭제 할 대상의 리스트를 체크하여 <b>"삭제"</b>버튼 클릭.
+	        		</p>
+	        	</div>
+	        	
+				<div class="tit_area" id="info05">
+	        		<span class="info_num">05</span>
+	        		<h2>추가</h2>
+	        		<p>
+	        			조회된 데이터가 그리드에 모두 조회되어 입력 할 수 없을때 <b>"추가"</b>버튼 클릭하여 입력.
+	        		</p>
+	        	</div>
+				
+	        	<!-- 빈칸 생성 영역 -->
+	        	<div class="pop_info_tbl"></div>
+	        </div>
+	    </div>
+	</body>
+	<script type="text/javascript">
+		function fnSetDocumentReady(){
+			var $sub_menu = $(".info_menu li a"),
+				$titArea = $(".tit_area"),
+				$tblArea = $(".pop_info_tbl");
+			
+			//마지막 영역 빈칸 생성
+			$tblArea.last().height("430");
+			
+			//클릭 이벤트
+			$sub_menu.click(function(){
+				var idx = $(this).parent().index();
+				var topVal = $titArea.eq(idx).offset().top - 122;
+				$("html, body").animate({scrollTop : topVal}, 400);
+			})
+		}
+	</script>
+</html>

@@ -1,0 +1,520 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="com.hncis.common.util.*" %>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XBV05";
+	String hid_cond  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_cond")));
+
+	String yy = CurrentDateTime.getYear();
+	String mm = CurrentDateTime.getMonth();
+	String bmm = CurrentDateTime.addMonth(CurrentDateTime.getDate(),-1);
+	String tdd = Integer.toString( CurrentDateTime.getMaxday(yy+mm));
+
+	String fromDay   = yy + "/" + bmm + "/" + "01";
+	String toDay = yy + "/" + mm + "/" + tdd;
+	
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH", locale);
+	String strNew = JSPMessageSource.getMessage("BUTTON.NEW",locale);
+	String strExl = JSPMessageSource.getMessage("BUTTON.EXCEL",locale);
+	
+	String strBtn = "";
+	strBtn = strSch+"/search@"+strNew+"/new@"+strExl+"/excel";
+	
+	String tempPath     = request.getServletPath().toString();
+	String stepHelpUrl  = StringUtil.getStepHelp(tempPath);
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>LIST</title>
+	</head>
+	<body>
+		<div id="wrap">
+	    	<form name="frm" id="frm">
+		    	<%@ include file="../include/hncis_header.gas"%>
+		        <div id="contents_wrap">
+		        	<%@ include file="../include/hncis_left.gas"%>
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,"XBV05"
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+		                <div class="search_area">
+			                <input type="hidden" id="menu_id" name="menu_id" value="<%=menuId.toLowerCase() %>">
+							<input type="hidden" id="hid_cond" name="hid_cond" value="<%=hid_cond %>">
+							<input type="hidden" id="hid_page" name="hid_page">
+							<input type="hidden" id="help_url" name="help_url" value="<%=stepHelpUrl%>">
+							
+		                	<table>
+		                        <colgroup>
+		                        	<col style="width:80px;" />
+		                        	<col style="width:300px;" />
+		                        	<col style="width:40px;" />
+		                        	<col style="width:255px;" />
+		                        	<col style="width:60px;" />
+		                            <col style="width:auto;" />
+		                        </colgroup>
+		                        <tbody>
+		                            <tr>
+										<th><fmt:message key="type"/></th>
+										<td>
+											<SELECT NAME="key_vehl_cd" ID="key_vehl_cd" style="width:115px"></SELECT>
+											<SELECT NAME="key_car_type_cd" ID="key_car_type_en" style="width:85px"></SELECT>
+											<SELECT NAME="key_car_type_cd" ID="key_car_type_cd" style="width:85px"></SELECT>
+										</td>
+										<th><fmt:message key="dept_nm"/></th>
+										<td>
+											<input type="text" name="key_ops_cd" id="key_ops_cd" style="ime-mode:disabled;width:60px" onkeyup="deptSearch();">
+											<input id="key_ops_nm" type="text" style="width:145px" class="disabled" readonly>
+											<img id="deptBtn" name="img_ignm_pop" src="<%=ctxPath %>/images/hncis_common/find-f.png" style="cursor:hand;filter:alpha(opacity=100)" class='button' onMouseOver="na_change_img_src('img_ignm_pop','document', '<%=ctxPath %>/images/hncis_common/find-n.png');" onMouseOut="na_restore_img_src('img_ignm_pop');" onclick="deptFind()" align="absmiddle">
+										</td>
+										<th><fmt:message key="charge_prsn"/></th>
+										<td>
+											<input type="text" id="key_crgr_eeno" name="key_crgr_eeno" style="ime-mode:disabled;width:65px;" onkeyup="setCrgrInfo()">
+											<input type="text" id="key_crgr_eeno_nm" name="key_crgr_eeno_nm" style="width:150px" class="disabled" readonly>
+										</td>
+									</tr>
+		                        </tbody>
+		                    </table>
+		                    <table>
+		                        <colgroup>
+		                        	<col style="width:80px;" />
+		                        	<col style="width:115px;" />
+		                        	<col style="width:65px;" />
+		                        	<col style="width:115px;" />
+		                        	<col style="width:80px;" />
+		                        	<col style="width:115px;" />
+		                        	<col style="width:60px;" />
+		                        	<col style="width:140px;" />
+		                        	<col style="width:50px;" />
+		                            <col style="width:auto;" />
+		                        </colgroup>
+		                        <tbody>
+		                            <tr>
+										<th><fmt:message key="car_no"/></th>
+										<td>
+											<input type="text" id="key_car_no" name="key_car_no" style="width:90px"/>
+										</td>
+										<th><fmt:message key="vhcl_no"/></th>
+										<td>
+											<input type="text" id="key_chss_no" name="key_chss_no" style="width:90px"/>
+										</td>
+										<th><fmt:message key="reg_no"/></th>
+										<td>
+											<input type="text" id="key_rgst_no" name="key_rgst_no" style="width:90px"/>
+										</td>
+										<th><fmt:message key="purp"/></th>
+										<td>
+											<SELECT NAME="key_usf_scn_cd" ID="key_usf_scn_cd" style="width:120px"></SELECT>
+										</td>
+										<th><fmt:message key="region"/></th>
+										<td>
+											<SELECT NAME="key_regn_cd" ID="key_regn_cd" style="width:100px"></SELECT>
+										</td>
+									</tr>
+		                        </tbody>
+		                    </table>
+		                </div>
+		                <div class="jq_tbl">
+			                <table id="htmlTable" class="scroll"></table>
+							<div id="htmlPager" class="scroll"></div>
+						</div>
+		                <%@ include file="../include/hncis_message.gas"%>
+		            </div>
+		            <div class="clear"></div>
+		        </div>
+	        </form>
+	    </div>
+	</body>
+</html>
+		<script type="text/javascript">
+		var params;
+		var comboVal;
+		var comboVal1;
+		var lastsel;
+		var fnMerge;
+		var gridParam;
+
+
+		var datarow = {chss_no:"",vehl_cd:"",car_type_cd:"",regn_cd:"",dcd:"",crgr_eeno:"",usf_scn_cd:"",car_no:"",rgst_no:"",car_type_en:"",crgr_eeno_nm:""};
+
+//		var excelCn = ['차량번호','차대번호','등록번호','보험료','등록년도','변경년도'
+//		               ,'차종','미션','엔진','색상','부서','담당자','지역','목적'
+//		               ,'월평균유류비','최종주행거리','일평균주행거리','사고이력','관리이력','범칙금이력','비고'];
+		
+	/*	var excelCn = ['<fmt:message key="car_no"/>',			//차량번호
+		               '<fmt:message key="vhcl_no"/>',			//차대번호
+		               '<fmt:message key="reg_no"/>',			//등록번호
+		               '<fmt:message key="ins_pay"/>',			//보험료
+		               '<fmt:message key="reg_year"/>',			//등록연도
+		               '<fmt:message key="chg_year"/>',			//변경연도
+		               '<fmt:message key="car_nm"/>',			//차종
+		               '<fmt:message key="auto_trms"/>',		//미션
+		               '<fmt:message key="engn"/>',				//엔진
+		               '<fmt:message key="car_clr"/>',			//색상
+		               '<fmt:message key="dept_nm"/>',			//부서
+		               '<fmt:message key="charge_prsn"/>',		//담당자
+		               '<fmt:message key="region"/>',			//지역
+		               '<fmt:message key="purp"/>',				//목적
+		               '<fmt:message key="apl_strt_trvg_dist"/>',//월평균유류비
+		               '<fmt:message key="lst_trvg_dist"/>',	//최종주행거리
+		               '<fmt:message key="avg_dry_mlg"/>',		//일평균주행거리
+		               '<fmt:message key="acdt_hist"/>',		//사고이력
+		               '<fmt:message key="mngr_hist"/>',		//관리이력
+		               '<fmt:message key="pnt_hist"/>',			//범칙금이력
+		               '<fmt:message key="rem_sbc"/>'];			//비고
+		               
+		var excelCm = [ 'car_no','chss_no','rgst_no','insu_no','insu_no_vld_trm_strt_ymd','insu_no_vld_trm_fnh_ymd'
+		                ,'vehl_cd','car_type_cd','car_type_en','vehl_colr','dcd','crgr_eeno','regn_cd','usf_scn_cd'
+		                ,'apl_strt_trvg_dist','lst_trvg_dist','avg_dry_mlg','trbl_stts_sbc','ceq_bkgd_sbc','pnlt_sbc','rem_sbc'];
+
+		var excelFm = ['string','string','string','string','string','string','string'
+		               ,'string','string','string','string','string','string','string','string'
+		               ,'string','string','string','string','string','string','string'];
+		               
+	*/	               
+		var excelCn = ['<fmt:message key="car_no"/>' // "차량번호"
+			          ,'<fmt:message key="vhcl_no"/>' // "차대번호"
+			          ,'<fmt:message key="car_nm"/>' // "차종"
+			          ,'<fmt:message key="engn"/>' // "엔진"
+			          ,'<fmt:message key="auto_trms"/>' // "미션"
+			          ,'<fmt:message key="region"/>' // "지역"
+			          ,'<fmt:message key="dept_nm"/>' // "부서"
+			          ,'<fmt:message key="charge_prsn"/>' // "담당자"
+			          ,'<fmt:message key="purp"/>' // "목적"
+			          ,'<fmt:message key="reg_no"/>' // "등록번호"
+		          ];		               
+
+		var excelCm = [ 'car_no','chss_no','vehl_cd','car_type_en','car_type_cd'
+		                ,'regn_cd','dcd','crgr_eeno_nm','usf_scn_cd','rgst_no'];
+
+		var excelFm = ['string','string','string','string','string',
+		               ,'string','string','string','string','string'];
+		
+
+		function fnSetDocumentReady(){
+			initMenus();
+			$('#BV').slideDown('fast');
+			$(".inputOnlyNumber").numeric();
+
+			getCommonCode("key_vehl_cd:XBV01:A;key_car_type_cd:XBV07:A;key_car_type_en:XBV08:A;key_regn_cd:XBV03:A;key_usf_scn_cd:XBV04:A;", "N", "setCondition();");
+		}
+
+		function getKeyCombo(codeStr){
+
+			var codknd = "";
+			switch (codeStr) {
+			case "key_vehl_cd": codknd = "key_vehl_cd:A";
+				break;
+			case "key_car_type_cd": codknd = "key_car_type_cd:A";
+				break;
+			}
+			getKeyMultiCombo(codknd);
+		};
+
+		function getKeyMultiCombo(codeStr){
+
+			var keyData = {
+					codknd : codeStr
+			};
+
+			doCommonAjax("doSearchBvToCombo.do", keyData, "comboResult(jsonData,'"+codeStr+"');");
+
+		};
+		function comboResult(jsonData,codknd){
+			$.each(eval(jsonData.sendResult),function(index,optionData){
+				$("#"+index).loadSelect(eval(optionData));
+			});
+			if(codknd.indexOf("key_vehl_cd") > -1){
+				getKeyCombo("key_car_type_cd");
+			}
+			else{
+//				init();
+				setCondition();
+			}
+		}
+
+		function setCondition(){
+			if($("#hid_cond").val() != ""){
+				var hidCond = $("#hid_cond").val().split("|");
+				if(hidCond[0] != "") $("#key_vehl_cd").val(hidCond[0]);
+				if(hidCond[1] != "") $("#key_car_type_cd").val(hidCond[1]);
+				if(hidCond[2] != "") $("#key_ops_cd").val(hidCond[2]);
+				if(hidCond[3] != "") $("#key_ops_nm").val(hidCond[3]);
+				if(hidCond[4] != "") $("#key_crgr_eeno").val(hidCond[4]);
+				if(hidCond[5] != "") $("#key_crgr_eeno_nm").val(hidCond[5]);
+				if(hidCond[6] != "") $("#key_chss_no").val(hidCond[6]);
+				if(hidCond[7] != "") $("#key_car_no").val(hidCond[7]);
+				if(hidCond[8] != "") $("#key_rgst_no").val(hidCond[8]);
+				if(hidCond[9] != "") $("#key_usf_scn_cd").val(hidCond[9]);
+				if(hidCond[10] != "") $("#key_regn_cd").val(hidCond[10]);
+				if(hidCond[11] != "") $("#hid_page").val(hidCond[11]);
+			}
+
+			init();
+		}
+
+		function init(){
+			params = {
+				vehl_cd 		: $('#key_vehl_cd').val(),
+				car_type_cd 	: $('#key_car_type_cd').val(),
+				dcd		 		: $('#key_ops_cd').val(),
+				crgr_eeno 		: $('#key_crgr_eeno').val(),
+				crgr_eeno_nm    : $("#key_crgr_eeno_nm").val(),
+				chss_no 		: $('#key_chss_no').val(),
+				car_no		 	: $('#key_car_no').val(),
+				rgst_no		 	: $('#key_rgst_no').val(),
+				usf_scn_cd		: $('#key_usf_scn_cd').val(),
+				regn_cd		 	: $('#key_regn_cd').val(),
+				corp_cd			: sess_corp_cd,
+				locale			: sess_locale
+			};
+
+// 			cn =[ '차량번호','차대번호','차종','엔진', '미션','지역','부서','담당자','목적','등록번호'],
+			var cn = ['<fmt:message key="car_no"/>' // "차량번호"
+			          ,'<fmt:message key="vhcl_no"/>' // "차대번호"
+			          ,'<fmt:message key="car_nm"/>' // "차종"
+			          ,'<fmt:message key="engn"/>' // "엔진"
+			          ,'<fmt:message key="auto_trms"/>' // "미션"
+			          ,'<fmt:message key="region"/>' // "지역"
+			          ,'<fmt:message key="dept_nm"/>' // "부서"
+			          ,'<fmt:message key="charge_prsn"/>' // "담당자"
+			          ,'<fmt:message key="purp"/>' // "목적"
+			          ,'<fmt:message key="reg_no"/>' // "등록번호"
+		          ];
+			cm = [
+			    {name:'car_no',index:'car_no', formatter:'string',width:100,align:'left',editable:false,sortable:false},
+				{name:'chss_no',index:'chss_no', formatter:'string', width:115,align:'left',editable:false,sortable:false},
+				{name:'vehl_cd',index:'vehl_cd', formatter:'string',width:85,align:'center',editable:false,sortable:false},
+				{name:'car_type_en',index:'car_type_en', formatter:'string',width:45,align:'center',editable:false,sortable:false},
+				{name:'car_type_cd',index:'car_type_cd', formatter:'string',width:40,align:'center',editable:false,sortable:false},
+				{name:'regn_cd',index:'regn_cd', formatter:'string',width:90,align:'center',editable:false,sortable:false},
+				{name:'dcd',index:'dcd', formatter:'string',width:145,align:'left',editable:false,sortable:false},
+				{name:'crgr_eeno_nm',index:'crgr_eeno_nm', formatter:'string',width:135,align:'left',editable:false,sortable:false},
+				{name:'usf_scn_cd',index:'usf_scn_cd', formatter:'string',width:100,align:'left',editable:false,sortable:false},
+				{name:'rgst_no',index:'rgst_no', formatter:'string',width:100,align:'left',editable:false,sortable:false}
+			],
+
+			gridParam = {
+				viewEdit : [{
+					gridName     : "htmlTable",
+					url          : "doSearchGridBvToVehicleList.do",
+					colNames     : cn,
+					colModel     : cm,
+					height       : "100%",
+					sortname     : "chss_no",
+					sortorder    : "desc",
+					rowNum		 : 15,
+					rownumbers   : true,
+					multiselect  : false,
+					cellEdit     : true,
+					fnMerge      : false,
+					paramJson    : params,
+					pager		 : "htmlPager",
+					page		 : $("#hid_page").val(),
+					completeFc	 : "addGridRow();initAfterMenus();"
+				}]
+			};
+
+			commonJqGridInit(gridParam);
+
+
+			jQuery("#htmlTable").jqGrid('navGrid',"#htmlPager",{edit:false,add:false,del:false,search:false,refresh:false});
+
+			jQuery("#htmlTable").jqGrid('setGroupHeaders', {
+				useColSpanStyle: true,
+				groupHeaders:[
+				              {startColumnName: 'strt_ymd', numberOfColumns: 2, titleText: 'From'},
+				              {startColumnName: 'fnh_ymd', numberOfColumns: 2, titleText: 'To'}
+				              ]
+			});
+
+			jQuery("#htmlTable").jqGrid("setGridParam",{
+				ondblClickRow : function(rowid, iRow, iCol, e){
+					if(getColValue("chss_no",rowid, "htmlTable") != ""){
+			            var form = $("<form/>");
+			            form.attr("method" , "post");
+			            form.attr("id"     , "hideForm");
+			            form.attr("action" , "xbv04.gas");
+			            var inp1 = $("<input type='hidden' id='M_CHSS_NO' name='M_CHSS_NO'/>").val(getColValue("chss_no", rowid, "htmlTable"));
+			            var cond = "";
+			            cond += $("#key_vehl_cd").val();
+			            cond += "|" + $("#key_car_type_cd").val();
+						cond += "|" + $("#key_ops_cd").val();
+						cond += "|" + $("#key_ops_nm").val();
+			            cond += "|" + $("#key_crgr_eeno").val();
+			            cond += "|" + $("#key_crgr_eeno_nm").val();
+			            cond += "|" + $("#key_chss_no").val();
+			            cond += "|" + $("#key_car_no").val();
+			            cond += "|" + $("#key_rgst_no").val();
+			            cond += "|" + $("#key_usf_scn_cd").val();
+			            cond += "|" + $("#key_regn_cd").val();
+			            cond += "|" + $("#page_htmlPager").val();
+
+			            var inp2 = $("<input type='hidden' id='hid_cond' name='hid_cond'/>").val(cond);
+			            var inp3 = $("<input type='hidden' id='hid_view_nm' name='hid_view_nm'/>").val($("#menu_id").val());
+			            var token = $("<input type='hidden' id='hid_csrfToken' name='hid_csrfToken'/>").val($("#csrfToken").val());
+			            form.append(inp1, inp2, inp3, token);
+			            $("body").append(form);
+			            form.submit();
+			            form.remove();
+					}
+				}
+			}).trigger('reloadGrid');
+		}
+
+		function retrieve(btnFlag){
+			var f = document.frm;
+			switch(btnFlag){
+			   case "search" :
+				    doSearch();
+					break;
+			   case "new" :
+				   doNew();
+				   break;
+			   case "excel" :
+				    doExcel();
+					break;
+
+			}
+		}
+		
+		function doNew(){
+			var form = $("<form/>");
+		    form.attr("method" , "post");
+		    form.attr("id"     , "submitForm").attr("name", "submitForm");
+		    form.attr("action" , "xbv04.gas");
+		    var token = $("<input type='hidden' id='hid_csrfToken' name='hid_csrfToken'/>").val($("#csrfToken").val());
+		    form.append(token);
+		    $("body").append(form);
+		    form.submit();
+		    form.remove();
+		}
+
+		function doSearch(msgFlag){
+			params = {
+				vehl_cd 		: $('#key_vehl_cd').val(),
+				car_type_cd 	: $('#key_car_type_cd').val(),
+				dcd		 		: $('#key_ops_cd').val(),
+				crgr_eeno 		: $('#key_crgr_eeno').val(),
+				crgr_eeno_nm    : $("#key_crgr_eeno_nm").val(),
+				chss_no 		: $('#key_chss_no').val(),
+				car_no		 	: $('#key_car_no').val(),
+				rgst_no		 	: $('#key_rgst_no').val(),
+				usf_scn_cd		: $('#key_usf_scn_cd').val(),
+				regn_cd		 	: $('#key_regn_cd').val(),
+				corp_cd			: sess_corp_cd,
+				locale			: sess_locale
+			};
+
+			doCommonSearch("doSearchGridBvToVehicleList.do", util.jsonToString(params), "loadCallBack();initAfterMenus();", "htmlTable", msgFlag);
+		}
+
+		/**
+		 * callback
+		 */
+		function loadCallBack(){
+			if(fnMerge !== ""){
+				eval(fnMerge);
+			}
+			addGridRow();
+		}
+
+
+		function deptFind(){
+			var param = "?dcd=key_ops_cd&dcdNm=key_ops_nm&hid_csrfToken="+$("#csrfToken").val();
+			newPopWin(ctxPath+"/hncis/popup/deptPopup.gas"+param, "440", "510", "pop_dept");
+		}
+		function deptSearch(){
+			if($("#key_ops_cd").val() != ""){
+				var keyData = { 
+						xorg_orga_c : $("#key_ops_cd").val(),
+						corp_cd		: sess_corp_cd
+				};
+				paramData = {
+					paramJson : util.jsonToString(keyData)
+				};
+				doCommonAjax("/doSearchToDeptInfo.do", paramData, "deptCallBack(jsonData.sendResult)");
+			}
+		}
+
+		function deptCallBack(result){
+			$("#key_ops_nm").val(result.xorg_orga_e);
+		}
+
+
+		function setCrgrInfo(){
+			if($("#key_crgr_eeno").val() != ""){
+				var keyData = { 
+						xusr_empno : $("#key_crgr_eeno").val(),
+						corp_cd		: sess_corp_cd
+				};
+				paramData = {
+					paramJson : util.jsonToString(keyData)
+				};
+				doCommonAjax("/doSearchToUserInfo.do", paramData, "crgrCallBack(jsonData.sendResult)");
+			}
+		}
+		/**
+		 * callback
+		 */
+		function crgrCallBack(result){
+			if(result.xusr_name == 'undefined'){
+				alertUI('Invalid ID.');
+				$("#key_crgr_eeno").val("");
+				$("#key_crgr_eeno_nm").val("");
+			}
+			else{
+				$("#key_crgr_eeno_nm").val(result.xusr_name);
+			}
+
+
+		}
+		function clearCrgr(){
+			if($("#key_crgr_eeno").val().length != 8){
+				$("#key_crgr_eeno_nm").val("");
+			}
+		}
+
+		function doExcel(){
+
+			keyData = {
+				vehl_cd 		: $('#key_vehl_cd').val(),
+				car_type_cd 	: $('#key_car_type_cd').val(),
+				dcd		 		: $('#key_ops_cd').val(),
+				crgr_eeno 		: $('#key_crgr_eeno').val(),
+				crgr_eeno_nm    : $("#key_crgr_eeno_nm").val(),
+				chss_no 		: $('#key_chss_no').val(),
+				car_no		 	: $('#key_car_no').val(),
+				rgst_no		 	: $('#key_rgst_no').val(),
+				usf_scn_cd		: $('#key_usf_scn_cd').val(),
+				regn_cd		 	: $('#key_regn_cd').val(),
+				corp_cd			: sess_corp_cd,
+				locale			: sess_locale
+			};
+
+			var params = [
+			      		{name : 'fileName',		value : "Vehicles"},
+			      		{name : 'header',		value : util.jsonToArray(excelCn)},
+			      		{name : 'headerName',	value : util.jsonToArray(excelCm)},
+			      		{name : 'fomatter',		value : util.jsonToArray(excelFm)},
+			      		{name : 'paramJson',	value : util.jsonToString(keyData)},
+			      		{name : 'firstUseYn',	value : "Y"}
+			];
+
+			gridToExcel("#htmlTable", "doExcelToVehicleList.excel", params);
+
+		}//end method
+		
+		function pageStepHelpPopup(){
+			if(popup != null ){
+				popup.close();
+			}
+			
+			popup = popUpWindow3($("#help_url").val());
+		}
+		</script>

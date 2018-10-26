@@ -1,0 +1,151 @@
+<%@page import="com.hncis.common.util.StringUtil"%>
+<%
+	String ozrName  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("OZR_FILE")));
+	String hidCond = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_cond")));
+	String[] hidCondArr = hidCond.split("\\|");
+%>
+<!-- saved from url=(0014)about:internet -->
+<html style="height:100%;">
+<!--
+Smart developers always View Source.
+
+This application was built using Adobe Flex, an open source framework
+for building rich Internet applications that get delivered via the
+Flash Player or to desktops via Adobe AIR.
+
+Learn more about Flex at http://flex.org
+//-->
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=euc-kr">
+<title></title>
+<!-- DEV -->
+<!-- <script src="http://tstgasc.hyundai-brasil.com:80/oz70/ozfviewer/AC_OETags.js" language="javascript"></script> -->
+<!-- <script src="http://tstgasc.hyundai-brasil.com:80/oz70/ozfviewer/ozutil.js" language="javascript"></script> -->
+<!-- <script src="http://tstgasc.hyundai-brasil.com:80/oz70/ozfviewer/ozjscript.js" language="javascript"></script> -->
+
+<!-- REAL -->
+<script src="http://112.217.187.186:8080/oz70/ozfviewer/AC_OETags.js" language="javascript"></script>
+<script src="http://112.217.187.186:8080/oz70/ozfviewer/ozutil.js" language="javascript"></script>
+<script src="http://112.217.187.186:8080/oz70/ozfviewer/ozjscript.js" language="javascript"></script>
+
+<style>
+body { height:100%; margin: 0px; overflow:hidden }
+</style>
+<script language="JavaScript" type="text/javascript">
+<!--
+function fnSetDocumentReady(){}
+//-----------------------------------------------------------------------------
+//Globals
+//Major version of Flash required
+var requiredMajorVersion = 10;
+//Minor version of Flash required
+var requiredMinorVersion = 0;
+//Minor version of Flash required
+var requiredRevision = 0;
+//-----------------------------------------------------------------------------
+//-->
+</script>
+</head>
+
+<body scroll="no">
+<script language="JavaScript" type="text/javascript">
+<!--
+//Version check for the Flash Player that has the ability to start Player Product Install (6.0r65)
+var hasProductInstall = DetectFlashVer(6, 0, 65);
+
+//Version check based upon the values defined in globals
+var hasRequestedVersion = DetectFlashVer(requiredMajorVersion, requiredMinorVersion, requiredRevision);
+
+// VIEWER URL START
+// DEV
+// var ozViewerURL = "http://tstgasc.hyundai-brasil.com:80/oz70/ozfviewer/playerProductInstall";
+// REAL
+var ozViewerURL = "http://112.217.187.186:8080/oz70/ozfviewer/playerProductInstall";
+// VIEWER URL END
+
+// VIEWER URL START
+// DEV
+// var ozViewerInsURL = "http://tstgasc.hyundai-brasil.com:80/oz70/ozfviewer/OZViewer10";
+// REAL
+var ozViewerInsURL = "http://112.217.187.186:8080/oz70/ozfviewer/OZViewer10";
+// VIEWER URL END
+
+// SERVER URL START
+// DEV
+// var ozServerUrl = "http://tstgasc.hyundai-brasil.com:80/oz70/server";
+// REAL
+var ozServerUrl = "http://112.217.187.186:8080/oz70/server";
+// SERVER URL END
+
+
+if(hasProductInstall && !hasRequestedVersion) {
+  //DO NOT MODIFY THE FOLLOWING FOUR LINES
+  //Location visited after installation is complete if installation is required
+  var MMPlayerType = "PlugIn";
+  var MMredirectURL = window.location;
+  document.title = document.title.slice(0, 47) + " - Flash Player Installation";
+  var MMdoctitle = document.title;
+  AC_FL_RunContent(
+    "src", ozViewerURL,
+    "FlashVars", "MMredirectURL=" + MMredirectURL + '&MMplayerType=' + MMPlayerType + '&MMdoctitle=' + MMdoctitle+"",
+    "width", "100%",
+    "height", "100%",
+    "align", "middle",
+    "id", "playerProductInstall",
+    "quality", "high",
+    "bgcolor", "#ffffff",
+    "name", "playerProductInstall",
+    "allowScriptAccess", "sameDomain",
+    "type", "application/x-shockwave-flash",
+    "pluginspage", "http://www.adobe.com/go/getflashplayer"
+  );
+} else if(hasRequestedVersion) {
+  //if we've detected an acceptable version
+  //embed the Flash Content SWF when all tests are passed
+  function SetOZParamters_OZViewer() {
+    var oz;
+    if(navigator.appName.indexOf("Microsoft") != -1) {
+      oz = window["OZViewer"];
+    } else {
+      oz = document["OZViewer"];
+    }
+    oz.sendToActionScript("connection.servlet", ozServerUrl);
+    oz.sendToActionScript("connection.reportname", "//<%=ozrName%>.ozr");
+	oz.sendToActionScript("connection.pcount", "<%=hidCondArr.length%>");
+	
+	<%for(int i=1; i<=hidCondArr.length; i++){
+		String[] tmpParamDtl = hidCondArr[i-1].split("::");
+	%>
+	oz.sendToActionScript("connection.args<%=i%>", "<%=tmpParamDtl[0]+"="+tmpParamDtl[1]%>");
+	<%}%>
+// 	oz.sendToActionScript("connection.args1", "DOC_NO=201602051105378");
+// 	oz.sendToActionScript("connection.args2", "Month=1");
+// 	oz.sendToActionScript("connection.args3", "Company=FORCS");
+    return true;
+  }
+  AC_FL_RunContent(
+    "src", ozViewerInsURL,
+    "width", "100%",
+    "height", "100%",
+    "align", "middle",
+    "id", "OZViewer",
+    "quality", "high",
+    "bgcolor", "#ffffff",
+    "name", "OZViewer",
+    "allowScriptAccess", "sameDomain",
+    "type", "application/x-shockwave-flash",
+    "pluginspage", "http://www.adobe.com/go/getflashplayer",
+    "flashVars", "flash.objectid=OZViewer"
+  );
+} else { //flash is too old or we can't detect the plugin
+  var alternateContent = 'Alternate HTML content should be placed here. '
+                         + 'This content requires the Adobe Flash Player. '
+                         + '<a href=http://www.adobe.com/go/getflash/>Get Flash</a>';
+  document.write(alternateContent); //insert non-flash content
+}
+//-->
+
+</script>
+</body>
+</html>

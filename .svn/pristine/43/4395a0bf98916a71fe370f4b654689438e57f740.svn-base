@@ -1,0 +1,648 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId = "XVE01";
+	String hid_req_date = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_req_date")));
+	String hid_eeno     = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_eeno")));
+	
+	String tempPath     = request.getServletPath().toString();
+	String stepHelpUrl  = StringUtil.getStepHelp(tempPath);
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>방문신청</title>
+	</head>
+	<body>
+		<form name="frm" id="frm">
+			<input type="hidden" id="loc" value="<%=sess_locale%>"/>
+			<div id="contents">
+               	<div class="btn_area mt0" id="btn_add">
+                    <ul class="btns fr ml20">
+                    	<li><a href="javascript:doFileAttach();"><fmt:message key="BUTTON.FILE_ATTACH"/><span></span></a></li>
+                        <li><a href="javascript:gridRowAdd();"><fmt:message key="BUTTON.ADD"/><span></span></a></li>
+                        <li><a href="javascript:gridRowDel();"><fmt:message key="BUTTON.DELETE"/><span></span></a></li>
+                    </ul>
+                </div>
+                <div class="jq_tbl">
+	                <table id="htmlTable" class="scroll"></table>
+	                <div id="htmlPager" class="scroll" style="display:none"></div>
+	            </div>
+			</div>
+			<div class="clear"></div>
+		</form>
+		<form id="fileForm" name="fileForm">
+			<input type="hidden" id="file_doc_no" name="file_doc_no">
+			<input type="hidden" id="file_eeno"  name="file_eeno">
+			<input type="hidden" id="hid_use_yn"  name="hid_use_yn">
+			<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+		</form>
+		<form id="hideForm" name="hideForm" method="post">
+			<input type="hidden" id="hid_csrfToken"	name="hid_csrfToken">
+		</form>
+	</body>
+</html>
+		<script type="text/javascript">
+		var gridParam;
+		var comboVal2;
+		var gridName1 = "htmlTable";
+		var calScrnID = "xve01_entrance";
+		var apply_date_temp = "";
+		var row_no = 0;
+	
+		var datarow = {full_name:"", et_rg:"", company:"", visit_purp:"", et_type:"", et_access:"", et_date:"", et_status:"", et_remark:"",
+				seq: "", eeno: "", apply_date: "", if_id: "", pgs_st_nm: "", pgs_st_cd: "", purpose:"", reason:"", remark:"", doc_no:"", snb_rson_sbc:""};
+
+		function fnSetDocumentReady(){
+			parent.$("#help_url").val("<%=stepHelpUrl%>");
+			parent.document.title = document.title;
+			
+			sess_auth = parent.$("#work_auth").val();
+			
+			getCommonCode("et_type:X3006:Z;", "Y", "comboSearch(jsonData.sendResult);");
+		}
+
+		function comboSearch(jsonData){
+			comboVal2 = jsonData;
+			getCommonCode('access:X3003;', 'Y', 'initSub();');
+		}
+
+		function initSub(){
+// 			var cn = ["날짜",  "회사", "이름", "직위", "연락처", "유형", "차량여부",  "상태", "비고",
+// 			          "seq", "eeno", "apply_date", "if_id", "pgs_st_nm", "pgs_st_cd", "purpose", "reason", "remark", "doc_no", ""];
+			var cn = ['<fmt:message key="ymd"/>' // "날짜"
+			          ,'<fmt:message key="comp"/>' // "회사"
+			          ,'<fmt:message key="bst_nm"/>' // "방문자명"
+			          ,'<fmt:message key="position"/>' // "직위"
+			          ,'<fmt:message key="tel_no"/>' // "연락처"
+			          ,'<fmt:message key="type"/>' // "유형"
+			          ,'<fmt:message key="car_yn"/>' // "차량여부"
+			          ,'' // "상태"
+			          ,'<fmt:message key="etc"/>' // "비고"
+			          ,'' // "seq"
+			          ,'' // "eeno"
+			          ,'' // "aaply_date"
+			          ,'' // "if_id"
+			          ,'' // "pgs_st_nm"
+			          ,'' // "pgs_st_cd"
+			          ,'' // "purpose"
+			          ,'' // "reason"
+			          ,'' // "remark"
+			          ,'' // "doc_no"
+			          ,'' // ""
+		          ];
+			var cm =
+			[
+				 {name:"et_date",		index:"et_date"		, sortable:false,		formatter:"string",		width:100,	align:"center",	editable:true,	frozen : false,
+					 editoptions: {
+						 readonly : true,
+						 dataInit: function(element) {
+							 $(element).datepicker({
+								 dateFormat: 'yy-mm-dd',
+								 onSelect: function(dataText, inst){
+								 }
+							 });
+						 }
+					 }
+				 },
+				 {name:"company",	index:"company"		, sortable:false,		formatter:"string",		width:150,	align:"left",	editable:true},
+				 {name:"full_name",	index:"full_name"	, sortable:false,		formatter:"string",		width:150,	align:"left",	editable:true},
+				 {name:"et_rg",		index:"et_rg"		, sortable:false,		formatter:"string",		width:100,	align:"left",	editable:true},
+				 {name:"visit_purp", index:"visit_purp"	, sortable:false,		formatter:"string",		width:85,	align:"left",	editable:true},
+				 {name:"et_type",   index:"et_type"		, sortable:false,		formatter:"string",		width:85,	align:"left",	editable:true, hidden:true},
+		 		 {name:"et_access",	index:"et_access"	, sortable:false,		formatter: "select",	width:100,	align:'center',	editable:true,	edittype:'select',
+					editoptions:{value:getComboValue('access'), dataInit: function(elem) {$(elem).width(95);}
+				        },
+				        editrules:{required:true}
+				 },
+				 {name:"et_status",	index:"et_status"	, sortable:false,		formatter:"string",		width:100,	align:"left",	editable:false, hidden:true},
+				 {name:"et_remark",	index:"et_remark"	, sortable:false,		formatter:"string",		width:285,	align:"left",	editable:true},
+				 {name:"seq",		index:"seq"			, sortable:false,		formatter:"string",		width:85,	align:"left",	editable:true, hidden:true},
+				 {name:"eeno",		index:"eeno"		, sortable:false,		formatter:"string",		width:85,	align:"left",	editable:true, hidden:true},
+				 {name:"apply_date",	index:"apply_date"	, sortable:false,		formatter:"string",		width:85,	align:"left",	editable:true, hidden:true},
+				 {name:"if_id",		index:"if_id"		, sortable:false,		formatter:"string",		width:85,	align:"left",	editable:true, hidden:true},
+				 {name:"pgs_st_nm",	index:"pgs_st_nm"	, sortable:false,		formatter:"string",		width:85,	align:"left",	editable:true, hidden:true},
+				 {name:"pgs_st_cd",	index:"pgs_st_cd"	, sortable:false,		formatter:"string",		width:85,	align:"left",	editable:true, hidden:true},
+				 {name:"purpose",	index:"purpose"		, sortable:false,		formatter:"string",		width:85,	align:"left",	editable:true, hidden:true},
+				 {name:"reason",		index:"reason"		, sortable:false,		formatter:"string",		width:85,	align:"left",	editable:true, hidden:true},
+				 {name:"remark",		index:"remark"		, sortable:false,		formatter:"string",		width:85,	align:"left",	editable:true, hidden:true},
+				 {name:"doc_no",		index:"doc_no"		, sortable:false,		formatter:"string",		width:85,	align:"left",	editable:true, hidden:true},
+				 {name:"snb_rson_sbc",		index:"snb_rson_sbc"		, sortable:false,		formatter:"string",		width:85,	align:"left",	editable:true, hidden:true}
+			];
+
+			if(parent.$("#eeno_temp").val() == "" || parent.$("#eeno_temp").val() != parent.$("#eeno").val()){
+				apply_date_temp = "";
+			}else{
+				apply_date_temp = parent.$("#apply_date").val();
+			}
+
+			var params = {
+				eeno	     : parent.$("#eeno").val(),
+				apply_date 	 : apply_date_temp,
+				doc_no 		 : parent.$("#hid_doc_no").val(),
+				type		 : "5",
+				corp_cd	     : sess_corp_cd,
+				locale		 : sess_locale
+			};
+
+			//set grid parameter
+			gridParam = {
+				viewEdit : [{
+					gridName     : gridName1,
+					url          : "doSearchSecurityRequestEntrance.do",
+					colNames     : cn,
+					colModel     : cm,
+					height       : "100%",
+					sortname     : "",
+					sortorder    : "",
+					rownumbers   : true,
+					multiselect  : false,
+					cellEdit     : true,
+					fnMerge      : false,
+					paramJson    : params,
+					completeFc   : "addGridRow(5);loadDataSet();"
+				}]
+			};
+
+			commonJqGridInit(gridParam);
+		}
+
+		function loadDataSet(){
+			parent.$("#if_id").val(getColValue("if_id", 1));
+			parent.$("#apply_date").val(getColValue("apply_date", 1));
+			parent.$("#purpose").val(getColValue("purpose", 1));
+			parent.$("#reason").val(getColValue("reason", 1));
+			parent.$("#pgs_st_cd").val(getColValue("pgs_st_cd", 1));
+			parent.$("#pgs_st_nm").val(getColValue("pgs_st_nm", 1));
+			if(getColValue("doc_no", 1) != ""){
+				parent.$("#doc_no").val(getColValue("doc_no", 1));
+				parent.$("#hid_doc_no").val(getColValue("doc_no", 1));
+			}
+			parent.$("#snb_rson_sbc").val(getColValue("snb_rson_sbc", 1));
+
+			resizeIframe();
+
+			parent.sbcReadonlySet();
+			parent.doSearchRequestInfo(getColValue("if_id", 1));
+			
+			doSaerchSecurityRemark();
+		}
+
+		function doSaerchSecurityRemark(){
+			var keyData = {
+				doc_no : parent.$("#doc_no").val(),
+				corp_cd	: sess_corp_cd
+			};
+
+			paramData = {
+				paramJson : util.jsonToString(keyData)
+			};
+
+			doCommonAjax("doSaerchSecurityRemark.do", paramData, "searchRemarkCallBack(jsonData.sendResult)");
+		}
+
+		function searchRemarkCallBack(result){
+			parent.$("#remark").val(result.remark);
+			
+			row_no = jQuery("#"+gridName1).getDataIDs().length;
+		}
+
+		function gridRowAdd(){
+			row_no = row_no + 1;
+			jQuery("#htmlTable").jqGrid("addRowData", row_no, datarow);
+
+			resizeIframe();
+		}
+
+		function doCudAction(gubun) {
+			
+			var url = "", doc_no = "";
+			var callBack = "actionCallBack(jsonData.sendResult);";
+			var params = [];
+			var ids = jQuery("#"+gridName1).getDataIDs();
+
+			if(gubun == "save"){
+				url = "doInsertSecurityRequestEntrance.do";
+			}else if(gubun == "delete"){
+				if(sess_mstu != "M" && sess_auth != 5 && parent.$("#eeno").val() != sess_empno && $("#pgs_st_cd").val() !== "0"){
+					parent.alertUI('<fmt:message key="MSG.STAT.0003"/>');
+					return;
+				}
+				url = "doDeleteSecurityRequestEntrance.do";
+				callBack = "deleteCallBack(jsonData.sendResult);";
+			}
+
+			var d= new Date();
+			var m = d.getMonth() +1;
+			var day = d.getDate();
+			if(m < 10){ m = "0" + m; }
+			if(day < 10){ day = "0" + day; }
+			var app_dt = d.getFullYear() + "-" + m + "-" + day;
+			if(parent.$("#apply_date").val() != ""){
+				app_dt = parent.$("#apply_date").val();
+			}
+
+			if(gubun == "delete"){
+				list = {
+					eeno     		: parent.$("#eeno").val(),
+					apply_date		: app_dt,
+					doc_no			: parent.$("#doc_no").val(),
+					type			: "5",
+					corp_cd	   		: sess_corp_cd
+				};
+				params.push(list);
+			}else{
+				for(var i = 0; i < ids.length; i++){
+					rowId = ids[i];
+					if(rowId){
+						if(getColValue("full_name", rowId) != ""){
+							if(getColValue("et_date", rowId) == ""){
+								parent.alertUI(rowId + ' <fmt:message key="MSG.ROW.0106"/>');
+								return;
+							}
+							if(getColValue("company", rowId) == ""){
+								parent.alertUI(rowId + ' <fmt:message key="MSG.ROW.0098"/>');
+								return;
+							}
+
+							list = {
+									seq				: $.trim(getColValue("seq", rowId)),
+									eeno     		: parent.$("#eeno").val(),
+									doc_no			: parent.$("#hid_doc_no").val(),
+									apply_date		: app_dt,
+									purpose 		: parent.$("#purpose").val(),
+									type			: "5",
+									full_name		: getColValue("full_name", rowId),
+									et_rg			: getColValue("et_rg", rowId),
+									company			: getColValue("company", rowId),
+									visit_purp		: getColValue("visit_purp", rowId),
+									et_type			: getColValue("et_type", rowId),
+									access			: getColValue("et_access", rowId),
+									et_date			: getColValue("et_date", rowId),
+									et_remark		: getColValue("et_remark", rowId),
+									pgs_st_cd   	: "0",
+									reason			: parent.$("#reason").val(),
+									remark			: overLineHtml(changeToUni(parent.$("#remark").val())),
+									ipe_eeno    	: sess_empno,
+									updr_eeno   	: sess_empno,
+									corp_cd	   		: sess_corp_cd
+							};
+							params.push(list);
+						}
+					}
+				}
+			}
+
+			if(params.length == 0){
+				parent.alertUI('<fmt:message key="MSG.INP.0065"/>');
+				return;
+			}
+			
+			if(gubun == 'save'){
+				strConfirm = '<fmt:message key="MSG.CNF.0004"/>';
+			} else if(gubun == 'edit'){
+				strConfirm = '<fmt:message key="MSG.CNF.0003"/>';
+			} else if(gubun == 'delete'){
+				strConfirm = '<fmt:message key="MSG.CNF.0002"/>';
+			}
+			
+			parent.confirmUI(strConfirm);
+			parent.$("#pop_yes").click(function(){
+				parent.$.unblockUI({
+					onUnblock: function(){
+ 						var paramData = {
+								paramJson : util.jsonToList(params)
+						};
+
+						doCommonAjax(url, paramData, callBack);
+					}
+				});
+			});
+			
+			/* var paramData = {
+				paramJson : util.jsonToList(params)
+			};
+
+			doCommonAjax(url, paramData, callBack); */
+		}
+
+
+		function actionCallBack(result){
+			parent.setBottomMsg(result.message, true);
+			parent.$("#hid_doc_no").val(result.code1);
+			parent.$("#doc_no").val(result.code1);
+
+			if(result.code1 != "" && result.code1 != null){
+				parent.$("#type").attr("disabled", true);
+			}else{
+				parent.$("#type").attr("disabled", false);
+				parent.$("#type").attr("style", "backgroundColor: '#ffffff'; width: 150px;");
+			}
+
+			if(null != result.code2 && result.code2 != ""){
+				parent.$("#eeno").val(result.code2);
+				parent.$("#eeno_temp").val(result.code2);
+			}
+			if(null != result.code && result.code != ""){
+				parent.$("#apply_date").val(result.code);
+			}
+
+// 			parent.SubmitClear();
+
+			doSearch("N");
+		}
+		
+		function deleteCallBack(result){
+			parent.setBottomMsg(result.message, true);
+			parent.doNew();
+		}
+
+		function doSearch(msgFlag){
+			var apply_date_temp = "";
+
+			if(parent.$("#eeno_temp").val() == "" || parent.$("#eeno_temp").val() != parent.$("#eeno").val()){
+				apply_date_temp = "";
+			}else{
+				apply_date_temp = parent.$("#apply_date").val();
+			}
+
+			var params = {
+				eeno	     : parent.$("#eeno").val(),
+				doc_no		 : parent.$("#hid_doc_no").val(),
+				apply_date 	 : apply_date_temp,
+				type		 : "5",
+				corp_cd	     : sess_corp_cd,
+				locale 		 : sess_locale
+			};
+			doCommonSearch("doSearchSecurityRequestEntrance.do", util.jsonToString(params), "addGridRow(5);loadDataSet();", gridName1, msgFlag);
+		}
+
+		function doApprove(gubun){
+			var url = "";
+			var callBack = "";
+			var pgs_st_cd = "";
+			if(gubun == "request"){
+				url = "doApproveSecurityRequest.do";
+				callBack = "approveCallBack('"+gubun+"', jsonData.sendResult);";
+				pgs_st_cd = "A";
+			}else if(gubun == "requestCancel"){
+				url = "doApproveCancelSecurityRequest.do";
+				callBack = "approveCallBack('"+gubun+"', jsonData.sendResult);";
+			}
+
+			var bsicInfo;
+			if(gubun == "request"){
+				bsicInfo = {
+					key_mode      : gubun,
+					key_eeno      : parent.$("#eeno").val(),
+					key_req_date  : parent.$("#apply_date").val(),
+					key_pgs_st_cd : pgs_st_cd,
+					doc_no		  : parent.$("#hid_doc_no").val(),
+					type		  : "5",
+					updr_eeno     : sess_empno,
+					corp_cd	      : sess_corp_cd
+				};
+			}else{
+				bsicInfo = {
+					if_id     : parent.$("#if_id").val(),
+					doc_no    : parent.$("#hid_doc_no").val(),
+					pgs_st_cd : "0",
+					updr_eeno : sess_empno,
+					corp_cd	  : sess_corp_cd,
+					locale	  : sess_locale
+				};
+			}
+
+			var paramData = {
+					bsicInfo : util.jsonToString(bsicInfo)
+			};
+			doCommonAjax(url, paramData, callBack);
+		}
+
+		function approveCallBack(gubun, result){
+			parent.setBottomMsg(result.message, true);
+// 			parent.SubmitClear();
+			doSearch("N");
+		}
+
+		function doConfirm(){
+			var bsicInfo = {
+				key_mode      : "confirm",
+				key_eeno      : parent.$("#eeno").val(),
+				key_req_date  : parent.$("#apply_date").val(),
+				key_pgs_st_cd : "3",
+				type		  : "5",
+				doc_no		  : parent.$("#hid_doc_no").val(),
+				updr_eeno     : sess_empno,
+				corp_cd	      : sess_corp_cd
+			};
+
+			var paramData = {
+					bsicInfo : util.jsonToString(bsicInfo)
+				};
+			doCommonAjax("doConfirmSecurityRequestMaterial.do", paramData, "confirmCallBack(jsonData.sendResult);");
+		}
+
+		function doConfirmCancel(){
+			if($("#rq_imtr_sbc").val() == ""){
+				parent.alertUI('<fmt:message key="MSG.INP.0066"/>');
+				return;
+			}
+
+			var bsicInfo = {
+				key_mode      : "confirmCancel",
+				key_eeno      : parent.$("#eeno").val(),
+				key_req_date  : parent.$("#apply_date").val(),
+				key_pgs_st_cd : "0",
+				type		  : "5",
+				doc_no		  : parent.$("#hid_doc_no").val(),
+				snb_rson_sbc  : parent.$("#snb_rson_sbc").val(),
+				updr_eeno     : sess_empno,
+				corp_cd	      : sess_corp_cd
+			};
+
+			var paramData = {
+				bsicInfo : util.jsonToString(bsicInfo)
+			};
+			doCommonAjax("doConfirmCancelSecurityRequestMaterial.do", paramData, "confirmCallBack(jsonData.sendResult);");
+		}
+
+		function confirmCallBack(result){
+			parent.setBottomMsg(result.message, true);
+			parent.SubmitClear();
+			doSearch("N");
+		}
+
+		function getComboValueType(comboName){
+			var returnVal="";
+			if(typeof(comboVal2) == 'undefined'){
+				returnVal = ":";
+			}
+			else{
+				var i = 0;
+				$.each(eval(comboVal2),function(targetNm,optionData){
+					if(targetNm == comboName){
+						$.each(eval(optionData),function(index,optionData){
+							if(i == 0){
+								returnVal = returnVal + optionData.value + ":" + optionData.name;
+							}else{
+								returnVal = returnVal + ";" + optionData.value + ":" + optionData.name;
+							}
+							i++;
+						});
+					}
+			      });
+				if(typeof(returnVal) == 'undefined'){
+					returnVal = '';
+				}
+				else{
+					returnVal = returnVal.replace("undefined", "");
+				}
+			}
+			return returnVal;
+		}
+
+		function resizeIframe(){
+			var doc = document.getElementById("contents");
+			parent.document.getElementById("ifra").height = (doc.offsetHeight+20) + "px";
+		}
+
+		var win;
+		function doFileAttach(){
+			if(win != null){ win.close(); }
+			var url = "xve_file.gas", width = "460", height = "453";
+
+			if(parent.$("#hid_doc_no").val() == ""){
+				$("#file_doc_no").val(parent.$("#temp_doc_no").val());
+			}else{
+				$("#file_doc_no").val(parent.$("#hid_doc_no").val());
+			}
+			$("#file_eeno").val("00000000");
+
+			if($("#work_auth").val() < 5 && sess_mstu != "M"){
+				if( $("#pgs_st_cd").val() == ""){
+					$("#hid_use_yn").val("Y");
+				}else if(sess_empno == $("#eeno").val()){
+					if($("#pgs_st_cd").val() == "0"){
+						$("#hid_use_yn").val("Y");
+					}else{
+						$("#hid_use_yn").val("N");
+					}
+				}else{
+					$("#hid_use_yn").val("N");
+				}
+			}else{
+				$("#hid_use_yn").val("Y");
+			}
+
+			win = newPopWin("about:blank", width, height, "win_file");
+			document.fileForm.hid_csrfToken.value = $("#csrfToken").val();
+			document.fileForm.action = url;
+			document.fileForm.target = "win_file";
+			document.fileForm.method = "post";
+			document.fileForm.submit();
+		}
+
+		function fnCopy(){
+			if(parent.$("#pgs_st_cd").val() == ""){
+				parent.alertUI('<fmt:message key="MSG.VAL.0036"/>');
+				return;
+			}
+			var params = [];
+			var ids = jQuery("#"+gridName1).getDataIDs();
+
+			var d= new Date();
+			var m = d.getMonth() +1;
+			var day = d.getDate();
+			if(m < 10){ m = "0" + m; }
+			if(day < 10){ day = "0" + day; }
+			var app_dt = d.getFullYear() + "-" + m + "-" + day;
+
+			for(var i = 0; i < ids.length; i++){
+				rowId = ids[i];
+				if(rowId){
+					if(getColValue("full_name", rowId) != "" && getColValue("et_rg", rowId) != "" && getColValue("company", rowId) != ""){
+						list = {
+								seq				: "",
+								eeno     		: parent.$("#eeno").val(),
+								doc_no			: "",
+								apply_date		: app_dt,
+								purpose 		: parent.$("#purpose").val(),
+								type			: "5",
+								full_name		: getColValue("full_name", rowId),
+								et_rg			: getColValue("et_rg", rowId),
+								company			: getColValue("company", rowId),
+								visit_purp		: getColValue("visit_purp", rowId),
+								et_type			: getColValue("et_type", rowId),
+								access			: getColValue("et_access", rowId),
+								et_date			: getColValue("et_date", rowId),
+								et_remark		: getColValue("et_remark", rowId),
+								pgs_st_cd   	: "0",
+								reason			: parent.$("#reason").val(),
+								remark			: overLineHtml(changeToUni(parent.$("#remark").val())),
+								ipe_eeno    	: sess_empno,
+								updr_eeno   	: sess_empno,
+								corp_cd	   		: sess_corp_cd
+						};
+						params.push(list);
+					}
+				}
+			}
+
+			var paramData = {
+					paramJson : util.jsonToList(params)
+			};
+			doCommonAjax("doInsertSecurityRequestEntranceCopy.do", paramData, "actionCallBack(jsonData.sendResult);");
+		}
+
+		function gridRowDel(){
+			var params = [];
+			var rowId = jQuery("#"+gridName1).jqGrid("getGridParam", "selrow");
+
+			if(parent.$("#pgs_st_cd").val() != '0' && parent.$("#pgs_st_cd").val() != ''){
+				parent.alertUI('<fmt:message key="MSG.STAT.0003"/>');
+				return;
+			}
+			
+			if(rowId == "" || rowId == null){
+				parent.alertUI('<fmt:message key="MSG.CNF.0025"/>');
+				return;
+			}
+			
+			if(getColValue("doc_no", rowId, gridName1) != ""){
+				var param = {
+					eeno		: parent.$("#eeno").val(),
+					apply_date  : parent.$("#apply_date").val(),
+					doc_no    	: getColValue("doc_no", rowId, gridName1),
+					seq    		: getColValue("seq", rowId, gridName1),
+					corp_cd		: sess_corp_cd
+				};
+				params.push(param);
+			}
+			
+			parent.confirmUI('<fmt:message key="MSG.CNF.0042"/>');
+			parent.$("#pop_yes").click(function(){
+				parent.$.unblockUI({
+					onUnblock: function(){
+ 						if(params.length > 0){
+							var paramData = {
+								paramJson : util.jsonToList(params)
+							};
+							doCommonAjax("doDeleteSecurityRequestEntrance.do", paramData, "setBottomMsg(jsonData.sendResult.message, true);gridRowDelCallBack();");
+						}else{
+							gridRowDelCallBack();
+						}
+					}
+				});
+			});
+		}
+		
+		function gridRowDelCallBack(){
+			var rowId = jQuery("#"+gridName1).jqGrid("getGridParam", "selrow");
+			$("#"+gridName1).delRowData(rowId);
+			if(jQuery("#"+gridName1).getDataIDs().length < 5){
+				gridRowAdd();
+			}
+		}
+
+		</script>

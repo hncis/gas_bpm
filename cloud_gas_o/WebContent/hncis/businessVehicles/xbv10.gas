@@ -1,0 +1,67 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XBV10";
+
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH", locale);
+	String strSav = JSPMessageSource.getMessage("BUTTON.SAVE", locale);
+	String strDel = JSPMessageSource.getMessage("BUTTON.DELETE", locale);
+	String strAdd = JSPMessageSource.getMessage("BUTTON.ADD", locale);
+	
+	String strBtn = "";
+	strBtn = strSch+"/search@"+strSav+"/save@"+strDel+"/delete@"+strAdd+"/addrow";
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>BusinessTravel - Country Group Management</title>
+		<script type="text/javascript" src="./js/xbv10.js"></script>
+	</head>
+	<body>
+		<div id="wrap">
+    	<form name="testForm" id="testForm">
+	    	<%@ include file="../include/hncis_header.gas"%>
+	        <div id="contents_wrap">
+	        	<%@ include file="../include/hncis_left.gas"%>
+	            <div id="contents">
+	            	<%=CommonGasc.getTitleAndButtonNew(sess_empno
+						,menuId
+						//,"search/search@저장/save@삭제/delete@추가/addrow"
+						,strBtn
+						,null
+						,null
+						,null
+						,request)
+					%>
+	                <div class="search_area">
+	                	<table>
+	                        <colgroup>
+	                        	<col style="width:100px;" />
+	                            <col style="width:auto;" />
+	                        </colgroup>
+	                        <tbody>
+	                            <tr>
+									<th width="100px">Region</th>
+									<td>
+										<select id="nat_g_scn_cd" name="nat_g_scn_cd" style="width:105px" onChange="javascript:doSearch();">
+										</select>
+									</td>
+								</tr>
+	                        </tbody>
+	                    </table>
+	                </div>
+	                <div class="jq_tbl">
+		                <table id="htmlTable" class="scroll"></table>
+						<div id="htmlPager" class="scroll"></div>
+					</div>
+	                <%@ include file="../include/hncis_message.gas"%>
+	            </div>
+	            <div class="clear"></div>
+	        </div>
+        </form>
+		<form id="hideForm" name="hideForm" method="post">
+			<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+		</form>
+	    </div>
+	</body>
+</html>

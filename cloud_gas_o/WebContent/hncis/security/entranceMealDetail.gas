@@ -1,0 +1,188 @@
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page import="com.hncis.common.application.SessionInfo" %>
+<%@ page import="com.hncis.common.application.CommonGasc" %>
+<%@ page import="com.hncis.common.exception.impl.SessionException" %>
+<%@ page import="com.hncis.common.util.*" %>
+<%@ page import="java.util.List" %>
+<%@ page errorPage = "/WEB-INF/view/sessionError.gas" %>
+<%
+	String ctxPath = request.getContextPath();
+	String menuId = "XVE01";
+	String hid_apply_date = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_apply_date")));
+	String hid_eeno       = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_eeno")));
+	String hid_type       = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_type")));
+	String hid_doc_no     = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_doc_no")));
+	String temp_doc_no    = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_doc_no")));
+	String hid_csrfToken  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_csrfToken")));
+	String hid_cond 	  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_cond")));
+	String hid_view_nm    = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_view_nm")));
+	String param1         = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("param1")));
+	
+	if(StringUtil.isEmpty(hid_doc_no)){
+		temp_doc_no = StringUtil.getDocNo();
+	}
+	
+	if("1".equals(param1)){
+		menuId = "XVE11";
+	}else if("2".equals(param1)){
+		menuId = "XVE12";
+	}else if("3".equals(param1)){
+		menuId = "XVE13";
+	}else if("4".equals(param1)){
+		menuId = "XVE14";
+	}else if("5".equals(param1)){
+		menuId = "XVE15";
+	}
+	
+	String strBtn = "";
+	strBtn = "done/done";
+	if(!"".equals(hid_doc_no)){
+		strBtn += "@back/back";
+	}
+%>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>Security Mgmt.</title>
+		<link rel="stylesheet" type="text/css" media="screen" href="<%=ctxPath%>/script/css/jquery-ui-1.8.18.custom.css" />    
+		<link rel="stylesheet" type="text/css" media="screen" href="<%=ctxPath%>/script/css/ui.jqgrid.css" />
+		<%-- <link rel='stylesheet' type="text/css" media="screen" href="<%=ctxPath%>/script/css/global_common.css"/>
+		<link rel='stylesheet' type="text/css" media="screen" href="<%=ctxPath%>/script/css/global_sub.css"/> --%>
+		<link rel='stylesheet' type="text/css" media="screen" href="<%=ctxPath%>/script/css/hncis_common.css" />
+		<link rel="stylesheet" type="text/css" media="screen" href="<%=ctxPath%>/script/css/jquery.ui.datepicker.css" />
+		 
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/i18n/grid.locale-en.js"></script>
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery.jqGrid.min.js"></script> 
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery-groupTable.js"></script> 
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery.ui.datepicker.js"></script>
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery-menu.js"></script>
+		<script type="text/javascript" src='<%=ctxPath%>/script/js/jsonUtil.js'></script>
+		<script type="text/javascript" src='<%=ctxPath%>/script/js/common.js'></script> 
+		<script type="text/javascript" src='<%=ctxPath%>/script/js/jquery.numeric.min.js'></script>
+		
+		<script>
+			var ctxPath = "<%=ctxPath%>"; 
+		</script>
+		<script type="text/javascript" src="./js/entranceMealDetail.js"></script>
+	</head>
+	<body>
+		<div id="wrap">
+		<form name="frm" id="frm">
+			<input type="hidden" id="gubun" name="gubun">
+			<input type="hidden" id="nSource" name="nSource">
+			<input type="hidden" id="hid_apply_date" name="hid_apply_date" value="<%=hid_apply_date%>">
+			<input type="hidden" id="hid_eeno" name="hid_eeno" value="<%=hid_eeno%>">
+			<input type="hidden" id="hid_type" name="hid_type" value="<%=hid_type%>">
+			<input type="hidden" id="hid_doc_no" name="hid_doc_no" value="<%=hid_doc_no%>">
+			<input type="hidden" id="hid_eeno" name="hid_eeno" value="<%=hid_eeno%>">
+			<input type="hidden" id="temp_doc_no" name="temp_doc_no" value="<%=temp_doc_no%>">
+			<input type="hidden" id="hid_cond" name="hid_cond" value="<%=hid_cond%>">
+			<input type="hidden" id="hid_view_nm" name="hid_view_nm" value="<%=hid_view_nm%>">
+			<input type="hidden" id="hid_param1" name="hid_param1" value="<%=param1%>">
+			<input type="hidden" id="if_id" name="if_id">
+			<input type="hidden" id="cancel_yn" name="cancel_yn">
+			
+			<div id="contents_wrap" class="any_page">
+				<div id="contents">
+					<div class="sub_title_area">
+	                	<h3 class="sub_title fl">Security - Detail</h3>
+	               	</div>
+	                <div class="btn_area">
+	                    <ul class="btns">
+	                        <li><a href="javascript:retrieve('done');">Done<span></span></a></li>
+	                        <li><a href="javascript:retrieve('doneCancel');">Done Cancel<span></span></a></li>
+	                        <li><a href="javascript:retrieve('back');">Back<span></span></a></li>
+	                    </ul>
+	                </div>
+					<div class="con_t_area mt10">
+	                	<h3>기본정보</h3>
+	                </div>
+					<div class="search_area">
+						<table>
+							<colgroup>
+	                        	<col style="width:110px;" />
+	                            <col style="width:158px;" />
+	                            <col style="width:73px;" />
+	                            <col style="width:158px;" />
+	                            <col style="width:80px;" />
+	                            <col style="width:158px;" />
+	                            <col style="width:73px;" />
+	                            <col style="width:158px;" />
+	                        </colgroup>
+							<tr>
+								<th>사번</th>
+								<td><input type="text" id="eeno" style="width:140px" onkeyup="setInsaInfo();cearInsa();">
+									<input type="hidden" id="eeno_temp"></td>
+								<th>이름</th>
+								<td><input type="text" id="keyEenm" style="width:140px" class="disabled" readOnly></td>
+								<th>직급</th>
+								<td><input type="text" id="keyPosition" style="width:140px" class="disabled" readOnly></td>
+								<th>부서</th>
+								<td>
+									<input type="hidden" id="keyOpsCd" readOnly>
+									<input type="text" id="keyOpsNm" style="width:140px" class="disabled" readOnly>
+								</td>
+							</tr>
+							<tr>
+								<th>신청일자</th>
+								<td><input type="text" id="apply_date" style="width:140px" class="disabled" readOnly></td>
+								<th>문서번호</th>
+								<td><input type="text" id="doc_no" style="width:140px" class="disabled" readOnly></td>
+								<th>진행상태</th>
+								<td>
+									<input type="hidden" id="pgs_st_cd" name="pgs_st_cd">
+									<input type="text" id="pgs_st_nm" name="pgs_st_nm" style="width:140px" class="disabled" readOnly>
+								</td>
+								<th>연락처</th>
+								<td><input type="text" id="keyTelNo" style="width:140px" class="disabled" readOnly></td>
+							</tr>
+							<tr>
+								<th class="div_nameF">반려사유</th>
+								<td class="inputF" colspan="7">
+									<input type="text" id="snb_rson_sbc" name="snb_rson_sbc" style="width:843px" class="disabled">
+								</td>
+							</tr>
+						</table>
+					</div>
+					
+					<div class="con_t_area">
+	                	<h3>Request Information</h3>
+	                </div>
+	                <div class="search_area">
+		                <table>
+		                	<tr>
+								<th width="150px">Type</th>
+								<td><select id="type" style="width: 150px" disabled></select></td>
+								<th width="200px">Purpose</th>
+								<td><input type="text" id="purpose" style="width: 250px" class="disabled" readonly></td>
+							</tr>
+		                </table>
+		            </div>
+		            
+					<iframe id="ifra" name="ifra" src="" style="padding-top:10px;" width="100%" height="400px" border="0" frameborder="0" framespacing="0" hspace="0" vspace="10" scrolling="no" noresize></iframe>
+
+					<div class="search_area">
+		                <table>
+		                	<tr>
+								<th width="80px">Reason</th>
+								<td><input type="text" id="reason" class="disabled" readonly></td>
+							</tr>
+							<tr>
+								<th width="80px">Remarks</th>
+								<td><textarea id="remark" class="sub_textarea disabled" readonly rows="8" cols=""></textarea></td>
+							</tr>
+		                </table>
+		            </div>
+					<%@ include file="../include/hncis_message.gas"%>
+				</div>
+				<div class="clear"></div>
+			</div>
+		</form>
+		<form id="hideForm" name="hideForm" method="post">
+			<input type="hidden" id="hid_csrfToken"	name="hid_csrfToken">
+		</form>
+		</div>
+	</body>
+</html>

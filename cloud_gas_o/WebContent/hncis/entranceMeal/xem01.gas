@@ -1,0 +1,259 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ page import="com.hncis.common.util.*"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId = "XEM01";
+	String M_DOC_NO = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("M_DOC_NO")).trim());
+	
+	
+	String yy = CurrentDateTime.getDate().substring(0, 4);
+	String mm = CurrentDateTime.getDate().substring(4, 6);
+	String dd = CurrentDateTime.getDate().substring(6, 8);
+	
+	String yymmdd = yy + "/" + mm + "/" + dd;
+	
+	String yy1 = CurrentDateTime.getDate().substring(0, 4);
+	String mm1 = CurrentDateTime.getDate().substring(4, 6);
+	String dd1 = CurrentDateTime.getDate().substring(6, 8);
+	String ddmmyy = dd+ "/" + mm + "/" + yy;
+	String ddmmyy1 = dd1+ "/" + mm1 + "/" + yy1;
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>ENTRANCE REQUEST PAGE</title>
+		<script type="text/javascript" src="./js/xem01.js"></script> 
+	</head>
+	<body>
+		<div id="wrap">
+    	<form name="frm" id="frm">
+			<input type="hidden" id="initYn" value="N">
+			<input type=hidden id="M_DOC_NO" value="<%=M_DOC_NO%>">
+			<input type=hidden id="pgs_st_cd">
+			<input type=hidden id="ipe_eeno">
+			<input type=hidden id="if_id">
+	    	<%@ include file="../include/hncis_header.gas"%>
+	        <div id="contents_wrap">
+	        	<%@ include file="../include/hncis_left.gas"%>
+	            <div id="contents">
+	            	<%=CommonGasc.getTitleAndButtonNew(
+						sess_empno
+						,"XEM01"
+						,"save/save@삭제/delete@request/request@request Cancel/requestCancel"
+						,"0"
+						,"2"
+						,null
+						,request)
+					%> 
+	                <div class="con_t_area mt10">
+	                	<h3>기본정보</h3>
+	                </div>
+	                <div class="search_area">
+	                	<table>
+	                        <colgroup>
+	                        	<col style="width:100px;" />
+	                            <col style="width:160px;" />
+	                            <col style="width:75px;" />
+	                            <col style="width:160px;" />
+	                            <col style="width:80px;" />
+	                            <col style="width:160px;" />
+	                            <col style="width:73px;" />
+	                            <col style="width:auto;" />
+	                        </colgroup>
+	                        <tbody>
+	                            <tr>
+	                                <th>사번</th>           
+	                                <td> 
+	                                    <input type="text" id="eeno" name="eeno" style="width:140px; ime-mode:disabled;" onKeyPress="return onlyNum2()" onKeyUp="cearInsa();setInsaInfo();" value="<%=sess_empno %>" class="disabled">
+	                                </td>
+	                                <th>이름</th>
+	                                <td>
+	                                    <input type="text" id="eeno_nm" name="eeno_nm" style="width:140px;" class="disabled"/>
+	                                </td>
+	                                <th>직급</th> 
+	                                <td>  
+	                                    <input type="text" id="pos_nm" name="pos_nm" style="width:140px;" class="disabled"/>
+	                                </td>
+	                                <th>부서</th>    
+	                                <td> 
+	                                    <input type="text" id="dept_nm" name="dept_nm" style="width:140px;" class="disabled"/>
+	                                </td>
+	                            </tr>
+	                            <tr>
+	                                <th>신청일자</th>
+	                                <td>
+	                                    <input type="text" id="ptt_ymd" name="ptt_ymd" style="width:140px;" class="disabled"/>
+	                                </td>
+	                                <th>문서번호</th>
+	                                <td>
+	                                    <input type="text" id="doc_no" name="doc_no" style="width:140px;" class="disabled"/>
+	                                </td>
+	                                <th>진행상태</th>
+	                                <td> 
+	                                    <input type="text" id="pgs_st_cd_d" name="pgs_st_cd_d" style="width:140px;" class="disabled"/>
+	                                </td>
+	                                <th>연락처</th>
+	                                <td>
+	                                    <input type="text" id="tel_no" name="tel_no" style="width:140px;" class="disabled"/>
+	                                </td>
+	                            </tr>
+	                            <tr> 
+	                                <th>반려사유</th>
+	                                <td colspan="7">
+	                                    <input type="text" id="snb_rson_sbc" name="snb_rson_sbc" style="width:848px;" class="disabled"/>
+	                                </td>
+	                            </tr>
+	                        </tbody>
+	                    </table>
+	                </div>
+	                <div class="con_t_area">
+	                	<h3>Visit Info</h3>
+	                </div>
+	                <div class="search_area">
+	                	<table>
+	                        <colgroup>
+	                        	<col style="width:86px;" />
+	                            <col style="width:auto;" />
+	                        </colgroup>
+	                        <tbody>
+	                            <tr>
+									<th>Purpose</th> 
+									<td>  
+										<SELECT NAME="vsit_purp_cd" ID="vsit_purp_cd" style="width:120px"></SELECT>
+										<input type="text" id="vsit_purp_dtl_sbc" name="vsit_purp_dtl_sbc" style="width:747px"/>
+									</td>
+								</tr>
+	                        </tbody>
+	                    </table>
+	                </div>
+	                <div class="con_t_area">
+	                	<h3 class="fl">Visitors</h3>
+	                	<div class="btn_area mt0">
+		                    <ul class="btns fr">
+		                        <li><a href="javascript:gridRowAdd();">추가<span></span></a></li>
+		                        <li><a href="javascript:gridRowDelete();">Delete<span></span></a></li>
+		                    </ul>
+		                </div>
+	                </div>
+	                <div class="jq_tbl">
+	                	<table id="htmlTable" class="scroll"></table>
+	                	<div id="htmlPager" class="scroll" style="display:none"></div>
+	                </div>
+	                <%@ include file="../include/hncis_message.gas"%>
+	            </div>
+	            <div class="clear"></div>
+	        </div>
+        </form>
+		<form id="hideForm" name="hideForm" method="post">
+			<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+		</form>
+	    </div>
+		<%-- <div id="wrap">
+			<div id="GASC">
+				<form name="frm" id="frm">
+					<input type="hidden" id="initYn" value="N">
+					<input type=hidden id="M_DOC_NO" value="<%=M_DOC_NO%>">
+					<input type=hidden id="pgs_st_cd">
+					<input type=hidden id="ipe_eeno">
+					<input type=hidden id="if_id">
+					
+					<%@ include file="/hncis/include/leftMenu.gas"%>
+					<div id="container_wrap">
+						<div id="container">
+							<%=CommonGasc.getTitleAndButtonNew(
+								sess_empno
+								,"XEM01"
+								,"save/save@삭제/delete@request/request@request Cancel/requestCancel"
+								,"0"
+								,"2"
+								,null
+								,request)
+							%> 
+								<div id="basic">
+									<p class="caption">Basic Info</p>
+									<div id="basic_info">
+										<table>
+											<tr>
+											<td align="left" width="120px">User Id</td>           
+											<td align="left" width="160px"> 
+												<input type="text" id="eeno" name="eeno" style="ime-mode:disabled;" onkeypress="return onlyNum2()" onkeyup="cearInsa();setInsaInfo();" value="<%=sess_empno %>" class="disabled">
+											</td>
+											<td align="left" width="65px">Name</td>
+											<td align="left" width="160px">
+												<input type="text" id="eeno_nm" name="eeno_nm" size="20" class="disabled"/>
+											</td>
+											<td align="left" width="70px">Position</td> 
+											<td align="left" width="160px">  
+												<input type="text" id="pos_nm" name="pos_nm" size="20" class="disabled"/>
+											</td>
+											<td align="left" width="50px">Dept.</td>    
+											<td align="left"> 
+												<input type="text" id="dept_nm" name="dept_nm" size="20" class="disabled"/>
+											</td>
+										</tr>
+										<tr>
+											<td align="left">신청일자</td>
+											<td align="left">
+												<input type="text" id="ptt_ymd" name="ptt_ymd" size="20" class="disabled"/>
+											</td>
+											<td align="left">Doc no.</td>
+											<td align="left">
+												<input type="text" id="doc_no" name="doc_no" size="20" class="disabled"/>
+											</td>
+											<td align="left">Status</td>
+											<td align="left"> 
+												<input type="text" id="pgs_st_cd_d" name="pgs_st_cd_d" size="20" class="disabled"/>
+											</td>
+											<td align="left">Tel No.</td>
+											<td align="left">
+												<input type="text" id="tel_no" name="tel_no" size="20" class="disabled"/>
+											</td>
+										</tr>
+											<tr> 
+												<td align="left">Return reason</td>
+												<td align="left" colspan="7">
+													<input type="text" id="snb_rson_sbc" name="snb_rson_sbc" size="157" class="disabled"/>
+												</td>
+											</tr>
+										</table>
+									</div>
+								</div>
+								<p class="caption">Visit Info</p>
+								<div id="basic_info">
+										<table width="100%" cellpadding="0" cellspacing="0">
+											<tr>
+												<td align="left" width="86px;">Purpose</td> 
+												<td align="left" width="400px">  
+													<SELECT NAME="vsit_purp_cd" ID="vsit_purp_cd" style="width:120px">
+													</SELECT>
+													<input type="text" id="vsit_purp_dtl_sbc" name="vsit_purp_dtl_sbc" size="40"/>
+												</td>
+<!-- 												<td width="90px"></td> -->
+												<td></td>
+<!-- 												<td align="left" width="90px">Budget Code</td> -->
+<!-- 												<td align="left"> -->
+<!-- 													<input type="text" id="budg_no" name="budg_no" size="20"/> -->
+<!-- 												</td> -->
+											</tr>
+										</table>
+								</div>
+								<div id="co_visitors">   
+									<span class="caption">Visitors</span>
+									<span class="work_btn" onclick="gridRowAdd()">AddRow</span>
+									<span class="work_btn" onclick="gridRowDelete();">Delete</span> 
+								</div>
+								<div style="clear:both;padding-top:10px;"></div>
+								<table id="htmlTable" class="scroll"></table> 
+								<div id="htmlPager" class="scroll" style="display:none"></div>   
+							<iframe id="msgFrame" src="<%=ctxPath%>/bottom.gas" style="width: 100%; height: 30px;" border="0" frameborder="0" framespacing="0" hspace="0" vspace="10" scrolling="no" noresize></iframe>
+						</div>
+					</div>
+				</form>
+				<form id="hideForm" name="hideForm" method="post">
+					<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+				</form>
+			</div>
+		</div> --%>
+	</body>
+</html>

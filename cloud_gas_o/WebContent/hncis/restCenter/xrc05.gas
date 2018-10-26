@@ -1,0 +1,144 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XRC05";
+
+	String strSav = JSPMessageSource.getMessage("BUTTON.SAVE", locale);
+	
+	String strBtn = "";
+	strBtn = strSav+"/save";
+	
+	String tempPath     = request.getServletPath().toString();
+	String stepHelpUrl  = StringUtil.getStepHelp(tempPath);
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>LIST</title>
+	</head>
+	<body>
+		<div id="wrap">
+	    	<form name="frm" id="frm">
+	    		<input type="hidden" id="help_url" name="help_url" value="<%=stepHelpUrl%>">
+	    		
+		    	<%@ include file="../include/hncis_header.gas"%>
+		        <div id="contents_wrap">
+		        	<%@ include file="../include/hncis_left.gas"%>
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,"XRC05"
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+						
+						<div class="search_area">
+						<table>
+							<colgroup>
+								<col style="width:80px;" />
+	                            <col style="width:auto;" />
+							</colgroup>
+							<tr>
+								<th><fmt:message key="key_count"/></th>
+								<td>
+									<input id="key_count" type="text" style="width:60px; text-align: right;" class="inputOnlyNumber" maxlength="3"> 
+								</td>
+							</tr>
+						</table>
+					</div>
+                	<%@ include file="../include/hncis_message.gas"%>
+				</div>
+			</div>
+		</form>
+		</div>
+	</body>
+</html>
+		<script type="text/javascript">
+		function fnSetDocumentReady(){
+			initMenus();
+			$('#RC').slideDown('fast');
+			
+			init();
+		}
+
+		function init(){
+			
+			$(".inputOnlyNumber").numeric();
+			
+			doSearch();
+		}
+
+		function retrieve(gubn){
+			switch(gubn){
+				case "search" :
+					doSearch();
+					break;
+				case "save" :
+					doSave();
+					break;
+			}
+		}
+
+		function doSearch(msgFlag){
+			var param = {
+					corp_cd				: sess_corp_cd
+			};
+
+			var paramData = {
+				paramJson : util.jsonToString(param)
+			};
+
+			doCommonAjax("doSelectRcToRequestCountInfo.do", paramData, "searchCallBack(jsonData.sendResult);");
+		}
+
+		/**
+		 * callback
+		 */
+		function searchCallBack(result){
+			$("#key_count").val(result.req_cnt);
+			setBottomMsg(result.message, false);
+		}
+
+		function doSave(){
+			var reqCnt = selectNum($("#key_count").val());
+
+			if(reqCnt == ''){
+				alertUI('<fmt:message key="MSG.INP.0070"/>');
+				return;
+			}
+
+
+			var param = {
+				req_cnt       : reqCnt,
+				updr_eeno     : sess_empno,
+				corp_cd		  : sess_corp_cd
+			};
+			
+			confirmUI('<fmt:message key="MSG.CNF.0004"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramJson : util.jsonToString(param)
+							};
+						doCommonAjax("doUpdateToRequestCountInfo.do", paramData, "doUpdateCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function doUpdateCallBack(result){
+			alertUI(result.message);
+			doSearch();
+		}
+		
+		function pageStepHelpPopup(){
+			if(popup != null ){
+				popup.close();
+			}
+			
+			popup = popUpWindow3($("#help_url").val());
+		}
+		</script>

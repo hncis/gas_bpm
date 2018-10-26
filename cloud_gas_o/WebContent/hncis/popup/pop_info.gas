@@ -1,0 +1,279 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title><fmt:message key="charge_prsn_guide"/></title>
+<link rel='stylesheet' type="text/css" media="screen" href="<%=ctxPath%>/script/css/hncis_common.css" />
+<script type="text/javascript" src='<%=ctxPath%>/script/js/jsonUtil.js'></script>
+<script type="text/javascript" src='<%=ctxPath%>/script/js/common.js'></script>
+<link rel="stylesheet" type="text/css" media="screen" href="../../script/css/pop_up.css" />
+<link rel="stylesheet" type="text/css" href="<%=ctxPath%>/script/js/autocomplete/redmond.css">
+<script type="text/javascript" src="<%=ctxPath%>/script/js/autocomplete/jquery.js"></script>
+<script type="text/javascript" src="<%=ctxPath%>/script/js/autocomplete/jquery-ui.js"></script>
+<script type="text/javascript">
+	$(window).scroll(function(){
+		var de = document.documentElement;
+		var b = document.body;
+		var now = {};
+		var cont01 = $('#info01').offset().top-123;
+		var cont02 = $('#info02').offset().top-123;
+		var cont03 = $('#info03').offset().top-123;
+		var cont04 = $('#info04').offset().top-123;
+		var cont05 = $('#info05').offset().top-123;
+		var tabMenu = $('.info_menu li');
+		now.Y = document.all ? (!de.scrollTop ? b.scrollTop : de.scrollTop) : (window.pageYOffset ? window.pageYOffset : window.scrollY);
+		if(cont02<=now.Y&&now.Y<=cont03-1){
+			tabMenu.removeClass('on');
+			tabMenu.eq(1).addClass('on');
+		}else if(cont03<=now.Y&&now.Y<=cont04-1){
+			tabMenu.removeClass('on');
+			tabMenu.eq(2).addClass('on');
+		}else if(cont04<=now.Y&&now.Y<=cont05-1){
+			tabMenu.removeClass('on');
+			tabMenu.eq(3).addClass('on');
+		}else if(cont05<=now.Y){
+			tabMenu.removeClass('on');
+			tabMenu.eq(4).addClass('on');
+		}else{
+			tabMenu.removeClass('on');
+			tabMenu.eq(0).addClass('on');
+		}
+		return now;
+	});
+	$(document).ready(function(){
+		/* $(".info_menu li a").click(function(){
+			var tab_on=$(this).parent();
+			$(".info_menu li").removeClass("on");
+			tab_on.addClass("on");
+		}); */
+		
+	});
+</script>
+</head>
+<body style="overflow-x: hidden ">
+	<div class="pop_wrap info_wrap">
+		<div class="pop_header_pos">
+			<div class="pop_header">
+	        	<div class="pop_title">
+	            	<h1>휴양소</h1>
+	                <a href="javascript:selfClose();" id="pop_tip_cls" class="pop_close"></a>
+	            </div>
+	        </div>
+	        <ul class="info_menu user menuNum05">
+	        	<li><a href="#info01"><span>휴양소 등록</span><span class="user_txt">담당자</span></a></li>
+	        	<li><a href="#info02"><span>연간 사용일수 등록</span><span class="user_txt">담당자</span></a></li>
+	        	<li><a href="#info03"><span>신청</span><span class="user_txt">사용자</span></a></li>
+	        	<li><a href="#info04"><span>결재</span><span class="user_txt">결재자</span></a></li>
+	        	<li><a href="#info05"><span>담당자확인</span><span class="user_txt">담당자</span></a></li>
+	        </ul>
+        </div>
+        <div class="pop_info_content">
+        	<div class="tit_area" id="info01">
+        		<span class="info_num">01</span>
+        		<h2>휴양소 등록 (휴양소 관리)</h2>
+        		<p>휴양소, 객실, 요금 등 기초 데이터 관리</p>
+        	</div>
+        	<table class="pop_info_tbl">
+        		<colgroup>
+        			<col style="width:25%;"/>
+        			<col style="width:75%;"/>
+        		</colgroup>
+        		<thead>
+        			<tr>
+        				<th>구분</th>
+        				<th>설명</th>
+        			</tr>
+        		</thead>
+        		<tbody>
+        			<tr>
+        				<td>휴양소</td>
+        				<td>휴양소의 코드(중복불가) 및 사용여부 관리<br/><span class="txt_blue">※ 등록된 휴양소는 신청화면에 출력</span></td>
+        			</tr>
+        			<tr>
+        				<td>달력</td>
+        				<td>일자별 요금구분(일반, 성수기, 비수기, 공휴일) 관리<br/><span class="txt_blue">※ 요금구분은 시스템의 코드관리에서 추가 및 삭제 가능</span></td>
+        			</tr>
+        			<tr>
+        				<td>객실</td>
+        				<td>휴양소 객실의 코드(중복불가) 및 사용여부 관리</td>
+        			</tr>
+        			<tr>
+        				<td>요금</td>
+        				<td>객실-요금구분 기준의 금액 관리</td>
+        			</tr>
+        		</tbody>
+        	</table>
+        	<div class="tit_area" id="info02">
+        		<span class="info_num">02</span>
+        		<h2>휴양소 등록 (휴양소 관리)</h2>
+        		<p>휴양소, 객실, 요금 등 기초 데이터 관리</p>
+        	</div>
+        	<table class="pop_info_tbl">
+        		<colgroup>
+        			<col style="width:25%;"/>
+        			<col style="width:75%;"/>
+        		</colgroup>
+        		<thead>
+        			<tr>
+        				<th>구분</th>
+        				<th>설명</th>
+        			</tr>
+        		</thead>
+        		<tbody>
+        			<tr>
+        				<td>휴양소</td>
+        				<td>휴양소의 코드(중복불가) 및 사용여부 관리<br/><span class="txt_blue">※ 등록된 휴양소는 신청화면에 출력</span></td>
+        			</tr>
+        			<tr>
+        				<td>달력</td>
+        				<td>일자별 요금구분(일반, 성수기, 비수기, 공휴일) 관리<br/><span class="txt_blue">※ 요금구분은 시스템의 코드관리에서 추가 및 삭제 가능</span></td>
+        			</tr>
+        			<tr>
+        				<td>객실</td>
+        				<td>휴양소 객실의 코드(중복불가) 및 사용여부 관리</td>
+        			</tr>
+        			<tr>
+        				<td>요금</td>
+        				<td>객실-요금구분 기준의 금액 관리</td>
+        			</tr>
+        		</tbody>
+        	</table>
+        	<div class="tit_area" id="info03">
+        		<span class="info_num">03</span>
+        		<h2>휴양소 등록 (휴양소 관리)</h2>
+        		<p>휴양소, 객실, 요금 등 기초 데이터 관리</p>
+        	</div>
+        	<table class="pop_info_tbl">
+        		<colgroup>
+        			<col style="width:25%;"/>
+        			<col style="width:75%;"/>
+        		</colgroup>
+        		<thead>
+        			<tr>
+        				<th>구분</th>
+        				<th>설명</th>
+        			</tr>
+        		</thead>
+        		<tbody>
+        			<tr>
+        				<td>휴양소</td>
+        				<td>휴양소의 코드(중복불가) 및 사용여부 관리<br/><span class="txt_blue">※ 등록된 휴양소는 신청화면에 출력</span></td>
+        			</tr>
+        			<tr>
+        				<td>달력</td>
+        				<td>일자별 요금구분(일반, 성수기, 비수기, 공휴일) 관리<br/><span class="txt_blue">※ 요금구분은 시스템의 코드관리에서 추가 및 삭제 가능</span></td>
+        			</tr>
+        			<tr>
+        				<td>객실</td>
+        				<td>휴양소 객실의 코드(중복불가) 및 사용여부 관리</td>
+        			</tr>
+        			<tr>
+        				<td>요금</td>
+        				<td>객실-요금구분 기준의 금액 관리</td>
+        			</tr>
+        		</tbody>
+        	</table>
+        	<div class="tit_area" id="info04">
+        		<span class="info_num">03</span>
+        		<h2>휴양소 등록 (휴양소 관리)</h2>
+        		<p>휴양소, 객실, 요금 등 기초 데이터 관리</p>
+        	</div>
+        	<table class="pop_info_tbl">
+        		<colgroup>
+        			<col style="width:25%;"/>
+        			<col style="width:75%;"/>
+        		</colgroup>
+        		<thead>
+        			<tr>
+        				<th>구분</th>
+        				<th>설명</th>
+        			</tr>
+        		</thead>
+        		<tbody>
+        			<tr>
+        				<td>휴양소</td>
+        				<td>휴양소의 코드(중복불가) 및 사용여부 관리<br/><span class="txt_blue">※ 등록된 휴양소는 신청화면에 출력</span></td>
+        			</tr>
+        			<tr>
+        				<td>달력</td>
+        				<td>일자별 요금구분(일반, 성수기, 비수기, 공휴일) 관리<br/><span class="txt_blue">※ 요금구분은 시스템의 코드관리에서 추가 및 삭제 가능</span></td>
+        			</tr>
+        			<tr>
+        				<td>객실</td>
+        				<td>휴양소 객실의 코드(중복불가) 및 사용여부 관리</td>
+        			</tr>
+        			<tr>
+        				<td>요금</td>
+        				<td>객실-요금구분 기준의 금액 관리</td>
+        			</tr>
+        		</tbody>
+        	</table>
+        	<div class="tit_area" id="info05">
+        		<span class="info_num">03</span>
+        		<h2>휴양소 등록 (휴양소 관리)</h2>
+        		<p>휴양소, 객실, 요금 등 기초 데이터 관리</p>
+        	</div>
+        	<table class="pop_info_tbl">
+        		<colgroup>
+        			<col style="width:25%;"/>
+        			<col style="width:75%;"/>
+        		</colgroup>
+        		<thead>
+        			<tr>
+        				<th>구분</th>
+        				<th>설명</th>
+        			</tr>
+        		</thead>
+        		<tbody>
+        			<tr>
+        				<td>휴양소</td>
+        				<td>휴양소의 코드(중복불가) 및 사용여부 관리<br/><span class="txt_blue">※ 등록된 휴양소는 신청화면에 출력</span></td>
+        			</tr>
+        			<tr>
+        				<td>달력</td>
+        				<td>일자별 요금구분(일반, 성수기, 비수기, 공휴일) 관리<br/><span class="txt_blue">※ 요금구분은 시스템의 코드관리에서 추가 및 삭제 가능</span></td>
+        			</tr>
+        			<tr>
+        				<td>객실</td>
+        				<td>휴양소 객실의 코드(중복불가) 및 사용여부 관리</td>
+        			</tr>
+        			<tr>
+        				<td>요금</td>
+        				<td>객실-요금구분 기준의 금액 관리</td>
+        			</tr>
+        		</tbody>
+        	</table>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+function fnSetDocumentReady(){
+	var cont01 = $('#info01').offset().top-122;
+	var cont02 = $('#info02').offset().top-122;
+	var cont03 = $('#info03').offset().top-122;
+	var cont04 = $('#info04').offset().top-122;
+	var cont05 = $('#info05').offset().top-122;
+	var sub_menu = $('.info_menu li a');	
+	$(sub_menu).eq(0).click(function(){
+			$('html, body').animate({scrollTop:cont01}, 1000);
+	});
+	$(sub_menu).eq(1).click(function(){
+			$('html, body').animate({scrollTop:cont02}, 1000);
+	});
+	$(sub_menu).eq(2).click(function(){
+			$('html, body').animate({scrollTop:cont03}, 1000);
+	});
+	$(sub_menu).eq(3).click(function(){
+			$('html, body').animate({scrollTop:cont04}, 1000);
+	});
+	$(sub_menu).eq(4).click(function(){
+		$('html, body').animate({scrollTop:cont05}, 1000);
+	});
+	
+	var tabMenu = $('.info_menu li');
+	tabMenu.eq(0).addClass('on');
+}
+</script>
+</html>

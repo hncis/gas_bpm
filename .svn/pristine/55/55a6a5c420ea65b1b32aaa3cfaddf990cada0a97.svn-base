@@ -1,0 +1,353 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="com.hncis.common.util.*"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId = "XFC05";
+	String hid_csrfToken  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_csrfToken")));
+	String hid_cond 	  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_cond")));
+	String hid_view_nm    = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_view_nm")));
+
+	String yy = CurrentDateTime.getDate().substring(0, 4);
+	String mm = CurrentDateTime.getDate().substring(4, 6);
+	String dd = CurrentDateTime.getDate().substring(6, 8);
+
+	String yymmdd = yy + "/" + mm + "/" + dd;
+	
+	String strSav = JSPMessageSource.getMessage("BUTTON.SAVE", locale);
+
+	String strBtn = "";
+	//strBtn = "저장/save";
+	strBtn = strSav+"/save";
+
+	String work_auth = CommonGasc.getScnAuth(sess_empno, menuId, request);
+	
+	String tempPath     = request.getServletPath().toString();
+	String stepHelpUrl  = StringUtil.getStepHelp(tempPath);
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>운행일지 - 작성</title>
+		<script>
+			var curYmd = "<%=yymmdd%>";
+		</script>
+	</head>
+	<body>
+		<div id="wrap">
+	    	<form name="frm" id="frm">
+				<input type=hidden id="ipe_eeno">
+				<input type=hidden id="hid_page">
+				<input type=hidden id="work_auth" name="work_auth" value="<%=work_auth%>">
+				<input type="hidden" id="hid_cond" name="hid_cond" value="<%=hid_cond%>">
+				<input type="hidden" id="hid_view_nm" name="hid_view_nm" value="<%=hid_view_nm%>">
+				<input type="hidden" id="help_url" name="help_url" value="<%=stepHelpUrl%>">
+				
+		    	<%@ include file="../include/hncis_header.gas"%>
+		        <div id="contents_wrap">
+		        	<%@ include file="../include/hncis_left.gas"%>
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(
+							sess_empno
+							,menuId
+							,strBtn
+							,""
+							,""
+							,null
+							,request)
+						%>
+						<div id="basic">
+			                <div class="con_t_area">
+			                	<h3><fmt:message key="oil_type_dist_amt"/></h3>
+			                </div>
+			                <div class="search_area">
+			                	<table>
+			                        <colgroup>
+			                        	<col style="width:100px;" />
+			                        	<col style="width:500px;" />
+			                        	<col style="width:100px;" />
+			                            <col style="width:auto;" />
+			                        </colgroup>
+			                        <tbody>
+			                        	<%-- <tr>
+			                        		<th colspan="4" style="text-align: center;"><fmt:message key="gsln"/></th>
+			                        	</tr> --%>
+			                            <tr>
+											<th><fmt:message key="dist_per_lt"/></th>
+											<td>
+												<input type="text" id="gas_dist" name="gas_dist" style="width:155px;ime-mode:disabled;" maxLength="8" value="" class="inputOnlyNumber"> KM
+											</td>
+											<%-- <th><fmt:message key="rt_amt"/></th> --%>
+											<th><fmt:message key="gsln"/></th>
+											<td>
+												<input type="text" id="gas_cost" name="gas_cost" style="width:155px;ime-mode:disabled;" maxLength="8" value="" class="inputOnlyNumber"> <fmt:message key="won"/>
+											</td>
+										</tr>
+			                        	<%-- <tr>
+			                        		<th colspan="4" style="text-align: center;"><fmt:message key="dsl"/></th>
+			                        	</tr> --%>
+			                            <tr>
+											<th><fmt:message key="dist_per_lt"/></th>
+											<td>
+												<input type="text" id="dsl_dist" name="dsl_dist" style="width:155px;ime-mode:disabled;" maxLength="8" value="" class="inputOnlyNumber"> KM
+											</td>
+											<%-- <th><fmt:message key="rt_amt"/></th> --%>
+											<th><fmt:message key="dsl"/></th>
+											<td>
+												<input type="text" id="dsl_cost" name="dsl_cost" style="width:155px;ime-mode:disabled;" maxLength="8" value="" class="inputOnlyNumber"> <fmt:message key="won"/>
+											</td>
+										</tr>
+			                        	<%-- <tr>
+			                        		<th colspan="4" style="text-align: center;"><fmt:message key="lpg"/></th>
+			                        	</tr> --%>
+			                            <tr>
+											<th><fmt:message key="dist_per_lt"/></th>
+											<td>
+												<input type="text" id="lpg_dist" name="lpg_dist" style="width:155px;ime-mode:disabled;" maxLength="8" value="" class="inputOnlyNumber"> KM
+											</td>
+											<%-- <th><fmt:message key="rt_amt"/></th> --%>
+											<th><fmt:message key="lpg"/></th>
+											<td>
+												<input type="text" id="lpg_cost" name="lpg_cost" style="width:155px;ime-mode:disabled;" maxLength="8" value="" class="inputOnlyNumber"> <fmt:message key="won"/>
+											</td>
+										</tr>
+			                        </tbody>
+			                    </table>
+			                </div>
+		                <div class="con_t_area">
+		                	<h3><fmt:message key="ch_hist_info"/></h3>
+		                </div>
+						<div class="jq_tbl">
+			                <table id="htmlTable" class="scroll"></table>
+							<div id="htmlPager" class="scroll"></div>
+						</div>
+		                <%@ include file="../include/hncis_message.gas"%>
+		            </div>
+		            <div class="clear"></div>
+		        </div>
+	        </form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken"	name="hid_csrfToken">
+			</form>
+	    </div>
+	</body>
+</html>
+	<script type="text/javascript">
+		var gridName1 = "htmlTable";
+		var datarow = {rnum:"", term:"", gas_dist:"", dsl_dist:"", lpg_dist:""};
+
+		function fnSetDocumentReady(){
+			initMenus();
+			$('#BV').slideDown('fast');
+			$(".inputOnlyNumber").numeric();
+
+			sess_auth = $("#work_auth").val();
+
+			//getCommonCode("cro_purp_cd:XBV04:S;", "N", "init()");
+			init();
+		}
+
+		function init(){
+
+			initAfterMenus();
+
+			$("#strt_ymd").datepicker({ dateFormat: 'yy-mm-dd' });
+			$("#fnh_ymd").datepicker({ dateFormat: 'yy-mm-dd' });
+
+// 			cn =[ '번호','일자','휘발류','경유', 'LPG'],
+			var cn = ['' // "번호"
+			          ,'<fmt:message key="ymd"/>' // "일자"
+			          ,'<fmt:message key="gsln"/>' // "휘발유"
+			          ,'<fmt:message key="dsl"/>' // "경유"
+			          ,'<fmt:message key="lpg"/>' // "LPG"
+		          ];
+			cm = [
+			    {name:'rnum',index:'rnum', formatter:'string',width:100,align:'center',editable:false,sortable:false, hidden:true},
+				{name:'term',index:'term', formatter:'string',width:240,align:'center',editable:false,sortable:false},
+				{name:'gas_dist',index:'gas_dist', formatter:'string',width:240,align:'center',editable:false,sortable:false},
+				{name:'dsl_dist',index:'dsl_dist', formatter:'string',width:240,align:'center',editable:false,sortable:false},
+				{name:'lpg_dist',index:'lpg_dist', formatter:'string',width:240,align:'center',editable:false,sortable:false}
+			],
+
+			gridParam = {
+				viewEdit : [{
+					gridName     : gridName1,
+					url          : "/doSearchToEmpty.do",
+					colNames     : cn,
+					colModel     : cm,
+					height       : 230,
+					width		 : 1030,
+//					sortname     : "rnum",
+//					sortorder    : "asc",
+					rowNum		 : 10,
+					rownumbers   : true,
+					multiselect  : false,
+					cellEdit     : false,
+					fnMerge      : false,
+//					paramJson    : params,
+					pager		 : "htmlPager",
+					page		 : $("#hid_page").val(),
+					completeFc	 : "addGridRow();initAfterMenus();"
+				}]
+			};
+
+			commonJqGridInit(gridParam);
+
+
+			jQuery("#htmlTable").jqGrid('navGrid',"#htmlPager",{edit:false,add:false,del:false,search:false,refresh:false});
+
+
+//			chk_auth();
+
+			doSearch();
+		}
+
+		function chk_auth(){
+			var f = document.frm;
+			with(f){
+				if($("#work_auth").val() < 5 && sess_mstu != "M"){
+					readOnlyStyle("eeno", 1);
+				}else{
+					if($("#M_DOC_NO").val() != ""){
+						readOnlyStyle("eeno", 1);
+					}else{
+						readOnlyStyle("eeno", 2);
+					}
+				}
+			}
+		}
+
+		function retrieve(btnFlag){
+			var f = document.frm;
+			switch(btnFlag){
+			   case "search" :
+				    doSearch();
+					break;
+			   case "save" :
+				   doSave();
+					break;
+			}
+		}
+
+		function doSearch(msgFlag){
+			var keyData = {
+					corp_cd		: sess_corp_cd
+//					doc_no		: $('#M_DOC_NO').val()
+			};
+			paramData = {
+					paramJson      	: util.jsonToString(keyData)
+			};
+			doCommonAjax("doSearchXfc05Info.do", paramData, "doSearchCallBack(jsonData.sendResult,'"+msgFlag+"');");
+		}
+
+		/**
+		 * callback
+		 */
+		function doSearchCallBack(result,msgFlag){
+			loadJsonSet(result);
+			if(msgFlag != 'N'){
+				setBottomMsg(result.message, false);
+			}
+			doSearch2();
+		}
+
+		function doSearch2(){
+
+			var params = {
+					corp_cd		: sess_corp_cd
+			};
+
+			doCommonSearch("doSearchXfc05InfoList.do", util.jsonToString(params), "doSearch2CallBack();", gridName1, "N");
+		}
+
+		/**
+		 * callback
+		 */
+		function doSearch2CallBack(){
+			addGridRow();
+		}
+
+		function doSave(){
+
+			//데이터 수정일때 권한 체크
+			//일반사용자 일때 체크
+			if($("#work_auth").val() < 5 && sess_mstu != "M"){
+			}
+
+			if($("#gas_dist").val() == ''){
+				alertUI('<fmt:message key="MSG.INP.0037"/>');
+				$("#gas_dist").focus();
+				return;
+			}
+
+			if($("#gas_cost").val() == ''){
+				alertUI('<fmt:message key="MSG.INP.0038"/>');
+				$("#gas_cost").focus();
+				return;
+			}
+
+			if($("#dsl_dist").val() == ''){
+				alertUI('<fmt:message key="MSG.INP.0039"/>');
+				$("#dsl_dist").focus();
+				return;
+			}
+
+			if($("#dsl_cost").val() == ''){
+				alertUI('<fmt:message key="MSG.INP.0040"/>');
+				$("#dsl_cost").focus();
+				return;
+			}
+
+			if($("#lpg_dist").val() == ''){
+				alertUI('<fmt:message key="MSG.INP.0041"/>');
+				$("#lpg_dist").focus();
+				return;
+			}
+
+			if($("#lpg_cost").val() == ''){
+				alertUI('<fmt:message key="MSG.INP.0042"/>');
+				$("#lpg_cost").focus();
+				return;
+			}
+
+			var keyData = {
+					gas_dist	: $("#gas_dist").val(),
+					gas_cost	: $("#gas_cost").val(),
+					dsl_dist	: $("#dsl_dist").val(),
+					dsl_cost	: $("#dsl_cost").val(),
+					lpg_dist	: $("#lpg_dist").val(),
+					lpg_cost	: $("#lpg_cost").val(),
+					ipe_eeno	: sess_empno,
+					updr_eeno	: sess_empno,
+					corp_cd		: sess_corp_cd
+
+			};
+
+			confirmUI('<fmt:message key="MSG.CNF.0004"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramJson 	: util.jsonToString(keyData)
+
+							};
+							doCommonAjax("doSaveXfc05Info.do", paramData, "setBottomMsg(jsonData.sendResult.message, true);insertCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+		
+		function insertCallBack(rtnJSon){
+			if(rtnJSon.result == 'Y'){
+				$("#M_DOC_NO").val(rtnJSon.code);
+				doSearch('N');
+			}
+		}
+		
+		function pageStepHelpPopup(){
+			if(popup != null ){
+				popup.close();
+			}
+			
+			popup = popUpWindow3($("#help_url").val());
+		}
+		</script>

@@ -1,0 +1,269 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XST18";
+
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH", locale);
+	String strSav = JSPMessageSource.getMessage("BUTTON.SAVE", locale);
+	String strDel = JSPMessageSource.getMessage("BUTTON.DELETE", locale);
+	String strAdd = JSPMessageSource.getMessage("BUTTON.ADD", locale);
+	
+	String strBtn = "";
+	strBtn = strSch+"/search@"+strSav+"/save@"+strDel+"/delete@"+strAdd+"/addrow";
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Vendor Management</title>
+	</head>
+	<body>
+		<div id="wrap">
+	    	<form name="testForm" id="testForm">
+		    	<%@ include file="../include/hncis_header.gas"%>
+		        <div id="contents_wrap">
+		        	<%@ include file="../include/hncis_left.gas"%>
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,menuId
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+		                <div class="search_area">
+		                	<table>
+		                        <colgroup>
+		                        	<col style="width:50px;" />
+		                            <col style="width:auto;" />
+		                        </colgroup>
+		                        <tbody>
+		                            <tr>
+										<th>Job</th>
+										<td><select id="key_job" name="key_job" style="width:150px"></select></td>
+									</tr>
+		                        </tbody>
+		                    </table>
+		                </div>
+		                <div class="jq_tbl">
+			                <table id="htmlTable" class="scroll"></table>
+							<div id="htmlPager" class="scroll"></div>
+						</div>
+		                <%@ include file="../include/hncis_message.gas"%>
+		            </div>
+		            <div class="clear"></div>
+		        </div>
+	        </form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+	    </div>
+	</body>
+</html>
+<script type="text/javascript">
+var params;
+var fnMerge;
+var gridParam;
+var gridName = "htmlTable";
+var datarow  = {job:"", order_no:"", use_yn:"", note:"", old_job:"", old_order_no:""};
+
+function fnSetDocumentReady(){
+	initMenus();
+	getCommonCode("key_job:X3013:A;", "N", "searchComboCallBack()");		//목적
+}
+
+function searchComboCallBack(){
+	getCommonCode("job:X3013:Z;", "Y", "init();");
+}
+
+function init(){
+	var params = {
+		key_job		: 	$("#key_job").val()
+	};
+	
+	gridParam = {
+		viewEdit : [{
+			gridName     : gridName,
+			url          : "doSearchPurchaseOrderManagement.do",
+			colNames     : ['<fmt:message key="job"/>' 
+					          ,'<fmt:message key="code"/>' 
+					          ,'<fmt:message key="use_yn"/>'  
+					          ,'<fmt:message key="rem_sbc"/>'
+					          ,''
+					          ,''
+			                //"Job", "Code", "Use Y/N", "Note", "", ""
+			                ],
+			colModel     : [{name:"job",index:"job", formatter:"select", width:150, align:"center", editable:true, sortable:true, edittype:"select", fixed: true,
+			        	  	//Discipline
+							editoptions:{value:getComboValue('job'),
+								dataInit: function(elem) {
+									$(elem).width(150);
+								}}
+			                },
+			                {name:"order_no",		index:"order_no",	 sortable:false,	formatter:"string",	width:"200",	align:"left",	editable:true,	frozen:false},
+			            	{name:"use_yn",			index:"use_yn",		 sortable:false,	edittype:"select", formatter:"select",	width:"80", align:"center",	editable:true,	
+			            		editoptions:{value:"Y:Y;N:N"}
+			            	},
+			            	{name:"note",			index:"note",		 sortable:false,	formatter:"string",	width:"530",	align:"left",	editable:true,	frozen:false},
+			            	{name:"old_job",		index:"old_job",	 sortable:false,	formatter:"string",	width:"130",	align:"left",	editable:true,	frozen:false, hidden:true},
+			            	{name:"old_order_no",	index:"old_order_no",sortable:false,	formatter:"string",	width:"150",	align:"center",	editable:true,	frozen:false, hidden:true}
+			            	],
+			height       : "100%",
+			rownumbers   : true,
+			multiselect  : true,
+			cellEdit     : true,
+			fnMerge      : false,
+			pager		 : "htmlPager",
+			completeFc   : "addGridRow();initAfterMenus();",
+			paramJson    : params
+		}]
+	};
+	
+	commonJqGridInit(gridParam);
+	
+	jQuery("#"+gridName).jqGrid("navGrid","#htmlPager",{edit:false,add:false,del:false,search:false,refresh:false});
+}
+
+function retrieve(gubn){
+	switch(gubn){
+		case "search" :
+			doSearch();
+			break;
+		case "save" :
+			doInsert();
+			break;
+		case "delete" :
+			doDelete();
+			break;
+		case "addrow" :
+			fnAddRow();
+			break;
+	}
+}
+
+function fnAddRow(){
+	var gridRowId = $("#htmlTable").getDataIDs().length;
+	jQuery("#htmlTable").jqGrid("addRowData", gridRowId+1, datarow);
+}
+
+function doSearch(msgFlag){
+	var params = {
+		key_job		: 	$("#key_job").val()
+	};
+	
+	doCommonSearch("doSearchPurchaseOrderManagement.do", util.jsonToString(params), "loadCallBack();initAfterMenus();", gridName, msgFlag);
+}
+
+function loadCallBack(){
+	addGridRow();
+}
+
+function doInsert(){
+	var paramsI = [];	
+	var paramsU = [];
+	var selectRow = jQuery("#"+gridName).jqGrid("getGridParam", "selarrrow");
+	
+	if(selectRow.length == 0){
+		alertUI('<fmt:message key="MSG.SEL.0011"/>');
+		return;
+	}else{
+		for(var i = 0; i < selectRow.length; i++){
+			var rowId = selectRow[i];
+			if(rowId){
+				if(getColValue("job" , rowId, gridName) == ""){
+					alertUI("Please Select Job.");
+					return;
+				}else if(getColValue("order_no" , rowId, gridName) == ""){
+					alertUI("Please enter Code.");
+					return;
+				}
+				
+				if($.trim(getColValue("old_order_no" , rowId, gridName)) != ""){
+					list ={
+						job      		: getColValue("job"  , rowId, gridName),
+						order_no	   	: getColValue("order_no"  , rowId, gridName),
+						use_yn  		: getColValue("use_yn" , rowId, gridName),
+						note      		: getColValue("note", rowId, gridName),
+						old_job   		: getColValue("old_job", rowId, gridName),
+						old_order_no	: getColValue("old_order_no", rowId, gridName),
+						ipe_eeno    	: sess_empno,
+						updr_eeno   	: sess_empno
+					};
+					paramsU.push(list);
+				}else{
+					list ={
+						job      		: getColValue("job"  , rowId, gridName),
+						order_no	   	: getColValue("order_no"  , rowId, gridName),
+						use_yn  		: getColValue("use_yn" , rowId, gridName),
+						note      		: getColValue("note", rowId, gridName),
+						old_job   		: getColValue("old_job", rowId, gridName),
+						old_order_no	: getColValue("old_order_no", rowId, gridName),
+						ipe_eeno    	: sess_empno,
+						updr_eeno   	: sess_empno
+					};
+					paramsI.push(list);
+				}
+			}
+		}
+	}
+	
+	confirmUI('<fmt:message key="MSG.CNF.0004"/>');
+	$("#pop_yes").click(function(){
+		$.unblockUI({
+			onUnblock: function(){
+				var paramData = {
+						paramsI : util.jsonToList(paramsI),
+						paramsU	: util.jsonToList(paramsU)
+					};
+				doCommonAjax("doInsertPurchaseOrderManagement.do", paramData, "submitCallBack('save', jsonData.sendResult);");
+			}
+		});
+	});
+}
+
+function doDelete(){
+	var params = [];
+	var selectRow = jQuery("#"+gridName).jqGrid("getGridParam", "selarrrow");
+	
+	if(selectRow.length == 0){
+		alertUI('<fmt:message key="MSG.SEL.0011"/>');
+		return;
+	}else{
+		for(var i = 0; i < selectRow.length; i++){
+			var rowId = selectRow[i];
+			if(rowId){
+				if($.trim(getColValue("old_order_no" , rowId, gridName)) != ""){
+					list ={
+						job      	: getColValue("old_job"  , rowId, gridName),
+						order_no	: getColValue("old_order_no" , rowId, gridName)
+					};
+					params.push(list);
+				}
+			}
+		}
+	}
+	
+	if(params.length == 0){
+		alertUI('<fmt:message key="MSG.SEL.0011"/>');
+		return;
+	}
+	
+	confirmUI('<fmt:message key="MSG.CNF.0002"/>');
+	$("#pop_yes").click(function(){
+		$.unblockUI({
+			onUnblock: function(){
+				var paramData = {
+						paramJson : util.jsonToList(params)
+					};
+					doCommonAjax("doDeletePurchaseOrderManagement.do", paramData, "submitCallBack('delete', jsonData.sendResult);");
+			}
+		});
+	});
+}
+
+function submitCallBack(id, result){
+	setBottomMsg(result.message, true);
+	doSearch("N");
+}
+
+</script>

@@ -1,0 +1,152 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="com.hncis.common.application.SessionInfo" %>
+<%@ page import="com.hncis.common.application.CommonGasc" %>
+<%@ page import="com.hncis.common.exception.impl.SessionException" %>
+<%@ page import="com.hncis.common.util.*" %>
+<%@page import="java.util.Vector"%>
+<%
+	String ctxPath1 = request.getContextPath();
+	CommonGasc commonGasc = new CommonGasc();
+	Vector vt = new Vector();
+	String errMsg1 = "";
+	String errMsg2 = "";
+	
+	try {
+		vt = CommonGasc.getLeftMenu("M",request);
+	}catch(Exception e){
+		System.out.println("DB Connection Fail...main.gas");
+		errMsg1 = "DB Connection Fail !!! ";
+		errMsg2 = e.getMessage();
+	}
+	
+	String strArr[] = new String[6];
+	String mstu_gubb = SessionInfo.getSess_mstu_gubb(request);
+%>
+<div id="navi">
+	<h1>
+		<p id="logo"><a href="javascript:pageLocationHref('<%=ctxPath1%>', '/main.gas');"><img id="logoImg"></a></p>
+		<script>
+			var url = window.location.href.indexOf("main.gas");
+			if(url != -1){
+				document.getElementById("logoImg").src = "<%=ctxPath1%>/images/main/main_logo.jpg";
+			}else{
+				document.getElementById("logoImg").src = "<%=ctxPath1%>/images/common/logo.jpg";
+			}
+			
+			function pageLocationHref(pageNm, param1){
+				var f = document.tokenForm;
+				f.action = pageNm+param1;
+				f.submit();
+			}
+		</script>
+	</h1>
+	<div>
+		<ul id="gnb" class="collapsible expandfirst">
+			<li><a href="#"><img src="<%=ctxPath1%>/images/common/left_menu01.jpg"></a>
+				<ul id="EM">
+				<% for(int i=0; i<vt.size(); i++){
+						strArr = (String[])vt.elementAt(i);
+						if(strArr[0].equals("M1")){
+							if(strArr[1].equals("001") && !strArr[2].equals("000")){
+				%>
+								<li><a href="javascript:pageLocationHref('<%=ctxPath1%>','<%=strArr[5]%>');"><%=strArr[4]%></a></li>
+				<%
+							}
+						}
+					}
+				%>
+				</ul>
+			</li>
+			<li><a href="#"><img src="<%=ctxPath1%>/images/common/left_menu02.jpg"></a>
+				<ul id="BT">
+				<% for(int i=0; i<vt.size(); i++){
+						strArr = (String[])vt.elementAt(i);
+						if(strArr[0].equals("M1")){
+							if(strArr[1].equals("002") && !strArr[2].equals("000")){
+				%>
+								<li><a href="javascript:pageLocationHref('<%=ctxPath1%>','<%=strArr[5]%>');"><%=strArr[4]%></a></li>
+				<%
+							}
+						}
+					}
+				%>
+				</ul>
+			</li>
+			<li><a href="#"><img src="<%=ctxPath1%>/images/common/left_menu03.jpg"></a>
+				<ul id="BV">
+				<% for(int i=0; i<vt.size(); i++){
+						strArr = (String[])vt.elementAt(i);
+						if(strArr[0].equals("M1")){
+							if(strArr[1].equals("003") && !strArr[2].equals("000")){
+				%>
+								<li><a href="javascript:pageLocationHref('<%=ctxPath1%>','<%=strArr[5]%>');"><%=strArr[4]%></a></li>
+				<%
+							}
+						}
+					}
+				%>
+				</ul>
+			</li>
+			<li><a href="#"><img src="<%=ctxPath1%>/images/common/left_menu04.jpg"></a>
+				<ul id="PS">
+				<% for(int i=0; i<vt.size(); i++){
+						strArr = (String[])vt.elementAt(i);
+						if(strArr[0].equals("M1")){
+							if(strArr[1].equals("004") && !strArr[2].equals("000")){
+				%>
+								<li><a href="javascript:pageLocationHref('<%=ctxPath1%>','<%=strArr[5]%>');"><%=strArr[4]%></a></li>
+				<%
+							}
+						}
+					}
+				%>
+				</ul>
+			</li>
+			<li><a href="#"><img src="<%=ctxPath1%>/images/common/left_menu05.jpg"></a>  
+				<ul id="DB">
+				<% for(int i=0; i<vt.size(); i++){
+						strArr = (String[])vt.elementAt(i);
+						if(strArr[0].equals("M1")){
+							if(strArr[1].equals("005") && !strArr[2].equals("000")){
+				%>
+								<li><a href="javascript:pageLocationHref('<%=ctxPath1%>','<%=strArr[5]%>');"><%=strArr[4]%></a></li>
+				<%
+							}
+						}
+					}
+				%>
+				</ul>
+			</li>
+			<li><a href="#"><img src="<%=ctxPath1%>/images/common/left_menu06.jpg"></a>  
+				<ul id="RM">
+				<% for(int i=0; i<vt.size(); i++){
+						strArr = (String[])vt.elementAt(i);
+						if(strArr[0].equals("M1")){
+							if(strArr[1].equals("006") && !strArr[2].equals("000")){
+				%>
+								<li><a href="javascript:pageLocationHref('<%=ctxPath1%>','<%=strArr[5]%>');"><%=strArr[4]%></a></li>
+				<%
+							}
+						}
+					}
+				%>
+				</ul>
+			</li>
+			<li><a href="#"><img src="<%=ctxPath1%>/images/common/left_menu05.jpg" alt="generalService"></a>
+				<ul id="GS">
+				<% for(int i=0; i<vt.size(); i++){
+						strArr = (String[])vt.elementAt(i);
+						if(strArr[0].equals("M1")){
+							if(strArr[1].equals("008") && !strArr[2].equals("000")){
+				%>
+								<li><a href="javascript:pageLocationHref('<%=ctxPath1%>','<%=strArr[5]%>');"><%=strArr[4]%></a></li>
+				<%
+							}
+						}
+					}
+				%>
+				</ul>
+			</li>
+		</ul>
+	</div>
+</div>

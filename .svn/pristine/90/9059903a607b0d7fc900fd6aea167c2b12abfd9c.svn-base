@@ -1,0 +1,433 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId	   = "XSM11";
+	String getDate     = CurrentDateTime.getDate();
+	String getFromDate = CurrentDateTime.getDashDate(getDate, 0);
+	String getToDate   = CurrentDateTime.getDashDate(getDate, 0);
+	String isAdminAuth = sess_mstu_gubb.equals("M") ? "true" : "false";
+%>
+
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<script type="text/javascript">
+			var isAdmAuth = "<%=isAdminAuth%>";
+		</script>
+		<script type="text/javascript" src='./js/xsm_reg.js'></script>
+		<script type="text/javascript" src='./js/xsm_util.js'></script>
+		<script type="text/javascript" src='<%=ctxPath%>/script/js/navigation.js'></script>
+		<link rel='stylesheet' href='<%=ctxPath%>/script/css/conference.css' type='text/css'>
+		<style type="text/css">
+		.w35{min-width: 35px !important; max-width: 35px !important; width: 35px !important;}
+		.w150{min-width: 150px !important; max-width: 150px !important; width: 150px !important;}
+		.w300{min-width: 300px !important; max-width: 300px !important; width: 300px !important;}
+		</style>
+	</head>
+	<body>
+		<div id="wrap">
+			<form name="frm" method="post">
+				<input type="hidden" id="gubun" name="gubun">
+				<input type="hidden" id="codeKnd" name="codeKnd">
+				<input type="hidden" id="jsonData" name="jsonData">
+				<input type="hidden" id="nSource" name="nSource">
+				<input type="hidden" id="nTarget" name="nTarget">
+				<input type="hidden" id="pagingIndex" name="pagingIndex" value="0">
+				<input type="hidden" id="menuId" name="menuId" value="<%=menuId%>">
+								
+				<%@ include file="../include/hncis_header.gas"%>
+				<div id="contents_wrap">
+	        		<%@ include file="../include/hncis_left.gas"%>
+	            	<div id="contents">
+						<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							, menuId
+							, "조회/search@엑셀/excel"
+							, null
+							, null
+							, null
+							, request)
+						%>
+						<div class="search_area">
+							<table>
+								<colgroup>
+									<col width="60px">
+									<col width="160px">
+									<col width="60px">
+									<col width="160px">
+									<col width="60px">
+									<col width="120px">
+									<col width="60px">
+									<col width="*">
+								</colgroup>
+								<tr>
+									<td align="left"><fmt:message key="svc_ar"/></td>
+									<td align="left">
+										<select id="KEY_REGN_CD" name="KEY_REGN_CD" style="width:140px">
+											<option value="">전 체</option>
+										</select>
+									</td>
+									<td align="left"><fmt:message key="bld"/></td>
+									<td align="left">
+										<select id="KEY_BD_CD" name="KEY_BD_CD" style="width:140px" disabled>
+											<option value="">전 체</option>
+										</select>
+									</td>
+									<td align="left"><fmt:message key="floor"/></td>
+									<td align="left">
+										<select id="KEY_CORM_FL_CD" name="KEY_CORM_FL_CD" style="width:90px" disabled>
+											<option value="">전 체</option>
+										</select>
+									</td>
+									<td align="left"><fmt:message key="mt_rm"/></td>
+									<td align="left">
+										<select id="KEY_CORM_CD" name="KEY_CORM_CD" style="width:140px" disabled>
+											<option value="">전 체</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td align="left"><fmt:message key="search_dt"/></td>
+									<td align="left" colspan="7">
+										<input type="text" id="KEY_FROM_YMD" name="KEY_FROM_YMD" style="width:80px;" class="mr5" value="<%=getFromDate%>">
+										<fmt:message key="from"/>
+										<input type="text" id="KEY_TO_YMD" name="KEY_TO_YMD" style="width:80px" class="mr5" value="<%=getToDate%>">
+										<fmt:message key="to"/>
+									</td>
+								</tr>
+							</table> 
+						</div>
+						<div style="margin-bottom:30px; padding-top: 10px; min-height: 450px; max-width: 1800px">
+				            <div class="">
+				                 <div class="col_table" style="padding-bottom:10px;overflow-x: scroll;overflow-y: hidden; width: 100%">
+				                 	<table style="width: 450px !important;">
+				                        <thead id="listThead">
+					                        <tr>
+					                        	<th rowspan="2" class="w300"><fmt:message key="mt_rm_dt"/></th>
+				                        		<th colspan="5" class="w300"><fmt:message key="tot"/></th>
+				                        	</tr>
+				                        	<tr>
+					                        	<th class="w35"><fmt:message key="rsvt_cnt"/></th>     
+												<th class="w35"><fmt:message key="use_tm"/></th>    
+												<th class="w35"><fmt:message key="empt_time"/></th>     
+												<th class="w35"><fmt:message key="use_rate"/></th>      
+												<th class="w35"><fmt:message key="appr_cncl_cnt"/></th>
+					                        </tr>
+				                        </thead>
+				                        <tbody id="listTbody">
+				                        	<tr>
+				                        		<td colspan="6"><fmt:message key="COMMENT.SEARCH.NO_DATA"/></td>
+				                        	</tr>
+				                        </tbody>
+				                    </table>
+				                 </div>
+				                 <div class="page" style="width:970px">
+				                    <ul id="navigation" class="navigation"></ul>
+				                 </div>
+				             </div>
+						</div>
+						<%@ include file="../include/hncis_message.gas"%>
+					</div>
+				</div>
+			</form> 
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+			<img id="loading_progress_img" src="../../images/common/progress_bar.gif" width="362" height="131" style="display:none" />
+		</div>
+	</body>
+</html>
+		<script type="text/javascript">
+		var curPage = 0;
+		var initYn = "Y";
+		var columnCnt = 7;
+
+		function fnSetDocumentReady(){
+			initMenus();
+			$('#SM').slideDown('fast');
+			
+			block_open();
+			//공통 콤보 조회
+			var sCode  = "KEY_REGN_CD:SM001:Z;";
+			var sCallBack = "init()";
+			var sUrl = "doSearchComboByXsm.do";
+			getCommonCode(sCode, "N", sCallBack, sUrl);
+		}
+
+		function init(){
+			$("#KEY_REGN_CD").val(sess_plac_work);
+			doBdCdComboInfo();
+		}
+
+		$(function(){
+			//근무지역 변경 이벤트
+			$("#KEY_REGN_CD").change(function(){
+				$("#KEY_BD_CD option:gt(0)").remove();
+				$("#KEY_CORM_FL_CD option:gt(0)").remove();
+				$("#KEY_CORM_CD option:gt(0)").remove();
+				$("#KEY_BD_CD").attr("disabled", true);
+				$("#KEY_CORM_FL_CD").attr("disabled", true);
+				$("#KEY_CORM_CD").attr("disabled", true);
+				doBdCdComboInfo();
+			});
+
+			//건물 변경 이벤트
+			$("#KEY_BD_CD").change(function(){
+				$("#KEY_CORM_FL_CD option:gt(0)").remove();
+				$("#KEY_CORM_CD option:gt(0)").remove();
+				$("#KEY_CORM_CD").attr("disabled", true);
+				if($(this).val() != ""){
+					doCormFlComboInfo();
+				}
+			});
+			
+			//층수 변경 이벤트
+			$("#KEY_CORM_FL_CD").change(function(){
+				$("#KEY_CORM_CD option:gt(0)").remove();
+				$("#KEY_CORM_CD").attr("disabled", true);
+				if($(this).val() != ""){
+					doCormComboInfo();
+				}
+			});
+			
+		    //리스트 초기화
+			$("#listTbody").html(init_grid(columnCnt, 0, 15, "Y"));
+			
+			$("#KEY_FROM_YMD").datepicker({
+				dateFormat: "yy/mm/dd",
+				showOn: "button",
+				buttonImage: "../../images/sub/ico_datepicker.gif",
+				buttonImageOnly: true
+			});
+			
+			$("#KEY_TO_YMD").datepicker({
+				dateFormat: "yy/mm/dd",
+				showOn: "button",
+				buttonImage: "../../images/sub/ico_datepicker.gif",
+				buttonImageOnly: true
+			});
+		});
+
+		/**
+		 * 건물 콤보 조회
+		 */
+		function doBdCdComboInfo(){
+			var paramData = {
+				regn_cd : $("#KEY_REGN_CD").val(),
+				code1 : "KEY_BD_CD",
+				code2 : "A"		
+			};
+			var sCallBack = 'doBdCdComboInfoCallBack();';
+			var sUrl = "selectBuildingComboByXsm05.do";
+			getCommonCode(util.jsonToString(paramData), "N", sCallBack, sUrl);
+		}
+
+		function doBdCdComboInfoCallBack(){
+			$("#KEY_BD_CD").attr("disabled", false);
+			
+			if(initYn == "Y"){
+				initYn = "N";
+				block_close();
+			}
+		}
+
+		/**
+		 * 층수 콤보 조회
+		 */
+		function doCormFlComboInfo(){
+			var paramData = {
+				regn_cd : $("#KEY_REGN_CD").val(),
+				bd_cd : $("#KEY_BD_CD").val(),
+				code1 : "KEY_CORM_FL_CD",
+				code2 : "A",		
+				code3 : "FL"		
+			};
+			var sCallBack = 'doCormFlComboInfoCallBack();';
+			var sUrl = "doSearchConferenceComboByXsm06.do";
+			getCommonCode(util.jsonToString(paramData), "N", sCallBack, sUrl);
+		}
+
+		function doCormFlComboInfoCallBack(){
+			$("#KEY_CORM_FL_CD").attr("disabled", false);
+		}
+
+		/**
+		 * 회의실 콤보 조회
+		 */
+		function doCormComboInfo(){
+			var paramData = {
+				regn_cd : $("#KEY_REGN_CD").val(),
+				bd_cd : $("#KEY_BD_CD").val(),
+				corm_fl_cd : $("#KEY_CORM_FL_CD").val(),
+				code1 : "KEY_CORM_CD",
+				code2 : "A",		
+				code3 : "CD"		
+			};
+			var sCallBack = 'doCormComboInfoCallBack();';
+			var sUrl = "doSearchConferenceComboByXsm06.do";
+			getCommonCode(util.jsonToString(paramData), "N", sCallBack, sUrl);
+		}
+
+		function doCormComboInfoCallBack(){
+			$("#KEY_CORM_CD").attr("disabled", false);
+		}
+
+		/**
+		 * 업무 호출
+		 */
+		function retrieve(btnFlag, pIdx){
+			$("#gubun").val(btnFlag);
+			switch(btnFlag){
+				case "search" :
+					 block_open();
+		             curPage = typeof(pIdx) == "undefined" ? "1" : pIdx;
+					 doSearch();
+					 break;
+				case "excel" :
+					 doExcel();
+					 break;
+			}
+		}
+
+		function doSearch(reFlag){
+		    if(typeof(reFlag) == "undefined"){
+		        reFlag = "N";
+		    }
+		    var fromYmd = selectNum($("#KEY_FROM_YMD").val());
+		    var toYmd = selectNum($("#KEY_TO_YMD").val());
+		    if(fromYmd > toYmd){
+		    	alertUI('<fmt:message key="MSG.VAL.0033"/>');
+		    	$("#KEY_FROM_YMD").select();
+		    	return;
+		    }
+
+		    var paramData = {
+		        regn_cd : $("#KEY_REGN_CD").val(),
+		        bd_cd : $("#KEY_BD_CD").val(),
+		        corm_fl_cd : $("#KEY_CORM_FL_CD").val(),
+		        corm_cd : $("#KEY_CORM_CD").val(),
+		        cnf_from_ymd : fromYmd,
+		        cnf_to_ymd : toYmd,
+		        cur_page : curPage
+		    };
+		    var form_data = {
+		        paramJson : util.jsonToString(paramData)
+		    };
+		    var params = {
+		        url : "doSearchListByXsm11.do",
+		        data : form_data,
+		        callback : "doSearchCallBack(data.sendResult, '"+reFlag+"')"
+		    };
+		    Con.ajax(params);
+		}
+
+		//리스트
+		function doSearchCallBack(result, reFlag){
+			block_close();
+		    var headerHtml = "";
+		    var bodyHtml = "";
+		    var dataArr = result.dataArr;
+		    var dayList = result.dayList;
+		    
+		    var headerTemplet = '';
+		    headerTemplet += '<th class="w35">예약<br/>건수</th>';
+		    headerTemplet += '<th class="w35">사용<br/>시간</th>';
+		    headerTemplet += '<th class="w35">공실<br/>시간</th>';
+		    headerTemplet += '<th class="w35">사용<br/>율</th>';
+		    headerTemplet += '<th class="w35">자동<br/>취소<br/>건수</th>';
+
+		    // 헤더만들기
+		    var tr1Html = '<th colspan="5" class="w300">총계</th>';
+		    var tr2Html = headerTemplet;
+		    $.each(dayList, function(idx, vo){
+		    	tr1Html += '<th colspan="5" class="w300">'+Number(vo.substring(4,6))+'월 '+Number(vo.substring(6,8))+'일'+'</th>';
+		    	tr2Html += headerTemplet;
+		    });
+
+		    headerHtml += '<tr>';
+		    headerHtml += '<th rowspan="2" class="w300">회의실/날짜</th>';
+		    headerHtml += tr1Html;
+		    headerHtml += '</tr>';
+		    headerHtml += '<tr>';
+		    headerHtml += tr2Html;
+		    headerHtml += '</tr>';
+
+		    $("#listThead").html(headerHtml);
+
+		    for (var k = 0; k < dataArr.length; k++) {
+		    	bodyHtml += '<tr>';
+		    	for (var i=0; i<dayList.length+1; i++) {
+		    		if(i == 0){
+		    			if(dataArr[k][i] == "합계"){
+		        			bodyHtml += '<td class="w300 align_c">&nbsp;' + dataArr[k][i] + '</td>';
+		        		}else{
+		        			bodyHtml += '<td class="w300 align_l">&nbsp;' + dataArr[k][i] + '</td>';
+		        		}
+		    		}
+
+		    		var val1 = dataArr[k][(i*5)+1] == null ? '' : dataArr[k][(i*5)+1] == '' ? '' :new Number(dataArr[k][(i*5)+1]);
+		    		var val2 = dataArr[k][(i*5)+2] == null ? '' : dataArr[k][(i*5)+2] == '' ? '' :new Number(dataArr[k][(i*5)+2]);
+		    		var val3 = dataArr[k][(i*5)+3] == null ? '' : dataArr[k][(i*5)+3] == '' ? '' :new Number(dataArr[k][(i*5)+3]);
+		    		var val4 = dataArr[k][(i*5)+4] == null ? '' : dataArr[k][(i*5)+4] == '' ? '' :new Number(dataArr[k][(i*5)+4]) + '%';
+		    		var val5 = dataArr[k][(i*5)+5] == null ? '' : dataArr[k][(i*5)+5] == '' ? '' :new Number(dataArr[k][(i*5)+5]);
+
+		    		bodyHtml += '<td class="w35">'+ val1 + '</td>';
+		    		bodyHtml += '<td class="w35">'+ val2 + '</td>';
+		    		bodyHtml += '<td class="w35">'+ val3 + '</td>';
+		    		bodyHtml += '<td class="w35">'+ val4 + '</td>';
+		    		bodyHtml += '<td class="w35">'+ val5 + '</td>';
+
+		    	}
+		    	bodyHtml += '</tr>';
+		    }
+
+		    $("#listTbody").html(bodyHtml);
+		}
+
+		//엑셀다운로드
+		function doExcel(){
+		    var fromYmd = selectNum($("#KEY_FROM_YMD").val());
+		    var toYmd = selectNum($("#KEY_TO_YMD").val());
+
+		    if(fromYmd == ""){
+		    	alert('<fmt:message key="MSG.ROW.0074"/>');
+		    	$("#KEY_FROM_TIME").focus();
+		    	return;
+		    }else if(toYmd == ""){
+		    	alert('<fmt:message key="MSG.ROW.0075"/>');
+		    	$("#KEY_TO_TIME").focus();
+		    	return;
+		    }else if(fromYmd > toYmd){
+		    	alert('<fmt:message key="MSG.ROW.0097"/>');
+		    	$("#KEY_TO_TIME").focus();
+		    	return;
+		    }
+		    
+		    if(getDiffDay(fromYmd, toYmd) > 30){
+		    	alert('<fmt:message key="MSG.VAL.0042"/>');
+		    	$("#KEY_TO_TIME").focus();
+		    	return;
+		    }
+
+		    var paramData = {
+		        regn_cd : $("#KEY_REGN_CD").val(),
+		        bd_cd : $("#KEY_BD_CD").val(),
+		        corm_fl_cd : $("#KEY_CORM_FL_CD").val(),
+		        corm_cd : $("#KEY_CORM_CD").val(),
+		        cnf_from_ymd : fromYmd,
+		        cnf_to_ymd : toYmd,
+		        cur_page : curPage
+		    };
+		    
+		    var form_data = {
+		        paramJson : util.jsonToString(paramData)
+		    };
+
+		    var form = $("<form/>").attr("id", "frmExcelDown");
+			form.attr("method", "POST");
+			form.attr("action", "doSearchExcelListXsm11.do");
+			form.append($("<input>", {type:"hidden", name:"paramJson", value:util.jsonToString(paramData)}));
+			$("body").append(form);
+			form.submit();
+			form.remove();
+		}
+		</script>

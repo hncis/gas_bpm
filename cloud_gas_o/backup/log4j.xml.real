@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="euc-kr" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<!-- Error RollingFileAppender -->
+	<appender name="FILE_LOG_ERROR" class="org.apache.log4j.RollingFileAppender">
+        <param name="File"
+            value="D:/Tomcat/logs/error.log" />
+		<param name="Append" value="true" />
+		<param name="MaxFileSize" value="50MB" />
+		<param name="MaxBackupIndex" value="5" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d] %5p [%t] %C{1}.%M():%L - %m%n" />
+		</layout>
+	</appender>
+
+	<!-- APP DailyFileAppender -->
+	<appender name="FILE_LOG_APP" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File"
+            value="D:/Tomcat/logs/hncis_app.log" />
+		<param name="Append" value="true" />
+		<param name="DatePattern" value="'.'yyyy-MM-dd" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{dd/MM/yyyy HH:mm:ss}] [%c{1}] [%L] [%p] %m %n" />
+		</layout>
+	</appender>
+
+
+	<!-- DAO RollingFileAppender -->
+	<appender name="FILE_LOG_DAO" class="org.apache.log4j.RollingFileAppender">
+        <param name="File"
+            value="D:/Tomcat/logs/hncis_dao.log" />
+		<param name="Append" value="true" />
+		<param name="MaxFileSize" value="50MB" />
+		<param name="MaxBackupIndex" value="5" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%5p] %d - (%L) | %m%n" />
+		</layout>
+	</appender>
+    
+	<!-- TRACE > DEBUG > INFO > WARN > ERROR > FATAL -->
+	<!-- Console Appender -->
+	<appender name="STDOUT" class="org.apache.log4j.ConsoleAppender">
+		<param name="File"
+            value="D:/Tomcat/logs/hncis_console.log" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{HH:mm:ss}] %5p - %m%n" />
+		</layout>
+	</appender>
+	
+    <category name="java.lang.Exception" additivity="false">
+        <priority value="INFO" />
+        <appender-ref ref="FILE_LOG_APP" />
+    </category>
+	
+	<category name="java.sql.PreparedStatement" additivity="false">
+		<priority value="DEBUG" />
+      	<appender-ref ref="FILE_LOG_APP" />
+	</category>
+	<category name="java.sql.ResultSet" additivity="false">
+		<priority value="INFO" />
+      	<appender-ref ref="FILE_LOG_APP" />
+	</category>
+
+</log4j:configuration>

@@ -1,0 +1,528 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="postOffice">
+	
+	<insert id="insertPoToRequest" parameterClass="bgabGascpo01Dto">
+		/*insertPoToRequest*/
+    	 MERGE INTO BGAB_GASCPO01 A
+		USING (SELECT #doc_no# AS DOC_NO) B
+		ON (A.DOC_NO = B.DOC_NO)
+		WHEN MATCHED THEN
+		UPDATE SET
+			PO_TRK_NO      = #po_trk_no#   
+			,PO_SERV_DESC  = #po_serv_desc#
+			,PO_NUMB_OBJ   = #po_numb_obj# 
+			,PO_ADDT_SERV  = #po_addt_serv#
+			,PO_CONT_DECL  = #po_cont_decl#
+			,PO_TYPE       = #po_type#     
+			,PO_OBJ_SIZE   = #po_obj_size# 
+			,PO_PB_LEN     = #po_pb_len#   
+			,PO_PB_WDTH    = #po_pb_wdth#  
+			,PO_PB_HGHT    = #po_pb_hght#  
+			,PO_RC_DMTR    = #po_rc_dmtr#  
+			,PO_RC_LEN     = #po_rc_len#   
+			,PO_COMP_NM    = #po_comp_nm#  
+			,PO_EMAIL      = #po_email#    
+			,PO_PHONE      = #po_phone#    
+			,PO_ADDR       = #po_addr#     
+			,PO_NUMB       = #po_numb#     
+			,PO_CMPLT      = #po_cmplt#    
+			,PO_NGHB       = #po_nghb#     
+			,PO_CITY       = #po_city#     
+			,PO_STATE      = #po_state#    
+			,PO_ZIP_CD     = #po_zip_cd#   
+			,PO_OBJ_DESC   = #po_obj_desc# 
+			,PO_INVC       = #po_invc#     
+			,PO_DRVR_INDC  = #po_drvr_indc#
+			,PO_AIT        = #po_ait#      
+			,PO_PRD_INDC   = #po_prd_indc# 
+			,REMARK        = #remark#
+			,UPDR_EENO     = #updr_eeno# 
+			,MDFY_YMD 	   = CONVERT(NVARCHAR, getdate() ,112)
+		WHEN NOT MATCHED THEN
+		INSERT (
+			DOC_NO
+			,PO_TRK_NO
+			,PO_SERV_DESC
+			,PO_NUMB_OBJ
+			,PO_ADDT_SERV
+			,PO_CONT_DECL
+			,PO_TYPE
+			,PO_OBJ_SIZE
+			,PO_PB_LEN
+			,PO_PB_WDTH
+			,PO_PB_HGHT
+			,PO_RC_DMTR
+			,PO_RC_LEN
+			,PO_COMP_NM
+			,PO_EMAIL
+			,PO_PHONE
+			,PO_ADDR
+			,PO_NUMB
+			,PO_CMPLT
+			,PO_NGHB
+			,PO_CITY
+			,PO_STATE
+			,PO_ZIP_CD
+			,PO_OBJ_DESC
+			,PO_INVC
+			,PO_DRVR_INDC
+			,PO_AIT
+			,PO_PRD_INDC
+			,PGS_ST_CD
+			,INP_YMD
+			,IPE_EENO
+			,MDFY_YMD
+			,UPDR_EENO
+			,PTT_YMD
+			,REQ_EENO
+			,REMARK
+		) VALUES (
+			#doc_no#		
+			,#po_trk_no#   
+			,#po_serv_desc#
+			,#po_numb_obj# 
+			,#po_addt_serv#
+			,#po_cont_decl#
+			,#po_type#     
+			,#po_obj_size# 
+			,#po_pb_len#   
+			,#po_pb_wdth#  
+			,#po_pb_hght#  
+			,#po_rc_dmtr#  
+			,#po_rc_len#   
+			,#po_comp_nm#  
+			,#po_email#    
+			,#po_phone#    
+			,#po_addr#     
+			,#po_numb#     
+			,#po_cmplt#    
+			,#po_nghb#     
+			,#po_city#     
+			,#po_state#    
+			,#po_zip_cd#   
+			,#po_obj_desc# 
+			,#po_invc#     
+			,#po_drvr_indc#
+			,#po_ait#      
+			,#po_prd_indc# 			
+			,#pgs_st_cd#
+			,CONVERT(NVARCHAR, getdate() ,112)    
+			,#ipe_eeno# 
+			,CONVERT(NVARCHAR, getdate() ,112)   
+			,#updr_eeno#
+			,CONVERT(NVARCHAR, getdate() ,112)
+			,#ipe_eeno# 
+			,#remark#
+		);
+	</insert>
+	
+	<select id="selectInfoPoToRequest" parameterClass="bgabGascpo01Dto" resultClass="bgabGascpo01Dto">
+		/*selectInfoPoToRequest*/
+		SELECT	DOC_NO
+				,PO_TRK_NO
+				,PO_SERV_DESC
+				,PO_NUMB_OBJ
+				,PO_ADDT_SERV
+				,PO_CONT_DECL
+				,PO_TYPE
+				,PO_OBJ_SIZE
+				,PO_PB_LEN
+				,PO_PB_WDTH
+				,PO_PB_HGHT
+				,PO_RC_DMTR
+				,PO_RC_LEN
+				,PO_COMP_NM
+				,PO_EMAIL
+				,PO_PHONE
+				,PO_ADDR
+				,PO_NUMB
+				,PO_CMPLT
+				,PO_NGHB
+				,PO_CITY
+				,PO_STATE
+				,PO_ZIP_CD
+				,PO_OBJ_DESC
+				,PO_INVC
+				,PO_DRVR_INDC
+				,PO_AIT
+				,PO_PRD_INDC
+				,PGS_ST_CD
+				,INP_YMD
+				,IPE_EENO
+				,MDFY_YMD
+				,UPDR_EENO
+				,DBO.CONVERT_DATE(PO01.PTT_YMD) AS PTT_YMD
+				,PO01.REQ_EENO
+				,Z002.XUSR_NAME AS REQ_EENO_NM
+				,Z002.XUSR_DEPT_NAME AS REQ_DEPT_NM
+				,Z002.XUSR_STEP_NAME AS REQ_STEP_NM
+				,Z002.XUSR_TEL_NO  AS REQ_TEL_NO
+				,Z005.XCOD_HNAME AS PGS_ST_NM
+				,SNB_RSON_SBC
+				,REMARK
+		FROM 	BGAB_GASCPO01 PO01
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON	PO01.REQ_EENO = Z002.XUSR_EMPNO
+		LEFT OUTER JOIN 
+		(
+			SELECT * FROM BGAB_GASCZ005$corp_cd$ WHERE XCOD_KND='PO04'
+		) Z005
+		ON PO01.PGS_ST_CD = Z005.XCOD_CODE
+		WHERE	DOC_NO = #doc_no#
+	</select>
+	
+	<update id="updatePoToRequestForRequest" parameterClass="bgabGascpo01Dto">
+		/*updatePoToRequestForRequest*/
+		UPDATE	BGAB_GASCPO01
+		SET		PGS_ST_CD = 'Z'
+		WHERE	1 = 1
+		AND		DOC_NO = #doc_no#
+	</update>
+	<update id="updatePoToRequestForRequestCancel" parameterClass="bgabGascpo01Dto">
+		/*updatePoToRequestForRequest*/
+		UPDATE	BGAB_GASCPO01
+		SET		PGS_ST_CD = '0'
+		WHERE	1 = 1
+		AND		DOC_NO = #doc_no#
+	</update>
+	<update id="updatePoToRequestForConfirm" parameterClass="bgabGascpo01Dto">
+		/*updatePoToRequestForRequest*/
+		UPDATE	BGAB_GASCPO01
+		SET		PGS_ST_CD = '3',
+				PO_TRK_NO = #po_trk_no#
+		WHERE	1 = 1
+		AND		DOC_NO = #doc_no#
+	</update>
+	<update id="updatePoToRequestForConfirmCancel" parameterClass="bgabGascpo01Dto">
+		/*updatePoToRequestForRequest*/
+		UPDATE	BGAB_GASCPO01
+		SET		PGS_ST_CD = '0'
+		WHERE	1 = 1
+		AND		DOC_NO = #doc_no#
+	</update>
+	<update id="deletePoToRequest" parameterClass="bgabGascpo01Dto">
+		/*deletePoToRequest*/
+		DELETE	BGAB_GASCPO01
+		WHERE	DOC_NO = #doc_no#
+	</update>
+	
+	<select id="selectCountPoToList" parameterClass="bgabGascpo01Dto" resultClass="java.lang.String">
+		/*selectCountPoToList*/
+		SELECT COUNT(*) TOT_CNT
+		FROM	BGAB_GASCPO01 PO01 
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON PO01.REQ_EENO = Z002.XUSR_EMPNO
+		LEFT OUTER JOIN(
+			SELECT XCOD_CODE, XCOD_HNAME
+			FROM BGAB_GASCZ005$corp_cd$
+			WHERE XCOD_KND = 'PO04') Z005
+		ON Z005.XCOD_CODE = PO01.PGS_ST_CD
+		WHERE	1 = 1
+		<isNotEmpty property="req_eeno_nm" prepend="and">
+			Z002.XUSR_NAME like '%' + #req_eeno_nm# + '%'
+		</isNotEmpty>
+		<isNotEmpty property="req_eeno" prepend="and">
+			PO01.REQ_EENO = #req_eeno#
+		</isNotEmpty>
+		<isNotEmpty property="pgs_st_cd" prepend="and">
+			PO01.PGS_ST_CD = #pgs_st_cd#
+		</isNotEmpty>
+		<isNotEmpty property="po_serv_desc" prepend="and">
+			PO01.PO_SERV_DESC = #po_serv_desc#
+		</isNotEmpty>
+		<isNotEmpty property="req_dept_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #req_dept_cd#
+		</isNotEmpty>
+		<isNotEmpty property="regn_cd" prepend="and">
+			Z002.XUSR_PLAC_WORK = #regn_cd#
+		</isNotEmpty>
+		AND PO01.PTT_YMD BETWEEN #fr_ymd# and #to_ymd#
+	</select>
+	<select id="selectListPoToList" parameterClass="bgabGascpo01Dto" resultClass="bgabGascpo01Dto">
+		/*selectListPoToList*/
+		SELECT * FROM (
+	  		SELECT k.*
+			FROM
+			(
+				SELECT	ROW_NUMBER() OVER(ORDER BY DOC_NO DESC) AS rnum
+						,DOC_NO
+						,PO_TRK_NO
+						,PO_NUMB_OBJ
+						,PO_CONT_DECL
+						,PO_TYPE
+						,PO_OBJ_SIZE
+						,PO_PB_LEN
+						,PO_PB_WDTH
+						,PO_PB_HGHT
+						,PO_RC_DMTR
+						,PO_RC_LEN
+						,PO_COMP_NM
+						,PO_EMAIL
+						,PO_PHONE
+						,PO_ADDR
+						,PO_NUMB
+						,PO_CMPLT
+						,PO_NGHB
+						,PO_CITY
+						,PO_STATE
+						,PO_ZIP_CD
+						,PO_OBJ_DESC
+						,PO_INVC
+						,PO_DRVR_INDC
+						,PO_AIT
+						,PO_PRD_INDC
+						,PGS_ST_CD
+						,INP_YMD
+						,IPE_EENO
+						,MDFY_YMD
+						,UPDR_EENO
+						,DBO.CONVERT_DATE(PO01.PTT_YMD) AS PTT_YMD
+						,REQ_EENO
+						,Z002.XUSR_NAME AS REQ_EENO_NM
+						,Z002.XUSR_DEPT_NAME AS REQ_DEPT_NM
+						,Z002.XUSR_STEP_NAME AS REQ_STEP_NM
+						,Z005.XCOD_HNAME AS PGS_ST_NM
+						,A.XCOD_HNAME AS PO_SERV_DESC
+						,B.XCOD_HNAME AS PO_ADDT_SERV
+						,SNB_RSON_SBC
+						,REMARK
+						,Z002.XUSR_COST_CD AS COST_CD
+				FROM BGAB_GASCPO01 PO01 
+				LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+				ON PO01.REQ_EENO = Z002.XUSR_EMPNO
+				LEFT OUTER JOIN(
+					SELECT XCOD_CODE, XCOD_HNAME
+					FROM BGAB_GASCZ005$corp_cd$
+					WHERE XCOD_KND = 'PO01') A
+				ON PO01.PO_SERV_DESC = A.XCOD_CODE
+				LEFT OUTER JOIN(
+					SELECT XCOD_CODE, XCOD_HNAME
+					FROM BGAB_GASCZ005$corp_cd$
+					WHERE XCOD_KND = 'PO02') B
+				ON PO01.PO_ADDT_SERV = B.XCOD_CODE
+				LEFT OUTER JOIN(
+					SELECT XCOD_CODE, XCOD_HNAME
+					FROM BGAB_GASCZ005$corp_cd$
+					WHERE XCOD_KND = 'PO04') Z005
+				ON Z005.XCOD_CODE = PO01.PGS_ST_CD
+				WHERE	1 = 1
+				<isNotEmpty property="req_eeno_nm" prepend="and">
+					Z002.XUSR_NAME like '%' + #req_eeno_nm# + '%'
+				</isNotEmpty>
+				<isNotEmpty property="req_eeno" prepend="and">
+					PO01.REQ_EENO = #req_eeno#
+				</isNotEmpty>
+				<isNotEmpty property="pgs_st_cd" prepend="and">
+					PO01.PGS_ST_CD = #pgs_st_cd#
+				</isNotEmpty>
+				<isNotEmpty property="po_serv_desc" prepend="and">
+					PO01.PO_SERV_DESC = #po_serv_desc#
+				</isNotEmpty>
+				<isNotEmpty property="req_dept_cd" prepend="and">
+					Z002.XUSR_DEPT_CODE = #req_dept_cd#
+				</isNotEmpty>
+				<isNotEmpty property="regn_cd" prepend="and">
+					Z002.XUSR_PLAC_WORK = #regn_cd#
+				</isNotEmpty>
+				AND PO01.PTT_YMD BETWEEN #fr_ymd# and #to_ymd#
+			) k
+		) j WHERE rnum between #startRow# AND #endRow#
+	</select>
+	
+	<select id="selectCountPoToConfirm" parameterClass="bgabGascpo01Dto" resultClass="java.lang.String">
+		/*selectCountPoToConfirm*/
+		SELECT COUNT(*) TOT_CNT
+		FROM	BGAB_GASCPO01 PO01 
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON PO01.REQ_EENO = Z002.XUSR_EMPNO
+		LEFT OUTER JOIN(
+			SELECT XCOD_CODE, XCOD_HNAME
+			FROM BGAB_GASCZ005$corp_cd$
+			WHERE XCOD_KND = 'PO04') Z005
+		ON Z005.XCOD_CODE = PO01.PGS_ST_CD
+		WHERE	1 = 1
+		<isNotEmpty property="req_eeno_nm" prepend="and">
+			Z002.XUSR_NAME like '%' + #req_eeno_nm# + '%'
+		</isNotEmpty>
+		<isNotEmpty property="req_eeno" prepend="and">
+			PO01.REQ_EENO = #req_eeno#
+		</isNotEmpty>
+		<isNotEmpty property="pgs_st_cd" prepend="and">
+			PO01.PGS_ST_CD = #pgs_st_cd#
+		</isNotEmpty>
+		<isNotEmpty property="po_serv_desc" prepend="and">
+			PO01.PO_SERV_DESC = #po_serv_desc#
+		</isNotEmpty>
+		<isNotEmpty property="req_dept_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #req_dept_cd#
+		</isNotEmpty>
+		<isNotEmpty property="regn_cd" prepend="and">
+			Z002.XUSR_PLAC_WORK = #regn_cd#
+		</isNotEmpty>
+		AND PO01.PTT_YMD BETWEEN #fr_ymd# and #to_ymd#
+	</select>
+	
+	<select id="selectListPoToConfirm" parameterClass="bgabGascpo01Dto" resultClass="bgabGascpo01Dto">
+		/*selectListPoToConfirm*/
+		SELECT * FROM (
+	  		SELECT k.*
+			FROM
+			(
+				SELECT	ROW_NUMBER() OVER(ORDER BY DOC_NO DESC) AS rnum
+						,DOC_NO
+						,PO_TRK_NO
+						,PO_NUMB_OBJ
+						,PO_CONT_DECL
+						,PO_TYPE
+						,PO_OBJ_SIZE
+						,PO_PB_LEN
+						,PO_PB_WDTH
+						,PO_PB_HGHT
+						,PO_RC_DMTR
+						,PO_RC_LEN
+						,PO_COMP_NM
+						,PO_EMAIL
+						,PO_PHONE
+						,PO_ADDR
+						,PO_NUMB
+						,PO_CMPLT
+						,PO_NGHB
+						,PO_CITY
+						,PO_STATE
+						,PO_ZIP_CD
+						,PO_OBJ_DESC
+						,PO_INVC
+						,PO_DRVR_INDC
+						,PO_AIT
+						,PO_PRD_INDC
+						,PGS_ST_CD
+						,INP_YMD
+						,IPE_EENO
+						,MDFY_YMD
+						,UPDR_EENO
+						,DBO.CONVERT_DATE(PO01.PTT_YMD) AS PTT_YMD
+						,REQ_EENO
+						,Z002.XUSR_NAME AS REQ_EENO_NM
+						,Z002.XUSR_DEPT_NAME AS REQ_DEPT_NM
+						,Z002.XUSR_STEP_NAME AS REQ_STEP_NM
+						,Z005.XCOD_HNAME AS PGS_ST_NM
+						,A.XCOD_HNAME AS PO_SERV_DESC
+						,B.XCOD_HNAME AS PO_ADDT_SERV
+						,SNB_RSON_SBC
+						,REMARK
+						,Z002.XUSR_COST_CD AS COST_CD
+				FROM BGAB_GASCPO01 PO01 
+				LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+				ON PO01.REQ_EENO = Z002.XUSR_EMPNO
+				LEFT OUTER JOIN(
+					SELECT XCOD_CODE, XCOD_HNAME
+					FROM BGAB_GASCZ005$corp_cd$
+					WHERE XCOD_KND = 'PO01') A
+				ON PO01.PO_SERV_DESC = A.XCOD_CODE
+				LEFT OUTER JOIN(
+					SELECT XCOD_CODE, XCOD_HNAME
+					FROM BGAB_GASCZ005$corp_cd$
+					WHERE XCOD_KND = 'PO02') B
+				ON PO01.PO_ADDT_SERV = B.XCOD_CODE
+				LEFT OUTER JOIN(
+					SELECT XCOD_CODE, XCOD_HNAME
+					FROM BGAB_GASCZ005$corp_cd$
+					WHERE XCOD_KND = 'PO04') Z005
+				ON Z005.XCOD_CODE = PO01.PGS_ST_CD
+				WHERE	1 = 1
+				<isNotEmpty property="req_eeno_nm" prepend="and">
+					Z002.XUSR_NAME like '%' + #req_eeno_nm# + '%'
+				</isNotEmpty>
+				<isNotEmpty property="req_eeno" prepend="and">
+					PO01.REQ_EENO = #req_eeno#
+				</isNotEmpty>
+				<isNotEmpty property="pgs_st_cd" prepend="and">
+					PO01.PGS_ST_CD = #pgs_st_cd#
+				</isNotEmpty>
+				<isNotEmpty property="po_serv_desc" prepend="and">
+					PO01.PO_SERV_DESC = #po_serv_desc#
+				</isNotEmpty>
+				<isNotEmpty property="req_dept_cd" prepend="and">
+					Z002.XUSR_DEPT_CODE = #req_dept_cd#
+				</isNotEmpty>
+				<isNotEmpty property="regn_cd" prepend="and">
+					Z002.XUSR_PLAC_WORK = #regn_cd#
+				</isNotEmpty>
+				AND PO01.PTT_YMD BETWEEN #fr_ymd# and #to_ymd#
+			) k
+		) j WHERE rnum between #startRow# AND #endRow#
+	</select>
+	
+	<insert id="insertPoToFile" parameterClass="BgabGascZ011Dto">
+		/* insertPoToFile */
+		INSERT INTO BGAB_GASCZ011$corp_cd$ (
+		DOC_NO ,
+		EENO ,
+		SEQ ,
+		AFFR_SCN_CD ,
+		OGC_FIL_NM ,
+		FIL_NM ,
+		FIL_MGN_QTY ,
+		INP_YMD ,
+		IPE_EENO
+		)VALUES(
+		#doc_no# ,
+		#eeno# ,
+		#seq# ,
+		#affr_scn_cd# ,
+		#ogc_fil_nm# ,
+		#fil_nm# ,
+		#fil_mgn_qty# ,
+		CONVERT(NVARCHAR, getDate(), 112) ,
+		#ipe_eeno#
+		)
+	</insert>
+
+	<select id="selectPoToFile" resultClass="BgabGascZ011Dto" parameterClass="BgabGascZ011Dto">
+		/* selectPoToFile */
+		SELECT
+		DOC_NO ,
+		EENO ,
+		SEQ ,
+		AFFR_SCN_CD ,
+		FIL_NM ,
+		OGC_FIL_NM ,
+		FIL_MGN_QTY ,
+		INP_YMD ,
+		IPE_EENO
+		FROM BGAB_GASCZ011$corp_cd$
+		WHERE DOC_NO = #doc_no#
+		AND EENO = #eeno#
+		AND SEQ =
+		#seq#
+		AND AFFR_SCN_CD = #affr_scn_cd#
+		<isNotEmpty property="ogc_fil_nm" prepend="and">
+			OGC_FIL_NM =
+			#ogc_fil_nm#
+		</isNotEmpty>
+		ORDER BY FIL_NM
+	</select>
+
+	<delete id="deletePoToFile" parameterClass="BgabGascZ011Dto">
+		/* deletePoToFile */
+		DELETE FROM BGAB_GASCZ011$corp_cd$
+		WHERE DOC_NO = #doc_no#
+		AND EENO = #eeno#
+		AND SEQ = #seq#
+		AND AFFR_SCN_CD = #affr_scn_cd#
+		AND
+		OGC_FIL_NM = #ogc_fil_nm#
+	</delete>
+	
+	<update id="rejectPoToRequest" parameterClass="bgabGascpo01Dto">
+		/* rejectPoToRequest */
+		UPDATE BGAB_GASCPO01 SET
+			  PGS_ST_CD = #pgs_st_cd#
+			, SNB_RSON_SBC = #snb_rson_sbc#
+			, UPDR_EENO = #updr_eeno#
+			, MDFY_YMD  = CONVERT(NVARCHAR(8), GETDATE(), 112)
+		WHERE DOC_NO = #doc_no#
+	</update>
+</sqlMap>

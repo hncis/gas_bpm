@@ -1,0 +1,158 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId = "XST35";
+	String fdate = CurrentDateTime.getDate(CurrentDateTime.getDate(),-14);
+	String fyy = fdate.substring(0,4);
+	String fmm = fdate.substring(4,6);
+	String fdd = fdate.substring(6,8);
+	String yy = CurrentDateTime.getYear();
+	String mm = CurrentDateTime.getMonth();
+	String dd = CurrentDateTime.getDay();
+	
+	String fromDay = fyy + "-" + fmm + "-" + fdd;
+	String toDay   = yy + "-" + mm + "-" + dd;
+	
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH",locale);
+	String strExcel = JSPMessageSource.getMessage("BUTTON.EXCEL",locale);
+	
+	String strBtn = "";
+	strBtn = strSch+"/search@"+strExcel+"/excel";
+	
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>MENU MANAGEMENT</title>
+	</head>
+	<body>
+		<div id="wrap">
+	    	<form name="viewForm" id="viewForm">
+				<input type="hidden" id="xusr_work_auth" name="xusr_work_auth"></input>
+		    	<%@ include file="../include/hncis_header.gas"%>
+		        <div id="contents_wrap">
+		        	<%@ include file="../include/hncis_left.gas"%>
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,"XST35"
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+		                <div class="search_area">
+		                	<table>
+		                        <colgroup>
+		                        	<col style="width:60px;" />
+		                        	<col style="width:200px;" />
+		                        	<col style="width:60px;" />
+		                        	<col style="width:*;" />
+		                        </colgroup>
+		                        <tbody>
+		                            <tr>
+										<th><fmt:message key="corp_cd"/></th>
+										<td>
+											<input type="text" id="key_corp_cd" name="key_corp_cd" style="width: 120px"/>
+										</td>
+										<th><fmt:message key="comp_nm"/></th>
+										<td>
+											<input type="text" id="key_corp_nm" name="key_corp_nm" style="width: 120px"/>
+										</td>
+									</tr>
+		                        </tbody>
+		                    </table>
+		                </div>
+		                <div class="jq_tbl">
+			                <table id="htmlTable" class="scroll"></table>
+							<div id="htmlPager" class="scroll"></div>
+						</div>
+		                <%@ include file="../include/hncis_message.gas"%>
+		            </div>
+		            <div class="clear"></div>
+		        </div>
+	        </form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+	    </div>
+	    <img id="loading_progress_img" src="<%=ctxPath %>/images/common/progress_bar.gif" width="362" height="131" style="display:none" />
+	</body>
+</html>
+	<script type="text/javascript">
+		var params;
+		var comboVal;
+		var lastsel;
+		var fnMerge;
+		var gridParam;
+		var datarow = {corp_cd:"", corp_nm:"", pay_amt:"", use_cnt:"", ven_cd:"", req_user_nm:"", req_contact:"", req_email:"", buy_date:""};
+
+		function fnSetDocumentReady(){
+			initMenus();
+			$('#ST').slideDown('fast');
+			init();
+		}
+
+		function init(){
+			var cn = ['<fmt:message key="corp_cd"/>' // "회사코드"
+			          ,'<fmt:message key="corp_nm"/>' // "회사명"
+			          ,'<fmt:message key="pay_amt"/>' // "결재금액"
+			          ,'<fmt:message key="use_cnt"/>' // "사용자수"
+			          ,'<fmt:message key="ven_cd"/>' // "사업자번호"
+			          ,'<fmt:message key="req_user_nm"/>' // "업체담당자"
+			          ,'<fmt:message key="req_contact"/>' // "연락처"
+			          ,'<fmt:message key="req_email"/>' // "이메일"
+			          ,'<fmt:message key="buy_date"/>' // "구매일자"
+		          ];
+			var cm = [
+				{name:'corp_cd',index:'corp_cd', sortable:false, formatter: "string", width:120, align:"center", editable:false, frozen : false},
+				{name:'corp_nm',index:'corp_nm', sortable:false, formatter: "string", width:120, align:"center", editable:false, frozen : false},
+				{name:'pay_amt',index:'pay_amt', sortable:false, formatter: "integer", width:100, align:"right", editable:false, frozen : false},
+				{name:'use_cnt',index:'use_cnt', sortable:false, formatter: "string", width:60, align:"center", editable:false, frozen : false},
+				{name:'ven_cd',index:'ven_cd', sortable:false, formatter: "string", width:120, align:"center", editable:false, frozen : false},
+				{name:'req_user_nm',index:'req_user_nm', sortable:false, formatter: "string", width:100, align:"center", editable:false, frozen : false},
+				{name:'req_contact',index:'req_contact', sortable:false, formatter: "string",  width:100, align:"center", editable:false, frozen : false},
+				{name:'req_email',index:'req_email', sortable:false, formatter: "string", width:120, align:"center", editable:false, frozen : false},
+				{name:'buy_date',index:'buy_date', sortable:false, formatter: "string", width:100, align:"center", editable:false, frozen : false}
+			];
+
+			params = {};
+			gridParam = {
+					viewEdit : [{
+						url          : "/doSearchToEmpty.do",
+						colNames     : cn,
+						colModel     : cm,
+						height       : "100%",
+						rowNum		 : 20,
+						rownumbers   : true,
+						multiselect  : false,
+						cellEdit     : false,
+						fnMerge      : false,
+						paramJson    : params,
+						pager		 : "htmlPager",
+						completeFc	 : "addGridRow();initAfterMenus();"
+					}]
+				};
+
+			commonJqGridInit(gridParam);
+
+			jQuery("#htmlTable").jqGrid('navGrid',"#htmlPager",{edit:false,add:false,del:false,search:false,refresh:false});
+		}
+
+		function retrieve(btnFlag){
+			switch(btnFlag){
+				case "search" :
+					doSearch(true);
+					break;
+			}
+		}
+
+		function doSearch(msgFlag){
+			var params = {
+				corp_cd : $.trim($('#key_corp_cd').val()),
+				corp_nm : $.trim($('#key_corp_nm').val())
+			};
+
+			doCommonSearch("doSearchXst35List.do", util.jsonToString(params), "addGridRow();initAfterMenus();", "htmlTable", msgFlag);
+		}
+	</script>

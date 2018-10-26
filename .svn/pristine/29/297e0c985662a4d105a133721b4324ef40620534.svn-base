@@ -1,0 +1,345 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+
+<%
+	String M_IF_ID = "";
+	String M_TABLE_NM = "";
+	String M_SYSTEM_NAME = "";
+	String M_PATH = "";
+	String M_TOT_LEVEL = "";
+	String M_LEVEL_INDEX = "";
+	String M_RPTS_DEPT = "";
+	String M_RDCS_EENO = "";
+	String M_RPTS_EENO = "";
+
+	String btnApl = JSPMessageSource.getMessage("BUTTON.APL",locale);
+	String btnRjt = JSPMessageSource.getMessage("BUTTON.REJECT", locale);
+	String btnCls = JSPMessageSource.getMessage("close", locale);
+	
+	if(request.getParameter("M_IF_ID") != null){
+		M_IF_ID = StringUtil.replaceParameter(request.getParameter("M_IF_ID")).trim();
+	}
+	if(request.getParameter("M_TABLE_NM") != null){
+		M_TABLE_NM = StringUtil.replaceParameter(request.getParameter("M_TABLE_NM")).trim();
+	}
+	if(request.getParameter("M_SYSTEM_NAME") != null){
+		M_SYSTEM_NAME = StringUtil.replaceParameter(request.getParameter("M_SYSTEM_NAME")).trim();
+	}
+	if(request.getParameter("M_PATH") != null){
+		M_PATH = StringUtil.replaceParameter(request.getParameter("M_PATH")).trim();
+	}
+	if(request.getParameter("M_TOT_LEVEL") != null){
+		M_TOT_LEVEL = StringUtil.replaceParameter(request.getParameter("M_TOT_LEVEL")).trim();
+	}
+	if(request.getParameter("M_LEVEL_INDEX") != null){
+		M_LEVEL_INDEX = StringUtil.replaceParameter(request.getParameter("M_LEVEL_INDEX")).trim();
+	}
+	if(request.getParameter("M_PATH") != null){
+		M_PATH = StringUtil.replaceParameter(request.getParameter("M_PATH")).trim();
+	}
+	if(request.getParameter("M_RPTS_DEPT") != null){
+		M_RPTS_DEPT = StringUtil.replaceParameter(request.getParameter("M_RPTS_DEPT")).trim();
+	}
+	if(request.getParameter("M_RDCS_EENO") != null){
+		M_RDCS_EENO = StringUtil.replaceParameter(request.getParameter("M_RDCS_EENO")).trim();
+	}
+	if(request.getParameter("M_RPTS_EENO") != null){
+		M_RPTS_EENO = StringUtil.replaceParameter(request.getParameter("M_RPTS_EENO")).trim();
+	}
+	String SUB_PATH = M_PATH+"?docid="+M_IF_ID+"&csrfToken="+csrfToken;
+	String SUB_HEIGHT = "1050px";
+	//String SUB_HEIGHT = "auto";
+	String TITLE_HTML = "";
+	System.out.println("request.getCharacterEncoding() :" + request.getCharacterEncoding());
+	System.out.println("sess_empno :" + sess_empno);
+	System.out.println("M_RDCS_EENO :" + M_RDCS_EENO);
+	if(StringUtil.isNullToString(M_RDCS_EENO).equals(sess_empno)){
+		TITLE_HTML = "<li><a href='javascript:retrieve(\"approve\");'>"+btnApl+"<span></span></a></li>";
+		TITLE_HTML = TITLE_HTML+"<li><a href='javascript:retrieve(\"return\");'>"+btnRjt+"<span></span></a></li>";
+		TITLE_HTML = TITLE_HTML+"<li><a href='javascript:retrieve(\"close\");'>"+btnCls+"<span></span></a></li>";
+	}else{
+		TITLE_HTML = "<li><a href='javascript:retrieve(\"close\");'>"+btnCls+"<span></span></a></li>";
+	}
+
+	if(SUB_PATH.contains("xbt_submit.gas")){
+		SUB_HEIGHT = "1530px";
+	}
+%>
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title><fmt:message key="apl_info"/></title>
+        <link rel="stylesheet" type="text/css" media="screen" href="../../script/css/pop_up.css" />
+    </head>
+	<body class="pop_back">
+		<input type=hidden name="codeKnd">
+		<input type=hidden name="jsonData">
+		<input type=hidden id="M_IF_ID" value = "<%=M_IF_ID%>">
+		<input type=hidden id="M_TABLE_NM" value = "<%=M_TABLE_NM%>">
+		<input type=hidden id="M_SYSTEM_NAME" value = "<%=M_SYSTEM_NAME%>">
+		<input type=hidden id="M_PATH" value = "<%=M_PATH%>">
+		<input type=hidden id="M_TOT_LEVEL" value = "<%=M_TOT_LEVEL%>">
+		<input type=hidden id="M_LEVEL_INDEX" value = "<%=M_LEVEL_INDEX%>">
+		<input type=hidden id="M_RPTS_DEPT" value = "<%=M_RPTS_DEPT%>">
+		<input type=hidden id="M_RPTS_EENO" value = "<%=M_RPTS_EENO%>">
+		<input type=hidden id="SUB_PATH" value = "<%=SUB_PATH%>">
+		<div class="pop_wrap">
+	    	<div class="pop_header">
+	        	<div class="pop_title">
+	            	<h1><fmt:message key="apl_detail"/></h1>
+	                <a href="javascript:selfClose();" class="pop_close"></a>
+	            </div>
+	        </div>
+	        <div class="pop_header_shadow"></div>
+	        <div class="pop_content">
+	        	<div class="div_box pop_con">
+	            	<form name="testForm" id="testForm">
+			        <div id="contents_wrap" class="any_page">
+			            <div id="contents">
+			            	<div class="btn_area">
+								<ul class="btns">
+									<%=TITLE_HTML%>
+<!-- 									<li><a href="javascript:doSearch();">Search<span></span></a></li> -->
+									<!-- <li><a href="javascript:selfClose();">Close<span></span></a></li> -->
+								</ul>
+							</div>
+			                <div class="search_area">
+			                	<table>
+			                        <colgroup>
+			                        	<col style="width:100px;" />
+			                            <col style="width:auto;" />
+			                            <col style="width:100px;" />
+			                            <col style="width:auto;" />
+			                        </colgroup>
+			                        <tbody>
+			                            <tr>
+										  <th scope="row"><fmt:message key="title"/></th>
+										  <td>
+											<input type="text" id="KEY_TITLE" name="KEY_TITLE" style="width:150px;" class="disabled" readonly>
+									      </td>
+										  <th scope="row"><fmt:message key="if_id"/></th>
+										  <td align="left">
+											<input type="text" id="KEY_IF_ID" name="KEY_IF_ID" style="width:150px;" class="disabled" readonly>
+										  </td>
+										</tr>
+										<tr>
+										  <th scope="row"><fmt:message key="rtn_rsn"/></th>
+										  <td colspan="3">
+										    <input type="text" id="KEY_RETURN_DETAIL" size="127">
+										  </td>
+										</tr>
+			                        </tbody>
+			                    </table>
+			                </div>
+			                <div class="mt10">
+			                	<iframe src="<%=ctxPath%><%=SUB_PATH%>" id="ifrm" name="list" width="100%" height="<%=SUB_HEIGHT %>" frameborder="0" scrolling=no></iframe>
+			                </div>
+			            </div>
+			            <div class="clear"></div>
+			        </div>
+			        </form>
+	                <div class="box_corner box_lt"></div>
+	                <div class="box_corner box_rt"></div>
+	                <div class="box_corner box_lb"></div>
+	                <div class="box_corner box_rb"></div>
+	            </div>
+	        </div>
+	    </div>
+	    <img id="loading_progress_img" src="<%=ctxPath %>/images/common/progress_bar.gif" width="362" height="131" style="display:none" />
+	    <div id="alert_pop" style="display:none">
+			<div class="msgBox">
+				<div class="msgBoxIn">
+				    <!--<strong><fmt:message key="msg_cont"/></strong>
+				    <hr> -->
+				    <ul>
+				        <li id="alert_msg" style="height:auto"><fmt:message key="msg_cont"/></li>
+				        <li>
+							<div class="btn_area">
+	                           <a href="#" id="pop_cls" class="white_btn22"><span><fmt:message key="close"/></span></a>
+	                       	</div>
+						</li>
+				    </ul>
+				    <!--<div class="boxRound01"><img src="../../images/msgbox/layer_pop_topLeft.gif" alt="" /></div>
+				    <div class="boxRound02"><img src="../../images/msgbox/layer_pop_topRight.gif" alt="" /></div>
+				    <div class="boxRound03"><img src="../../images/msgbox/layer_pop_bottomLeft.gif" alt="" /></div>
+				    <div class="boxRound04"><img src="../../images/msgbox/layer_pop_bottomRight.gif" alt="" /></div>-->
+				</div>
+			</div>
+		</div>
+		<div id="confirm_pop" style="display:none">
+			<div class="msgBox">
+				<div class="msgBoxIn">
+				    <!--<strong><fmt:message key="msg_cont"/></strong>
+				    <hr> -->
+				    <ul>
+				        <li id="confirm_msg" style="height:auto"><fmt:message key="msg_cont"/></li>
+				        <li>
+							<div class="btn_area">
+	                           <a href="#" id="pop_yes" class="white_btn22"><span><fmt:message key="conf"/></span></a>
+	                           <a href="#" id="pop_no" class="white_btn22"><span><fmt:message key="cncl"/></span></a>
+	                       	</div>
+						</li>
+				    </ul>
+				    <!--<div class="boxRound01"><img src="../../images/msgbox/layer_pop_topLeft.gif" alt="" /></div>
+				    <div class="boxRound02"><img src="../../images/msgbox/layer_pop_topRight.gif" alt="" /></div>
+				    <div class="boxRound03"><img src="../../images/msgbox/layer_pop_bottomLeft.gif" alt="" /></div>
+				    <div class="boxRound04"><img src="../../images/msgbox/layer_pop_bottomRight.gif" alt="" /></div>-->
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+var tmpConfirmArr = [];
+var tmpConfirmMessage = "";
+
+function fnSetDocumentReady(){
+	init();
+}
+
+function init(){
+	$("#M_SYSTEM_NAME").val(decodeURIComponent($("#M_SYSTEM_NAME").val()));
+	$("#KEY_TITLE").val($("#M_SYSTEM_NAME").val());
+	$("#KEY_IF_ID").val($("#M_IF_ID").val());
+	
+	readOnlyStyle("KEY_TITLE", 1);
+	readOnlyStyle("KEY_IF_ID", 1);
+}
+function retrieve(btnFlag){
+	var f = document.frm;
+	switch(btnFlag){
+	   case "close" :
+		    doClose();
+			break;
+	   case "approve" :
+		    doApprove();
+			break;
+	   case "return" :
+		    doReturn();
+			break;
+	}
+}
+function doClose(){
+	this.close();
+}
+
+function doApprove(){
+	var tempStr = [];
+
+	tmpConfirmArr     = [];
+	tmpConfirmMessage = "";
+	
+	data =
+	{
+			if_id				: $("#M_IF_ID").val(),
+			result				: 'Z',
+			return_detail		: $("#KEY_RETURN_DETAIL").val(),
+			tot_level			: $("#M_TOT_LEVEL").val(),
+			level_index 		: $("#M_LEVEL_INDEX").val(),
+			table_name			: $("#M_TABLE_NM").val(),
+			system_name			: $("#M_SYSTEM_NAME").val(),
+			rdcs_eeno			: sess_empno,
+			rpts_dept			: $("#M_RPTS_DEPT").val(),
+			rpts_eeno			: $("#M_RPTS_EENO").val()
+	};
+	tempStr.push(data);
+	
+	if($("#M_IF_ID").val().substring(0,2) == "RM"){
+		confirmData = {
+			if_id     : $("#M_IF_ID").val(),
+			pgs_st_cd : "3"
+		};
+		
+		tmpConfirmArr.push(confirmData);
+	}
+	
+	confirmUI('<fmt:message key="MSG.CNF.0016"/>');
+	$("#pop_yes").click(function(){
+		$.unblockUI({
+			onUnblock: function(){
+				fnStartLoading();
+				
+				var paramData = {
+					paramJson : util.jsonToList(tempStr)
+				};
+				doCommonAjax("doApproveToMyApprovalByApprove.do", paramData, "doApproveCallBack(jsonData.sendResult.message);");
+			}
+		});
+	});
+}
+
+
+function doApproveCallBack(message){
+	if(tmpConfirmArr.length == 0){
+//		setBottomMsg(message, true);
+//		doCallBackClose();
+		alertUI('<fmt:message key="APPROVE.0004"/>', '', 'doCallBackClose();');
+	}else{
+		tmpConfirmMessage = message;
+		doRoomsMealConfirm();
+	}
+}
+
+function doRoomsMealConfirm(){
+	paramData = 
+	{
+		uParams : util.jsonToList(tmpConfirmArr)
+	};
+	doCommonAjax("doApproveToMyApprovalByConfirm.do", paramData, "doRoomsMealConfirmCallBack(jsonData.sendResult);");
+}
+
+function doRoomsMealConfirmCallBack(result){
+	setBottomMsg(tmpConfirmMessage, true);
+	doCallBackClose();
+}
+
+function doReturn(){
+	var tempStr = [];
+
+	if($("#KEY_RETURN_DETAIL").val() == ''){
+		alertUI('<fmt:message key="MSG.INP.0011"/>');
+		return;
+	}
+	
+	data = {
+		if_id				: $("#M_IF_ID").val(),
+		result				: 'R',
+		return_detail		: changeToUni($("#KEY_RETURN_DETAIL").val()),
+		tot_level			: $("#M_TOT_LEVEL").val(),
+		level_index 		: $("#M_LEVEL_INDEX").val(),
+		table_name			: $("#M_TABLE_NM").val(),
+		system_name			: $("#M_SYSTEM_NAME").val(),
+		rdcs_eeno			: sess_empno,
+		rpts_dept			: $("#M_RPTS_DEPT").val(),
+		rpts_eeno			: $("#M_RPTS_EENO").val()
+	};
+	
+	tempStr.push(data);
+	
+	confirmUI('<fmt:message key="MSG.CNF.0010"/>');
+	$("#pop_yes").click(function(){
+		$.unblockUI({
+			onUnblock: function(){
+//				fnStartLoading();
+				
+				paramData = {
+					paramJson : util.jsonToList(tempStr)
+				};
+				
+//				doCommonAjax("doApproveToMyApprovalByReject.do", paramData, "fnEndLoading();alert(jsonData.sendResult.message);doCallBackClose();");
+				doCommonAjax("doApproveToMyApprovalByApprove.do", paramData, "doReturnCallBack(jsonData.sendResult.message);");
+			}
+		});
+	});
+}
+
+function doReturnCallBack(message){
+	alertUI('<fmt:message key="REJECT.0000"/>', '', 'doCallBackClose();');
+}
+
+function doCallBackClose(){
+	opener.doSearch();
+	this.close();
+}
+</script>

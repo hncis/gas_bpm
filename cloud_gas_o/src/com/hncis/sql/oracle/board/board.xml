@@ -1,0 +1,983 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Board">
+	<!-- COMMON -->
+	<select id="selectMaxSeqBdToBoardForNot" parameterClass="java.lang.String" resultClass="java.lang.String">
+		/*selectMaxSeqBdToBoardForNot*/
+		SELECT NVL(MAX(bod_indx), 0)+1 max_seq
+		  FROM BGAB_GASCBD01$corp_cd$
+		 WHERE BOD_TYPE = 'N'
+	</select>
+	
+	<update id="updateReadBdToBoard" parameterClass="bdKeyDto">
+		/*updateReadBdToBoard*/
+		UPDATE BGAB_GASCBD01$corp_cd$
+		   SET bod_read = NVL(bod_read, 0)+1
+		WHERE bod_indx = #key_bod_indx#
+	</update>
+
+	<select id="selectMaxSeqBdToBoardForQna" parameterClass="java.lang.String" resultClass="java.lang.String">
+		/*selectMaxSeqBdToBoardForQna*/
+		SELECT NVL(MAX(bod_indx),0)+1 max_seq
+		  FROM BGAB_GASCBD01$corp_cd$
+		WHERE BOD_TYPE = 'Q'
+	</select>
+	
+	<select id="selectMaxSeqBdToBoardForFaq" parameterClass="java.lang.String" resultClass="java.lang.String">
+		/*selectMaxSeqBdToBoardForFaq*/
+		SELECT NVL(MAX(bod_indx), 0)+1 max_seq
+		  FROM BGAB_GASCBD01$corp_cd$
+		WHERE BOD_TYPE = 'F'
+	</select>
+	
+	<select id="selectMaxSeqBdToBoardForClaim" parameterClass="java.lang.String" resultClass="java.lang.String">
+		/*selectMaxSeqBdToBoardForClaim*/
+		SELECT NVL(MAX(bod_indx),0)+1 max_seq
+		  FROM BGAB_GASCBD01$corp_cd$
+		 WHERE BOD_TYPE = 'C'
+	</select>
+	
+	<!-- in charge search -->
+	<select id="selectInChargeBdToQna" parameterClass="bdKeyDto" resultClass="userInfoDto">
+		/*selectInChargeBdToQna*/
+		SELECT * FROM (
+			SELECT a.xdsm_empno     as eeno    ,    
+				   b.xusr_name      as eenm    ,
+				   b.xusr_dept_name as deptName,
+				   b.xusr_step_name as stepName,
+				   a.xdsm_hpno      as hpno    ,
+				   ROW_NUMBER() OVER(ORDER BY xusr_empno DESC) AS rownum
+			FROM BGAB_GASCZ007$corp_cd$ a 
+			INNER JOIN BGAB_GASCZ002$corp_cd$ b 
+			ON b.xusr_empno = a.xdsm_empno
+			WHERE RTRIM(a.xdsm_plac)  = #key_bod_agbn#
+			  AND a.xdsm_gubn2 = #key_bod_jgbn#
+			) c
+		 WHERE rownum = 1
+	</select>
+	
+	<select id="selectInChargeBdToClaim" parameterClass="bdKeyDto" resultClass="userInfoDto">
+		/*selectInChargeBdToClaim*/
+		SELECT * FROM (
+			SELECT a.xdsm_empno     as eeno    ,    
+				   b.xusr_name      as eenm    ,
+				   b.xusr_dept_name as deptName,
+				   b.xusr_step_name as stepName,
+				   a.xdsm_hpno      as hpno    ,
+				   ROW_NUMBER() OVER(ORDER BY xusr_empno DESC) AS rownum
+			FROM BGAB_GASCZ007$corp_cd$ a
+			INNER JOIN BGAB_GASCZ002$corp_cd$ b 
+			ON b.xusr_empno = a.xdsm_empno
+			WHERE RTRIM(a.xdsm_plac)  = #key_bod_agbn#
+			  AND a.xdsm_gubn2 = #key_bod_jgbn#
+			) c
+		 WHERE rownum = 1
+	</select>
+	
+	<!-- NOTICE -->
+	<select id="selectCountBdToNotice" parameterClass="bdKeyDto" resultClass="java.lang.String">
+		/*selectCountBdToNotice*/
+		SELECT COUNT(*) tot_cnt
+		  FROM BGAB_GASCBD01$corp_cd$
+		 WHERE bod_type = 'N' <!-- notice(N), qna(Q) -->
+				 <isNotEmpty property="key_bod_agbn" prepend="and">
+				 	bod_agbn = #key_bod_agbn#
+				 </isNotEmpty>
+				 <isNotEmpty property="key_bod_jgbn" prepend="and">
+				 	bod_jgbn = #key_bod_jgbn#
+				 </isNotEmpty>
+	</select>
+	
+	<select id="selectListBdToNotice" parameterClass="bdKeyDto" resultClass="bdDto">
+		/*selectListBdToNotice*/
+		SELECT * from(
+			SELECT rownum rnum, t.* 
+			from (
+				SELECT bod_indx   ,
+					   bod_jgbnnm ,
+					   bod_title  ,
+					   bod_fname  ,
+					   NVL(bod_read, 0)                     AS bod_read, 
+					   TO_CHAR( inp_ymd, 'YYYY-MM-DD' ) AS inp_ymd
+				  FROM BGAB_GASCBD01$corp_cd$
+				 WHERE bod_type = 'N' <!-- notice(N), qna(Q) -->
+						 <isNotEmpty property="key_bod_agbn" prepend="and">
+						 	bod_agbn = #key_bod_agbn#
+						 </isNotEmpty>
+						 <isNotEmpty property="key_bod_jgbn" prepend="and">
+						 	bod_jgbn = #key_bod_jgbn#
+						 </isNotEmpty>
+				 ORDER BY bod_indx DESC, inp_ymd DESC
+			)t
+		)a
+		WHERE a.rnum between #startRow# AND #endRow#
+	</select>
+	
+	<select id="selectDetailBdToNotice" parameterClass="bdKeyDto" resultClass="bdDto">
+		/*selectDetailBdToNotice*/
+		SELECT bod_sano   ,
+			   bod_sanm   ,
+			   bod_jgbn   ,
+			   bod_jgbnnm ,
+			   TO_CHAR( TO_DATE( bod_fdat, 'YYYY-MM-DD' ), 'YYYY-MM-DD' ) AS bod_fdat,
+        	   bod_ftim   ,
+        	   TO_CHAR( TO_DATE( bod_tdat, 'YYYY-MM-DD' ), 'YYYY-MM-DD' ) AS bod_tdat,
+			   bod_ttim   , 
+			   bod_popyn  ,
+			   bod_type   ,
+			   bod_title  ,
+			   bod_content,
+			   NVL(bod_read, 0) bod_read, 
+			   bod_pass ,
+			   bod_fname,
+			   bod_fname AS old_bod_fname, 
+			   bod_fsize, 
+			   TO_CHAR( inp_ymd, 'YYYY-MM-DD' ) AS inp_ymd 
+		  FROM BGAB_GASCBD01$corp_cd$
+		 WHERE bod_type = 'N'
+		   AND bod_indx = #key_bod_indx#
+	</select>
+	
+	<insert id="mergeInfoBdToNotice" parameterClass="bdDto">
+		/*mergeInfoBdToNotice*/
+		MERGE INTO BGAB_GASCBD01$corp_cd$
+			USING DUAL
+			ON (BOD_INDX = #bod_indx# and BOD_TYPE = #bod_type#)
+		WHEN MATCHED THEN
+			UPDATE SET
+				bod_jgbn    = #bod_jgbn#   ,
+				   bod_jgbnnm  = #bod_jgbnnm# ,
+				   bod_fdat    = #bod_fdat#   ,
+				   bod_ftim    = #bod_ftim#   ,
+				   bod_tdat    = #bod_tdat#   ,
+				   bod_ttim    = #bod_ttim#   ,
+				   bod_popyn   = #bod_popyn#  ,
+				   bod_title   = #bod_title#  ,
+				   bod_content = #bod_content#,
+				   bod_pass    = #bod_pass#   ,
+				   bod_fname   = #bod_fname#  ,
+				   bod_fsize   = CASE 
+					              WHEN #bod_fsize# = '' OR #bod_fsize# = null THEN 0
+					             ELSE TO_NUMBER(#bod_fsize#)
+					            END,
+				   updr_ymd    = SYSDATE    ,
+				   updr_eeno   = #updr_eeno#
+		WHEN NOT MATCHED THEN
+			INSERT(
+				bod_indx	,
+	            bod_sano    ,
+	            bod_sanm    ,
+				bod_ovl_nm	,
+				bod_ops_nm	,
+	            bod_type    ,
+	            bod_jgbn    ,
+	            bod_jgbnnm  ,
+	            bod_fdat    ,
+	            bod_ftim    ,
+	            bod_tdat    ,
+	            bod_ttim    ,
+	            bod_popyn   ,
+	            bod_title   ,
+	            bod_content ,
+				bod_group	,
+				bod_step	,
+				bod_level	,
+	            bod_read    ,
+	            bod_pass    ,
+	            bod_fname   ,
+	            bod_fsize   ,
+				bod_down	,
+	            inp_ymd     ,
+	            ipe_eeno    ,
+	            updr_ymd    ,
+	            updr_eeno
+			)values(
+				TO_NUMBER(#bod_indx#)   ,
+				#bod_sano#   ,
+				#bod_sanm#   ,
+				#bod_ovl_nm# ,
+				#bod_ops_nm# ,
+				#bod_type#   ,
+				#bod_jgbn#   ,
+				#bod_jgbnnm# ,
+				#bod_fdat#   ,
+				#bod_ftim#   ,
+				#bod_tdat#   ,
+				#bod_ttim#   ,
+				#bod_popyn#  ,
+				#bod_title#  ,
+				#bod_content#,
+				0	 ,
+				0	 ,
+				0	 ,
+				0            ,
+				#bod_pass#   ,
+				#bod_fname#  ,
+				CASE 
+	              WHEN #bod_fsize# = '' OR #bod_fsize# = null THEN 0
+	              ELSE TO_NUMBER(#bod_fsize#)
+	            END ,
+	            0,
+				SYSDATE  ,
+				#ipe_eeno# ,
+				SYSDATE  ,
+				#updr_eeno#
+			)
+	</insert>
+	
+	<delete id="deleteInfoBdToNotice" parameterClass="bdDto">
+		/*deleteInfoBdToNotice*/
+		DELETE FROM BGAB_GASCBD01$corp_cd$
+		 WHERE bod_indx = #bod_indx#
+		   AND bod_type = 'N'
+	</delete>
+	
+	<!-- QNA -->
+	<select id="selectCountBdToQna" parameterClass="bdKeyDto" resultClass="java.lang.String">
+		/*selectCountBdToQna*/
+		SELECT count(*) tot_cnt
+		  FROM BGAB_GASCBD01$corp_cd$
+		 WHERE bod_type = 'Q' <!-- notice(N), qna(Q) -->
+				 <isNotEmpty property="key_bod_agbn" prepend="and">
+				 	bod_title like '%' || #key_bod_agbn# || '%'
+				 </isNotEmpty>
+	</select>
+	
+	<select id="selectListBdToQna" parameterClass="bdKeyDto" resultClass="bdDto">
+	/*selectListBdToQna*/
+	SELECT * 
+	FROM
+	(
+		SELECT K.* , rownum rnum
+		FROM
+		(
+			SELECT  
+				   BD01.BOD_INDX, 
+			       BD01.BOD_JGBNNM, 
+			       BD01.BOD_AGBN, 
+			       BD01.BOD_TITLE, 
+			       BD01.BOD_FNAME, 
+			       TO_CHAR( BD01.INP_YMD, 'YYYY-MM-DD' ) AS INP_YMD, 
+			       NVL(BD01.BOD_READ,0) AS BOD_READ, 
+			       BD01.BOD_GROUP, 
+			       BD01.BOD_STEP, 
+			       BD01.BOD_LEVEL, 
+			       BD01.IPE_EENO, 
+			       D.XUSR_NAME AS EENM  
+			FROM BGAB_GASCBD01$corp_cd$ BD01
+			LEFT OUTER JOIN 
+			    (SELECT XUSR_EMPNO, 
+			           XUSR_NAME, 
+			           XUSR_DEPT_NAME 
+			      FROM BGAB_GASCZ002$corp_cd$ 
+			    ) D 
+			      ON D.XUSR_EMPNO = BD01.IPE_EENO
+			WHERE BD01.bod_type='Q' 
+			<isNotEmpty property="key_bod_agbn" prepend="and">
+				bod_title like '%' || #key_bod_agbn# || '%'
+			</isNotEmpty>
+			ORDER BY BD01.BOD_GROUP DESC, BD01.BOD_LEVEL ASC, BD01.BOD_STEP ASC
+		)K
+	)X
+	WHERE RNUM BETWEEN #startRow# AND #endRow#
+	</select>
+	
+	<select id="selectDetailBdToQna" parameterClass="bdKeyDto" resultClass="bdDto">
+	    /*selectDetailBdToQna*/
+		SELECT bod_sano ,
+		       bod_sanm ,
+		       bod_jgbn ,
+		       bod_jgbnnm ,
+		       bod_agbn ,
+		       bod_qgbn ,
+		       bod_hpno1 ,
+		       bod_hpno2 ,
+		       bod_hpno3 ,
+		       '' AS bod_ichagenm ,
+		       bod_type ,
+		       bod_title ,
+		       bod_content ,
+		       bod_read ,
+		       bod_group ,
+		       bod_step ,
+		       bod_level ,
+		       bod_stat ,
+		       bod_pass ,
+		       bod_fname ,
+		       bod_fname AS old_bod_fname ,
+		       bod_fsize ,
+		       TO_CHAR( inp_ymd, 'YYYY-MM-DD' ) AS inp_ymd, 
+		       eeno ,
+		       eenm ,
+		       deptName ,
+		       stepName ,
+		       hpno ,
+		       ipe_eeno ,
+		       ipe_eeno         AS bod_eeno ,
+		       d.xusr_name      AS bod_eenm ,
+		       d.xusr_dept_name AS bod_ops_nm
+		FROM BGAB_GASCBD01$corp_cd$ bbs
+		LEFT OUTER JOIN
+		  (SELECT a.xdsm_empno AS eeno ,
+		    b.xusr_name        AS eenm ,
+		    b.xusr_dept_name   AS deptName ,
+		    b.xusr_step_name   AS stepName ,
+		    a.xdsm_hpno        AS hpno ,
+		    rtrim(a.xdsm_plac) AS plac ,
+		    a.xdsm_gubn2       AS gubn2
+		  FROM BGAB_GASCZ007$corp_cd$ a
+		  INNER JOIN BGAB_GASCZ002$corp_cd$ b
+		  ON b.xusr_empno    = a.xdsm_empno
+		  )c ON bbs.bod_agbn = c.plac
+		AND bbs.bod_jgbn     = c.gubn2
+		LEFT OUTER JOIN
+		  ( SELECT xusr_empno, xusr_name, xusr_dept_name FROM BGAB_GASCZ002$corp_cd$
+		  ) d
+		ON d.xusr_empno = bbs.ipe_eeno
+		WHERE bod_type  = 'Q'
+		  AND bod_indx    = #key_bod_indx#
+	</select>
+
+	<insert id="mergeInfoBdToQna" parameterClass="bdDto">
+	    /*mergeInfoBdToQna*/
+		MERGE INTO BGAB_GASCBD01$corp_cd$
+			USING DUAL
+			ON (BOD_INDX = #bod_indx# and BOD_TYPE = #bod_type#)
+		WHEN MATCHED THEN
+			UPDATE SET
+				   bod_jgbn    = #bod_jgbn#   ,
+				   bod_jgbnnm  = #bod_jgbnnm# ,
+				   bod_agbn    = #bod_agbn#   ,
+				   bod_qgbn    = #bod_qgbn#   ,
+				   bod_hpno1   = #bod_hpno1#  ,
+				   bod_hpno2   = #bod_hpno2#  ,
+				   bod_hpno3   = #bod_hpno3#  ,
+				   bod_title   = #bod_title#  ,
+				   bod_content = #bod_content#,
+				   bod_pass    = #bod_pass#   ,
+				   bod_fname   = #bod_fname#  ,
+				   bod_fsize   = CASE 
+					              WHEN #bod_fsize# = '' OR #bod_fsize# = null THEN 0
+					            END, 
+				   updr_ymd    = SYSDATE    ,
+				   updr_eeno   = #updr_eeno#
+		WHEN NOT MATCHED THEN
+			INSERT(
+				bod_indx    ,
+				bod_sano    ,
+				bod_sanm    ,
+				bod_type    ,
+				bod_jgbn    ,
+				bod_jgbnnm  ,
+				bod_agbn    ,
+				bod_qgbn    ,
+				bod_hpno1   ,
+				bod_hpno2   ,
+				bod_hpno3   ,
+				bod_title   ,
+				bod_content ,
+				bod_read    ,
+				bod_pass    ,
+				bod_fname   ,
+				bod_fsize   ,
+				bod_group   ,
+				bod_step    ,
+				bod_level   ,
+				bod_stat    ,
+				inp_ymd     ,
+				ipe_eeno    ,
+				updr_ymd    ,
+				updr_eeno
+			)values(
+				TO_NUMBER(#bod_indx#)   ,
+				#bod_sano#   ,
+				#bod_sanm#   ,
+				#bod_type#   ,
+				#bod_jgbn#   ,
+				#bod_jgbnnm# ,
+				#bod_agbn#   ,
+				#bod_qgbn#   ,
+				#bod_hpno1#  ,
+				#bod_hpno2#  ,
+				#bod_hpno3#  ,
+				#bod_title#  ,
+				#bod_content#,
+				0            ,
+				#bod_pass#   ,
+				#bod_fname#  ,
+				 CASE 
+	              WHEN #bod_fsize# = '' OR #bod_fsize# = null THEN 0
+	            END  ,
+				TO_NUMBER(#bod_group#)  ,
+				TO_NUMBER(#bod_step#)   ,
+				TO_NUMBER(#bod_level#)  ,
+				#bod_stat#   ,
+				SYSDATE    ,
+				#ipe_eeno#   ,
+				SYSDATE    ,
+				#updr_eeno#
+			)
+	</insert>
+	
+	<delete id="deleteInfoBdToQna" parameterClass="bdDto">
+	    /*deleteInfoBdToQna*/
+		DELETE FROM BGAB_GASCBD01$corp_cd$ 
+		 WHERE bod_type = 'Q' 
+		 AND bod_group = #bod_group#
+		 <isEqual property="bod_step" compareValue="0">
+		 AND bod_level <![CDATA[>=]]> #bod_level#
+		 </isEqual>
+		 <isNotEqual property="bod_step" compareValue="0">
+		 AND bod_level = #bod_level#
+		 </isNotEqual>
+	</delete>
+	
+	<insert id="replyInfoBdToQna" parameterClass="bdDto">
+	    /*replyInfoBdToQna*/
+		INSERT INTO BGAB_GASCBD01$corp_cd$(
+				bod_indx   , 
+				bod_sano   , 
+				bod_sanm   , 
+				bod_type   , 
+				bod_jgbn   , 
+				bod_jgbnnm , 
+				bod_agbn   , 
+				bod_qgbn   , 
+				bod_hpno1  , 
+				bod_hpno2  , 
+				bod_hpno3  , 
+				bod_title  , 
+				bod_content, 
+				bod_read   , 
+				bod_pass   , 
+				bod_fname  , 
+				bod_fsize  , 
+				bod_group  , 
+				bod_step   , 
+				bod_level  , 
+				bod_stat   , 
+				inp_ymd    , 
+				ipe_eeno   , 
+				updr_ymd   , 
+				updr_eeno
+			) VALUES (
+				#bod_indx#   , 
+				#bod_sano#   , 
+				#bod_sanm#   , 
+				#bod_type#   , 
+				#bod_jgbn#   , 
+				#bod_jgbnnm# , 
+				#bod_agbn#   , 
+				#bod_qgbn#   , 
+				#bod_hpno1#  , 
+				#bod_hpno2#  , 
+				#bod_hpno3#  , 
+				#bod_title#  , 
+				#bod_content#, 
+				0            , 
+				#bod_pass#   , 
+				#bod_fname#  , 
+				CASE 
+	              WHEN #bod_fsize# = '' OR #bod_fsize# = null THEN 0
+	            END  , 
+				#bod_group#  , 
+				#bod_step#   , 
+				#bod_level#, 
+				#bod_stat#   , 
+				SYSDATE    , 
+				#ipe_eeno#   , 
+				SYSDATE    , 
+				#updr_eeno#
+			)
+	</insert>
+	
+	<update id="updateReplyInfoBDToQnaLevel" parameterClass="bdDto">
+		/* board.xml :: updateReplyInfoBDToQnaLevel */
+		UPDATE BGAB_GASCBD01$corp_cd$
+		   SET BOD_LEVEL = BOD_LEVEL + 1
+		 WHERE BOD_TYPE = 'Q'
+		   AND BOD_GROUP = #bod_group#
+		   AND BOD_LEVEL >= #bod_level#
+	</update>
+	
+	<!-- FAQ -->
+	<select id="selectCountBdToFaq" parameterClass="bdKeyDto" resultClass="java.lang.String">
+	    /*selectCountBdToFaq*/
+		SELECT COUNT(*) tot_cnt
+		  FROM BGAB_GASCBD01$corp_cd$
+		 WHERE bod_type = 'F' <!-- notice(N), qna(Q) -->
+		 <isNotEmpty property="key_bod_agbn" prepend="and">
+		 	bod_title LIKE '%' || #key_bod_agbn# || '%'
+		 </isNotEmpty>
+	</select>
+	
+	<select id="selectListBdToFaq" parameterClass="bdKeyDto" resultClass="bdDto">
+	    /*selectListBdToFaq*/
+		SELECT * FROM (
+			SELECT rownum rnum, t.* 
+			from (
+				SELECT bod_indx   ,
+					   bod_jgbnnm ,
+					   bod_agbn   ,
+					   bod_title  ,
+					   bod_content,
+					   c.eenm AS bod_ichagenm,
+					   bod_fname  ,
+					   TO_CHAR( inp_ymd,'YYYYMMDD') AS inp_ymd, 
+					   NVL(bod_read, 0) AS bod_read , 
+					   bod_group  ,
+					   bod_step   ,
+					   bod_level  
+				  FROM BGAB_GASCBD01$corp_cd$ bbs 
+				  LEFT OUTER JOIN (
+						 SELECT b.xusr_name      AS eenm  ,
+								RTRIM(a.xdsm_plac) AS plac,
+								a.xdsm_gubn2     AS gubn2
+						 FROM BGAB_GASCZ007$corp_cd$ a
+						 INNER JOIN BGAB_GASCZ002$corp_cd$ b 
+						 ON b.xusr_empno = a.xdsm_empno
+						  ) c
+				  ON bbs.bod_agbn   = c.plac
+			  	  AND bbs.bod_jgbn  = c.gubn2
+				 WHERE bod_type = 'F' <!-- notice(N), qna(Q) -->
+				 <isNotEmpty property="key_bod_agbn" prepend="and">
+				 	bod_title LIKE '%' || #key_bod_agbn# || '%'
+				 </isNotEmpty>
+				 ORDER BY bod_group DESC, bod_step ASC
+			)t
+		)a
+		WHERE a.rnum BETWEEN #startRow# AND #endRow#
+	</select>
+	<select id="selectDetailBdToFaq" parameterClass="bdKeyDto" resultClass="bdDto">
+	    /*selectDetailBdToFaq*/
+		SELECT bod_sano   ,   
+			   bod_sanm   ,
+			   bod_jgbn   ,
+			   bod_jgbnnm ,
+			   bod_agbn   ,
+			   bod_qgbn   ,
+			   bod_hpno1  ,
+			   bod_hpno2  ,
+			   bod_hpno3  ,
+			   '' AS bod_ichagenm, 
+			   bod_type   ,
+			   bod_title  ,
+			   bod_content,
+			   bod_read   ,
+			   bod_group  ,
+			   bod_step   ,
+			   bod_level  ,
+			   bod_stat   ,
+			   bod_pass   ,
+			   bod_fname  ,
+			   bod_fname AS old_bod_fname,
+			   bod_fsize  ,
+			   TO_CHAR( inp_ymd, 'YYYY-MM-DD' ) AS inp_ymd ,
+			   eeno       ,
+			   eenm       ,
+			   deptName   ,
+			   stepName   ,
+			   hpno       ,
+			   ipe_eeno
+		  FROM BGAB_GASCBD01$corp_cd$ bbs 
+		  LEFT OUTER JOIN(
+			SELECT a.xdsm_empno     as eeno     ,
+				   b.xusr_name      as eenm     ,
+				   b.xusr_dept_name as deptName ,
+				   b.xusr_step_name as stepName ,
+				   a.xdsm_hpno      as hpno     ,
+				   RTRIM(a.xdsm_plac) as plac   ,
+				   a.xdsm_gubn2     as gubn2
+			  FROM BGAB_GASCZ007$corp_cd$ a 
+			  INNER JOIN BGAB_GASCZ002$corp_cd$ b 
+			  ON b.xusr_empno = a.xdsm_empno
+		  )c
+		  ON bbs.bod_agbn   = c.plac
+		 AND  bbs.bod_jgbn  = c.gubn2
+		 WHERE bod_type = 'F'
+		   AND bod_indx = #key_bod_indx#
+	</select>
+	
+	<insert id="mergeInfoBdToFaq" parameterClass="bdDto">
+	    /*mergeInfoBdToFaq*/
+		MERGE INTO BGAB_GASCBD01$corp_cd$
+			USING DUAL
+			ON (BOD_INDX = #bod_indx# and BOD_TYPE = #bod_type#)
+		WHEN MATCHED THEN
+			UPDATE SET
+				   bod_jgbn    = #bod_jgbn#   ,
+				   bod_jgbnnm  = #bod_jgbnnm# ,
+				   bod_agbn    = #bod_agbn#   ,
+				   bod_qgbn    = #bod_qgbn#   ,
+				   bod_hpno1   = #bod_hpno1#  ,
+				   bod_hpno2   = #bod_hpno2#  ,
+				   bod_hpno3   = #bod_hpno3#  ,
+				   bod_title   = #bod_title#  ,
+				   bod_content = #bod_content#,
+				   bod_pass    = #bod_pass#   ,
+				   bod_fname   = #bod_fname#  ,
+				   bod_fsize   = CASE 
+					              WHEN #bod_fsize# = '' OR #bod_fsize# = null THEN 0
+					            END ,
+				   updr_ymd    = SYSDATE    ,
+				   updr_eeno   = #updr_eeno#
+		WHEN NOT MATCHED THEN
+			INSERT(
+				bod_indx   , 
+				bod_sano   , 
+				bod_sanm   , 
+				bod_type   , 
+				bod_jgbn   , 
+				bod_jgbnnm , 
+				bod_agbn   , 
+				bod_qgbn   , 
+				bod_hpno1  , 
+				bod_hpno2  , 
+				bod_hpno3  , 
+				bod_title  , 
+				bod_content, 
+				bod_read   , 
+				bod_pass   , 
+				bod_fname  , 
+				bod_fsize  , 
+				bod_group  , 
+				bod_step   , 
+				bod_level  , 
+				bod_stat   , 
+				inp_ymd    , 
+				ipe_eeno   , 
+				updr_ymd   , 
+				updr_eeno
+			) VALUES (
+				TO_NUMBER(#bod_indx#)   ,
+				#bod_sano#   ,
+				#bod_sanm#   ,
+				#bod_type#   ,
+				#bod_jgbn#   ,
+				#bod_jgbnnm# ,
+				#bod_agbn#   ,
+				#bod_qgbn#   ,
+				#bod_hpno1#  ,
+				#bod_hpno2#  ,
+				#bod_hpno3#  ,
+				#bod_title#  ,
+				#bod_content#,
+				0            ,
+				#bod_pass#   ,
+				#bod_fname#  ,
+				CASE 
+	              WHEN #bod_fsize# = '' OR #bod_fsize# = null THEN 0
+	            END  ,
+				#bod_group#  ,
+				#bod_step#   ,
+				#bod_level#  ,
+				#bod_stat#   ,
+				SYSDATE    ,
+				#ipe_eeno#   ,
+				SYSDATE    ,
+				#updr_eeno#
+			)
+	</insert>
+	
+	<delete id="deleteInfoBdToFaq" parameterClass="bdDto">
+	    /*deleteInfoBdToFaq*/
+		DELETE FROM BGAB_GASCBD01$corp_cd$
+		 WHERE bod_type = 'F'
+		   AND bod_indx = #bod_indx#
+	</delete>
+	<select id="getSelectListBDToMainNotice" parameterClass="String" resultClass="bdDto">
+		/*getSelectListBDToMainNotice*/
+		SELECT 
+			top(#row#) 
+			bod_title,
+			bod_indx
+		FROM
+			BGAB_GASCBD01$corp_cd$
+	</select>
+	
+	<!-- Claim -->
+	<select id="selectCountBdToClaim" parameterClass="bdKeyDto" resultClass="java.lang.String">
+		/*selectCountBdToClaim*/
+		SELECT count(*) tot_cnt
+		  FROM BGAB_GASCBD01$corp_cd$
+		 WHERE bod_type = 'C' <!-- notice(N), qna(Q), faq(F), Claim(C) -->
+				 <isNotEmpty property="key_title" prepend="and">
+				 	bod_title like '%' || #key_title# || '%'
+				 </isNotEmpty>
+				 <isNotEmpty property="key_bod_jgbn" prepend="and">
+				 	bod_jgbn like '%' || #key_bod_jgbn# || '%'
+				 </isNotEmpty>
+				 <isNotEmpty property="key_bod_agbn" prepend="and">
+				 	bod_agbn like '%' || #key_bod_agbn# || '%'
+				 </isNotEmpty>
+				 
+	</select>
+	
+	<select id="selectListBdToClaim" parameterClass="bdKeyDto" resultClass="bdDto">
+	/*selectListBdToClaim*/
+	SELECT * 
+	FROM
+	(
+		SELECT rownum rnum, K.*
+		FROM
+		(
+			SELECT  
+				   BD01.BOD_INDX, 
+			       BD01.BOD_JGBNNM, 
+			       BD01.BOD_AGBN, 
+			       BD01.BOD_TITLE, 
+			       BD01.BOD_FNAME, 
+			       TO_CHAR( BD01.INP_YMD, 'YYYY-MM-DD' ) AS INP_YMD, 
+			       NVL(BD01.BOD_READ,0) AS BOD_READ, 
+			       BD01.BOD_GROUP, 
+			       BD01.BOD_STEP, 
+			       BD01.BOD_LEVEL, 
+			       BD01.IPE_EENO, 
+			       d.xusr_name AS EENM  
+			FROM BGAB_GASCBD01$corp_cd$ BD01
+			LEFT OUTER JOIN 
+			    (SELECT xusr_empno, 
+			           xusr_name, 
+			           xusr_dept_name 
+			      FROM BGAB_GASCZ002$corp_cd$ 
+			    ) d 
+			      ON d.xusr_empno = BD01.ipe_eeno
+			WHERE BD01.bod_type='Q' 
+			ORDER BY BD01.BOD_GROUP DESC, BD01.BOD_INDX ASC
+		)K
+	)X
+	WHERE RNUM BETWEEN #startRow# AND #endRow#
+	</select>
+	
+	<select id="selectDetailBdToClaim" parameterClass="bdKeyDto" resultClass="bdDto">
+	    /*selectDetailBdToClaim*/
+		SELECT bod_sano ,
+		       bod_sanm ,
+		       bod_jgbn ,
+		       bod_jgbnnm ,
+		       bod_agbn ,
+		       bod_qgbn ,
+		       bod_hpno1 ,
+		       bod_hpno2 ,
+		       bod_hpno3 ,
+		       '' AS bod_ichagenm ,
+		       bod_type ,
+		       bod_title ,
+		       bod_content ,
+		       NVL(bod_secret,'Public') AS bod_secret,
+			   NVL(bod_secretnm,'public') as bod_secretnm,
+		       bod_read ,
+		       bod_group ,
+		       bod_step ,
+		       bod_level ,
+		       bod_stat ,
+		       bod_pass ,
+		       bod_fname ,
+		       bod_fname AS old_bod_fname ,
+		       bod_fsize ,
+		       TO_CHAR( inp_ymd, 'YYYY-MM-DD' ) AS inp_ymd, 
+		       eeno ,
+		       eenm ,
+		       deptName ,
+		       stepName ,
+		       hpno ,
+		       ipe_eeno ,
+		       ipe_eeno         AS bod_eeno ,
+		       d.xusr_name      AS bod_eenm ,
+		       d.xusr_dept_name AS bod_ops_nm
+		FROM BGAB_GASCBD01$corp_cd$ bbs
+		LEFT OUTER JOIN
+		  (SELECT a.xdsm_empno AS eeno ,
+		    b.xusr_name        AS eenm ,
+		    b.xusr_dept_name   AS deptName ,
+		    b.xusr_step_name   AS stepName ,
+		    a.xdsm_hpno        AS hpno ,
+		    rtrim(a.xdsm_plac) AS plac ,
+		    a.xdsm_gubn2       AS gubn2
+		  FROM BGAB_GASCZ007$corp_cd$ a
+		  INNER JOIN BGAB_GASCZ002$corp_cd$ b
+		  ON b.xusr_empno    = a.xdsm_empno
+		  )c ON bbs.bod_agbn = c.plac
+		AND bbs.bod_jgbn     = c.gubn2
+		LEFT OUTER JOIN
+		  ( SELECT xusr_empno, xusr_name, xusr_dept_name FROM BGAB_GASCZ002$corp_cd$
+		  ) d
+		ON d.xusr_empno = bbs.ipe_eeno
+		WHERE bod_type  = 'C'
+		  AND bod_indx    = #key_bod_indx#
+	</select>
+
+	<insert id="mergeInfoBdToClaim" parameterClass="bdDto">
+	    /*mergeInfoBdToClaim*/
+		MERGE INTO BGAB_GASCBD01$corp_cd$ a
+		USING (SELECT #bod_indx# as bod_indx , #bod_type# as bod_type) AS b
+		   ON ( a.bod_indx = b.bod_indx AND a.bod_type = b.bod_type)
+		WHEN MATCHED THEN
+			UPDATE 
+			   SET bod_jgbn    = #bod_jgbn#     ,
+				   bod_jgbnnm  = #bod_jgbnnm#   ,
+				   bod_agbn    = #bod_agbn#     ,
+				   bod_qgbn    = #bod_qgbn#     ,
+				   bod_hpno1   = #bod_hpno1#    ,
+				   bod_hpno2   = #bod_hpno2#    ,
+				   bod_hpno3   = #bod_hpno3#    ,
+				   bod_title   = #bod_title#    ,
+				   bod_content = #bod_content#  ,
+				   bod_secret  = #bod_secret#   ,
+				   bod_secretnm= #bod_secretnm# ,
+				   bod_pass    = #bod_pass#     ,
+				   bod_fname   = #bod_fname#    ,
+				   bod_fsize   = CASE 
+					              WHEN #bod_fsize# = '' OR #bod_fsize# = null THEN 0
+					            END, 
+				   updr_ymd    = SYSDATE    ,
+				   updr_eeno   = #updr_eeno#
+		WHEN NOT MATCHED THEN
+			INSERT (
+				bod_indx    ,
+				bod_sano    ,
+				bod_sanm    ,
+				bod_type    ,
+				bod_jgbn    ,
+				bod_jgbnnm  ,
+				bod_agbn    ,
+				bod_qgbn    ,
+				bod_hpno1   ,
+				bod_hpno2   ,
+				bod_hpno3   ,
+				bod_title   ,
+				bod_content ,
+				bod_secret  ,
+				bod_secretnm,
+				bod_read    ,
+				bod_pass    ,
+				bod_fname   ,
+				bod_fsize   ,
+				bod_group   ,
+				bod_step    ,
+				bod_level   ,
+				bod_stat    ,
+				inp_ymd     ,
+				ipe_eeno    ,
+				updr_ymd    ,
+				updr_eeno
+			)values(
+				#bod_indx#   ,
+				#bod_sano#   ,
+				#bod_sanm#   ,
+				#bod_type#   ,
+				#bod_jgbn#   ,
+				#bod_jgbnnm# ,
+				#bod_agbn#   ,
+				#bod_qgbn#   ,
+				#bod_hpno1#  ,
+				#bod_hpno2#  ,
+				#bod_hpno3#  ,
+				#bod_title#  ,
+				#bod_content#,
+				#bod_secret#   ,
+				#bod_secretnm# ,
+				0            ,
+				#bod_pass#   ,
+				#bod_fname#  ,
+				 CASE 
+	              WHEN #bod_fsize# = '' OR #bod_fsize# = null THEN 0
+	            END  ,
+				#bod_group#  ,
+				#bod_step#   ,
+				#bod_level#  ,
+				#bod_stat#   ,
+				SYSDATE    ,
+				#ipe_eeno#   ,
+				SYSDATE    ,
+				#updr_eeno#
+			);
+	</insert>
+	
+	<delete id="deleteInfoBdToClaim" parameterClass="bdDto">
+	    /*deleteInfoBdToClaim*/
+		DELETE FROM BGAB_GASCBD01$corp_cd$ 
+		 WHERE bod_type = 'C' 
+		 AND bod_group = #bod_group#
+		 AND bod_level <![CDATA[>=]]> #bod_level#
+	</delete>
+	
+	<insert id="replyInfoBdToClaim" parameterClass="bdDto">
+	    /*replyInfoBdToClaim*/
+		INSERT INTO BGAB_GASCBD01$corp_cd$(
+				bod_indx   , 
+				bod_sano   , 
+				bod_sanm   , 
+				bod_type   , 
+				bod_jgbn   , 
+				bod_jgbnnm , 
+				bod_agbn   , 
+				bod_qgbn   , 
+				bod_hpno1  , 
+				bod_hpno2  , 
+				bod_hpno3  , 
+				bod_title  , 
+				bod_content, 
+				bod_read   , 
+				bod_pass   , 
+				bod_fname  , 
+				bod_fsize  , 
+				bod_group  , 
+				bod_step   , 
+				bod_level  , 
+				bod_stat   ,
+				bod_secret ,
+				bod_secretnm,
+				inp_ymd    , 
+				ipe_eeno   , 
+				updr_ymd   , 
+				updr_eeno
+			) VALUES (
+				#bod_indx#   , 
+				#bod_sano#   , 
+				#bod_sanm#   , 
+				#bod_type#   , 
+				#bod_jgbn#   , 
+				#bod_jgbnnm# , 
+				#bod_agbn#   , 
+				#bod_qgbn#   , 
+				#bod_hpno1#  , 
+				#bod_hpno2#  , 
+				#bod_hpno3#  , 
+				#bod_title#  , 
+				#bod_content#, 
+				0            , 
+				#bod_pass#   , 
+				#bod_fname#  , 
+				CASE 
+	              WHEN #bod_fsize# = '' OR #bod_fsize# = null THEN 0
+	            END  , 
+				#bod_group#  , 
+				#bod_step#   , 
+				#bod_level#  , 
+				#bod_stat#   , 
+				#bod_secret# ,
+				#bod_secretnm#,
+				SYSDATE    , 
+				#ipe_eeno#   , 
+				SYSDATE    , 
+				#updr_eeno#
+			)
+	</insert>
+	
+	<select id="selectToJobCombo" parameterClass="commonCode" resultClass="commonCode">
+		/* selectToJobCombo */
+		select menu_mgrp_cd as value
+     		 , scrn_nm as name
+     		 , menu_mgrp_cd AS KEY
+		  from bgab_gascz004_gas
+		 where menu_sgrp_cd = '000'
+		   and use_yn = '1'
+		   and menu_lgrp_cd not in ('M1','M9')
+		   and locale = #locale#
+	</select>
+</sqlMap>

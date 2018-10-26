@@ -1,0 +1,228 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String docId = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("docid")));
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>ROOMS&MEALS PAGE</title>
+		<style type="text/css">
+			#wrap.submit_page #contents_wrap,
+			#wrap.submit_page .any_page,
+			#wrap.submit_page #contents{width:100%}
+		</style>
+	</head>
+	<body>
+		<div id="wrap" class="submit_page">
+		<form name="frm" id="frm">
+			<input type="hidden" id="if_id" name="if_id"  value="<%=docId%>">
+	        <div id="contents_wrap" class="any_page">
+	        	<div id="contents">
+		        	<%=CommonGasc.getTitleAndButtonNew(
+						sess_empno
+						,"XRM01"
+						,""
+						,"1"
+						,"2"
+						,null
+						,"Y"
+						,request)
+					%>
+					<div class="search_area" style="margin-bottom: 10px;"> 
+						<table>
+							<tr> 
+								<th width="50px"><fmt:message key="region"/></th>
+								<td> 
+									<select id="room_plant" name="room_plant" style="width:120px">
+									</select>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div class="con_t_area">
+	                	<h3><fmt:message key="basic_info"/></h3>
+	                </div>
+					<div class="search_area">
+						<table>
+							<colgroup>
+								<col style="width:80px">
+								<col style="width:160px">
+								<col style="width:80px">
+								<col style="width:160px">
+								<col style="width:80px">
+								<col style="width:160px">
+								<col style="width:80px">
+								<col style="width:160px">
+							</colgroup>
+							<tr>
+								<th><fmt:message key="eeno"/></th>           
+								<td> 
+									<input type="text" id="req_eeno" name="req_eeno" style="width:145px;ime-mode:disabled;" onkeypress="return onlyNum2()" onkeyup="cearInsa();setInsaInfo();" value="<%=sess_empno %>" class="disabled">
+								</td>
+								<th><fmt:message key="eenm"/></th>
+								<td>
+									<input type="text" id="eeno_nm" name="eeno_nm" style="width:145px;" class="disabled" readonly/>
+								</td>
+								<th><fmt:message key="position"/></th> 
+								<td>  
+									<input type="text" id="pos_nm" name="pos_nm" style="width:145px;" class="disabled" readonly/>
+								</td>
+								<th><fmt:message key="dept_nm"/></th>    
+								<td> 
+									<input type="text" id="dept_nm" name="dept_nm" style="width:145px;" class="disabled" readonly/>
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="req_ymd"/></th>
+								<td>
+									<input type="text" id="ptt_ymd" name="ptt_ymd" style="width:145px;" class="disabled" readonly/>
+								</td>
+								<th><fmt:message key="doc_no"/></th>
+								<td>
+									<input type="text" id="doc_no" name="doc_no" style="width:145px;" class="disabled" readonly/>
+								</td>
+								<th><fmt:message key="tel_no"/></th>
+								<td>
+									<input type="text" id="tel_no" name="tel_no" style="width:145px;" class="disabled" readonly/>
+								</td>
+								<th><fmt:message key="pgs_st_nm"/></th>
+								<td> 
+									<input type="text" id="pgs_st_nm" name="pgs_st_cd_d" style="width:145px;" class="disabled" readonly/>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div class="con_t_area">
+	                	<h3><fmt:message key="req_info"/></h3>
+	                </div>
+					<div class="search_area">
+						<table>
+							<colgroup>
+								<col style="width:80px;" />
+	                            <col style="width:160px;" />
+	                            <col style="width:80px;" />
+	                            <col style="width:160px;" />
+	                            <col style="width:100px;" />
+	                            <col style="width:auto;" />
+							</colgroup>
+							<tr>
+								<th><fmt:message key="place"/></th>           
+								<td> 
+									<input type="text" id="room_place" name="room_place" style="width:140px;" class="disabled" readonly/>
+								</td>
+								<th><fmt:message key="long_tm"/></th>           
+								<td> 
+									<input type="checkbox" id="isMulti" name="isMulti" >
+									<select id="rsvt_day" name="rsvt_day" style="width:70px" disabled></select>
+								</td>
+								<th><fmt:message key="rsvt_tm"/></th>
+								<td>
+									<input id="fr_ymd" type="text" style="width:90px;" class="disabled" readonly>
+									<select id="fr_time" name="fr_time" style="width:85px">
+									</select>
+									~<input id="to_ymd" type="text" style="width:90px;" class="disabled" readonly>
+									<select id="to_time" name="to_time" style="width:85px">
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="dtl_cont"/></th>
+								<td colspan="5">
+									<input type="text" id="note" name="note" style="width:866px;" class="disabled" readonly/>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</form>
+		<form id="hideForm" name="hideForm" method="post">
+			<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+		</form>
+	</div>
+	</body>
+</html>
+
+<script type="text/javascript">
+	var firstYn = "Y";
+	var authType = "N";
+	
+	function fnSetDocumentReady(){
+		getCommonCode("room_plant:X0004;fr_time:TIME;to_time:TIME;budget_type:X3012;tot:X3020:A;rsvt_day:XRM02:A", "N", "searchBudgetCombo();");	
+	}
+	
+	function searchBudgetCombo(){
+		getCommonCode("budget_sel:XRM:S;budget_wbs:XRM;", "N", "doSearch()", "/hncis/system/getPurchaseOrderCombo.do");
+	}
+	
+	function calMealPriceInfo(){
+		var mealPrice = 0;
+		$.each(eval(mealPrice_info),function(targetNm,optionData){
+			$.each(eval(optionData),function(idx,optionData1){
+				if($("#room_meal").val() == optionData1.value){
+					mealPrice = optionData1.price;
+				}
+			});
+		});
+		
+		if($("#room_meal").val() == "N"){
+			$("#room_qty").val(0);
+			$("#amont").val(0);
+		}
+		else{
+			var roomQty = $("#room_qty").val() == ""? 0 :  $("#room_qty").val();
+			$("#amont").val(numberComma(Number(roomQty) * Number(mealPrice)));
+		}
+	}
+	
+	function doSearch(msgFlag){
+		var keyData = {
+			if_id		: $('#if_id').val(),
+			corp_cd		: sess_corp_cd,
+			loc_cd		: sess_locale
+		};
+		paramData = {
+				paramJson      	: util.jsonToString(keyData)
+		};
+		doCommonAjax("doSearchInfoRmToRequestForAprv.do", paramData, "loadCallBack(jsonData.sendResult,'"+msgFlag+"');");
+	}
+	
+	/**
+	 * callback
+	 */
+	function loadCallBack(result,msgFlag){
+		
+		loadJsonSet(result);
+		
+		$("#eeno").val(result.req_eeno);
+		$("#eeno_nm").val(result.req_eeno_nm);
+		$("#pos_nm").val(result.req_step_nm);
+		$("#dept_nm").val(result.req_dept_nm);
+		$("#ptt_ymd").val(result.ptt_ymd);
+		$("#tel_no").val(result.req_tel_no);
+		$("#pgs_st_nm").val(result.pgs_st_nm);
+		
+		if(msgFlag != 'N'){ 
+			setBottomMsg(result.message, false);
+		}
+		
+		if(result.fr_ymd != result.to_ymd || result.rsvt_day != ""){
+			$("#isMulti").attr('checked', true) ;
+		}else{
+			$("#isMulti").attr('checked', false) ;
+		}
+		$("#isMulti").attr("disabled", true);
+		$("#room_plant").attr("disabled", true);
+		$("#fr_time").attr("disabled", true);
+		$("#to_time").attr("disabled", true);
+		
+		if($("#room_plant").val() == "2"){
+			$(".plant_hidden_area").hide();
+		}else{
+			$(".plant_hidden_area").show();
+		}
+		
+		fnSubmitInfoSettings($("#pgs_st_cd").val(), $("#if_id").val(), result.code, "snb_rson_sbc", "1");
+	}
+</script>

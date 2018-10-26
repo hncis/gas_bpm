@@ -1,0 +1,516 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="com.hncis.common.util.*" %>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XSB07";
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>LIST</title>
+	</head>
+	<body>
+		<div id="wrap">
+	    	<form name="frm" id="frm">
+		    	<%@ include file="../include/hncis_header.gas"%>
+		        <div id="contents_wrap">
+		        	<%@ include file="../include/hncis_left.gas"%>
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,"XSB07" 
+							,""
+							,null
+							,null
+							,null
+							,request)
+						%>
+		                <div style="float:left; width:435px; height:500px">
+							<div class="con_t_area mt10" style="height:30px">
+			                	<h3 style="float:left"><fmt:message key="route"/></h3>
+			                	<div class="btn_area mt0">
+				                    <ul class="btns fr ml20">
+				                        <li><a href="javascript:fnGridRowAdd('htmlTable1');"><fmt:message key="BUTTON.ADD.ROW"/><span></span></a></li>
+		                        		<li><a href="javascript:retrieve('fretado_save');"><fmt:message key="BUTTON.SAVE"/><span></span></a></li>
+		                        		<li><a href="javascript:retrieve('fretado_delete');"><fmt:message key="BUTTON.DELETE"/><span></span></a></li>
+				                    </ul>
+				                </div>
+			                </div>
+			                <table id="htmlTable1" class="scroll"></table>
+							<div id="htmlPager1" class="scroll"></div>
+						</div>
+						<div style="width:580px; height:500px; margin-left:455px; margin-top:30px">
+							<div class="con_t_area mt10" style="height:30px">
+			                	<h3 style="float:left"><fmt:message key="boarding"/></h3>
+			                	<!--<div class="ml20 fl">
+									<input type="text" id="key_time" style="width:50px" maxlength="5">
+									<input type="text" id="key_interval" style="width:50px" maxlength="2">
+					                <a href="javascript:retrieve('interval');" class="blue_btn">Interval<span></span></a>
+				                </div>-->
+			                	<div class="btn_area mt0">
+				                    <ul class="btns fr" style="margin-left: 5px">
+				                    	<li><a href="javascript:fnGridRowAdd('htmlTable2');"><fmt:message key="BUTTON.ADD.ROW"/><span></span></a></li>
+		                        		<li><a href="javascript:retrieve('exist_save');"><fmt:message key="BUTTON.SAVE"/><span></span></a></li>
+		                        		<li><a href="javascript:retrieve('exist_delete');"><fmt:message key="BUTTON.DELETE"/><span></span></a></li>
+				                    </ul>
+				                </div>
+			                </div>
+			                <table id="htmlTable2" class="scroll"></table>
+							<div id="htmlPager2" class="scroll"></div>
+						</div>
+			            <div class="clear"></div>
+	                	<%@ include file="../include/hncis_message.gas"%>
+		            </div>
+		        </div>
+	        </form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken"	name="hid_csrfToken">
+				<input type="hidden" id="hid_type"	name="hid_type">
+			</form>
+	    </div>
+	</body>
+</html>
+
+<script type="text/javascript">
+	var gridName1 = "htmlTable1";
+	var gridName2 = "htmlTable2";
+	
+	var datarow1 = {fret_name:"",fret_sort:"",fret_use_yn:"", fret_type:"", fret_seq:"", fret_cnt:""};
+	var datarow2 = {route_name:"",route_time:"",route_sort:"",route_use_yn:"",seq:"", exist_type:""};
+	
+	var gridParam_fretado, gridParam_existente;
+	
+	function fnSetDocumentReady(){
+		getCommonCode('fret_use_yn:X3003;route_use_yn:X3003;', 'Y', 'init();');
+	}
+	
+	function init(){
+		//cn_fretado = [ "Name", "Sort", "Use Y/N", "type", "seq", ""],
+		cn_fretado = [
+			  '<fmt:message key="routeNm"/>' // "이름"
+			, '<fmt:message key="sort"/>' // "정렬"
+			, '<fmt:message key="use_yn"/>' // "사용여부"
+			, ''
+			, ''
+			, ''
+		];
+		cm_fretado = [
+		    {name:"fret_name",	 	index:"fret_name",   	formatter:"string", width:230, 	align:"left",	editable:true, sortable:false},
+		    {name:"fret_sort",	 	index:"fret_sort",		formatter:"string", width:80, 	align:"center",	editable:true, sortable:false},
+		    {name:"fret_use_yn",	index:"fret_use_yn"		, sortable:false,		formatter: "select",	width:80,	align:'center',	editable:true,	edittype:'select', 
+				editoptions:{value:getComboValue('fret_use_yn'), dataInit: function(elem) {$(elem).width(80);}
+			        },
+			        editrules:{required:true}
+			},
+		    {name:"fret_type",		index:"fret_type", 		formatter:"string", width:0, 	align:"left",	editable:true, sortable:false, hidden:true},
+		    {name:"fret_seq",		index:"fret_seq", 		formatter:"string", width:0, 	align:"left",	editable:true, sortable:false, hidden:true},
+		    {name:"fret_cnt",		index:"fret_cnt", 		formatter:"string", width:0, 	align:"left",	editable:true, sortable:false, hidden:true}
+		];
+		
+		//cn_existente = [ "Name", "Time", "Sort", "Use Y/N", "seq", "type"],
+		cn_existente = [
+			  '<fmt:message key="boardingNm"/>' // "이름"
+			, '<fmt:message key="sb_time"/>' // "정렬"
+			, '<fmt:message key="sort"/>' // "정렬"
+			, '<fmt:message key="use_yn"/>' // "사용여부"
+			, ''
+			, ''
+		];
+		cm_existente = [
+			{name:"route_name",		index:"route_name",		formatter:"string", width:270, 	align:"left",	editable:true, sortable:false},
+			{name:"route_time",		index:"route_time",		formatter:"string", width:100, 	align:"center",	editable:true, sortable:false},
+			{name:"route_sort",		index:"route_sort",		formatter:"string", width:80, 	align:"center",	editable:true, sortable:false},
+			{name:"route_use_yn",	index:"route_use_yn"		, sortable:false,		formatter: "select",	width:80,	align:'center',	editable:true,	edittype:'select', 
+				editoptions:{value:getComboValue('route_use_yn'), dataInit: function(elem) {$(elem).width(60);}
+			        },
+			        editrules:{required:true}
+			},
+			{name:"seq",			index:"seq",			formatter:"string", width:350, 	align:"left",	editable:true, sortable:false, hidden:true},
+			{name:"route_time",		index:"route_time", 	formatter:"string", width:350, 	align:"left",	editable:true, sortable:false, hidden:true}
+		];
+		
+		var params = {
+			f_levl		: '0',
+			corp_cd		: sess_corp_cd
+		};
+		
+		gridParam_fretado = {
+			viewEdit : [{
+				gridName      : gridName1,
+				url           : "doSearchTransporteFretadoList.do",
+				colNames      : cn_fretado,
+				colModel      : cm_fretado,
+				width         : "430",
+				height        : 438,
+				rownumbers    : false,
+				multiselect   : true,
+				cellEdit      : true,
+				fnMerge       : false,
+				paramJson     : params,
+				rowNum        : 100,
+				selectCellFc  : "setExistGridValue(rowid, iCol, cellcontent);",
+				completeFc	  : "addGridRow(19, 'htmlTable1', 'datarow1');loadCallBack();"
+			}]
+		};
+		
+		gridParam_existente = {
+			viewEdit : [{
+				gridName      : gridName2,
+				url           : "/doSearchToEmpty.do",
+				colNames      : cn_existente,
+				colModel      : cm_existente,
+				width         : "575",
+				height        : 438,
+				rownumbers    : false,
+				multiselect   : true,
+				cellEdit      : true,
+				fnMerge       : false,
+				rowNum        : 100,
+				completeFc	  : "addGridRow(19, 'htmlTable2', 'datarow2')"
+			}]
+		};
+	
+		commonJqGridInit(gridParam_fretado);
+		commonJqGridInit(gridParam_existente);
+	}
+	
+	function loadCallBack(){
+	//	$("#hid_type").val(getColValue("fret_type", 1, gridName1));
+	//	jQuery("#"+gridName1).setRowData (1,false,{background:'#B2EBF4'});
+	//	previSRow1 = 1;
+	//	doExistenteSearch();
+	}
+	
+	function setExistGridValue(rowid, iCol, cellcontent){
+		if(iCol != 0){
+			$("#hid_type").val(getColValue("fret_type", rowid, gridName1));
+			doExistenteSearch();
+		}
+	}
+	
+	function retrieve(btnFlag){
+		var f = document.frm;
+		switch(btnFlag){
+		    case "fretado_save" :
+			    doFretadoSave();
+				break;
+		    case "exist_save" :
+			    doExistSave();
+				break;
+		    case "fretado_delete" :
+			    doFretadoDelete();
+				break;
+		    case "exist_delete" :
+			    doExistDelete();
+				break;
+		    case "interval" :
+		    	doIntervalTime();
+		    	break;
+		}
+	}
+	
+	function doSearchFretado(){
+		var params = {
+			f_levl		: "0",
+			corp_cd		: sess_corp_cd
+		};
+		
+		doCommonSearch("doSearchTransporteFretadoList.do", util.jsonToString(params), "doFretadoSearchCallBack();", gridName1);
+	}
+	
+	function doFretadoSearchCallBack(){
+		addGridRow(19, 'htmlTable1', 'datarow1');
+	}
+	
+	function doExistenteSearch(rowid, iRow, iCol, e){
+		if($("#hid_type").val() == ""){
+			return;
+		}
+		
+		var params = {
+			type		: $("#hid_type").val(),
+			f_levl		: "1",
+			corp_cd		: sess_corp_cd
+		};
+		
+		doCommonSearch("doSearchPonteExistenteList.do", util.jsonToString(params), "doExistenteSearchCallBack();", gridName2);
+	}
+	
+	function doExistenteSearchCallBack(){
+		addGridRow(19, 'htmlTable2', 'datarow2');
+	}
+	
+	function fnGridRowAdd(targetGrid){
+		var gridRowId = $("#"+targetGrid).getDataIDs().length;
+		switch(targetGrid){
+		case "htmlTable1" :
+			jQuery("#"+targetGrid).jqGrid("addRowData", gridRowId+1, datarow1);
+			break;
+		case "htmlTable2" :
+			jQuery("#"+targetGrid).jqGrid("addRowData", gridRowId+1, datarow2);
+			break;
+		}
+	}
+	
+	function doFretadoSave(){
+		var params = [];
+		
+		var selectRow = $("#"+gridName1).jqGrid("getGridParam", "selarrrow");
+		
+		if(selectRow.length == 0){
+			alertUI("<fmt:message key="MSG.SEL.0011"/>");
+			return;
+		}
+		
+		for(var i=0; i<selectRow.length; i++){
+			if(selectRow[i]){
+				if(getColValue("fret_name", selectRow[i], gridName1) == ""){
+					alertUI(selectRow[i] + " Line : Please input Transporte Fretado Name");
+					return;
+				}
+				if(getColValue("fret_sort", selectRow[i], gridName1) == ""){
+					alertUI(selectRow[i] + " Line : Please input Transporte Fretado Sort");
+					return;
+				}
+				
+				data = {
+					fret_name	: getColValue("fret_name", selectRow[i], gridName1),
+					fret_sort	: getColValue("fret_sort", selectRow[i], gridName1),
+					fret_use_yn	: getColValue("fret_use_yn", selectRow[i], gridName1),
+					fret_type	: getColValue("fret_type", selectRow[i], gridName1),
+					fret_seq	: getColValue("fret_seq", selectRow[i], gridName1),
+					f_levl		: "0",
+					ipe_eeno	: sess_empno,
+					updr_eeno	: sess_empno,
+					corp_cd		: sess_corp_cd
+				};
+				
+				params.push(data);
+			}
+		}
+		
+		if(params.length == 0){
+			alertUI("<fmt:message key="MSG.SEL.0011"/>");
+			return;
+		}
+		
+		confirmUI("<fmt:message key="MSG.CNF.0004"/>");
+		$("#pop_yes").click(function(){
+			$.unblockUI({
+				onUnblock: function(){
+					var paramData = {
+							paramJson : util.jsonToList(params)
+						};
+						doCommonAjax("doSaveTransporteFretadoList.do", paramData, "doFretadoCallBack(jsonData.sendResult);");
+				}
+			});
+		});
+	}
+	
+	function doExistSave(){
+		var data;
+		var params = [];
+		
+		var selectRow = $("#"+gridName2).jqGrid("getGridParam", "selarrrow");
+		
+		if(selectRow.length == 0){
+			alertUI("<fmt:message key="MSG.SEL.0011"/>");
+			return;
+		}
+		
+		if($("#hid_type").val() == ""){
+			alertUI("Please select 'Transporte Fretado'");
+			return;
+		}
+		
+		for(var i=0; i<selectRow.length; i++){
+			if(getColValue("route_name", selectRow[i], gridName1) == ""){
+				alertUI(selectRow[i] + " Line : Please input Ponto Existente Name");
+				return;
+			}
+			if(getColValue("route_time", selectRow[i], gridName1) == ""){
+				alertUI(selectRow[i] + " Line : Please input Ponto Existente Time");
+				return;
+			}
+			if(getColValue("route_sort", selectRow[i], gridName1) == ""){
+				alertUI(selectRow[i] + " Line : Please input Ponto Existente Sort");
+				return;
+			}
+			
+			if(selectRow[i]){
+				data = {
+					route_name		: changeToUni(getColValue("route_name", selectRow[i], gridName2)),
+					route_time		: getColValue("route_time", selectRow[i], gridName2),
+					route_sort		: getColValue("route_sort", selectRow[i], gridName2),
+					route_use_yn	: getColValue("route_use_yn", selectRow[i], gridName2),
+					seq				: getColValue("seq", selectRow[i], gridName2),
+					type			: $("#hid_type").val(),
+					f_levl			: "1",
+					ipe_eeno		: sess_empno,
+					updr_eeno		: sess_empno,
+					corp_cd			: sess_corp_cd
+				};
+				
+				params.push(data);
+			}
+		}
+		
+		if(params.length == 0){
+			alertUI("<fmt:message key="MSG.SEL.0011"/>");
+			return;
+		}
+		
+		confirmUI("<fmt:message key="MSG.CNF.0004"/>");
+		$("#pop_yes").click(function(){
+			$.unblockUI({
+				onUnblock: function(){
+					var paramData = {
+							paramJson : util.jsonToList(params)
+						};
+					doCommonAjax("doSavePontoExistenteList.do", paramData, "doExistenteCallBack(jsonData.sendResult);");
+				}
+			});
+		});
+	}
+	
+	function doFretadoDelete(){
+		var dParams = [];
+		var dData;
+		
+		var selectRow = $("#"+gridName1).jqGrid("getGridParam", "selarrrow");
+		
+		if(selectRow.length == 0){
+			alertUI("<fmt:message key="MSG.SEL.0011"/>");
+			return;
+		}
+		
+		for(var i=0; i<selectRow.length; i++){
+			if(selectRow[i]){
+				if(getColValue("fret_cnt", selectRow[i], gridName1) != "0"){
+					alertUI(selectRow[i] + " Line : Has Ponto Existente Data.");
+					return;
+				}
+				
+				dData = {
+					fret_seq  : getColValue("fret_seq", selectRow[i], gridName1),
+					fret_type : getColValue("fret_type", selectRow[i], gridName1),
+					f_levl	  : "0",
+					corp_cd		: sess_corp_cd
+				};
+				
+				dParams.push(dData);
+			}
+		}
+		
+		if(dParams.length == 0){
+			alertUI("<fmt:message key="MSG.SEL.0011"/>");
+			return;
+		}
+		
+		confirmUI("<fmt:message key="MSG.CNF.0002"/>");
+		$("#pop_yes").click(function(){
+			$.unblockUI({
+				onUnblock: function(){
+					var paramData = {
+							paramJson : util.jsonToList(dParams)
+						};
+						doCommonAjax("doDeleteTransporteFretadoList.do", paramData, "doFretadoCallBack(jsonData.sendResult);");
+				}
+			});
+		});
+	}
+	
+	function doExistDelete(tgName){
+		var dParams = [];
+		var dData;
+		
+		var selectRow = $("#"+gridName2).jqGrid("getGridParam", "selarrrow");
+		
+		if(selectRow.length == 0){
+			alertUI("<fmt:message key="MSG.SEL.0011"/>");
+			return;
+		}
+		
+	//	var tmpPrnCd = $("#"+gridName1).jqGrid("getGridParam", "selrow");
+		
+		for(var i=0; i<selectRow.length; i++){
+			if(selectRow[i]){
+				dData = {
+					seq  	: getColValue("seq", selectRow[i], gridName2),
+					type 	: $("#hid_type").val(),
+					f_levl	: "1",
+					corp_cd		: sess_corp_cd
+				};
+				
+				dParams.push(dData);
+			}
+		}
+		
+		if(dParams.length == 0){
+			alertUI("<fmt:message key="MSG.SEL.0011"/>");
+			return;
+		}
+		
+		confirmUI("<fmt:message key="MSG.CNF.0002"/>");
+		$("#pop_yes").click(function(){
+			$.unblockUI({
+				onUnblock: function(){
+					var paramData = {
+							paramJson : util.jsonToList(dParams)
+						};
+						doCommonAjax("doDeletePontoExistenteList.do", paramData, "doExistenteCallBack(jsonData.sendResult);");
+				}
+			});
+		});
+	}
+	
+	function doFretadoCallBack(result){
+		setBottomMsg(result.message, true);
+		doSearchFretado();
+	}
+	
+	function doExistenteCallBack(result){
+		setBottomMsg(result.message, true);
+		doExistenteSearch("N");
+	}
+	
+	function doIntervalTime(){
+		var time = selectNum($("#key_time").val());
+		if(time.length != 4){
+			return;
+		}
+		var hour = time.substring(0,2);
+		var min = time.substring(2,4);
+		var intVal = $("#key_interval").val();
+		
+		var ids = jQuery("#"+gridName2).getDataIDs();
+		for(var i = 0; i < ids.length; i++){
+			rowId = ids[i];
+			if(getColValue("route_name", rowId, gridName2) != ""){
+				$("#"+gridName2).jqGrid("setCell", rowId, "route_time", hour + ":" + min);
+				min = parseInt(min) + parseInt(intVal);
+				if(min >= 60){
+					hour = parseInt(hour) + 1;
+					min = parseInt(min) - 60;
+				}
+				if(min < 10){min = "0" + parseInt(min);}
+				if(hour > 24){ hour = "1"; }
+				if(hour < 10){hour = "0" + parseInt(hour);}
+			}
+		}
+	}
+	
+	var popWin;
+	function shuttleBusPopup(){
+		var url = "", width = "1093", height = "600";
+		url = ctxPath+"/hncis/shuttleBus/xsb08.gas";
+		win = newPopWin("about:blank", width, height, "win_shuttle");
+			
+		document.hideForm.hid_csrfToken.value = $("#csrfToken").val();
+		document.hideForm.action = url;
+		document.hideForm.target = "win_shuttle"; 
+		document.hideForm.method = "post"; 
+		document.hideForm.submit();
+	}
+
+</script>

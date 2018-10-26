@@ -1,0 +1,461 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId = "XST30";
+	String fdate = CurrentDateTime.getDate(CurrentDateTime.getDate(),-14);
+	String fyy = fdate.substring(0,4);
+	String fmm = fdate.substring(4,6);
+	String fdd = fdate.substring(6,8);
+	String yy = CurrentDateTime.getYear();
+	String mm = CurrentDateTime.getMonth();
+	String dd = CurrentDateTime.getDay();
+	
+	String fromDay = fyy + "-" + fmm + "-" + fdd;
+	String toDay   = yy + "-" + mm + "-" + dd;
+	
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH",locale);
+	String strIcc = JSPMessageSource.getMessage("BUTTON.INCOME_CHECK",locale);
+	String strUAP = JSPMessageSource.getMessage("BUTTON.USE_APPROVAL", locale);
+	String strRej = JSPMessageSource.getMessage("BUTTON.CONFIRMCANCEL", locale);
+	
+	String strBtn = "";
+	strBtn = strSch+"/search@"+strIcc+"/incomeCheck@"+strUAP+"/confirm@"+strRej+"/reject";
+	
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>MENU MANAGEMENT</title>
+	</head>
+	<body>
+		<div id="wrap">
+	    	<form name="viewForm" id="viewForm">
+				<input type="hidden" id="xusr_work_auth" name="xusr_work_auth"></input>
+		    	<%@ include file="../include/hncis_header.gas"%>
+		        <div id="contents_wrap">
+		        	<%@ include file="../include/hncis_left.gas"%>
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,"XST30"
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+		                <div class="search_area">
+		                	<table>
+		                        <colgroup>
+		                        	<col style="width:80px;" />
+		                        	<col style="width:200px;" />
+		                        	<col style="width:80px;" />
+		                        	<col style="width:150px;" />
+		                        	<col style="width:80px;" />
+		                        	<col style="width:150px;" />
+		                        	<col style="width:80px;" />
+		                            <col style="width:auto;" />
+		                        </colgroup>
+		                        <tbody>
+		                            <tr>
+										<th><fmt:message key="reg_ymd"/></th>
+										<td>
+											<input type="text" id="key_strt_ymd" name="key_strt_ymd" style="width:80px" value="<%=fromDay%>" readonly>~
+											<input type="text" id="key_fnh_ymd" name="key_fnh_ymd" style="width:80px" value="<%=toDay %>" readonly>
+										</td>
+										<th><fmt:message key="comp_nm"/></th>
+										<td>
+											<input type="text" id="key_corp_nm" name="key_corp_nm" style="width: 100px"/>
+										</td>
+										<th><fmt:message key="req_eeno"/></th>
+										<td>
+											<input type="text" id="key_req_user_nm" name="key_req_user_nm" style="width: 100px"/>
+										</td>
+										<th><fmt:message key="pgs_st_nm"/></th>
+										<td>
+											<select id="key_pgs_st_cd" name="key_pgs_st_cd">
+											</select>
+										</td>
+									</tr>
+		                        </tbody>
+		                    </table>
+		                </div>
+		                <div class="jq_tbl">
+			                <table id="htmlTable" class="scroll"></table>
+							<div id="htmlPager" class="scroll"></div>
+						</div>
+		                <%@ include file="../include/hncis_message.gas"%>
+		            </div>
+		            <div class="clear"></div>
+		        </div>
+	        </form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+	    </div>
+	    <img id="loading_progress_img" src="<%=ctxPath %>/images/common/progress_bar.gif" width="362" height="131" style="display:none" />
+	</body>
+</html>
+		<script type="text/javascript">
+		var params;
+		var comboVal;
+		var lastsel;
+		var fnMerge;
+		var gridParam;
+		var datarow = {corp_cd:"", pgs_st_cd:"", corp_nm:"", reg_ymd:"", pgs_st_nm:"", req_user_nm:"", req_contact:"", req_email:""
+			         , task01:"", task02:"", task03:"", task04:"", task05:"", task06:"", task07:"", task08:"", task09:"", task10:""
+			         , task11:"", task12:"", task13:"", task14:"", task15:"", task16:"", task17:"", task18:"", task19:"", task20:""
+			         , task30:"", task31:""};
+
+		function fnSetDocumentReady(){
+			initMenus();
+			$('#ST').slideDown('fast');
+			$("#key_strt_ymd").datepicker({ dateFormat: "yy-mm-dd" });
+			$("#key_fnh_ymd").datepicker({ dateFormat: "yy-mm-dd" });
+			getCommonCode("key_pgs_st_cd:XST30:S;", "N", "init();");
+
+			//f.KEY_MENU_MGRP_CD[0] = new Option("선 택","");
+		}
+
+		function init(){
+
+// 			cn = ['회사코드','국가코드','진행코드','회사명','신청일','진행','신청자명','연락처','이메일'
+// 			     ,'휴양소','근무복','선물','도서','교육','명함','전사용품','사무용품','출장','픽업'
+// 			     ,'교통비','차량','주유비','운행일지','방문','회의실','증명서','연차','통근버스','경조사','물품지원','협력업체'],
+			var cn = ['' // "회사코드"
+					  ,'' // "국가코드"
+			          ,'' // "진행코드"
+			          ,'<fmt:message key="comp_nm"/>' // "회사명"
+			          ,'<fmt:message key="req_ymd"/>' // "신청일"
+			          ,'<fmt:message key="pgs"/>' // "진행"
+			          ,'<fmt:message key="req_eeno"/>' // "신청자명"
+			          ,'<fmt:message key="tel_no"/>' // "연락처"
+			          ,'<fmt:message key="email"/>' // "이메일"
+			          ,'<fmt:message key="rc"/>' // "휴양소"
+			          ,'<fmt:message key="uniform"/>' // "근무복"
+			          ,'<fmt:message key="gift"/>' // "선물"
+			          ,'<fmt:message key="book"/>' // "도서"
+			          ,'<fmt:message key="training"/>' // "교육"
+			          ,'<fmt:message key="business_card"/>' // "명함"
+			          ,'<fmt:message key="computer_supplies"/>' // "전산용품"
+			          ,'<fmt:message key="office_supplies"/>' // "사무용품"
+			          ,'<fmt:message key="bns_tr"/>' // "출장"
+			          ,'<fmt:message key="pkup"/>' // "픽업"
+			          ,'<fmt:message key="trpt_cost"/>' // "교통비"
+			          ,'<fmt:message key="car"/>' // "차량"
+			          ,'<fmt:message key="fuel_cost"/>' // "주유비"
+			          ,'<fmt:message key="run_hist"/>' // "운행일지"
+			          ,'<fmt:message key="vst"/>' // "방문"
+			          ,'<fmt:message key="mt_rm"/>' // "회의실"
+			          ,'<fmt:message key="cert"/>' // "증명서"
+			          ,'<fmt:message key="xlv"/>' // "연차"
+			          ,'<fmt:message key="shuttleBus"/>' // "통근버스"
+			          ,'<fmt:message key="familyJob"/>' // "경조사"
+			          ,'물품지원' // "물품지원"
+			          ,'<fmt:message key="xco"/>' // "협력업체관리"
+		          ];
+			cm = [
+				{name:'corp_cd',index:'corp_cd', sortable:false, formatter: "string", hidden: true, width:0, align:"center", editable:false, frozen : false},
+				{name:'locale',index:'locale', sortable:false, formatter: "string", hidden: true, width:0, align:"center", editable:false, frozen : false},
+				{name:'pgs_st_cd',index:'pgs_st_cd', sortable:false, formatter: "string", hidden: true, width:0, align:"center", editable:false, frozen : false},
+				{name:'corp_nm',index:'corp_nm', sortable:false, formatter: "string", width:80, align:"center", editable:false, frozen : false},
+				{name:'reg_ymd',index:'reg_ymd', sortable:false, formatter: "string", width:80, align:"center", editable:false, frozen : false},
+				{name:'pgs_st_nm',index:'pgs_st_nm', sortable:false, formatter: "string", width:80, align:"center", editable:false, frozen : false},
+				{name:'req_user_nm',index:'req_user_nm', sortable:false, formatter: "string", width:80, align:"center", editable:false, frozen : false},
+				{name:'req_contact',index:'req_contact', sortable:false, formatter: "string",  width:80, align:"center", editable:false, frozen : false},
+				{name:'req_email',index:'req_email', sortable:false, formatter: "string", width:80, align:"center", editable:false, frozen : false},
+				{name:'task01', index:'task01',formatter:"select", width:60, align:'center', edittype:'select', editable:false, sortable:false,
+					editoptions:{value:'Y:Y;N:N'}
+				},
+				{name:'task02', index:'task02',formatter:"select", width:60, align:'center', edittype:'select', editable:false, sortable:false,
+					editoptions:{value:'Y:Y;N:N'}
+				},
+				{name:'task03', index:'task03',formatter:"select", width:60, align:'center', edittype:'select', editable:false, sortable:false,
+					editoptions:{value:'Y:Y;N:N'}
+				},
+				{name:'task04', index:'task04',formatter:"select", width:60, align:'center', edittype:'select', editable:false, sortable:false,
+					editoptions:{value:'Y:Y;N:N'}
+				},
+				{name:'task05', index:'task05',formatter:"select", width:60, align:'center', edittype:'select', editable:false, sortable:false,
+					editoptions:{value:'Y:Y;N:N'}
+				},
+				{name:'task06', index:'task06',formatter:"select", width:60, align:'center', edittype:'select', editable:false, sortable:false,
+					editoptions:{value:'Y:Y;N:N'}
+				},
+				{name:'task07', index:'task07',formatter:"select", width:60, align:'center', edittype:'select', editable:false, sortable:false,
+					editoptions:{value:'Y:Y;N:N'}
+				},
+				{name:'task08', index:'task08',formatter:"select", width:60, align:'center', edittype:'select', editable:false, sortable:false,
+					editoptions:{value:'Y:Y;N:N'}
+				},
+				{name:'task09', index:'task09',formatter:"select", width:60, align:'center', edittype:'select', editable:false, sortable:false,
+					editoptions:{value:'Y:Y;N:N'}
+				},
+				{name:'task10', index:'task10',formatter:"select", width:60, align:'center', edittype:'select', editable:false, sortable:false,
+					editoptions:{value:'Y:Y;N:N'}
+				},
+				{name:'task11', index:'task11',formatter:"select", width:60, align:'center', edittype:'select', editable:false, sortable:false,
+					editoptions:{value:'Y:Y;N:N'}
+				},
+				{name:'task12', index:'task12',formatter:"select", width:60, align:'center', edittype:'select', editable:false, sortable:false,
+					editoptions:{value:'Y:Y;N:N'}
+				},
+				{name:'task13', index:'task13',formatter:"select", width:60, align:'center', edittype:'select', editable:false, sortable:false,
+					editoptions:{value:'Y:Y;N:N'}
+				},
+				{name:'task14', index:'task14',formatter:"select", width:60, align:'center', edittype:'select', editable:false, sortable:false,
+					editoptions:{value:'Y:Y;N:N'}
+				},
+				{name:'task15', index:'task15',formatter:"select", width:60, align:'center', edittype:'select', editable:false, sortable:false,
+					editoptions:{value:'Y:Y;N:N'}
+				},
+				{name:'task16', index:'task16',formatter:"select", width:60, align:'center', edittype:'select', editable:false, sortable:false,
+					editoptions:{value:'Y:Y;N:N'}
+				},
+				{name:'task17', index:'task17',formatter:"select", width:60, align:'center', edittype:'select', editable:false, sortable:false,
+					editoptions:{value:'Y:Y;N:N'}
+				},
+				{name:'task18', index:'task18',formatter:"select", width:60, align:'center', edittype:'select', editable:false, sortable:false,
+					editoptions:{value:'Y:Y;N:N'}
+				},
+				{name:'task19', index:'task19',formatter:"select", width:60, align:'center', edittype:'select', editable:false, sortable:false,
+					editoptions:{value:'Y:Y;N:N'}
+				},
+				{name:'task20', index:'task20',formatter:"select", width:60, align:'center', edittype:'select', editable:false, sortable:false,
+					editoptions:{value:'Y:Y;N:N'}
+				},
+				{name:'task30', index:'task30',formatter:"select", width:60, align:'center', edittype:'select', editable:false, sortable:false,
+					editoptions:{value:'Y:Y;N:N'}
+				},
+				{name:'task31', index:'task31',formatter:"select", width:60, align:'center', edittype:'select', editable:false, sortable:false,
+					editoptions:{value:'Y:Y;N:N'}
+				}
+			];
+
+			params = {
+
+				};
+
+			gridParam = {
+					viewEdit : [{
+						url          : "/doSearchToEmpty.do",
+						colNames     : cn,
+						colModel     : cm,
+						height       : "100%",
+						rowNum		 : 20,
+						rownumbers   : true,
+						multiselect  : true,
+						cellEdit     : true,
+						fnMerge      : false,
+						paramJson    : params,
+						pager		 : "htmlPager",
+						completeFc	 : "addGridRow();initAfterMenus();"
+					}]
+				};
+
+			commonJqGridInit(gridParam);
+
+			jQuery("#htmlTable").jqGrid('navGrid',"#htmlPager",{edit:false,add:false,del:false,search:false,refresh:false});
+		}
+
+		function setMerge(){
+			jQuery("#htmlTable").jqGrid('setGroupHeaders', {
+				useColSpanStyle: false,
+				groupHeaders:[
+				  			{startColumnName: 'th1_use_yn', numberOfColumns: 8, titleText: 'Use Area'}
+				  		  ]
+			});
+
+			setGridColumnOptions();
+			//jQuery("#htmlTable").jqGrid('setFrozenColumns');
+		}
+
+
+		function getEmployeeInfo(){
+
+			if($("#eeno").val().length != 7) return;
+
+			var keyData = {eeno : $('#eeno').val()};
+			paramData = {
+					paramJson      	: util.jsonToString(keyData)
+				};
+
+			doCommonAjax("doSearchToUserManagementByUserInfo.do", paramData, "loadJsonSet(jsonData.sendResult);");
+		}
+
+		function employeeClear(){
+			if($("#eeno").val() == "" || $("#eeno").val().length == 0){
+				$("#retrFlag").val("");
+				$("#eenm").val("");
+				$("#stepName").val("");
+			}
+		}
+
+		function retrieve(btnFlag){
+			switch(btnFlag){
+				case "search" :
+					doSearch();
+					break;
+				case "incomeCheck" :
+					doUpdateIncomeCheck();
+					break;
+				case "confirm" :
+					doConfirm();
+					break;
+				case "reject" :
+					doReject();
+					break;
+			}
+		}
+
+		function doSearch(msgFlag){
+
+			var params = {
+					strt_ymd 	: selectNum($('#key_strt_ymd').val()),
+					fnh_ymd 	: selectNum($('#key_fnh_ymd').val()),
+					corp_nm 	: $('#key_corp_nm').val(),
+					req_user_nm : $('#key_req_user_nm').val(),
+					pgs_st_cd	: $('#key_pgs_st_cd').val()
+			};
+
+			doCommonSearch("doSearchXst30InfoList.do", util.jsonToString(params), "addGridRow();initAfterMenus();", "htmlTable", msgFlag);
+		}
+
+		function doUpdateIncomeCheck(){
+			var selectInfoRow = jQuery("#htmlTable").jqGrid('getGridParam','selarrrow');
+			var params = [];
+
+			if(selectInfoRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+
+			for(var i=0; i<selectInfoRow.length; i++){
+				rowId = selectInfoRow[i];
+				if(rowId){
+					if( getColValue("pgs_st_cd", rowId) != '1' ){
+						alertUI(rowId + ' <fmt:message key="MSG.ROW.0050"/>');
+						return;
+					}
+					var data ={
+							corp_cd	: getColValue("corp_cd", rowId),
+							pgs_st_cd : '2'
+						};
+					params.push(data);
+				}
+			}
+
+			confirmUI('<fmt:message key="MSG.CNF.0028"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								params 	: util.jsonToList(params)
+							};
+							doCommonAjax("doUpdateXst30IncomeCheck.do", paramData, "setBottomMsg(jsonData.sendResult.message, true);doSearch('N');");
+					}
+				});
+			});
+		}
+
+		function doConfirm(){
+			var selectInfoRow = jQuery("#htmlTable").jqGrid('getGridParam','selarrrow');
+			var params = [];
+
+			if(selectInfoRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+
+			for(var i=0; i<selectInfoRow.length; i++){
+				rowId = selectInfoRow[i];
+				if(rowId){
+					if( !(getColValue("pgs_st_cd", rowId) == '2' || getColValue("pgs_st_cd", rowId) == '4') ){
+						alertUI(rowId + ' <fmt:message key="MSG.ROW.0049"/>');
+						return;
+					}
+					var data ={
+							corp_cd			: getColValue("corp_cd", rowId),
+							locale			: getColValue("locale", rowId),
+							pgs_st_cd		: '3',
+							req_email		: getColValue("req_email", rowId),
+							bf_pgs_st_cd	: getColValue("pgs_st_cd", rowId),
+							task01			: getColValue("task01", rowId),
+							task02			: getColValue("task02", rowId),
+							task03			: getColValue("task03", rowId),
+							task04			: getColValue("task04", rowId),
+							task05			: getColValue("task05", rowId),
+							task06			: getColValue("task06", rowId),
+							task07			: getColValue("task07", rowId),
+							task08			: getColValue("task08", rowId),
+							task09			: getColValue("task09", rowId),
+							task10			: getColValue("task10", rowId),
+							task11			: getColValue("task11", rowId),
+							task12			: getColValue("task12", rowId),
+							task13			: getColValue("task13", rowId),
+							task14			: getColValue("task14", rowId),
+							task15			: getColValue("task15", rowId),
+							task16			: getColValue("task16", rowId),
+							task17			: getColValue("task17", rowId),
+							task18			: getColValue("task18", rowId),
+							task19			: getColValue("task19", rowId),
+							task20			: getColValue("task20", rowId),
+							task30			: getColValue("task30", rowId)
+						};
+					params.push(data);
+				}
+			}
+			
+			confirmUI('<fmt:message key="MSG.CNF.0017"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						
+						fnStartLoading();
+						
+						var paramData = {
+								params 	: util.jsonToList(params)
+							};
+							doCommonAjax("doUpdateXst30Confirm.do", paramData, "setBottomMsg(jsonData.sendResult.message, true);fnEndLoading();doSearch('N');");
+					}
+				});
+			});
+		}
+
+		function doReject(){
+			var selectInfoRow = jQuery("#htmlTable").jqGrid('getGridParam','selarrrow');
+			var params = [];
+
+			if(selectInfoRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+
+			for(var i=0; i<selectInfoRow.length; i++){
+				rowId = selectInfoRow[i];
+				if(rowId){
+					if(getColValue("pgs_st_cd", rowId) == '1'){
+					} else {
+						alertUI(rowId + ' <fmt:message key="MSG.ROW.0048"/>');
+						return;
+					}
+					var data ={
+							corp_cd	: getColValue("corp_cd", rowId),
+							pgs_st_cd : 'Z'
+						};
+					params.push(data);
+				}
+			}
+
+			confirmUI('<fmt:message key="MSG.CNF.0010"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								params 	: util.jsonToList(params)
+							};
+							doCommonAjax("doUpdateXst30Reject.do", paramData, "setBottomMsg(jsonData.sendResult.message, true);doSearch('N');");
+					}
+				});
+			});
+		}
+		</script>

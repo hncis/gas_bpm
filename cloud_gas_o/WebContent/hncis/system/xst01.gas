@@ -1,0 +1,632 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId = "XST01";
+
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH",locale);
+	String strSav = JSPMessageSource.getMessage("BUTTON.SAVE",locale);
+	String strIup = JSPMessageSource.getMessage("BUTTON.IS_UPLOAD",locale);
+	String strTmp = JSPMessageSource.getMessage("temp",locale);
+	String strBtn = "";
+	strBtn = strSch+"/search@"+strSav+"/edit@"+strIup+"/excelUpload1@"+strTmp+"/excelTmp";
+	
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>USER MANAGEMENT</title>
+	</head>
+	<body>
+		<div id="wrap">
+	    	<form name="viewForm" id="viewForm">
+				<input type="hidden" id="xusr_work_auth" name="xusr_work_auth"></input>
+		    	<%@ include file="../include/hncis_header.gas"%>
+		        <div id="contents_wrap">
+		        	<%@ include file="../include/hncis_left.gas"%>
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,"XST01"
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+		                <div class="search_area">
+		                	<table>
+		                        <colgroup>
+		                        	<col style="width:50px;" />
+		                        	<col style="width:160px;" />
+		                        	<col style="width:50px;" /> 
+		                        	<col style="width:180px;" />
+		                        	<col style="width:60px;" /> 
+		                        	<col style="width:180px;" />
+		                        	<col style="width:50px;" />
+		                            <col style="width:auto;" />
+		                        </colgroup>
+		                        <tbody>
+		                            <tr>
+										<th><fmt:message key="eeno"/></th>
+										<td>
+											 <input id="eeno" type="text" onKeyPress="return onlyNum2()" style="width:90px; ime-mode:disabled">
+											 <img id="deptBtn" name="img_ignm_pop" src="<%=ctxPath %>/images/hncis_common/find-f.png" style="cursor:hand;filter:alpha(opacity=100)" class='button' onMouseOver="na_change_img_src('img_ignm_pop','document', '<%=ctxPath %>/images/hncis_common/find-n.png');" onMouseOut="na_restore_img_src('img_ignm_pop');" onclick="userFind()" align="absmiddle">
+										</td>
+										<th><fmt:message key="eenm"/></th>
+										<td>
+											<input id="xusr_name" type="text" style="width:130px;">
+										</td>
+										<th><fmt:message key="eenm_en"/></th>
+										<td>
+											<input id="xusr_en_name" type="text" style="width:150px;">
+										</td>
+										<th><fmt:message key="position"/></th>
+										<td>
+											<input id="xusr_step_code" type="text" style="width:60px;">
+											<input id="xusr_step_name" type="text" style="width:100px;">
+										</td>
+									</tr>
+		                        </tbody>
+		                    </table>
+		                </div>
+		                <div class="search_area">
+		                	<table>
+		                        <colgroup>
+		                        	<col style="width:80px;" />
+		                        	<col style="width:250px;" />
+		                        	<col style="width:80px;" />
+		                        	<col style="width:250px;" />
+		                        	<col style="width:70px;" />
+		                            <col style="width:auto;" />
+		                        </colgroup>
+		                        <tbody>
+		                            <tr>
+										<th><fmt:message key="auth"/></th>
+										<td>
+											<select id="xusr_auth_knd"  style="width:100px" onkeyup="tab_next(this.form,this)">
+												<option value=""><fmt:message key="select"/></option>
+												<option value="M"><fmt:message key="admin"/></option>
+												<option value="U"><fmt:message key="user"/></option>
+											</select>
+										</td>
+										<th><fmt:message key="region"/></th>
+										<td>
+											<select id="xusr_plac_work"  style="width:100px" onkeyup="tab_next(this.form,this)">
+											</select>
+										</td>
+										<th><fmt:message key="worker_yn"/></th>
+										<td>
+											<select id="xusr_retr_flag"  style="width:100px">
+												<option value=""><fmt:message key="select"/></option>
+												<option value="N"><fmt:message key="worker_y"/></option>
+												<option value="Y"><fmt:message key="worker_n"/></option>
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<th><fmt:message key="dept_nm"/></th>
+										<td>
+											<!-- 
+											<input type="text" id="xusr_dept_code" value="" maxlength="8"  onkeyup="getDeptInfo('dc');deptClear('dc');tab_next(this.form,this)" style="width:60px;ime-mode:disabled;text-transform:uppercase;">
+											 -->
+											 <input type="text" id="xusr_dept_code" value="" maxlength="8"  style="width:60px;ime-mode:disabled;text-transform:uppercase;">
+											 <input type="text" id="xusr_dept_name" value="" style="width:145px;" maxlength="20"> 
+										</td>
+										<th><fmt:message key="join_ymd"/></th>
+										<td>
+											<input type="text" id="xusr_aply_date" value="" style="width:100px;">
+										</td>
+										<th><fmt:message key="sex"/></th>
+										<td>
+											<select id="xusr_sex"  style="width:100px">
+												<option value=""><fmt:message key="select"/></option>
+												<option value="1"><fmt:message key="male"/></option>
+												<option value="2"><fmt:message key="female"/></option>
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<th><fmt:message key="hp_no"/></th>
+										<td>
+											<input type="text" id="xusr_tel_no" value="" style="width:210px;" maxlength="20">
+										</td>
+										<th><fmt:message key="pn_no"/></th>
+										<td>
+											<input type="text" id="xusr_work_phone_no" value="" style="width:210px;" maxlength="20">
+										</td>
+										<th><fmt:message key="email"/></th>
+										<td>
+											<input type="text" id="xusr_mail_adr" value="" style="width:210px; ime-mode:disabled" maxlength="20">
+										</td>
+									</tr>
+									<tr>
+										<th><fmt:message key="addr"/></th>
+										<td colspan="5">
+											<input type="text" id="xusr_postal_code" value="" style="width:70px;">
+											<input type="text" id="xusr_addr" value="" style="width:510px;">
+										</td>
+									</tr>
+		                        </tbody>
+		                    </table>
+		                </div>
+		                <div class="jq_tbl">
+		                	<div class="r_ch" style="">
+		                		<strong><fmt:message key="all_auth"/> :</strong>&nbsp;
+								<input type="radio" name="radioAll" value="0" onClick="setAllAuth(this.value)"> <span><fmt:message key="none"/></span>&nbsp;
+								<input type="radio" name="radioAll" value="4" onClick="setAllAuth(this.value)"> <span><fmt:message key="gnrl"/></span>&nbsp;
+								<input type="radio" name="radioAll" value="5" onClick="setAllAuth(this.value)"> <span><fmt:message key="charge_prsn"/></span>
+		                	</div>
+			                <table id="htmlTable" class="scroll"></table>
+							<div id="htmlPager" class="scroll" style="display: none"></div>
+						</div>
+		                <%@ include file="../include/hncis_message.gas"%>
+		            </div>
+		            <div class="clear"></div>
+		        </div>
+	        </form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+				<input type="hidden" id="UPLOAD_TYPE"   name="UPLOAD_TYPE">
+			</form>
+			<form id="fileForm" name="fileForm" method="post">
+				<input type="hidden" id="fileInfo" name="fileInfo">
+			</form>
+	    </div>
+	</body>
+</html>
+		<script type="text/javascript">
+		var params;
+		var comboVal;
+		var lastsel;
+		var fnMerge;
+		var gridParam;
+		var datarow = {menu_lgrp_nm:"",menu_mgrp_cd:"",scrn_nm:"",auth:""};
+
+		function fnSetDocumentReady(){
+			initMenus();
+			$('#ST').slideDown('fast');
+			$(".inputOnlyNumber").numeric();
+			$(".inputOnlyNumberPhone").numeric("-");
+
+			getCommonCode("xusr_plac_work:X0004;", "N", "init();");	// 공통그리드콤보 조회
+
+			//readOnlyStyle("eenm", 1);
+			//readOnlyStyle("stepName", 1);
+			//readOnlyStyle("retrFlag", 1);
+			//readOnlyStyle("xusr_dept_name", 1);
+			//readOnlyStyle("xusr_bsns_dept", 1);
+			//readOnlyStyle("xusr_bsns_dept_nm", 1);
+		}
+
+		function fnCheckPhoneNum(){
+			var regExp = /^(01[016789]{1}|02|0[3-9]{1}[0-9]{1})-?[0-9]{3,4}-?[0-9]{4}$/;
+			if(!regExp.test($("#xusr_work_phone_no").val())){
+				return false;
+			}
+			return true;
+		}
+
+		function init(){
+
+			/* Technical supporter information Setting */
+// 			cn = ['분류','코드', '업무명','권한'],
+			var cn = ['<fmt:message key="ctgy"/>' // "분류"
+				          ,'<fmt:message key="code"/>' // "코드"
+				          ,'<fmt:message key="sts_nm"/>' // "업무명"
+				          ,'<fmt:message key="auth"/>' // "권한"
+				          ];
+			cm = [
+				{name:'menu_lgrp_nm',index:'menu_lgrp_nm', sortable:false, formatter: "string", width:120, align:"center", editable:false, frozen : false},
+				{name:'menu_mgrp_cd',index:'menu_mgrp_cd', sortable:false, formatter: "string", width:88, align:"center", editable:false, frozen : false},
+				{name:'scrn_nm',index:'scrn_nm', sortable:false, formatter: "string", width:180, align:"center", editable:false, frozen : false},
+				{name:'auth',index:'auth', width:580, align:"center", editable:false, frozen : false,
+					formatter:"string"
+				}
+			];
+
+			params = {
+				locale	: sess_locale,
+				corp_cd : sess_corp_cd
+			};
+
+			gridParam = {
+					viewEdit : [{
+						url          : "doSearchToUserManagementByMenu.do",
+						colNames     : cn,
+						colModel     : cm,
+						height       : "100%",
+						sortname     : "idx",
+						sortorder    : "desc",
+						rowNum		 : 100,
+						rownumbers   : true,
+						multiselect  : false,
+						cellEdit     : true,
+						fnMerge      : false,
+						paramJson    : params,
+						completeFc	 : "setGridColumn();$('#htmlTable').tuiTableRowSpan('1');initAfterMenus();"
+					}]
+				};
+
+			commonJqGridInit(gridParam);
+			
+			//$("#excelTmp").children().attr('href', ctxPath+'/upload/template/user_upload_template.xlsx');
+		}
+
+		jQuery.fn.tuiTableRowSpan=function(colIndexs){
+			return this.each(function(){
+				var indexs = eval("(["+colIndexs+"])");
+
+				for(var i=0;i<indexs.length;i++){
+					var colIdx = indexs[i];
+					var that;
+
+					$('tbody tr', this).each(function(row){
+						$('td:eq('+colIdx+')', this).filter(':visible').each(function(col){
+							if(that != null && $(this).html() == $(that).html()){
+								rowspan = $(that).attr("rowSpan");
+								if(rowspan == undefined){
+									$(that).attr("rowSpan", 1);
+									rowspan = $(that).attr("rowSpan");
+								}
+								rowspan = Number(rowspan) + 1;
+								$(that).attr("rowSpan", rowspan);
+								$(this).remove();
+							}else{
+								that = this;
+							}
+						});
+					});
+				}
+			});
+		};
+
+		function getEmployeeInfo(){
+
+			if($("#eeno").val().length != 8) return;
+
+			var keyData = {eeno : $('#eeno').val()};
+			paramData = {
+					paramJson      	: util.jsonToString(keyData)
+				};
+
+			doCommonAjax("doSearchToUserManagementByUserInfo.do", paramData, "loadJsonSet(jsonData.sendResult);");
+		}
+
+		function employeeClear(){
+			if($("#eeno").val() == "" || $("#eeno").val().length == 0){
+				$("#retrFlag").val("");
+				$("#eenm").val("");
+				$("#stepName").val("");
+			}
+		}
+
+		function retrieve(btnFlag){
+			var f = document.frm;
+			switch(btnFlag){
+			   case "search" :
+				    if(!keyCheck(btnFlag))return;
+				    doSearch();
+					break;
+			   case "edit" :
+				    if(!keyCheck(btnFlag))return;
+				    doModify();
+					break;
+			   case "excelUpload1" :
+				   fnExcelUpload(btnFlag);
+				   break;
+			   case "excelTmp" :
+				   doTemplateFileDown();
+				   break;
+			}
+		}
+
+		function keyCheck(btnFlag){
+			var msg = "";
+
+			if( $("#eeno").val().length == 0 ){
+				msg +='사번을 입력하세요.';
+				$("#eeno").focus();
+			}
+
+			if(btnFlag=="search"){
+			}else if(btnFlag=="edit"){
+				var reg_email=/^[-A-Za-z0-9_]+[-A-Za-z0-9_.]*[@]{1}[-A-Za-z0-9_]+[-A-Za-z0-9_.]*[.]{1}[A-Za-z]{2,5}$/;
+
+				if( $("#xusr_work_auth").val().length == 0 ){
+					msg +='저장할 데이터가 없습니다.';
+				}else if(!fnCheckPhoneNum()){
+					msg += "전화번호 형식이 잘못되었습니다.(ex : XX-XXXX-XXXX) \n";
+				}else if ($("#xusr_mail_adr").val().search(reg_email) == -1){
+					msg += "E-Mail 형식이 잘못되었습니다. \n";
+				}else{
+					if($("#xusr_auth_knd").val() == ""){
+						msg += "마스터 여부를 선택하세요. \n";
+					}
+//					if($("#xusr_dept_knd").val() == ""){
+//						msg += "부서타입을 선택하세요. \n";
+//					}
+					if($("#xusr_plac_work").val() == ""){
+						msg += "지역을 선택하세요. \n";
+					}
+				}
+			}
+
+			if(msg != ""){
+				alertUI(msg);
+				return;
+			}else{
+				return true;
+			}
+		}
+
+		function doSearch(){
+			var keyData = {
+				xusr_empno : $('#eeno').val(),
+				corp_cd	  : sess_corp_cd
+			};
+			
+			paramData = {
+				paramJson      	: util.jsonToString(keyData)
+			};
+
+			doCommonAjax("doSearchToUserManagementByUserDetail.do", paramData, "doSearchCallBack(jsonData.sendResult);");
+		}
+
+		function doSearchCallBack(result){
+			if(result.code == "noData"){
+				alertUI('<fmt:message key="MSG.STAT.0046"/>');
+				fn_clear();
+			}else{
+				loadJsonSet(result);
+				setWorkAuthValue();
+			}
+		}
+		
+		function fn_clear(){
+			$("#eenm").val("");
+			$("#xusr_name").val("");
+			$("#xusr_en_name").val("");
+			$("#xusr_step_code").val("");
+			$("#xusr_step_name").val("");
+			
+			$("#xusr_auth_knd").val("");
+			$("#region").val("");
+			$("#xusr_retr_flag").val("");
+			
+			$("#xusr_dept_code").val("");
+			$("#xusr_dept_name").val("");
+			$("#xusr_aply_date").val("");
+			$("#xusr_sex").val("");
+			
+			$("#xusr_tel_no").val("");
+			$("#xusr_work_phone_no").val("");
+			$("#xusr_mail_adr").val("");
+			
+			$("#xusr_postal_code").val("");
+			$("#xusr_addr").val("");
+			
+			setAllAuth("0");
+		}
+		
+		function doModify(){
+			var f = document.viewForm ;
+			var auth = $("#xusr_work_auth").val();
+			var authTemp = auth;
+
+			for(i=0; i<f.length; i++){
+				if(f[i].name.indexOf("work_auth_hddn")!=-1){
+					idx = Number(f[i].name.replace("work_auth_hddn", ''));
+					val = auth.substring(idx-1, idx);
+
+					if(f[i].value.length == 1){
+						authTemp = authTemp.substring(0, idx-1) + f[i].value + authTemp.substring(idx, auth.length);
+					}
+				}
+			}
+
+			var keyData = {
+					xusr_empno 				: $('#eeno').val(),
+					xusr_name				: $("#xusr_name").val(),
+					xusr_en_name			: $("#xusr_en_name").val(),
+					xusr_step_code			: $("#xusr_step_code").val(),
+					xusr_step_name			: $("#xusr_step_name").val(),
+					xusr_auth_knd			: $("#xusr_auth_knd").val(),
+					//xusr_dept_knd			: $("#xusr_dept_knd").val(),
+					xusr_plac_work			: $("#xusr_plac_work").val(),
+					xusr_retr_flag			: $("#xusr_retr_flag").val(),
+					xusr_dept_code			: $("#xusr_dept_code").val(),
+					xusr_dept_name			: $("#xusr_dept_name").val(),
+					xusr_aply_date			: $("#xusr_aply_date").val(),
+					xusr_sex				: $("#xusr_sex").val(),
+					//xusr_bsns_dept		: $("#xusr_bsns_dept").val(),
+					xusr_work_phone_no		: $("#xusr_work_phone_no").val(),
+					xusr_tel_no				: $("#xusr_tel_no").val(),
+					xusr_mail_adr			: $("#xusr_mail_adr").val(),
+					xusr_postal_code		: $("#xusr_postal_code").val(),
+					xusr_addr				: $("#xusr_addr").val(),
+					xusr_work_auth			: authTemp,
+					corp_cd	  				: sess_corp_cd
+			};
+
+			confirmUI('<fmt:message key="MSG.CNF.0004"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramJson      	: util.jsonToString(keyData)
+							};
+						doCommonAjax("doModifyToUserManagement.do", paramData, "alertUI(jsonData.sendResult.message);doSearch();");
+					}
+				});
+			});
+		}
+
+		function setWorkAuthValue(){
+
+			var f = document.viewForm ;
+			var auth = $("#xusr_work_auth").val();
+
+			for(i=0; i<f.length; i++){
+				if(f[i].name.indexOf("work_auth")!=-1){
+					idx = Number(f[i].name.replace("work_auth", ''));
+					val = auth.substring(idx-1, idx);
+					if(f[i].value == val){
+						f[i].checked = true;
+						$("#work_auth_hddn"+f[i].name.replace("work_auth", '')).val(val);
+					}
+				}
+			}
+		}
+
+		function setGridColumn(){
+			$('td[aria-describedby="htmlTable_auth"]').each(function (k) {
+				var id = getColValue("menu_mgrp_cd", k+1);
+
+				var strHtml = '<input type="radio" value="0" id="work_auth'+id+'" name="work_auth'+id+'" onClick="radio_click(this.id, this.value);" checked/> <fmt:message key="none"/>';
+
+				strHtml += '<input type="radio" value="4" id="work_auth'+id+'" name="work_auth'+id+'" onClick="radio_click(this.id, this.value);" /> <fmt:message key="gnrl"/>';
+//				if(id == '002' || id == '004' || id == '013'){
+//					strHtml += '<input type="radio" value="6" id="work_auth'+id+'" name="work_auth'+id+'" onClick="radio_click(this.id, this.value);" /> 담당자 ';
+//					strHtml += '<input type="radio" value="5" id="work_auth'+id+'" name="work_auth'+id+'" onClick="radio_click(this.id, this.value);" />부서 담당자 ';
+//				}else if(id == '016'){
+//					strHtml += '<input type="radio" value="5" id="work_auth'+id+'" name="work_auth'+id+'" onClick="radio_click(this.id, this.value);" />담당자 ';
+//					strHtml += '<input type="radio" value="6" id="work_auth'+id+'" name="work_auth'+id+'" onClick="radio_click(this.id, this.value);" /> 인사 담당자 ';
+//				}else if(id == '009'){
+//					strHtml += '<input type="radio" value="5" id="work_auth'+id+'" name="work_auth'+id+'" onClick="radio_click(this.id, this.value);" />담당자 ';
+//					strHtml += '<input type="radio" value="6" id="work_auth'+id+'" name="work_auth'+id+'" onClick="radio_click(this.id, this.value);" /> 특별권한 ';
+//				}else{
+//					strHtml += '<input type="radio" value="5" id="work_auth'+id+'" name="work_auth'+id+'" onClick="radio_click(this.id, this.value);" />담당자 ';
+//				}
+				
+				strHtml += '<input type="radio" value="5" id="work_auth'+id+'" name="work_auth'+id+'" onClick="radio_click(this.id, this.value);" /> <fmt:message key="charge_prsn"/>';
+
+				strHtml += '<input type="hidden" id="work_auth_hddn'+id+'" name="work_auth_hddn'+id+'" />';
+
+				$(this).html(strHtml);
+			});
+		}
+
+		function setAllAuth(val){
+			var f = document.viewForm ;
+
+			for(i=0; i<f.length; i++){
+				if(f[i].name.indexOf("work_auth")!=-1){
+					if(f[i].value == val){
+						f[i].checked = true;
+						$("#work_auth_hddn"+f[i].name.replace("work_auth", '')).val(val);
+					}
+				}
+			}
+
+		}
+
+		function radio_click(id, radioValue){
+			id = id.replace("work_auth", '');
+			$("#work_auth_hddn"+id).val(radioValue);
+		}
+
+		function getDeptInfo(deptType){
+
+			var deptCode;
+
+			if(event.srcElement.value.length == 8){
+				deptCode = event.srcElement.value.toUpperCase();
+//				switch(deptType){
+//			        case "dc" :
+//			        	target.value = "xusr_dept_name";
+//			            break;
+//			        case "bd" :
+//			        	target.value = "xusr_bsns_dept_nm";
+//			            break;
+//			        case "dc2" :
+//			        	target.value = "xusr_dept_code2_nm";
+//			            break;
+//			        case "dc3" :
+//			        	target.value = "xusr_dept_code3_nm";
+//			            break;
+//			    }
+
+				var keyData = {
+						xorg_orga_c 	: deptCode,
+						corp_cd	  		: sess_corp_cd
+				};
+				paramData = {
+						paramJson      	: util.jsonToString(keyData)
+					};
+
+				doCommonAjax("doSearchToUserManagementByDeptInfo.do", paramData, "setDeptName('"+deptType+"', jsonData.sendResult.code)");
+			}
+		}
+
+		function setDeptName(deptType, deptName){
+
+			switch(deptType){
+			    case "dc" :
+			    	$("#xusr_dept_name").val(deptName);
+			        break;
+			    case "bd" :
+			    	$("#xusr_bsns_dept_nm").val(deptName);
+			        break;
+//			    case "dc2" :
+//			    	$("#xusr_dept_code2_nm").val(deptName);
+//			        break;
+//			    case "dc3" :
+//			    	$("#xusr_dept_code3_nm").val(deptName);
+//			        break;
+			}
+		}
+
+		function deptClear(deptType){
+			switch(deptType){
+		    case "dc" :
+		    	$("#xusr_dept_name").val("");
+		        break;
+		    case "bd" :
+		    	$("#xusr_bsns_dept_nm").val("");
+		        break;
+//		    case "dc2" :
+//		    	$("#xusr_dept_code2_nm").val("");
+//		        break;
+//		    case "dc3" :
+//		    	$("#xusr_dept_code3_nm").val("");
+//		        break;
+			}
+		}
+
+		var win;
+		function fnExcelUpload(gubn){
+			if(win != null){ win.close(); }
+			var url = "../popup/pop_excelUpload.gas", width = "460", height = "200";
+
+			win = newPopWin("about:blank", width, height, "win_excel");
+			document.hideForm.hid_csrfToken.value = $("#csrfToken").val();
+			document.hideForm.UPLOAD_TYPE.value = gubn == "excelUpload1" ? "XST01A" : "XST01B";
+			document.hideForm.action = url;
+			document.hideForm.target = "win_excel";
+			document.hideForm.method = "post";
+			document.hideForm.submit();
+		}
+
+		function userFind(){
+			var param = "?csrfToken="+$("#csrfToken").val();
+			newPopWin(ctxPath+"/hncis/popup/userPopup.gas"+param, "440", "510", "pop_dept");
+		}
+
+		function userFindCallBack(empno){
+			$('#eeno').val(empno);
+		}
+		function doTemplateFileDown(){
+			var locale = sess_locale;
+			var fileInfo = {
+// 				ogc_fil_nm   	: "user_upload_template_"+locale+".xlsx",
+// 				fil_nm			: "user_upload_template_"+locale+".xlsx"
+				ogc_fil_nm   	: "/user_upload_template.xlsx",
+				fil_nm			: "/user_upload_template.xlsx",
+				locale			: locale
+			};
+			
+			var frm = document.fileForm;
+			frm.fileInfo.value = util.jsonToString(fileInfo);
+			frm.action = "doTemplateFileDown.do";
+			frm.submit();
+		}
+		</script>

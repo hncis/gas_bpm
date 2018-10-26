@@ -1,0 +1,74 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XOS06";
+
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH", locale);
+	String strSav = JSPMessageSource.getMessage("BUTTON.SAVE", locale);
+	String strDel = JSPMessageSource.getMessage("BUTTON.DELETE", locale);
+	
+	String strBtn = "";
+	strBtn = strSch+"/search@"+strSav+"/save@"+strDel+"/delete";
+%>
+<html>
+	<head>
+		<title>GeneralService - Request</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<script type="text/javascript" src="./js/xos06.js"></script>
+	</head>
+	<body>
+		<div id="wrap">
+			<form name="mainForm" id="mainForm">
+				<input type="hidden" id="nSource" name="nSource">
+				<%@ include file="../include/hncis_header.gas"%>
+				<div id="contents_wrap">
+					<%@ include file="../include/hncis_left.gas"%>
+					<div id="contents">
+						<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,menuId
+							//,"search/search@저장/save@삭제/delete"
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+		                <div class="search_area">
+		                	<table>
+								<colgroup>
+									<col width="60px" />
+		                            <col width="100px" />
+		                            <col width="60px" />
+		                            <col width="180px" />
+		                            <col width="60px" />
+		                            <col width="*" />
+								</colgroup>
+								<tr>
+									<th>사번</th>
+									<td><input type="text" id="key_eeno" name="key_eeno" style="width:75px" onkeyup="setInsaInfo();clearInsa();"></td>
+									<th>이름</th>
+									<td><input type="text" id="key_eenm" name="key_eenm" style="width:150px"></td>
+									<th>Produto</th>
+									<td>
+										<select id="key_produto" style="width:95px">
+											<option value=""><fmt:message key="total"/></option>
+										</select>
+									</td>
+								</tr>
+							</table>
+		                </div>
+		                <div class="jq_tbl">
+		                	<table id="htmlTable" class="scroll"></table>
+		                	<div id="htmlPager" class="scroll"></div>
+		                </div>
+	                	<%@ include file="../include/hncis_message.gas"%>
+	            	</div>
+	            	<div class="clear"></div>
+				</div>
+			</form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>	
+		</div>			
+	</body>
+</html>

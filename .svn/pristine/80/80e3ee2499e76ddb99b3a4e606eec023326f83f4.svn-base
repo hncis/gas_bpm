@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>New Document</title>
+<!-- <link rel="shortcut icon" href="favicon.ico" /> -->
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Cache-Control" content="no-cache" />
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+<meta http-equiv="Imagetoolbar" content="no" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<script type="text/javascript" src="/script/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="/script/js/jquery-ui-1.10.2.custom.min.js"></script>
+<script type="text/javascript" src="/script/js/front.js"></script>
+<!--// css start -->
+<link rel="stylesheet" type="text/css" href="/script/css/import.css" />
+<script type="text/javascript">
+<!--
+	$(function(){
+		
+	});
+//-->
+</script>
+</head>
+
+<body class="popup">
+<div class="popupIn">
+	<!-- title -->
+	<h2><img src="/images/txt/ph2_uniform_02.gif" alt="MY APPROVAL LIST" /></h2>
+	<!-- /title -->
+
+	<!-- btn -->
+	<div class="btnSec">
+		<a href="javascript:;"><img src="/images/btn/sb_01_01.gif" alt="SEARCH" /></a>
+		<a href="javascript:;" onclick="dimLayerView('hide', 'popup'); return false;"><img src="/images/btn/sb_01_14.gif" alt="CLOSE" /></a>
+		<a href="javascript:;"><img src="/images/btn/sb_01_15.gif" alt="APPROVE" /></a>
+		<a href="javascript:;"><img src="/images/btn/sb_01_09.gif" alt="REJECT" /></a>
+	</div>
+	<!-- /btn -->
+
+	<!-- top -->
+	<div class="topTableSec">
+		<div class="fleft">
+			<table class="type1">
+				<colgroup>
+					<col width="70" />
+					<col width="103" />
+					<col width="103" />
+				</colgroup>
+				<tr>
+					<th rowspan="2">Req.</th>
+					<th>Planner</th>
+					<th>Hot</th>
+				</tr>
+				<tr>
+					<td>Baca Rene<br />2013.05.10</td>
+					<td>Tom Kim<br />2013.05.11</td>
+				</tr>
+			</table>
+		</div>
+
+		<div class="fright">
+			<table class="type1">
+				<colgroup>
+					<col width="70" />
+					<col width="103" />
+					<col width="103" />
+				</colgroup>
+				<tr>
+					<th rowspan="2">App.</th>
+					<th>GA PIC</th>
+					<th>GA HoT</th>
+				</tr>
+				<tr>
+					<td>Name Data</td>
+					<td>Name Data</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<!-- /top -->
+
+	<!-- search -->
+	<div class="searchSec"><div class="in">
+		<ul>
+			<li>
+				<label>User ID</label>
+				<input type="text" class="txt1" style="width: 40px;" />
+			</li>
+
+			<li>
+				<label>Name</label>
+				<input type="text" class="txt1" style="width: 40px;" />
+			</li>
+
+			<li>
+				<label>Position</label>
+				<input type="text" class="txt1" style="width: 32px;" />
+			</li>
+
+			<li>
+				<label>Dept</label>
+				<input type="text" class="txt1" style="width: 40px;" />
+				<input type="text" class="txt1" style="width: 40px;" />
+				<a href="javascript:;"><img src="/images/btn/rs_01_01.gif" alt="search" class="vmid" /></a>
+			</li>
+
+			<li class="br"></li>
+
+			<li>
+				<label>Request Date</label>
+				<input type="text" class="txt1 datepicker tcenter" style="width: 70px;" />
+			</li>
+
+			<li>
+				<label>Status</label>
+				<input type="text" class="txt1" style="width: 70px;" />
+			</li>
+		</ul>
+	</div></div>
+	<!-- /search -->
+
+	<!-- form -->
+	<div class="formSecType1">
+		<table>
+			<colgroup>
+				<col width="120" />
+				<col width="170" />
+				<col width="120" />
+				<col width="*" />
+			</colgroup>
+			<tbody>
+				<tr>
+					<th><strong>Purpose</strong></th>
+					<td colspan="5"><div class="inp">
+						Change position
+					</div></td>
+				</tr>
+
+				<tr>
+					<th><strong>Type 1</strong></th>
+					<td colspan="5"><div class="inp">
+						Special
+					</div></td>
+				</tr>
+
+				<tr>
+					<th><strong>Type 2</strong></th>
+					<td><div class="inp">
+						Set 1 (Top)
+					</div></td>
+
+					<th class="tcenter"><strong>Size 2</strong></th>
+					<td colspan="3"><div class="inp">
+						L
+					</div></td>
+				</tr>
+
+				<tr>
+					<th><strong>Type 3</strong></th>
+					<td><div class="inp">
+						Set 1 (bottoms)
+					</div></td>
+
+					<th class="tcenter"><strong>Size 3</strong></th>
+					<td colspan="3"><div class="inp">
+						34
+					</div></td>
+				</tr>
+
+				<tr>
+					<th><strong>Color</strong></th>
+					<td><div class="inp">
+						Black
+					</div></td>
+
+					<th class="tcenter"><strong>Quantity</strong></th>
+					<td colspan="3"><div class="inp">
+						1
+					</div></td>
+				</tr>
+
+				<tr>
+					<th><strong>Contact No</strong></th>
+					<td colspan="4"><div class="inp">
+						123-1234
+					</div></td>
+				</tr>
+
+				<tr>
+					<th><strong>Comments</strong></th>
+					<td colspan="4"><div class="inp">
+						&nbsp;
+					</div></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<!-- /form -->
+</div>
+</body>
+</html>

@@ -1,0 +1,414 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId = "XGF03";
+	String hid_cond  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_cond")));
+
+	String work_auth = CommonGasc.getScnAuth(sess_empno, menuId, request);
+
+	String yy = CurrentDateTime.getYear();
+	String mm = CurrentDateTime.getMonth();
+	String byy = CurrentDateTime.getYearByAddMonth(CurrentDateTime.getDate(),-1);
+	String bmm = CurrentDateTime.addMonth(CurrentDateTime.getDate(),-1);
+	String tdd = Integer.toString( CurrentDateTime.getMaxday(yy+mm));
+
+	String fromDay = byy + "-" + bmm + "-" + "01";
+	String toDay = yy + "-" + mm + "-" + tdd;
+
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH", locale);
+	String strRqc = JSPMessageSource.getMessage("BUTTON.REQUESTCANCEL",locale);
+	String strNew = JSPMessageSource.getMessage("BUTTON.NEW",locale);
+
+	String strBtn = "";
+	strBtn = strSch+"/search@"+strNew+"/new";
+
+	String tempPath     = request.getServletPath().toString();
+	String stepHelpUrl  = StringUtil.getStepHelp(tempPath);
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>신청</title>
+	</head>
+	<body>
+		<div id="wrap">
+		<form name="frm" id="frm">
+			<input type="hidden" id="menu_id" name="menu_id" value="<%=menuId.toLowerCase() %>">
+			<input type="hidden" id="work_auth" name="work_auth" value="<%=work_auth%>">
+			<input type="hidden" id="hid_cond" name="hid_cond" value="<%=hid_cond %>">
+			<input type="hidden" id="hid_page" name="hid_page">
+			<input type="hidden" id="help_url" name="help_url" value="<%=stepHelpUrl%>">
+
+			<%@ include file="../include/hncis_header.gas"%>
+			<div id="contents_wrap">
+				<%@ include file="../include/hncis_left.gas"%>
+				<div id="contents">
+					<%=CommonGasc.getTitleAndButtonNew(sess_empno
+						,"XGF03"
+						,strBtn
+						,null
+						,null
+						,null
+						,request)
+					%>
+					<div class="search_area">
+						<table>
+							<colgroup>
+								<col style="width:60px;" />
+	                            <col style="width:250px;" />
+								<col style="width:70px;" />
+	                            <col style="width:200px;" />
+	                            <col style="width:60px;" />
+	                            <col style="width:auto;" />
+							</colgroup>
+							<tr>
+                            	<th><fmt:message key="dept_nm"/></th>
+								<td>
+									<input type="text" name="key_ops_cd" id="key_ops_cd" style="ime-mode:disabled;width:60px" onkeyup="deptSearch();">
+									<input id="key_ops_nm" type="text" style="width:145px" class="disabled" readonly>
+									<img id="deptBtn" name="img_ignm_pop" src="<%=ctxPath %>/images/hncis_common/find-f.png" style="cursor:hand;filter:alpha(opacity=100)" class='button' onMouseOver="na_change_img_src('img_ignm_pop','document', '<%=ctxPath %>/images/hncis_common/find-n.png');" onMouseOut="na_restore_img_src('img_ignm_pop');" onclick="deptFind()" align="absmiddle">
+								</td>
+								<th><fmt:message key="eeno"/></th>
+								<td>
+									<input type="text" id="key_eeno" style="width:150px">
+								</td>
+								<th><fmt:message key="eenm"/></th>
+								<td>
+									<input type="text" id="key_eeno_nm" style="width:150px" maxlength="20">
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="req_ymd"/></th>
+								<td>
+									<input id="key_fr_ymd" type="text" style="width:80px" value="<%=fromDay%>" readonly> ~
+									<input id="key_to_ymd" type="text" style="width:80px"  value="<%=toDay%>" readonly>
+								</td>
+								<th><fmt:message key="pgs_st_nm"/></th>
+								<td colspan="3">
+									<select id="key_pgs_st_cd" style="width:130px"></select>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div class="jq_tbl">
+		                <table id="htmlTable" class="scroll"></table>
+		                <div id="htmlPager" class="scroll"></div>
+		            </div>
+                	<%@ include file="../include/hncis_message.gas"%>
+				</div>
+			</div>
+		</form>
+		</div>
+	</body>
+</html>
+		<script type="text/javascript">
+
+		var initYn = "N";
+		function fnSetDocumentReady(){
+			initMenus();
+
+			$("#key_fr_ymd").datepicker({ dateFormat: "yy-mm-dd" });
+			$("#key_to_ymd").datepicker({ dateFormat: "yy-mm-dd" });
+
+			sess_auth = $("#work_auth").val();
+
+			if(sess_auth < 5 && sess_mstu != "M"){
+				$("#key_ops_cd") .val(sess_dept_code);
+				$("#key_ops_nm") .val(sess_dept_name);
+				$("#key_eeno")   .val(sess_empno);
+				$("#key_eeno_nm").val(sess_name);
+
+				readOnlyStyle("key_ops_cd" , "1");
+				readOnlyStyle("key_eeno" , "1");
+				readOnlyStyle("key_eeno_nm" , "1");
+
+				$("#deptBtn").hide();
+			}
+
+			getCommonCode("key_pgs_st_cd:XGF01:A;", "N", "setCondition();");
+		}
+
+		function setCondition(){
+			if($("#hid_cond").val() != ""){
+				var hidCond = $("#hid_cond").val().split("|");
+				if(hidCond[0] != "") $("#key_ops_cd").val(hidCond[0]);
+				if(hidCond[1] != "") $("#key_ops_nm").val(hidCond[1]);
+				if(hidCond[2] != "") $("#key_eeno").val(hidCond[2]);
+				if(hidCond[3] != "") $("#key_eeno_nm").val(hidCond[3]);
+				if(hidCond[4] != "") $("#key_fr_ymd").val(hidCond[4]);
+				if(hidCond[5] != "") $("#key_to_ymd").val(hidCond[5]);
+				if(hidCond[6] != "") $("#key_pgs_st_cd").val(hidCond[6]);
+				if(hidCond[7] != "") $("#hid_page").val(hidCond[7]);
+			}else{
+//				$("#key_pgs_st_cd").val("Z");
+			}
+
+			init();
+
+//			setInsaInfo();
+		}
+
+
+		/**
+		 * process init() loading
+		 */
+		var fnMerge;
+		var gridParam;
+		var gridName1 = "htmlTable";
+// 		var cn = ["신청일자", "진행상태", "부서", "사번", "이름", "구분", "품목" , "" , "" , ""];
+		var cn = [ '<fmt:message key="req_ymd"/>' // "신청일자"
+		          ,'<fmt:message key="pgs_st_nm"/>' // "진행상태"
+		          ,'<fmt:message key="dept_nm"/>' // "부서"
+		          ,'<fmt:message key="eeno"/>' // "사번"
+		          ,'<fmt:message key="eenm"/>' // "이름"
+		          ,'<fmt:message key="type"/>' // "구분"
+		          ,'<fmt:message key="gift"/>' // "선물"
+		          ,'' // ""
+		          ,'' // ""
+		          ,'' // ""
+		          ];
+		var datarow = {req_ymd:"", dept_nm:"", eeno:"", eenm:"", item_ctgry:"", item_ttl:"", item_seq:"", pgs_st_nm:"", pgs_st_cd:"", doc_no:""};
+		var cm =
+		[
+			{name:"req_ymd",		index:"req_ymd"			, sortable:false,		formatter:"string",		width:105,	align:"center",	editable:false,	frozen : false},
+			{name:"pgs_st_nm",		index:"pgs_st_nm"		, sortable:false,		formatter:"string",		width:80,	align:"center",	editable:false,	frozen : false},
+			{name:"dept_nm",		index:"dept_nm"			, sortable:false,		formatter:"string",		width:150,	align:"center",	editable:false,	frozen : false},
+			{name:"eeno",			index:"eeno"			, sortable:false,		formatter:"string",		width:80,	align:"center",	editable:false,	frozen : false},
+			{name:"eenm",			index:"eenm"			, sortable:false,		formatter:"string",		width:115,	align:"center",	editable:false,	frozen : false},
+			{name:"item_ctgry",		index:"item_ctgry"		, sortable:false,		formatter:"string",		width:200,	align:"left",	editable:false,	frozen : false},
+			{name:"item_ttl",		index:"item_ttl"		, sortable:false,		formatter:"string",		width:240,	align:"left",	editable:false,	frozen : false},
+			{name:"item_seq",		index:"item_seq"		, sortable:false,		formatter:"string",		width:80,	align:"left",	editable:false,	frozen : false,	hidden: true},
+			{name:"doc_no",			index:"doc_no"			, sortable:false,		formatter:"string",		width:80,	align:"left",	editable:false,	frozen : false,	hidden: true},
+			{name:"pgs_st_cd",		index:"pgs_st_cd"		, sortable:false,		formatter:"string",		width:80,	align:"left",	editable:false,	frozen : false,	hidden: true}
+
+		];
+
+		function init(){
+			var params = {
+				fr_ymd       		: selectNum($("#key_fr_ymd").val()),
+				to_ymd       		: selectNum($("#key_to_ymd").val()),
+				search_pgs_st_cd	: $("#key_pgs_st_cd").val(),
+				search_ops_cd		: $("#key_ops_cd").val(),
+				search_eeno			: $("#key_eeno").val(),
+				search_eenm			: $("#key_eeno_nm").val(),
+				corp_cd				: sess_corp_cd,
+				locale				: $("#lo").val()
+			};
+
+			//set grid parameter
+			gridParam = {
+				viewEdit : [{
+					gridName     : gridName1,
+					url          : "doSearchGfToReqList.do",
+					colNames     : cn,
+					colModel     : cm,
+					height       : "100%",
+					sortname     : "rnum",
+					sortorder    : "desc",
+					rownumbers   : true,
+					multiselect  : false,
+					cellEdit     : false,
+					fnMerge      : false,
+					pager		 : "htmlPager",
+					page		 : $("#hid_page").val(),
+					paramJson    : params,
+					completeFc   : "addGridRow();initAfterMenus();loadCallBack();",
+					dblClickRowFc : "celldbClickAction(rowId,iRow,iCol,e);"
+				}]
+			};
+
+			//core jqGrid call...
+			commonJqGridInit(gridParam);
+
+			//method overliding
+			jQuery("#"+gridName1).jqGrid("setFrozenColumns");
+			jQuery("#"+gridName1).jqGrid("navGrid","#htmlPager",{edit:false,add:false,del:false,search:false,refresh:false});
+
+
+		}
+
+		function celldbClickAction(rowId,iRow,iCol,e){
+			if(getColValue("item_seq",rowId, gridName1) == ""){
+				return;
+			}
+			
+		    var form = $("<form/>");
+		    form.attr("method" , "post");
+		    form.attr("id"     , "hideForm");
+		    form.attr("action" , "xgf02.gas");
+		    var inp1 = $("<input type='hidden' id='item_seq' name='item_seq'/>").val(getColValue("item_seq",rowId, gridName1));
+		    var inp2 = $("<input type='hidden' id='hid_view_nm' name='hid_view_nm'/>").val($("#menu_id").val());
+		    var cond = $("#key_ops_cd").val() + "|" + $("#key_ops_nm").val() + "|" + $("#key_eeno").val() + "|" + $("#key_eeno_nm").val() + "|" + $("#key_fr_ymd").val() + "|" + $("#key_to_ymd").val() + "|" + $("#key_pgs_st_cd").val() + "|" + $("#hid_page").val();
+		    var inp3 = $("<input type='hidden' id='hid_cond' name='hid_cond'/>").val(cond);
+		    var inp4 = $("<input type='hidden' id='hid_page' name='hid_page'/>").val($("#hid_page").val());
+		    var inp5 = $("<input type='hidden' id='m_type' name='m_type'/>").val("V");
+		    var inp6 = $("<input type='hidden' id='doc_no' name='doc_no'/>").val(getColValue("doc_no",rowId, gridName1));
+		    var token = $("<input type='hidden' id='hid_csrfToken' name='hid_csrfToken'/>").val($("#csrfToken").val());
+		    form.append(inp1, inp2, inp3, inp4, inp5, inp6, token);
+		    $("body").append(form);
+		    form.submit();
+		    form.remove();
+		}
+
+		function retrieve(gubn){
+			switch(gubn){
+				case "search" :
+					doSearch();
+					break;
+				case "new" :
+				   doNew();
+				   break;
+				case "requestCancel" :
+					doRequestCancel();
+					break;
+			}
+		}
+
+		function doNew(){
+			var form = $("<form/>");
+		    form.attr("method" , "post");
+		    form.attr("id"     , "submitForm").attr("name", "submitForm");
+		    form.attr("action" , "xgf01.gas");
+		    var token = $("<input type='hidden' id='hid_csrfToken' name='hid_csrfToken'/>").val($("#csrfToken").val());
+		    form.append(token);
+		    $("body").append(form);
+		    form.submit();
+		    form.remove();
+		}
+
+		function doSearch(msgFlag){
+			var params = {
+				fr_ymd       		: selectNum($("#key_fr_ymd").val()),
+				to_ymd       		: selectNum($("#key_to_ymd").val()),
+				search_pgs_st_cd	: $("#key_pgs_st_cd").val(),
+				search_ops_cd		: $("#key_ops_cd").val(),
+				search_eeno			: $("#key_eeno").val(),
+				search_eenm			: $("#key_eeno_nm").val(),
+				corp_cd				: sess_corp_cd,
+				locale				: $("#lo").val()
+			};
+
+			doCommonSearch("doSearchGfToReqList.do", util.jsonToString(params), "loadCallBack();", gridName1, msgFlag);
+		}
+
+		/**
+		 * callback
+		 */
+		function loadCallBack(){
+			if(fnMerge !== ""){
+				eval(fnMerge);
+			}
+			$("#hid_page").val($("#page_htmlPager").val());
+			addGridRow();
+		}
+
+		function doRequestCancel(){
+			var data;
+			var iParams = [];
+
+			var selectRow = $("#"+gridName1).jqGrid("getGridParam", "selarrrow");
+
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+
+			for(var i=0; i<selectRow.length; i++){
+				if(selectRow[i]){
+					if(!fnValidationChk(selectRow[i])){ return; }
+
+					data = {
+						doc_no   : getColValue("doc_no"  , selectRow[i], gridName1),
+						item_seq : getColValue("item_seq", selectRow[i], gridName1),
+						corp_cd	 : sess_corp_cd
+					};
+
+					iParams.push(data);
+				}
+			}
+
+			if(iParams.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+
+			confirmUI('<fmt:message key="MSG.CNF.0006"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var params = {
+								paramJson : util.jsonToList(iParams)
+						};
+						doCommonAjax("doUpdateGfToRequestCancel.do", params, "doRequestCancelCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function fnValidationChk(rowId){
+			if(getColValue("pgs_st_cd", rowId, gridName1) != "A"){
+				alertUI('<fmt:message key="MSG.STAT.0033"/>');
+				return false;
+			}
+
+			return true;
+		}
+
+		function doRequestCancelCallBack(result){
+			alertUI(result.message);
+			doSearch("N");
+		}
+
+		function deptSearch(){
+			if($("#key_ops_cd").val() != ""){
+				var keyData = { xorg_orga_c : $("#key_ops_cd").val() };
+				paramData = {
+					paramJson : util.jsonToString(keyData)
+				};
+				doCommonAjax("/doSearchToDeptInfo.do", paramData, "deptCallBack(jsonData.sendResult)");
+			}else{
+				$("#key_ops_nm").val("");
+			}
+		}
+
+		function deptCallBack(result){
+			$("#key_ops_nm").val(result.xorg_orga_e);
+		}
+
+		function setInsaInfo(){
+			if($("#key_eeno").val() != ""){
+				var keyData = { xusr_empno : $("#key_eeno").val() };
+				paramData = {
+					paramJson : util.jsonToString(keyData)
+				};
+				doCommonAjax("/doSearchToUserInfo.do", paramData, "insaCallBack(jsonData.sendResult)");
+			}
+		}
+
+		function insaCallBack(result){
+			setBottomMsg(result.message, false);
+			$("#key_eeno_nm").val(result.xusr_name);
+		}
+
+		function clearInsa(){
+			if($("#key_eeno").val() == ""){
+				$("#key_eeno_nm").val("");
+			}
+		}
+
+		function deptFind(){
+			var param = "?dcd=key_ops_cd&dcdNm=key_ops_nm&callBackYn=Y&csrfToken="+$("#csrfToken").val();
+			newPopWin(ctxPath+"/hncis/popup/deptPopup.gas"+param, "440", "510", "pop_dept");
+		}
+
+		function deptFindCallBack(){
+		}
+
+		function pageStepHelpPopup(){
+			if(popup != null ){
+				popup.close();
+			}
+
+			popup = popUpWindow3($("#help_url").val());
+		}
+		</script>

@@ -1,0 +1,87 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%	
+	String file_doc_no = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("file_doc_no")) == ""?(String)request.getAttribute("file_doc_no"):request.getParameter("file_doc_no"));
+	String file_eeno = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("file_eeno")) == ""?(String)request.getAttribute("file_eeno"):request.getParameter("file_eeno"));
+	String hid_use_yn = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_use_yn")) == ""?(String)request.getAttribute("hid_use_yn"):request.getParameter("hid_use_yn"));
+	String file_pgs_st_cd = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("file_pgs_st_cd")) == ""?(String)request.getAttribute("file_pgs_st_cd"):request.getParameter("file_pgs_st_cd"));
+	String file_seq = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("file_seq") == null?(Integer)request.getAttribute("file_seq"):request.getParameter("file_seq")));
+	String message = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("message")).equals("")?StringUtil.isNullToString((String)request.getAttribute("message")):request.getParameter("message"));
+	String dispatcherYN = (String)request.getAttribute("dispatcherYN");
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Post Office</title>
+		<script type="text/javascript" src="./js/xsb04_file.js"></script>
+		<link rel="stylesheet" type="text/css" media="screen" href="../../script/css/pop_up.css" />
+		<style type="text/css">
+			.file_input_div {position:absolute; top: 35px; left:312px; width:100px; height:36px; overflow:hidden;}
+			.file_input_img_btn {padding:0 0 0 5px;}
+			.file_input_hidden {font-size:18px; position:absolute; right:0px; top:0px; opacity:0; filter: alpha(opacity=0); -ms-filter: alpha(opacity=0); cursor:pointer;}
+		</style>
+	</head>
+	<body>
+		<div class="pop_wrap">
+	    	<div class="pop_header">
+	        	<div class="pop_title">
+	            	<h1>파일첨부</h1>
+	                <a href="javascript:selfClose();" class="pop_close"></a>
+	            </div>
+	        </div>
+	        <div class="pop_header_shadow"></div>
+	        <div class="pop_content">
+	        	<div class="div_box pop_con">
+	            	<form id="mainForm" name="mainForm" method="post" enctype="multipart/form-data">
+					<input type="hidden" id="file_doc_no" 	name="file_doc_no"  	value="<%=file_doc_no%>">
+					<input type="hidden" id="file_eeno"		name="file_eeno"  		value="<%=file_eeno%>">
+					<input type="hidden" id="hid_use_yn"	name="hid_use_yn"  		value="<%=hid_use_yn%>">
+					<input type="hidden" id="file_pgs_st_cd"name="file_pgs_st_cd"  	value="<%=file_pgs_st_cd%>">
+					<input type="hidden" id="file_seq"	 	name="file_seq"  		value="<%=file_seq%>">
+					<input type="hidden" id="dispatcherYN"	name="dispatcherYN"  	value="<%=dispatcherYN%>">
+					<input type="hidden" id="fileInfo"	 	name="fileInfo">
+			        <div id="contents_wrap" class="any_page">
+			            <div id="f_search" class="search_area">
+							<input type="text" id="fileTemp" name="fileTemp" style="width:257px" readonly>
+							<div class="file_input_div">
+<!-- 				            	<input type="file" id="file_name" name="file_name" style="cursor:pointer;width:100px;height:25px;filter:alpha(opacity=0);position:absolute;top:35px;left:312px;align:center;"onChange='javascript:$("#fileTemp").val(this.value);' size="0"> -->
+				            	<input type="file" id="file_name" name="file_name" class="file_input_hidden" onChange='javascript:$("#fileTemp").val(this.value);' size="0">
+								<img src="../../images/hncis_bttn/find_btn.gif" alt="search" align="absmiddle" class="file_input_img_btn"/>
+							</div>
+			            </div>
+			            <div id="f_btn" class="btn_area mt10"> 
+							<ul class="btns"> 
+								<li><a href="javascript:retrieve('save');">Save<span></span></a></li>
+								<li><a href="javascript:retrieve('delete');">Delete<span></span></a></li>
+							</ul> 
+						</div>
+			            <div id="contents">
+			                <div class="jq_tbl">
+				                <table id="htmlTable" class="scroll"></table>
+								<div id="htmlPager" class="scroll" style="display:none"></div>
+							</div>
+			            </div>
+			            <div class="clear"></div>
+			        </div>
+			        </form>
+			        <form id="dispatcherForm" name="dispatcherForm" method="post" >
+						<input type="hidden" id="file_doc_no" name="file_doc_no" value="<%=file_doc_no%>">
+						<input type="hidden" id="file_eeno"  name="file_eeno" value="<%=file_eeno%>">
+						<input type="hidden" id="file_pgs_st_cd"  name="file_pgs_st_cd" value="<%=file_pgs_st_cd%>">
+						<input type="hidden" id="file_seq"	name="file_seq"  value="<%=file_seq%>">
+						<input type="hidden" id="message"	name="message"  value="<%=message%>">
+						<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+					</form>
+					<form id="hideForm" name="hideForm" method="post">
+						<table id="htmlTable" class="scroll"></table>
+						<div id="htmlPager" class="scroll" style="display:none"></div>
+					</form>
+	                <div class="box_corner box_lt"></div>
+	                <div class="box_corner box_rt"></div>
+	                <div class="box_corner box_lb"></div>
+	                <div class="box_corner box_rb"></div>
+	            </div>
+	        </div>
+	    </div>
+	</body>
+</html>

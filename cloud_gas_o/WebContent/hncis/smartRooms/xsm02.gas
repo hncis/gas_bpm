@@ -1,0 +1,1082 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId	   = "XSM02";
+	String getDate     = CurrentDateTime.getDate();
+	String getDashDate = CurrentDateTime.getDashDate(getDate, 0);
+	int getWeek        = CurrentDateTime.getWeek(getDate, 0);
+	String isAdminAuth = sess_mstu_gubb.equals("M") ? "true" : "false";
+	
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH",locale);
+	String strDys = JSPMessageSource.getMessage("BUTTON.DAYS", locale);
+	String strWks = JSPMessageSource.getMessage("BUTTON.WEEKS", locale);
+	String strMts = JSPMessageSource.getMessage("BUTTON.MONTHS", locale);
+
+	String strBtn = "";
+	strBtn = strSch+"/search@"+strDys+"/day@"+strWks+"/week@"+strMts+"/month";
+%>
+
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>상세검색및예약(일별)</title>
+		<script type="text/javascript">
+			var isAdmAuth = "<%=isAdminAuth%>";
+		</script>
+		<script type="text/javascript" src='./js/xsm_reg.js'></script>
+		<script type="text/javascript" src='./js/xsm_util.js'></script>
+		<script type="text/javascript" src='<%=ctxPath%>/script/js/navigation.js'></script>
+		<link rel='stylesheet' href='<%=ctxPath%>/script/css/conference.css' type='text/css'>
+	</head>
+	
+<!-- 	<body onunload="onUnload()"> -->
+	<body>
+		<div id="wrap">
+			<form id="frm" name="frm" method="post">
+				<input type="hidden" id="gubun" name="gubun">
+				<input type="hidden" id="codeKnd" name="codeKnd">
+				<input type="hidden" id="jsonData" name="jsonData">
+				<input type="hidden" id="nSource" name="nSource">
+				<input type="hidden" id="nTarget" name="nTarget">
+				<input type="hidden" id="pagingIndex" name="pagingIndex" value="0">
+				<input type="hidden" id="menuId" name="menuId" value="<%=menuId%>">
+				<input type="hidden" id="getToDay" name="getToDay" value="<%=getDate%>">
+				<input type="hidden" id="curYmd" name="curYmd" value="<%=getDate%>">
+				<input type="hidden" id="curWeek" name="curWeek" value="<%=getWeek%>">
+				<input type="hidden" id="KEY_PARAM_DAY" name="KEY_PARAM_DAY" />
+				<input type="hidden" id="p_regn_cd" name="p_regn_cd">
+				<input type="hidden" id="p_bd_cd" name="p_bd_cd">
+				<input type="hidden" id="p_corm_fl_cd" name="p_corm_fl_cd">
+				<input type="hidden" id="p_corm_cd" name="p_corm_cd">
+				<input type="hidden" id="p_corm_nm" name="p_corm_nm">
+				<input type="hidden" id="p_from_ymd" name="p_from_ymd">
+				<input type="hidden" id="p_to_ymd" name="p_to_ymd">
+				<input type="hidden" id="p_from_time" name="p_from_time">
+				<input type="hidden" id="p_to_time" name="p_to_time">
+				<input type="hidden" id="hid_doc_no" name="hid_doc_no">
+				<input type="hidden" id="hid_key_no" name="hid_key_no">
+				<input type="hidden" id="etc_user" name="etc_user">
+				<input type="hidden" id="etc_org" name="etc_org">
+				<input type="hidden" id="etc_user_data" name="etc_user_data">
+				<input type="hidden" id="etc_org_data1" name="etc_org_data1">
+				<input type="hidden" id="etc_org_data2" name="etc_org_data2">
+				<input type="hidden" id="paramJson" name="paramJson">
+				
+				<%@ include file="../include/hncis_header.gas"%>
+				<div id="contents_wrap">
+	        		<%@ include file="../include/hncis_left.gas"%>
+	            	<div id="contents">
+						<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							, menuId
+							, strBtn
+							, null
+							, null
+							, null
+							, request)
+						%>
+						<div class="search_area">
+							<table>
+								<colgroup>
+									<col width="60px">
+									<col width="160px">
+									<col width="60px">
+									<col width="160px">
+									<col width="60px">
+									<col width="120px">
+									<col width="60px">
+									<col width="160px">
+									<col width="60px">
+									<col width="*">
+								</colgroup>
+								<tr>
+									<td align="left"><fmt:message key="svc_ar"/></td>
+									<td align="left">
+										<select id="KEY_REGN_CD" name="KEY_REGN_CD" style="width:140px">
+											<option value="">전 체</option>
+										</select>
+									</td>
+									<td align="left"><fmt:message key="bld"/></td>
+									<td align="left">
+										<select id="KEY_BD_CD" name="KEY_BD_CD" style="width:140px" disabled>
+											<option value="">전 체</option>
+										</select>
+									</td>
+									<td align="left"><fmt:message key="floor"/></td>
+									<td align="left">
+										<select id="KEY_CORM_FL_CD" name="KEY_CORM_FL_CD" style="width:90px" disabled>
+											<option value="">전 체</option>
+										</select>
+									</td>
+									<td align="left"><fmt:message key="mt_rm"/></td>
+									<td align="left">
+										<select id="KEY_CORM_CD" name="KEY_CORM_CD" style="width:140px" disabled>
+											<option value="">전 체</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td align="left"><fmt:message key="empt_div"/></td>
+									<td align="left">
+										<select id="KEY_GUBUN" name="KEY_GUBUN" style="width:90px">
+											<option value="Y"><fmt:message key="empt_view"/></option>
+											<option value="N" selected><fmt:message key="tot_view"/></option>
+										</select>
+									</td>
+									<td align="left"><fmt:message key="use_tm"/></td>
+									<td align="left">
+										<select id="KEY_FROM_TIME" name="KEY_FROM_TIME" style="width:68px">
+											<option value="">전 체</option>
+										</select>
+										<select id="KEY_TO_TIME" name="KEY_TO_TIME" style="width:69px">
+											<option value="">전 체</option>
+										</select>
+									</td>
+									<td align="left"><fmt:message key="use_psrn"/></td>
+									<td align="left">
+										<input type="text" id="KEY_BLNS_CPSN1" name="KEY_BLNS_CPSN1" class="numeric" maxlength="3" style="width:40px"/>~
+										<input type="text" id="KEY_BLNS_CPSN2" name="KEY_BLNS_CPSN2" class="numeric" maxlength="3" style="width:40px"/>
+									</td>
+									<td align="left"><fmt:message key="use_eqmt"/></td>
+									<td align="left">
+										<input type="text" id="KEY_ITEM_SBC" name="KEY_ITEM_SBC" style="width:140px"/>
+									</td>
+									<td align="left"><fmt:message key="use_type"/></td>
+									<td align="left">
+										<select id="KEY_USE_KND" name="KEY_USE_KND" style="width:80px">
+											<option value="">전 체</option>
+										</select>
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div class="calendar_area">
+			                <span id="preDay" class="prv_btn"></span>
+			                <span id="curDay" class="today_txt"><%=getDashDate%></span>
+			                <span id="nextDay" class="next_btn"></span>
+			                <span id="cal" class="cal_ico">
+			                	<input type="hidden" id="KEY_SEL_YMD" name="KEY_SEL_YMD"/>
+			                </span>
+			                <span id="toDay" class="today_btn"><fmt:message key="today"/></span>
+							<span id="descColor" style="padding-top:3px;">
+								<span style="color:#C1D82E">■</span>
+								<span style="padding-right:5px;"><fmt:message key="self_rsvt"/></span>
+								<span style="color:#68C8C6">■</span>
+								<span style="color:#007A85">■</span>
+								<span style="color:#7EB0CB">■</span>
+								<span><fmt:message key="others_rsvt"/></span>
+							</span>
+			            </div>
+			            
+						<div>
+				            <div class="col_cont cc1">
+								<div class="col_table">
+									<table style="table-layout:fixed;">
+										<colgroup>
+											<col width="auto">
+											<col width="25px"><col width="25px">
+											<col width="25px"><col width="25px">
+											<col width="25px"><col width="25px">
+											<col width="25px"><col width="25px">
+											<col width="25px"><col width="25px">
+											<col width="25px"><col width="25px">
+											<col width="25px"><col width="25px">
+											<col width="25px"><col width="25px">
+											<col width="25px"><col width="25px">
+											<col width="25px"><col width="25px">
+											<col width="25px"><col width="25px">
+											<col width="25px"><col width="25px">
+											<col width="25px"><col width="25px">
+											<col width="25px"><col width="25px">
+											<col width="25px"><col width="25px">
+											<col width="25px"><col width="25px">
+										</colgroup>
+					                  	<thead>
+											<tr>
+											    <th rowspan="2"><fmt:message key="mt_rm_tm"/></th>
+											    <th colspan=2>6</th>
+											    <th colspan=2>7</th>
+											    <th colspan=2>8</th>
+											    <th colspan=2>9</th>
+											    <th colspan=2>10</th>
+											    <th colspan=2>11</th>
+											    <th colspan=2>12</th>
+											    <th colspan=2>13</th>
+											    <th colspan=2>14</th>
+											    <th colspan=2>15</th>
+											    <th colspan=2>16</th>
+											    <th colspan=2>17</th>
+											    <th colspan=2>18</th>
+											    <th colspan=2>19</th>
+											    <th colspan=2>20</th>
+											    <th colspan=2 class="last">21</th>
+											</tr>
+											<tr>
+											    <th>00</th><th>30</th>
+											    <th>00</th><th>30</th>
+											    <th>00</th><th>30</th>
+											    <th>00</th><th>30</th>
+											    <th>00</th><th>30</th>
+											    <th>00</th><th>30</th>
+											    <th>00</th><th>30</th>
+											    <th>00</th><th>30</th>
+											    <th>00</th><th>30</th>
+											    <th>00</th><th>30</th>
+											    <th>00</th><th>30</th>
+											    <th>00</th><th>30</th>
+											    <th>00</th><th>30</th>
+											    <th>00</th><th>30</th>
+											    <th>00</th><th>30</th>
+											    <th>00</th><th class='last'>30</th>
+											</tr> 
+										</thead>
+									</table>
+				              	</div>
+							</div>
+							
+				            <div class="col_cont cc2">
+				                 <div class="col_table">
+				                     <table style="table-layout:fixed;">
+										 <colgroup>
+											 <col width="auto">
+											 <col width="25px"><col width="25px">
+											 <col width="25px"><col width="25px">
+											 <col width="25px"><col width="25px">
+											 <col width="25px"><col width="25px">
+											 <col width="25px"><col width="25px">
+											 <col width="25px"><col width="25px">
+											 <col width="25px"><col width="25px">
+											 <col width="25px"><col width="25px">
+											 <col width="25px"><col width="25px">
+											 <col width="25px"><col width="25px">
+											 <col width="25px"><col width="25px">
+											 <col width="25px"><col width="25px">
+											 <col width="25px"><col width="25px">
+											 <col width="25px"><col width="25px">
+											 <col width="25px"><col width="25px">
+											 <col width="25px"><col width="25px">
+										 </colgroup>
+				                         <tbody id="listTbody">
+				                         </tbody>
+				                     </table>
+				                 </div>
+				             </div>
+			                 <div class="page">
+			                     <ul id="navigation" class="navigation"></ul>
+			                 </div>
+						</div>
+	            		<%@ include file="../include/hncis_message.gas"%>
+	            	</div> 
+	            </div>
+			</form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+			<img id="loading_progress_img" src="../../images/common/progress_bar.gif" width="362" height="131" style="display:none" />
+		</div>
+	</body>
+</html>
+		<script type="text/javascript">
+		var curPage = 0;
+
+		function fnSetDocumentReady(){
+			initMenus();
+			$('#SM').slideDown('fast');
+			sess_auth = $("#work_auth").val();
+			
+			$("#KEY_SEL_YMD").datepicker({
+				dateFormat: "yy/mm/dd",
+				showOn: "button",
+				buttonImage: "../../images/sub/ico_datepicker.gif",
+				buttonImageOnly: true,
+				onSelect:function(){
+					afterFnCall();
+				}
+			});
+			
+			block_open();
+			doAuthInfo();
+		}
+
+		function doAuthInfo(){
+		    var params = {
+		        url : "doSearchLoginTimeUser.do",
+		        data : "",
+		        callback : "doAuthInfoCallBack(data.sendResult)"
+		    };
+		    
+		    Con.ajax(params);
+		}
+
+		function doAuthInfoCallBack(rs){
+			$("#etc_user").val(rs.isEtcUser);
+			
+			//공통 콤보 조회
+			var sCode  = "KEY_REGN_CD:SM001:Z;";
+				sCode += "KEY_USE_KND:SM002:A;";
+				sCode += "KEY_FROM_TIME:SM005:A;KEY_TO_TIME:SM006:A;";
+			var sCallBack = "init()";
+			var sUrl = "doSearchComboByXsm.do";
+			getCommonCode(sCode, "N", sCallBack, sUrl);
+		}
+
+		function init(){
+			$("#KEY_REGN_CD").val(sess_plac_work);
+			doBdCdComboInfo();
+		}
+
+		$(function(){
+			//근무지역 변경 이벤트
+			$("#KEY_REGN_CD").change(function(){
+				$("#KEY_BD_CD option:gt(0)").remove();
+				$("#KEY_CORM_FL_CD option:gt(0)").remove();
+				$("#KEY_CORM_CD option:gt(0)").remove();
+				$("#KEY_BD_CD").attr("disabled", true);
+				$("#KEY_CORM_FL_CD").attr("disabled", true);
+				$("#KEY_CORM_CD").attr("disabled", true);
+				doBdCdComboInfo();
+			});
+
+			//건물 변경 이벤트
+			$("#KEY_BD_CD").change(function(){
+				$("#KEY_CORM_FL_CD option:gt(0)").remove();
+				$("#KEY_CORM_CD option:gt(0)").remove();
+				$("#KEY_CORM_CD").attr("disabled", true);
+				if($(this).val() != ""){
+					doCormFlComboInfo();
+				}
+			});
+			
+			//층수 변경 이벤트
+			$("#KEY_CORM_FL_CD").change(function(){
+				$("#KEY_CORM_CD option:gt(0)").remove();
+				$("#KEY_CORM_CD").attr("disabled", true);
+				if($(this).val() != ""){
+					doCormComboInfo();
+				}
+			});
+			
+			//공실여부
+			$("#KEY_GUBUN").change(function(){
+				var gb = $("#KEY_GUBUN").val();
+				if(gb == "Y"){
+					fieldSet(false);
+				}else{
+					fieldSet(true);
+				}
+			});
+			
+			//사용설명팝업
+			$("#resv_desc").live("click",function() {
+				var gbWidth = "350";
+				var gbHeight = "150";
+				var popTop = (($(window).height() - Number(gbHeight)) /2)-50 + 'px';
+				var popLeft = (($(window).width() - Number(gbWidth)) /2)+100 + 'px';
+				var css = {
+					top: popTop, left: popLeft, width: gbWidth, height: gbHeight,
+					cursor: 'hand', border: 'none', color: '#fff', backgroundColor:'#fff'
+				};
+				$.blockUI({
+				    message: $("#resv_desc_pop"),
+				    css: css
+				});
+				return false;
+			});
+			
+			//가용장비 마우스 이벤트
+			$(".spanCormTitle").live("mouseover",function() {
+				$(this).parent().parent().parent().find(".slyrpop1").show();
+				return false;
+			});
+			
+			$(".spanCormTitle").live("mouseout",function() {
+				$(this).parent().parent().parent().find(".slyrpop1").hide();
+				return false;
+			});
+			
+			//오늘 일자 셋팅
+			$("#curDay").text(setDateFormat(getAddDayDate($("#curYmd").val(), 0), "YMD") + " " + setDay($("#curYmd").val()));
+		    $("#KEY_PARAM_DAY").val($("#curYmd").val());
+
+		    //이전일
+		    $("#preDay").click(function(){
+		    	setClear();
+		        $("#KEY_PARAM_DAY").val(selectNum(getAddDayDate($("#KEY_PARAM_DAY").val(), -1)));
+		        $("#curDay").text(setDateFormat(getAddDayDate($("#KEY_PARAM_DAY").val(), 0), "YMD") + " " + setDay($("#KEY_PARAM_DAY").val()));
+		        retrieve('search');
+		    });
+
+		    //다음일
+		    $("#nextDay").click(function(){
+		    	setClear();
+		        $("#KEY_PARAM_DAY").val(selectNum(getAddDayDate($("#KEY_PARAM_DAY").val(), 1)));
+		        $("#curDay").text(setDateFormat(getAddDayDate($("#KEY_PARAM_DAY").val(), 0), "YMD") + " " + setDay($("#KEY_PARAM_DAY").val()));
+		        retrieve('search');
+		    });
+
+		    //오늘
+		    $("#toDay").click(function(){
+		    	setClear();
+		        $("#KEY_PARAM_DAY").val($("#curYmd").val());
+		        $("#curDay").text(setDateFormat(getAddDayDate($("#KEY_PARAM_DAY").val(), 0), "YMD") + " " + setDay($("#KEY_PARAM_DAY").val()));
+		        retrieve('search');
+		    });
+		    
+		    fieldSet(true);
+			$(".numeric").numeric();
+			$(".numeric").css("ime-mode","disabled");
+			$("#listTbody").html(init_grid(33, 0, 16, "Y"));
+		});
+
+		/**
+		 * 건물 콤보 조회
+		 */
+		function doBdCdComboInfo(){
+			var paramData = {
+				regn_cd : $("#KEY_REGN_CD").val(),
+				code1 : "KEY_BD_CD",
+				code2 : "A"		
+			};
+			var sCallBack = 'doBdCdComboInfoCallBack();';
+			var sUrl = "selectBuildingComboByXsm05.do";
+			getCommonCode(util.jsonToString(paramData), "N", sCallBack, sUrl);
+		}
+
+		function doBdCdComboInfoCallBack(){
+			block_close();
+			$("#KEY_BD_CD").attr("disabled", false);
+			
+			retrieve("search");
+		}
+
+		/**
+		 * 층수 콤보 조회
+		 */
+		function doCormFlComboInfo(){
+			var paramData = {
+				regn_cd : $("#KEY_REGN_CD").val(),
+				bd_cd : $("#KEY_BD_CD").val(),
+				code1 : "KEY_CORM_FL_CD",
+				code2 : "A",		
+				code3 : "FL"		
+			};
+			var sCallBack = 'doCormFlComboInfoCallBack();';
+			var sUrl = "doSearchConferenceComboByXsm06.do";
+			getCommonCode(util.jsonToString(paramData), "N", sCallBack, sUrl);
+		}
+
+		function doCormFlComboInfoCallBack(){
+			$("#KEY_CORM_FL_CD").attr("disabled", false);
+		}
+
+		/**
+		 * 회의실 콤보 조회
+		 */
+		function doCormComboInfo(){
+			var paramData = {
+				regn_cd : $("#KEY_REGN_CD").val(),
+				bd_cd : $("#KEY_BD_CD").val(),
+				corm_fl_cd : $("#KEY_CORM_FL_CD").val(),
+				code1 : "KEY_CORM_CD",
+				code2 : "A",		
+				code3 : "CD"		
+			};
+			var sCallBack = 'doCormComboInfoCallBack();';
+			var sUrl = "doSearchConferenceComboByXsm06.do";
+			getCommonCode(util.jsonToString(paramData), "N", sCallBack, sUrl);
+		}
+
+		function doCormComboInfoCallBack(){
+			$("#KEY_CORM_CD").attr("disabled", false);
+		}
+
+		/**
+		 * 업무 호출
+		 */
+		function retrieve(btnFlag, pIdx){
+			$("#gubun").val(btnFlag);
+			switch(btnFlag){
+				case "search" :
+					 curPage = typeof(pIdx) == "undefined" ? "1" : pIdx;
+					 doSearch();
+					 break;
+				case "day" :
+				case "week" :
+				case "month" :
+					 doMovePage(btnFlag);
+					 break;
+			}
+		}
+
+		function doMovePage(btnFlag){
+			var nRow = "";
+			var cormInfo = "";
+			var jsonData = {};
+			var sUrl = "/hncis/smartRooms/";
+		    if(btnFlag == "day"){
+		    	jsonData = {url:sUrl+"xsm02.gas", mv:"Y", param2:""};
+		    }else if(btnFlag == "week" || btnFlag == "month"){
+				$("input:radio[name='rdo_grp']").each(function(){
+					if(this.checked){
+						nRow = this.value;
+						return false;
+					}
+				});
+				if(nRow == ""){
+					if($("#KEY_CORM_CD").val() == ""){
+						alertUI('<fmt:message key="MSG.SEL.0031"/>');
+						return;
+					}
+					cormInfo += $("#KEY_REGN_CD").val();
+					cormInfo += "|"+$("#KEY_BD_CD").val();
+					cormInfo += "|"+$("#KEY_CORM_FL_CD").val();
+					cormInfo += "|"+$("#KEY_CORM_CD").val();
+				}else{
+					cormInfo += getTdIdValue("listTbody", nRow, "regn_cd");
+					cormInfo += "|"+getTdIdValue("listTbody", nRow, "bd_cd");
+					cormInfo += "|"+getTdIdValue("listTbody", nRow, "corm_fl_cd");
+					cormInfo += "|"+getTdIdValue("listTbody", nRow, "corm_cd");
+				}
+				if(btnFlag == "week"){
+					jsonData = {url:sUrl+"xsm08.gas", mv:"Y", param2:cormInfo};
+				}else if(btnFlag == "month"){
+					jsonData = {url:sUrl+"xsm09.gas", mv:"Y", param2:cormInfo};
+				}
+		    }
+		    block_open();
+		    getMovePage(jsonData);
+		}
+
+		function doSearch(){
+		    var keyGubun = $("#KEY_GUBUN").val();
+		    var fromTime = selectNum($("#KEY_FROM_TIME").val());
+		    var toTime = selectNum($("#KEY_TO_TIME").val());
+		    var fromCpsn = $("#KEY_BLNS_CPSN1").val();
+		    var toCpsn = $("#KEY_BLNS_CPSN2").val();
+		    if(keyGubun == "Y"){
+		    	//사용시간
+			    if(fromTime == ""){
+			    	alertUI('<fmt:message key="MSG.SEL.0005"/>');
+			    	$("#KEY_FROM_TIME").focus();
+			    	return;
+			    }else if(toTime == ""){
+			    	alertUI('<fmt:message key="MSG.SEL.0006"/>');
+			    	$("#KEY_TO_TIME").focus();
+			    	return;
+			    }else if(fromTime > toTime){
+			    	alertUI('<fmt:message key="MSG.VAL.0027"/>');
+			    	$("#KEY_TO_TIME").focus();
+			    	return;
+			    }
+		    }
+		    var paramData = {
+		        regn_cd : $("#KEY_REGN_CD").val(),
+		        bd_cd : $("#KEY_BD_CD").val(),
+		        corm_fl_cd : $("#KEY_CORM_FL_CD").val(),
+		        corm_cd : $("#KEY_CORM_CD").val(),
+		        cur_fr_tm : keyGubun=="N"?"":fromTime,
+		        cur_to_tm : keyGubun=="N"?"":toTime,
+		        from_cpsn : fromCpsn == "" ? "0" : fromCpsn,
+		        to_cpsn : toCpsn == "" ? "999" : toCpsn,
+		        item_sbc : $.trim($("#KEY_ITEM_SBC").val()),
+		        use_knd : $("#KEY_USE_KND").val(),
+		        isYn : keyGubun,
+		        today : $("#KEY_PARAM_DAY").val(),
+		        cur_page : curPage
+		    };
+		    var form_data = {
+		        paramJson : util.jsonToString(paramData)
+		    };
+		    var params = {
+		        url : "doSearchConferenceRoomListByXsm02.do",
+		        data : form_data,
+		        callback : "doSearchCallBack(data)"
+		    };
+		    block_open();
+		    Con.ajax(params);
+		}
+
+		function doSearchCallBack(result){
+		    var html = "";
+		    var rmList = result.list;
+		    var rmLstLen = result.list.length;
+		    var rvList = result.list1;
+		    var rvLstLen = result.list1.length;
+		    
+		    //조회값이 없을경우 테이블 초기화
+		    if(rmLstLen == 0){
+		    	block_close();
+		    	$("#listTbody").html(init_grid(33, 0, 16, "Y"));
+		    	return;
+		    }
+		    
+		    $("#listTbody").empty();
+		    var keyFromYmd = $("#KEY_PARAM_DAY").val();
+		    for(var r = 0; r<rmLstLen; r++){
+		        html += "<tr id='tr"+r+"'>";
+			        html += "<td id='regn_cd"+r+"' style='display:none'>"+rmList[r].regn_cd+"</td>";
+			        html += "<td id='bd_cd"+r+"' style='display:none'>"+rmList[r].bd_cd+"</td>";
+			        html += "<td id='corm_fl_cd"+r+"' style='display:none'>"+rmList[r].corm_fl_cd+"</td>";
+		            html += "<td id='corm_cd"+r+"' style='display:none'>"+rmList[r].corm_cd+"</td>";
+		            html += "<td id='corm_nm"+r+"' style='text-align:left;padding-left:5px;'>";
+		            html += "<label for='rdo"+r+"'>";
+		            html += "<input type='radio' id='rdo"+r+"' name='rdo_grp' value='"+r+"'/>&nbsp;";
+		            html += "<span class='spanCormTitle' onclick='conferenceRoomInfo(\""+r+"\")'>";
+		            html += "<span id='spanCormNm"+r+"'>";
+		            html += rmList[r].corm_nm;
+		            html += "</span>";
+		            var cormTooltipHtml = "";
+		            cormTooltipHtml += "<div class='slyrpop1'>";
+		            cormTooltipHtml += "<div class='body1'>";
+		            cormTooltipHtml += "<ul>";
+		            cormTooltipHtml += "<li>";
+		            cormTooltipHtml += rmList[r].regn_nm+"/";
+		            cormTooltipHtml += rmList[r].bd_nm+"/";
+		            cormTooltipHtml += rmList[r].corm_fl_cd.replace("-", "B")+"층/";
+		            cormTooltipHtml += rmList[r].corm_nm;
+		            cormTooltipHtml += "</li>";
+		            cormTooltipHtml += "</ul>";
+		            cormTooltipHtml += "</div>";
+		            cormTooltipHtml += "</div>";
+		            html += cormTooltipHtml;
+		    		html += "</span>";
+		    		html += "</label>";
+		            html += "</td>";
+		            var rowHr = "";
+		            var hr = "";
+		            var seq = 0;
+
+		            var sKey = rmList[r].bd_cd+rmList[r].corm_fl_cd+rmList[r].corm_cd+"-"+keyFromYmd;
+		            for(var tm=1; tm<=16; tm++){
+		            	var s1 = ++seq;
+		            	var s2 = ++seq;
+		                rowHr = (5+tm)<10 ? "0"+(5+tm):(5+tm);
+		                hr = (5+tm)<10 ? "-"+"0"+(5+tm):"-"+(5+tm);
+		                var onClick00 = "resvTimeClick('"+sKey+"_"+s1+"','"+rowHr+"00','"+r+"')";
+		                var onClick30 = "resvTimeClick('"+sKey+"_"+s2+"','"+rowHr+"30','"+r+"')";
+
+		                html += "<td id='"+sKey+hr+"00'>";
+		                html += "<div id='"+sKey+"_"+s1+"' onclick="+onClick00+" style='width:100%;height:100%;cursor:arrow'></div>";
+		                html += "</td>";
+		                html += "<td id='"+sKey+hr+"30'>";
+		                html += "<div id='"+sKey+"_"+s2+"' onclick="+onClick30+" style='width:100%;height:100%;cursor:arrow'></div>";
+		                html += "</td>";
+		            }
+		        html += "</tr>";
+		    }
+		    $("#listTbody").html(html);
+		    
+		    for(var r = 0; r < rmLstLen; r++){
+		    	var sKey = rmList[r].bd_cd+rmList[r].corm_fl_cd+rmList[r].corm_cd;
+		    	sKey += "-"+keyFromYmd;
+		        for(var i=0; i < rvLstLen; i++){
+		        	var rKey = rvList[i].bd_cd+rvList[i].corm_fl_cd+rvList[i].corm_cd;
+		        	rKey += "-"+keyFromYmd;
+		            if(sKey == rKey){
+		                var rowHr = "";
+		                var hr = "";
+		                for(var tm=1; tm<=16; tm++ ){
+		                    rowHr = (5+tm)<10 ? "0"+(5+tm):(5+tm);
+		                    hr = (5+tm)<10 ? "-"+"0"+(5+tm):"-"+(5+tm);
+		                    var gubun = $("#KEY_GUBUN").val();
+		                	var frTime = $("#KEY_FROM_TIME").val();
+		                	var toTime = $("#KEY_TO_TIME").val();
+		                	//셀단위의 상태값 저장
+		                	var hidInp1 = $("<input/>").attr("type", "hidden").attr("id", "I"+sKey+hr+"00");
+		                	var hidInp2 = $("<input/>").attr("type", "hidden").attr("id", "I"+sKey+hr+"30");
+		                	//key no
+		                	var hidDocNo1 = $("<input/>").attr("type", "hidden").attr("id", "D"+sKey+hr+"00");
+		                	var hidDocNo2 = $("<input/>").attr("type", "hidden").attr("id", "D"+sKey+hr+"30");
+		                	
+		                	var tmRowHr00 = eval("rvList[i].tm"+rowHr+"00").split("@");
+		                	var tmRowHr30 = eval("rvList[i].tm"+rowHr+"30").split("@");
+		                	
+		                    if(tmRowHr00[0] == "1"){
+		                    	//본인 작성
+		                    	$("#"+sKey+hr+"00").append(hidDocNo1.val(sKey+hr+"00"));
+		                    	$("#"+sKey+hr+"00").append(hidInp1.val("1"));
+		                        $("#"+sKey+hr+"00").css("background", "#C1D82E");
+		                    }else if(tmRowHr00[0] == "2"){
+		                    	//타인 작성
+		                    	$("#"+sKey+hr+"00").append(hidDocNo1.val(sKey+hr+"00"));
+		                    	$("#"+sKey+hr+"00").append(hidInp1.val("2"));
+		                    	if(tmRowHr00[1] == "1"){
+		                    		$("#"+sKey+hr+"00").css("background", "#68C8C6");
+		                    	}else if(tmRowHr00[1] == "2"){
+		                    		$("#"+sKey+hr+"00").css("background", "#007A85");
+		                    	}else{
+		                    		$("#"+sKey+hr+"00").css("background", "#7EB0CB");
+		                    	}
+		                    }else{
+		                    	//Yㅣ공실
+		                    	if(gubun == "Y"){
+			                    	if(frTime <= rowHr+"00" && toTime > rowHr+"00"){
+			                    	} else {
+			                    		$("#"+sKey+hr+"00").append(hidInp1.val("0"));
+			                    		$("#"+sKey+hr+"00").css("background", "#e9e9e9");
+			                    	}
+		                    	}
+		                    }
+		                    
+		                    if(tmRowHr30[0] == "1"){
+		                    	//본인 작성
+		                    	$("#"+sKey+hr+"30").append(hidDocNo2.val(sKey+hr+"30"));
+		                    	$("#"+sKey+hr+"30").append(hidInp2.val("1"));
+		                        $("#"+sKey+hr+"30").css("background", "#C1D82E");
+		                    }else if(tmRowHr30[0] == "2"){
+		                    	//타인 작성
+		                    	$("#"+sKey+hr+"30").append(hidDocNo2.val(sKey+hr+"30"));
+		                    	$("#"+sKey+hr+"30").append(hidInp2.val("2"));
+		                    	if(tmRowHr30[1] == "1"){
+		                    		$("#"+sKey+hr+"30").css("background", "#68C8C6");
+		                    	}else if(tmRowHr30[1] == "2"){
+		                    		$("#"+sKey+hr+"30").css("background", "#007A85");
+		                    	}else{
+		                    		$("#"+sKey+hr+"30").css("background", "#7EB0CB");
+		                    	}
+		                    }else{
+		                    	//Yㅣ공실
+		                    	if(gubun == "Y"){
+			                    	if(frTime <= rowHr+"30" && toTime > rowHr+"30"){
+			                    	} else {
+			                    		$("#"+sKey+hr+"30").append(hidInp2.val("0"));
+			                    		$("#"+sKey+hr+"30").css("background", "#e9e9e9");
+			                    	}
+		                    	}
+		                    }
+		                }
+		            }
+		        }
+		    }
+		    
+		    block_close();
+		    pageNavigation(result);
+		}
+
+		var firClick = "";
+		var lstClick = "";
+		var firId = "";
+		var lstId = "";
+		var firIdx = 0;
+		var lstIdx = 0;
+		var firRow = 0;
+		var lstRow = 0;
+		var firToLastNo = 0;
+		var clickCnt = 0;
+		var firTime = "";
+		var lstTime = "";
+		var dispLstTime = "";
+		function resvTimeClick(sId, sTime, nRow){
+			//클릭수
+			if(clickCnt == 2){
+				return;
+			}
+			if(firClick == ""){
+				firClick = "Y";
+				firId    = sId.split("_")[0];
+				firIdx   = parseInt(sId.split("_")[1], 10);
+				firRow   = nRow;
+				firTime  = sTime;
+
+				$("#"+sId).css("background", "#714E34");
+				$("#p_regn_cd").val(getTdIdValue("listTbody", nRow, "regn_cd"));
+				$("#p_bd_cd").val(getTdIdValue("listTbody", nRow, "bd_cd"));
+				$("#p_corm_fl_cd").val(getTdIdValue("listTbody", nRow, "corm_fl_cd"));
+				$("#p_corm_cd").val(getTdIdValue("listTbody", nRow, "corm_cd"));
+				$("#p_corm_nm").val($("#spanCormNm"+nRow).text());
+			}else if(firClick != ""){
+				lstClick = "Y";
+				lstId    = sId.split("_")[0];
+				lstIdx   = parseInt(sId.split("_")[1], 10);
+				lstRow   = nRow;
+				lstTime  = sTime;
+				$("#"+sId).css("background", "#97793D");
+			}
+			
+			var hiddenKey = sId.split("_")[0]+"-"+sTime;
+			var chkHidNo = $("#I"+hiddenKey).val();
+			var hidKeyNo = $("#D"+hiddenKey).val();
+			if(chkHidNo == "1" || chkHidNo == "2"){
+				if(lstClick != "Y"){
+					//1.본인/2.타인 예약내용 확인(두번째 클릭이 아닐때)
+					$("#hid_key_no").val(hidKeyNo);
+					cormReservationView(chkHidNo);
+					return;
+				}else{
+					alertUI('<fmt:message key="MSG.SEL.0036"/>');
+					$("#"+firId+"_"+firIdx).css("background", "");
+					$("#"+lstId+"_"+lstIdx).css("background", "");
+					setClear();
+					return;
+				}
+			}else if(chkHidNo == "0"){
+				//조건검색
+				alertUI('<fmt:message key="MSG.SEL.0037"/>');
+				if(lstClick != "Y"){
+					$("#"+firId+"_"+firIdx).css("background", "");
+				}else{
+					$("#"+firId+"_"+firIdx).css("background", "");
+					$("#"+lstId+"_"+lstIdx).css("background", "");
+				}
+				setClear();
+				return;
+			}
+			
+			//날짜 체크
+		    if(Number(getCurrentToDate()) > Number($("#KEY_PARAM_DAY").val())){
+		    	alertUI('<fmt:message key="MSG.VAL.0023"/>');
+		    	$("#"+firId+"_"+firIdx).css("background", "");
+		    	setClear();
+		    	return;
+		    }
+		    
+		    //시간 체크
+		    var scd = new Date();
+		    var diffTime = ""+numPad(scd.getHours())+numPad(scd.getMinutes());
+		    if(Number(getCurrentToDate()+diffTime) > Number($("#KEY_PARAM_DAY").val()+firTime)){
+		    	if(firTime == "2130"){
+		    		alertUI('<fmt:message key="MSG.VAL.0014"/>');
+		    	}else{
+		    		alertUI('<fmt:message key="MSG.VAL.0023"/>');
+		    	}
+		    	$("#"+firId+"_"+firIdx).css("background", "");
+		    	setClear();
+		    	return;
+		    	
+		    }
+			
+			//두번째 클릭
+			if(lstClick == "Y"){
+				firToLastNo = lstIdx-firIdx;
+				if(firRow != lstRow){
+					//회의실를 잘못 클릭 했을경우
+					alertUI('<fmt:message key="MSG.SEL.0038"/>');
+					$("#"+firId+"_"+firIdx).css("background", "");
+					$("#"+lstId+"_"+lstIdx).css("background", "");
+					setClear();
+					return;
+				}else if(firToLastNo < 0){
+					//from ~ to에서 To가 더 작을 경우
+					alertUI('<fmt:message key="MSG.SEL.0039"/>');
+					$("#"+firId+"_"+firIdx).css("background", "");
+					$("#"+lstId+"_"+lstIdx).css("background", "");
+					setClear();
+					return;
+				}else{
+					for(var i = 1; i < firToLastNo; i++){
+						var inpCnt = $("#"+firId+"_"+(firIdx+i)).parent().find(":input").length;
+						if(inpCnt == 0){
+							$("#"+firId+"_"+(firIdx+i)).css("background", "#C5B340");
+						}else{
+							alertUI('<fmt:message key="MSG.VAL.0032"/>');
+							cellBgColor("A");
+							setClear();
+							return;
+						}
+					}
+					$("#p_from_ymd").val($("#KEY_PARAM_DAY").val());
+					$("#p_to_ymd").val($("#KEY_PARAM_DAY").val());
+					$("#p_from_time").val(firTime);
+
+					var mm = "", hh1 = "", mm1 = "";
+					var ohh = lstTime.substring(0,2);
+					var omm = lstTime.substring(2,4);
+					
+					//변수에 셋팅될 시간
+					if(omm == "00"){
+						mm = "29";
+					}else{
+						mm = "59";
+					}
+					lstTime = ohh+mm;
+					$("#p_to_time").val(lstTime);
+					
+					//confirm 화면에 보여줄 시간
+					if(omm == "00"){
+						hh1 = ohh;
+						mm1 = "30";
+					} else{
+						hh1 = numPad(Number(ohh)+1);
+						mm1 = "00"; 
+					}
+					dispLstTime = hh1+mm1;
+					confirmDisp();
+				}
+			}
+			clickCnt++;
+		}
+
+		//알림메시지
+		function confirmDisp(){
+			var strVal = "";
+				strVal += setDateFormat($("#KEY_PARAM_DAY").val()) + " " + setTimeFormat(firTime) + " 부터 " + setTimeFormat(dispLstTime) + "까지<br>";
+				strVal += $("#p_corm_nm").val() + " 을 예약 하시겠습니까?";
+			$("#conf_msg").html(strVal);
+
+			var gbWidth = "300";
+			var gbHeight = "150";
+			var popTop = ($(window).height() - Number(gbWidth)) /2 + 'px';
+			var popLeft = ($(window).width() - Number(gbHeight)) /2 + 'px';
+			var css = {
+				top: popTop, left: popLeft, width: gbWidth, height: gbHeight,
+				cursor: 'hand', border: 'none', color: '#fff', backgroundColor:'#fff'
+			};
+			$.blockUI({
+			    message: $("#conf_pop"),
+			    css: css
+			});
+		}
+
+		//예약
+		$("#btn_resv").live("click", function(){
+			cormReservation();
+		});
+
+		//취소
+		$("#btn_resv_cancel").live("click", function(){
+			$.unblockUI();
+			//색칠했던 배경을 원래대로 되돌린다.
+			cellBgColor("A");
+			setClear();
+		});
+
+		function setClear(){
+			firClick = "";
+			lstClick = "";
+			firId = "";
+			lstId = "";
+			firIdx = 0;
+			lstIdx = 0;
+			firRow = 0;
+			lstRow = 0;
+			firToLastNo = 0;
+			clickCnt = 0;
+			firTime = "";
+			lstTime = "";
+			dispLstTime = "";
+			$("#p_regn_cd").val("");
+			$("#p_odu_sebu_cd").val("");
+			$("#p_corm_fl_cd").val("");
+			$("#p_bd_cd").val("");
+			$("#p_corm_cd").val("");
+			$("#p_corm_nm").val("");
+			$("#p_from_ymd").val("");
+			$("#p_to_ymd").val("");
+			$("#p_from_time").val("");
+			$("#p_to_time").val("");
+			
+			$("#hid_doc_no").val("");
+			$("#hid_key_no").val("");
+		}
+
+		function fieldSet(bool){
+			$("#KEY_FROM_TIME").attr("disabled", bool);
+			$("#KEY_TO_TIME").attr("disabled", bool);
+		}
+
+		function conferenceRoomInfo(idx){
+			//선점 예약후 테이블 생성;
+		    var paramData = {
+		        regn_cd : getTdIdValue("listTbody", idx, "regn_cd"),
+		        bd_cd : getTdIdValue("listTbody", idx, "bd_cd"),
+		        corm_cd : getTdIdValue("listTbody", idx, "corm_cd")
+		    };
+		    var form_data = {
+		        paramJson : util.jsonToString(paramData)
+		    };
+		    var params = {
+		        url : "doSearchConferenceInfo.do",
+		        data : form_data,
+		        callback : "conferenceRoomInfoCallBack(data.sendResult)"
+		    };
+		    Con.ajax(params);
+		}
+
+		function conferenceRoomInfoCallBack(result){
+			var rs1 = result.info1;
+			var form = $("<form id='frmMain' name='frmMain' method='POST'/>");
+			var html = "";
+
+			//회의실상세 조회 시작
+			html += "<div id='confInfo'>";
+			html += "<div class='inlyrx1'>";
+			html += "<div class='inbox'>";
+			html += "<table class='tblT1'>";
+			html += "<colgroup>";
+			html += "<col width='85px'>";
+			html += "<col width='200px'>";
+			html += "<col width='70px'>";
+			html += "<col width='70px'>";
+			html += "<col width='60px'>";
+			html += "<col width='240px'>";
+			html += "</colgroup>";
+			
+			html += "<tr>";
+			html += "<td colspan='6'>";
+			html += "<div style='padding:5px;text-align:center;height:auto;'>";
+			if(typeof(rs1.file_img_1) == "undefined" || rs1.file_img_1 == ""){
+				html += "<img src='../../images/common/no_img.gif' align='absmiddle' width='170px' height='150px' style='border:1px solid #e2e2e2'>";
+			}else{
+				html += "<img src='"+rs1.file_img_1+"' width='350px' height='256px'>";
+			}
+			html += "</div>";
+			html += "</td>";
+			html += "</tr>";
+			
+			html += "<tr>";
+			html += "<th>회의실</th>";
+			html += "<td colspan='5'>"+rs1.regn_nm+"/"+rs1.bd_nm+"/"+rs1.corm_fl_cd.replace("-", "B")+"층"+"/"+rs1.corm_nm+"</td>";
+			html += "</tr>";
+			html += "<tr>";
+			html += "<th>위치설명</th>";
+			html += "<td><div class='txt_wd'>"+rs1.corm_loc_sbc+"</div></td>";
+			html += "<th>수용인원</th>";
+			html += "<td colspan='3'>"+rs1.blns_cpsn+"명</td>";
+			html += "</tr>";
+			html += "<th>장비</th>";
+			html += "<td colspan='5'>"+rs1.item_sbc+"</td>";
+			html += "</tr>";
+			html += "<tr>";
+			html += "<th>비고</th>";
+			html += "<td colspan='5'>"+rs1.remark+"</td>";
+			html += "</tr>";
+			html += "</table>";
+			html += "<a href='#' class='lyrClose'><img src='../../images/common/btn_sclose.gif' alt=''></a>";
+			html += "</div>";
+			html += "</div>";
+			html += "</div>";
+			
+			form.append(html);
+			var resvPop = $("<div/>").attr("id", "corm_dtl_pop").attr("style","display:none");
+			resvPop.addClass("corm_dtl_pop");
+			resvPop.append(form);
+			$("body").append(resvPop);
+
+			var gbWidth = "784";
+			var gbHeight = "300";
+			var popTop = (($(window).height() - Number(gbHeight)) /2)-50 + 'px';
+			var popLeft = (($(window).width() - Number(gbWidth)) /2)+100 + 'px';
+			var css = {
+				top: popTop, left: popLeft, width: gbWidth, height: gbHeight, textAlign: "left",
+				cursor: 'hand', border: 'none', backgroundColor:'#fff', color:"#fff"
+			};
+			$.blockUI({
+			    message: $("#corm_dtl_pop"),
+			    css: css
+			});
+		}
+
+		//회의실 상세 닫기
+		$(".inlyrx1 .lyrClose").live("click", function() {
+			$.unblockUI();
+			setTimeout('$("#corm_dtl_pop").remove();', 500);
+		});
+
+		function afterFnCall(){
+			if(selectNum($("#KEY_SEL_YMD").val()) != ""){
+				setClear();
+			    $("#KEY_PARAM_DAY").val(selectNum($("#KEY_SEL_YMD").val()));
+			    $("#curDay").text(setDateFormat(getAddDayDate($("#KEY_PARAM_DAY").val(), 0), "YMD") + " " + setDay($("#KEY_PARAM_DAY").val()));
+			    retrieve('search');
+			}
+		}
+		</script>

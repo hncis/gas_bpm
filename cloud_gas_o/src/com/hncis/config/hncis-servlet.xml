@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:lang="http://www.springframework.org/schema/lang"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+        http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-2.5.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+    
+    <!-- ################ autoScan establishment start ###################### -->
+	<context:component-scan base-package="com.hncis.controller"/>
+	
+    <context:annotation-config />
+    <!-- ################ autoScan establishment end   ###################### -->
+    
+    <!-- ################ HandlerMapping establishment start   ############################## -->
+    <bean id="annotationMapper" class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+        
+		<description>annotation HandlerMapping 설정</description>
+		<property name="interceptors">
+            <list>
+                <ref bean="loginHandlerInterceptor" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="loginHandlerInterceptor" class="com.hncis.common.aspect.LoginHandlerInterceptor">
+        <description>login check interceptor 설정</description>
+        <property name="exclusionList">
+            <list>
+                <value>/getCommonCombo.do</value>
+                <value>/getCommonMultiCombo.do</value>
+                <value>/doLogin.do</value>
+                <value>/doSearchToEmpty.do</value>
+                <value>/hncis/entranceMeal/doSearchGridEmToListForWorker.do</value>
+                <value>/hncis/businessTravel/doSearchBTToCustomerList.do</value>
+                <value>/hncis/businessTravel/doComboListToRequest.do</value>
+                <value>/hncis/businessTravel/doSearchInfoBTToRequest.do</value>
+                <value>/hncis/businessTravel/doSearchListBTToRequestByTraveler.do</value>
+                <value>/hncis/businessTravel/doSearchListBTToRequestByVirtualTraveler.do</value>
+                <value>/hncis/businessTravel/doSearchListBTToRequestBySchedule.do</value>
+                <value>/hncis/businessTravel/doSearchListBTToRequestByFilghtConfirmation.do</value>
+                <value>/hncis/businessTravel/doSearchListBTToRequestByHotelConfirmation.do</value>
+                <value>/hncis/businessTravel/doSearchListBTToRequestByRentCar.do</value>
+                <value>/hncis/businessTravel/doSearchBTToFile.do</value>
+                <value>/hncis/businessTravel/doSearchBTToMultiComboByReport.do</value>
+                <value>/hncis/businessTravel/doSearchBTToList.do</value>
+                <value>/hncis/businessTravel/doSearchBTToReport.do</value>
+                <value>/hncis/businessTravel/doExpensePrint.do</value>
+                <value>/hncis/businessTravel/doCheckBTToConfirmList.do</value>
+                <value>/hncis/businessTravel/doSaveBTToOutCompFile.do</value>
+                <value>/hncis/businessTravel/doDeleteBTToFile.do</value>
+                <value>/hncis/businessTravel/doFileDown.do</value>
+                <value>/hncis/businessTravel/doSearchBTToSendMailCom.do</value>
+                <value>/hncis/businessTravel/saveBtToOutCompFileHotel.do</value>
+                <value>/hncis/businessTravel/doVendorCheckBTToConfirmList.do</value>
+                <value>/hncis/roomsMeals/doSearchGridRmToMealsMgmtList.do</value>
+                <value>/hncis/roomsMeals/doUpdateRmToMealsMgmtSubmit.do</value>
+                <value>/hncis/roomsMeals/doUpdateRmToMealsMgmtOngoing.do</value>
+                <value>/hncis/roomsMeals/doUpdateRmToMealsMgmtDone.do</value>
+                <value>/hncis/roomsMeals/doUpdateRmToMealsMgmtCancel.do</value>
+                <value>/hncis/generalService/doSearchPoCreate.do</value>
+                <value>/hncis/generalService/doSearchPoDelete.do</value>
+                <value>/hncis/security/doSearchSecurityRequestConfirmList.do</value>
+                <value>/hncis/security/doSearchToSecurityRequest.do</value>
+                <value>/hncis/security/doSearchSecurityRequestEntrance.do</value>
+                <value>/hncis/security/doSearchSecurityRequestMaterial.do</value>
+                <value>/hncis/security/doSearchSecurityRequestVehicle.do</value>
+                <value>/hncis/security/doSearchSecurityRequestDevices.do</value>
+                <value>/hncis/security/doSearchSecurityRequestFilm.do</value>
+                <value>/hncis/security/getSearchFilmComboArea.do</value>
+                <value>/hncis/security/doSaerchSecurityRemark.do</value>
+                <value>/hncis/security/doDoneSecurityRequest.do</value>
+                <value>/hncis/security/doDoneCancelSecurityRequest.do</value>
+                <value>/hncis/security/doExcelSecurityRequestConfirmList.excel</value>
+                <value>/hncis/system/getPurchaseOrderCombo.do</value>
+                <value>/doSearchToDeptInfo.do</value>
+                <value>/doSearchToUserInfo.do</value>
+                <value>/hncis/roomsMeals/doExcelToMealsMgmtList.excel</value>
+                <value>/hncis/security/doSearchSecurityVistiorCustomer.do</value>
+                <value>/hncis/security/doSearchSecurityRequestList.do</value>
+                <value>/doSearchToUserInfoByPopup.do</value>
+                <value>/hncis/system/doSearchToUserInfoPopup.do</value>
+                <value>/doSearchJobManagement.do</value>
+                <value>/doSaveCommonEditorFile.do</value>
+                <value>/doSignup.do</value>
+                <value>/checkCorpcdDuplicate.do</value>
+                <value>/doResetPassword.do</value>
+                <value>/doSearchCorpNameList.do</value>
+                <value>/doSendMailForResetPassword.do</value>
+                <value>/doSearchCorpInfo.do</value>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"
+	p:paramName="language" />
+    
+	
+    <!-- ################ multipartResolver start ############################# -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    	<property name="maxUploadSize" value="100072000" />
+    </bean>
+    <!-- ################ multipartResolver end ############################# -->
+    
+	<!-- ################ excelViewResolver establishment start   ############################## -->
+	<bean id="excelViewResolver"
+      class="org.springframework.web.servlet.view.XmlViewResolver">
+       <property name="order" value="0"/>
+       <property name="location" value="/WEB-INF/spring-excel-views.xml"/>
+    </bean>
+    
+	<!-- ################ viewResoler establishment start   ############################## -->
+    <bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		  <description>기본 viewResolver 설정</description>
+		  <property name="prefix" value="/WEB-INF/"/>
+		  <property name="suffix" value=".jsp"/>
+		  <property name="order" value="1"/>
+		  <property name="contentType" value="text/html; charset=UTF-8"/>
+    </bean>
+    
+    <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <description>error message viewResolver 설정</description>
+        <property name="defaultErrorView" value="view/error"/>
+        <property name="exceptionAttribute" value="exception"/>
+        <property name="exceptionMappings">
+            <props>
+                <prop key="com.hncis.common.exception.IHncisException">view/error</prop>
+                <prop key="com.hncis.common.exception.impl.SessionException">view/sessionError</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean
+		class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		  <property name="order" value="0"/>
+    </bean>
+        
+    <bean id="fileDownResolver"
+      class="org.springframework.web.servlet.view.XmlViewResolver">
+       <property name="order" value="0"/>
+       <property name="location" value="/WEB-INF/spring-filedown-views.xml"/>
+    </bean>
+    
+    <!-- ################ viewResoler establishment end     ############################## -->
+    
+</beans>

@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Certificate">
+	
+	<insert id="insertCertificateToRequest" parameterClass="bgabGascce01">
+		/* insertCertificateToRequest */
+		INSERT INTO BGAB_GASCCE01$corp_cd$(
+			  DOC_NO
+			, REQ_DATE
+			, EENO
+			, TYPE
+			, PURPOSE
+			, NOTE
+			, PGS_ST_CD
+			, INP_YMD
+			, IPE_EENO
+			, MDFY_YMD
+			, UPDR_EENO
+		)VALUES(
+			  #doc_no#
+			, TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+			, #eeno#
+			, #type#
+			, #purpose#
+			, #note#
+			, #pgs_st_cd#
+			, SYSDATE
+			, #ipe_eeno#
+			, SYSDATE
+			, #updr_eeno#
+		)
+	</insert>
+
+	<update id="updateCertificateToRequest" parameterClass="bgabGascce01">
+		/* updateCertificateToRequest */
+		UPDATE BGAB_GASCCE01$corp_cd$
+		   SET TYPE = #type#
+		     , PURPOSE = #purpose#
+		     , NOTE = #note#
+		     , MDFY_YMD = SYSDATE
+			 , UPDR_EENO = #updr_eeno#
+		 WHERE DOC_NO = #hid_doc_no#
+	</update>
+	
+	<delete id="deleteCertificateToRequest" parameterClass="bgabGascce01">
+		/* deleteCertificateToRequest */
+		DELETE FROM BGAB_GASCCE01$corp_cd$
+		 WHERE DOC_NO = #doc_no#
+	</delete>
+	
+	<select id="selectCertificateToRequest" parameterClass="bgabGascce01" resultClass="bgabGascce01">
+		/* selectCertificateToRequest */
+		SELECT DOC_NO
+			 , TO_CHAR(TO_DATE(REQ_DATE,'YYYY-MM-DD'), 'YYYY-MM-DD') AS REQ_DATE
+			 , EENO
+			 , TYPE
+			 , PURPOSE
+			 , NOTE
+			 , PGS_ST_CD
+			 , B.XCOD_HNAME AS PGS_ST_NM
+			 , SNB_RSON_SBC
+			 , A.IF_ID
+	      FROM BGAB_GASCCE01$corp_cd$ A
+	      JOIN BGAB_GASCZ005$corp_cd$ B
+	        ON B.XCOD_KND = 'X0001'
+	       AND B.LOCALE = #loc_cd# 
+	       AND A.PGS_ST_CD = B.XCOD_CODE
+	     <isNotEmpty property="doc_no">
+	     WHERE DOC_NO = #doc_no#
+	     </isNotEmpty>
+	     <isEmpty property="doc_no">
+	     WHERE IF_ID = #if_id#
+	     </isEmpty>
+	</select>
+	
+	<select id="selectGridCertificateToListCount" parameterClass="bgabGascce01" resultClass="String">
+		/* selectGridCertificateToListCount */
+		SELECT COUNT(*)
+		  FROM (SELECT DOC_NO
+					 , TO_CHAR(TO_DATE(REQ_DATE,'YYYY-MM-DD'), 'YYYY-MM-DD') AS REQ_DATE
+					 , EENO
+					 , TYPE
+					 , PURPOSE
+					 , NOTE
+					 , PGS_ST_CD
+					 , B.XCOD_HNAME AS PGS_ST_NM
+			      FROM BGAB_GASCCE01$corp_cd$ A
+			      JOIN BGAB_GASCZ005$corp_cd$ B
+			        ON B.XCOD_KND = 'X0001'
+			       AND B.LOCALE = #loc_cd#
+			       AND A.PGS_ST_CD = B.XCOD_CODE
+			      LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ C
+			        ON A.EENO = C.XUSR_EMPNO
+			     WHERE replace(REQ_DATE,'-','') BETWEEN replace(#key_from_date#,'/','') AND replace(#key_to_date#,'/','')
+			       <isNotEmpty property="key_eeno">
+			       AND A.EENO = #key_eeno#
+			       </isNotEmpty>
+			       <isNotEmpty property="key_eenm">
+			       AND C.XUSR_NAME LIKE '%' || #key_eenm# || '%'
+			       </isNotEmpty>
+			       <isNotEmpty property="key_regn_cd">
+			       AND C.XUSR_PLAC_WORK = #key_regn_cd#
+			       </isNotEmpty>
+			       <isNotEmpty property="key_pgs_st_cd">
+			       AND A.PGS_ST_CD = #key_pgs_st_cd#
+			       </isNotEmpty>
+			       <isNotEmpty property="key_type">
+			       AND A.TYPE = #key_type#
+			       </isNotEmpty>
+		  		)Z
+	</select>
+	
+	<select id="selectGridCertificateToList" parameterClass="bgabGascce01" resultClass="bgabGascce01">
+		/* selectGridCertificateToList */
+		SELECT Z.*
+		  FROM (
+				SELECT rownum rnum, X.*
+				  FROM (
+						SELECT DOC_NO
+							 , TO_CHAR(TO_DATE(REQ_DATE, 'YYYY-MM-DD'), 'YYYY-MM-DD') REQ_DATE
+							 , EENO
+							 , TYPE
+							 , PURPOSE
+							 , NOTE
+							 , PGS_ST_CD
+							 , B.XCOD_HNAME AS PGS_ST_NM
+							 , XUSR_NAME AS EENM
+			 				 , XUSR_STEP_CODE AS STEP_CODE
+			 				 , XUSR_STEP_NAME AS POSITION
+			 				 , XUSR_DEPT_CODE AS OPS_CD
+			 				 , XUSR_DEPT_NAME AS OPS_NM
+			 				 , D.XCOD_HNAME AS TYPE_NM
+					      FROM BGAB_GASCCE01$corp_cd$ A
+					      JOIN BGAB_GASCZ005$corp_cd$ B
+					        ON B.XCOD_KND = 'X0001'
+					       AND B.LOCALE = #loc_cd#
+					       AND A.PGS_ST_CD = B.XCOD_CODE
+					      LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ C
+					        ON A.EENO = C.XUSR_EMPNO
+					      JOIN BGAB_GASCZ005$corp_cd$ D
+					        ON D.XCOD_KND = 'XCE'
+					       AND D.LOCALE   = #loc_cd# 
+					       AND A.TYPE = D.XCOD_CODE
+					     WHERE replace(REQ_DATE,'-','') BETWEEN replace(#key_from_date#,'/','') AND replace(#key_to_date#,'/','')
+					       <isNotEmpty property="key_eeno">
+					       AND A.EENO = #key_eeno#
+					       </isNotEmpty>
+					       <isNotEmpty property="key_eenm">
+					       AND C.XUSR_NAME LIKE '%' || #key_eenm# || '%'
+					       </isNotEmpty>
+					       <isNotEmpty property="key_regn_cd">
+					       AND C.XUSR_PLAC_WORK = #key_regn_cd#
+					       </isNotEmpty>
+					       <isNotEmpty property="key_pgs_st_cd">
+					       AND A.PGS_ST_CD = #key_pgs_st_cd#
+					       </isNotEmpty>
+					       <isNotEmpty property="key_type">
+					       AND A.TYPE = #key_type#
+					       </isNotEmpty>
+					     ) X
+					     ORDER BY DOC_NO DESC
+			   ) Z
+	     WHERE rnum between #startRow# AND #endRow#
+	</select>
+	
+	<update id="updateCertificateToApprove" parameterClass="bgabGascce01">
+		/* updateCertificateToApprove  */
+		UPDATE BGAB_GASCCE01$corp_cd$
+		   SET PGS_ST_CD = #pgs_st_cd#
+		   	 <isEqual property="pgs_st_cd" compareValue="2">
+		   	 , SNB_RSON_SBC = #snb_rson_sbc#
+		   	 </isEqual>
+		     , MDFY_YMD = SYSDATE
+			 , UPDR_EENO = #updr_eeno#
+		 WHERE DOC_NO = #doc_no#
+	</update>
+	
+	<update id="confirmCEToRequest" parameterClass="bgabGascce01">
+		/* confirmCEToRequest */
+		update BGAB_GASCCE01$corp_cd$
+		set	    pgs_st_cd	= #pgs_st_cd#
+			   ,mdfy_ymd	= SYSDATE
+			   ,updr_eeno	= #updr_eeno#
+			   ,acpc_eeno	= #updr_eeno#
+			   ,acpc_ymd	= sysdate
+		where doc_no = #doc_no#
+	</update>
+	
+	<update id="updateInfoCEToReject" parameterClass="bgabGascce01">
+		/* updateInfoCEToReject */
+   		UPDATE	BGAB_GASCCE01$corp_cd$
+		SET 	PGS_ST_CD  = #pgs_st_cd#
+				,IF_ID     = ''
+				,RPTS_EENO = ''
+				,RPTS_YMD  = ''
+				,RDCS_EENO = ''
+				,RDCS_YMD  = ''
+				,ACPC_EENO = ''
+				,ACPC_YMD  = ''
+				,SNB_RSON_SBC = #snb_rson_sbc#
+				,UPDR_EENO = #updr_eeno#
+				,MDFY_YMD  = SYSDATE
+		WHERE	1 = 1
+		AND		DOC_NO = #doc_no#
+	</update>
+</sqlMap>

@@ -1,0 +1,116 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XST22";
+	
+	String strSav = JSPMessageSource.getMessage("upload",locale);
+	
+	String strBtn = "";
+	strBtn = strSav+"/upload";
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Logo Management</title>
+	</head>
+	<body>
+		<div id="wrap">
+	    	<form name="testForm" id="testForm">
+		    	<%@ include file="../include/hncis_header.gas"%>
+		        <div id="contents_wrap">
+		        	<%@ include file="../include/hncis_left.gas"%>
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,"XST22"
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+						<div class="search_area">
+							<h3>Logo Size :: Width : 134px, Height : 34px</h3>
+						</div>
+		                <div class="pt30 pb30" style="text-align: center;">
+		                	<table style="width:1000px; margin:0 auto;">
+								<colgroup>
+		                        	<col style="width:200px;" />
+		                        </colgroup>
+								<tr>
+									<td>
+										<div style="width:134px; height:34px">
+											<img src="<%=defLogoPath%>" style="width:134px; height:34px" alt="" id="logo_img"/>
+										</div>
+									</td>
+								</tr>
+							</table>
+		                </div>
+		                <%@ include file="../include/hncis_message.gas"%>
+		            </div>
+		            <div class="clear"></div>
+		        </div>
+	        </form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+	    </div>
+	    <form id="fileForm" name="fileForm">
+			<input type="hidden" id="file_doc_no" name="file_doc_no">
+			<input type="hidden" id="file_eeno"  name="file_eeno">
+			<input type="hidden" id="req_eeno"  name="req_eeno">
+			<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+		</form>
+	</body>
+</html>
+<script type="text/javascript">
+	function fnSetDocumentReady(){
+		initMenus();
+		$('#ST').slideDown('fast');
+		init();
+	}
+	
+	function init(){
+	}
+	
+	function retrieve(btnFlag){
+		switch(btnFlag){
+			case "search" :
+				doSearch();
+				break;
+			case "upload" :
+				doFileAttach();
+				break;
+		}
+	}
+	
+	function doSearch(){
+		var keyData = { 
+			xusr_empno : $("#eeno").text(),
+			corp_cd	     : sess_corp_cd
+		};
+		
+		paramData = {
+			paramJson : util.jsonToString(keyData)
+		};
+		
+		doCommonAjax("doSearchToLogoFile.do", paramData, "doSearchCallBack(jsonData.sendResult)");
+	}
+	
+	function doSearchCallBack(result){
+
+		$("#logo_img").attr("src", ctxPath + "/upload/logo/" + result.corp_cd + "/" + result.ogc_fil_nm);
+	}
+	
+	var win;
+	function doFileAttach(){
+		if(win != null){ win.close(); }
+		var url = "xst22_file.gas", width = "460", height = "190";
+
+		win = newPopWin("about:blank", width, height, "win_file");
+		document.fileForm.hid_csrfToken.value = $("#csrfToken").val();
+		document.fileForm.action = url;
+		document.fileForm.target = "win_file";
+		document.fileForm.method = "post";
+		document.fileForm.submit();
+	}
+</script>

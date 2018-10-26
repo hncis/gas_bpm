@@ -1,0 +1,249 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title><fmt:message key="help"/></title>
+		<link rel="stylesheet" type="text/css" media="screen" href="<%=ctxPath%>/script/css/hncis_common.css" />
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/jsonUtil.js"></script>
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/common.js"></script>
+		<link rel="stylesheet" type="text/css" media="screen" href="../../script/css/pop_up.css" />
+		<link rel="stylesheet" type="text/css" href="<%=ctxPath%>/script/js/autocomplete/redmond.css">
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/autocomplete/jquery.js"></script>
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/autocomplete/jquery-ui.js"></script>
+	</head>
+	
+	<body style="overflow-x: hidden">
+		<div class="pop_wrap info_wrap">
+			<div class="pop_header_pos">
+				<div class="pop_header">
+		        	<div class="pop_title">
+		            	<h1><fmt:message key="rc"/>  - <fmt:message key="rc_mng"/></h1>
+		                <a href="javascript:selfClose();" id="pop_tip_cls" class="pop_close"></a>
+		            </div>
+		        </div>
+		        <ul class="info_menu menuNum05">
+		        	<li><a href="#info01"><span><fmt:message key="rc"/></span></a></li>
+		        	<li><a href="#info02"><span><fmt:message key="cal"/></span></a></li>
+		        	<li><a href="#info03"><span><fmt:message key="rm"/></span></a></li>
+		        	<li><a href="#info04"><span><fmt:message key="charge"/></span></a></li>
+		        	<li></li>
+		        </ul>
+	        </div>
+	        <div class="pop_info_content">
+	        	<div class="tit_area" id="info01">
+	        		<span class="info_num">01</span>
+	        		<h2><fmt:message key="HELP.XRC.0015"/></h2>
+	        		<p>
+	        			<fmt:message key="HELP.0066"/>
+	        		</p>
+	        	</div>
+	        	<table class="pop_info_tbl">
+	        		<colgroup>
+	        			<col style="width:25%;"/>
+	        			<col style="width:75%;"/>
+	        		</colgroup>
+	        		<thead>
+	        			<tr>
+	        				<th><fmt:message key="gubun"/></th>
+	        				<th><fmt:message key="exp"/></th>
+	        			</tr>
+	        		</thead>
+	        		<tbody>
+	        			<tr>
+	        				<td><fmt:message key="code"/></td>
+	        				<td><fmt:message key="HELP.0067"/></td>
+	        			</tr>
+	        			<tr>
+	        				<td><fmt:message key="rc_name"/></td>
+	        				<td><fmt:message key="HELP.XRC.0016"/></td>
+	        			</tr>
+	        			<tr>
+	        				<td><fmt:message key="sort"/></td>
+	        				<td>
+	        					<fmt:message key="HELP.0068"/>
+	        					<br/>
+	        					<span class="txt_blue">
+	        						<fmt:message key="HELP.0069"/>
+	        					</span>
+	        				</td>
+	        			</tr>
+	        			<tr>
+	        				<td><fmt:message key="sort"/></td>
+	        				<td>
+	        					<fmt:message key="HELP.0070"/>
+	        					<br/>
+	        					<span class="txt_blue">
+	        						<fmt:message key="HELP.0071"/>
+	        					</span>
+	        				</td>
+	        			</tr>
+	        		</tbody>
+	        	</table>
+	        	
+	        	<div class="tit_area" id="info02">
+	        		<span class="info_num">02</span>
+	        		<h2><fmt:message key="HELP.0072"/></h2>
+	        		<p>
+	        			<fmt:message key="HELP.0073"/>
+	        		</p>
+	        	</div>
+	        	<table class="pop_info_tbl">
+	        		<colgroup>
+	        			<col style="width:25%;"/>
+	        			<col style="width:75%;"/>
+	        		</colgroup>
+	        		<thead>
+	        			<tr>
+	        				<th><fmt:message key="gubun"/></th>
+	        				<th><fmt:message key="exp"/></th>
+	        			</tr>
+	        		</thead>
+	        		<tbody>
+	        			<tr>
+	        				<td><fmt:message key="charge_type"/></td>
+	        				<td>
+	        					<fmt:message key="HELP.XRC.0017"/>
+	        					<br/>
+	        					<span class="txt_blue">
+	        						<fmt:message key="HELP.XRC.0018"/>
+	        					</span>
+							</td>
+	        			</tr>
+	        			<tr>
+	        				<td><fmt:message key="BUTTON.ALL_APPLY"/></td>
+	        				<td>
+	        					<fmt:message key="HELP.XRC.0019"/>
+	        					<br/>
+	        					<span class="txt_blue">
+	        						<fmt:message key="HELP.XRC.0020"/>
+	        						<fmt:message key="HELP.XRC.0021"/>
+	        						<fmt:message key="HELP.XRC.0022"/>
+	        					</span>
+	        				</td>
+	        			</tr>
+	        		</tbody>
+	        	</table>
+	        	
+	        	<div class="tit_area" id="info03">
+	        		<span class="info_num">03</span>
+	        		<h2><fmt:message key="HELP.XRC.0023"/></h2>
+	        		<p>
+	        			<fmt:message key="HELP.XRC.0024"/><br/>
+	        			<fmt:message key="HELP.0066"/>
+	        		</p>
+	        	</div>
+	        	<table class="pop_info_tbl">
+	        		<colgroup>
+	        			<col style="width:25%;"/>
+	        			<col style="width:75%;"/>
+	        		</colgroup>
+	        		<thead>
+	        			<tr>
+	        				<th><fmt:message key="gubun"/></th>
+	        				<th><fmt:message key="exp"/></th>
+	        			</tr>
+	        		</thead>
+	        		<tbody>
+	        			<tr>
+	        				<td><fmt:message key="code"/></td>
+	        				<td><fmt:message key="HELP.0067"/></td>
+	        			</tr>
+	        			<tr>
+	        				<td><fmt:message key="rm_nm"/></td>
+	        				<td><fmt:message key="rm_inp"/></td>
+	        			</tr>
+	        			<tr>
+	        				<td><fmt:message key="sort"/></td>
+	        				<td>
+	        					<fmt:message key="HELP.0068"/>
+	        					<br/>
+	        					<span class="txt_blue">
+	        						<fmt:message key="HELP.0069"/>
+	        					</span>
+	        				</td>
+	        			</tr>
+	        			<tr>
+	        				<td><fmt:message key="sort"/></td>
+	        				<td>
+	        					<fmt:message key="HELP.0070"/>
+	        					<br/>
+	        					<span class="txt_blue">
+	        						<fmt:message key="HELP.0071"/>
+	        					</span>
+	        				</td>
+	        			</tr>
+	        		</tbody>
+	        	</table>
+	        	
+	        	<div class="tit_area" id="info04">
+	        		<span class="info_num">04</span>
+	        		<h2><fmt:message key="HELP.XRC.0025"/></h2>
+	        		<p>
+	        			<fmt:message key="HELP.XRC.0026"/><br/>
+	        			<fmt:message key="HELP.0066"/>
+	        		</p>
+	        	</div>
+	        	<table class="pop_info_tbl">
+	        		<colgroup>
+	        			<col style="width:25%;"/>
+	        			<col style="width:75%;"/>
+	        		</colgroup>
+	        		<thead>
+	        			<tr>
+	        				<th><fmt:message key="gubun"/></th>
+	        				<th><fmt:message key="exp"/></th>
+	        			</tr>
+	        		</thead>
+	        		<tbody>
+	        			<tr>
+	        				<td><fmt:message key="charge"/></td>
+	        				<td><fmt:message key="HELP.0074"/></td>
+	        			</tr>
+	        			<tr>
+	        				<td><fmt:message key="sort"/></td>
+	        				<td>
+	        					<fmt:message key="HELP.0068"/>
+	        					<br/>
+	        					<span class="txt_blue">
+	        						<fmt:message key="HELP.0069"/>
+	        					</span>
+	        				</td>
+	        			</tr>
+	        			<tr>
+	        				<td><fmt:message key="sort"/></td>
+	        				<td>
+	        					<fmt:message key="HELP.0070"/>
+	        					<br/>
+	        					<span class="txt_blue">
+	        						<fmt:message key="HELP.0071"/>
+	        					</span>
+	        				</td>
+	        			</tr>
+	        		</tbody>
+	        	</table>
+	        	
+	        	<!-- 빈칸 생성 영역 -->
+	        	<div class="pop_info_tbl"></div>
+	        </div>
+	    </div>
+	</body>
+	<script type="text/javascript">
+		function fnSetDocumentReady(){
+			var $sub_menu = $(".info_menu li a"),
+				$titArea = $(".tit_area"),
+				$tblArea = $(".pop_info_tbl");
+			
+			//마지막 영역 빈칸 생성
+			$tblArea.last().height("430");
+			
+			//클릭 이벤트
+			$sub_menu.click(function(){
+				var idx = $(this).parent().index();
+				var topVal = $titArea.eq(idx).offset().top - 122;
+				$("html, body").animate({scrollTop : topVal}, 400);
+			})
+		}
+	</script>
+</html>

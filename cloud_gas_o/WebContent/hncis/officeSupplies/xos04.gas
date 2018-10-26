@@ -1,0 +1,385 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XOS05";
+	String hid_eeno  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_eeno")));
+	String hid_year = CurrentDateTime.getYear();
+
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH", locale);
+	String strExl = JSPMessageSource.getMessage("BUTTON.EXCEL", locale);
+
+	String strBtn = "";
+	strBtn = strSch+"/search@"+strExl+"/excel";
+
+	String tempPath     = request.getServletPath().toString();
+	String stepHelpUrl  = StringUtil.getStepHelp(tempPath);
+%>
+<html>
+	<head>
+		<title>GeneralService - Request</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	</head>
+	<body>
+		<div id="wrap">
+			<form name="mainForm" id="mainForm">
+				<input type="hidden" id="nSource" name="nSource">
+				<input type="hidden" id="hid_year" name="hid_yyyy" value="<%=hid_year%>">
+				<input type="hidden" id="hid_eeno" name="hid_eeno" value="<%=hid_eeno%>">
+				<input type="hidden" id="help_url" name="help_url" value="<%=stepHelpUrl%>">
+
+				<%@ include file="../include/hncis_header.gas"%>
+				<div id="contents_wrap">
+					<%@ include file="../include/hncis_left.gas"%>
+					<div id="contents">
+						<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,menuId
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+		                <div class="search_area">
+		                	<table>
+								<colgroup>
+									<col style="width:50px;" />
+		                            <col style="width:120px;" />
+		                            <col style="width:50px;" />
+		                            <col style="width:265px;" />
+		                            <col style="width:60px;" />
+		                            <col style="width:120px;" />
+		                            <col style="width:60px;" />
+		                            <col style="width:auto;" />
+								</colgroup>
+								<tr>
+									<th><fmt:message key="year"/></th>
+									<td>
+										<select id="key_year" style="width:95px">
+											<option value="2014">2014</option>
+											<option value="2015">2015</option>
+											<option value="2016">2016</option>
+											<option value="2017">2017</option>
+											<option value="2018">2018</option>
+											<option value="2019">2019</option>
+											<option value="2020">2020</option>
+										</select>
+									</td>
+									<th><fmt:message key="dept_nm"/></th>
+									<td>
+										<input type="text" id="key_ops_cd" name="key_ops_cd" style="ime-mode:disabled;width:60px" onkeyup="deptSearch();">
+										<input type="text" id="key_ops_nm" name="key_ops_nm" style="width:145px" readonly>
+										<img id="deptBtn" name="img_ignm_pop" src="<%=ctxPath %>/images/hncis_common/find-f.png" style="cursor:hand;filter:alpha(opacity=100)" class='button' onMouseOver="na_change_img_src('img_ignm_pop','document', '<%=ctxPath %>/images/hncis_common/find-n.png');" onMouseOut="na_restore_img_src('img_ignm_pop');" onclick="deptFind()" align="absmiddle">
+									</td>
+									<th><fmt:message key="lrg_cd"/></th>
+									<td>
+										<select id="key_produto" style="width:180px" onchange="doSearch();">
+											<option value=""><fmt:message key="total"/></option>
+										</select>
+									</td>
+								</tr>
+							</table>
+		                </div>
+		                <div id="div_layer"></div>
+		                <div class="jq_tbl">
+		                	<table id="htmlTable" class="scroll"></table>
+		                	<div id="htmlPager" class="scroll" style="display:none"></div>
+		                </div>
+	                	<%@ include file="../include/hncis_message.gas"%>
+	            	</div>
+	            	<div class="clear"></div>
+				</div>
+			</form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+		</div>
+	</body>
+</html>
+		<script type="text/javascript">
+		var saveCode;
+		var comboVal;
+		var comboVal1;
+		var comboVal2;
+		var comboVal3;
+		var lastsel;
+		var fnMerge;
+
+		function fnSetDocumentReady(){
+			initMenus();
+			sess_auth = $("#work_auth").val();
+			$("#key_year").val($("#hid_year").val());
+			$(".inputOnlyNumber").numeric();
+			readOnlyStyle("key_ops_nm", 1);
+			getCommonCode("key_produto:xos:A:PD:GS;", "N", "init();", "/hncis/officeSupplies/getOfficeCombo.do");
+
+		}
+
+		function nextCombo(){
+			var regionCd = $("#key_region").val();
+			if(regionCd == ""){
+				$("#key_produto option").remove();
+				$("#key_produto").prepend("<option value=''><fmt:message key='total'/></option>");
+			}else{
+				getCommonCode("key_produto:"+regionCd+":Y:PD;", "N", "", "/hncis/officeSupplies/getCatgCombo.do");
+			}
+		}
+
+
+		var gridParam;
+		var gridName = "htmlTable";
+		var datarow = {dept_nm:"", prod_nm:"", seqc_nm1:"", seqc_nm2:"", pop_img:"", ogc_fil_nm:"", m01:"", m02:"", m03:"", m04:"", m05:"", m06:"", m07:"", m08:"", m09:"", m10:"", m11:"", m12:"", total_sum:""};
+		function init(){
+// 			var cn = ["부서", "대분류", "중분류", "소분류", "사진", "", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "Total"];
+			var cn = ['<fmt:message key="dept_nm"/>' // "부서"
+			          ,'<fmt:message key="lrg_cd"/>' // "대분류"
+			          ,'<fmt:message key="mdl_cd"/>' // "중분류"
+			          ,'<fmt:message key="sml_cd"/>' // "소분류"
+			          ,'<fmt:message key="pctr"/>' // "사진"
+			          ,'' // ""
+			          ,'1' // "1"
+			          ,'2' // "2"
+			          ,'3' // "3"
+			          ,'4' // "4"
+			          ,'5' // "5"
+			          ,'6' // "6"
+			          ,'7' // "7"
+			          ,'8' // "8"
+			          ,'9' // "9"
+			          ,'10' // "10"
+			          ,'11' // "11"
+			          ,'12' // "12"
+			          ,'<fmt:message key="total"/>' // "전체"
+		          ];
+			var cm = [{name:"dept_nm", index:"dept_nm", sortable:false, formatter:"string", width:110, align:"center", editable:false, frozen:false},
+//			          {name:"region_nm", index:"region_nm", sortable:false, formatter:"string", width:110, align:"center", editable:false, frozen:false},
+			          {name:"prod_nm", index:"prod_nm", sortable:false, formatter:"string", width:110, align:"center", editable:false, frozen:false},
+			          {name:"seqc_nm1", index:"seqc_nm1", sortable:false, formatter:"string", width:85, align:"center", editable:false, frozen:false},
+			          {name:"seqc_nm2", index:"seqc_nm2", sortable:false, formatter:"string", width:85, align:"center", editable:false, frozen:false},
+			          {name:"pop_img",  index:"pop_img", sortable:false,	formatter:"string",	width:60,  align:"center",	editable:false,	frozen : false},
+			          {name:"ogc_fil_nm", index:"ogc_fil_nm", sortable:false, formatter:"string", width:85, align:"center", editable:false, frozen:false, hidden:true},
+			          {name:"m01", index:"m01", sortable:false, formatter:"currency", width:30, align:"right", editable:false, frozen:false, formatoptions: {
+						    thousandsSeparator:",",
+						    defaultValue:"",
+						    decimalPlaces:0
+						  }
+	            	  },
+			          {name:"m02", index:"m02", sortable:false, formatter:"currency", width:30, align:"right", editable:false, frozen:false, formatoptions: {
+						    thousandsSeparator:",",
+						    defaultValue:"",
+						    decimalPlaces:0
+						  }
+	            	  },
+			          {name:"m03", index:"m03", sortable:false, formatter:"currency", width:30, align:"right", editable:false, frozen:false, formatoptions: {
+						    thousandsSeparator:",",
+						    defaultValue:"",
+						    decimalPlaces:0
+						  }
+	            	  },
+			          {name:"m04", index:"m04", sortable:false, formatter:"currency", width:30, align:"right", editable:false, frozen:false, formatoptions: {
+						    thousandsSeparator:",",
+						    defaultValue:"",
+						    decimalPlaces:0
+						  }
+	            	  },
+			          {name:"m05", index:"m05", sortable:false, formatter:"currency", width:30, align:"right", editable:false, frozen:false, formatoptions: {
+						    thousandsSeparator:",",
+						    defaultValue:"",
+						    decimalPlaces:0
+						  }
+	            	  },
+			          {name:"m06", index:"m06", sortable:false, formatter:"currency", width:30, align:"right", editable:false, frozen:false, formatoptions: {
+						    thousandsSeparator:",",
+						    defaultValue:"",
+						    decimalPlaces:0
+						  }
+	            	  },
+			          {name:"m07", index:"m07", sortable:false, formatter:"currency", width:30, align:"right", editable:false, frozen:false, formatoptions: {
+						    thousandsSeparator:",",
+						    defaultValue:"",
+						    decimalPlaces:0
+						  }
+	            	  },
+			          {name:"m08", index:"m08", sortable:false, formatter:"currency", width:30, align:"right", editable:false, frozen:false, formatoptions: {
+						    thousandsSeparator:",",
+						    defaultValue:"",
+						    decimalPlaces:0
+						  }
+	            	  },
+			          {name:"m09", index:"m09", sortable:false, formatter:"currency", width:30, align:"right", editable:false, frozen:false, formatoptions: {
+						    thousandsSeparator:",",
+						    defaultValue:"",
+						    decimalPlaces:0
+						  }
+	            	  },
+			          {name:"m10", index:"m10", sortable:false, formatter:"currency", width:30, align:"right", editable:false, frozen:false, formatoptions: {
+						    thousandsSeparator:",",
+						    defaultValue:"",
+						    decimalPlaces:0
+						  }
+	            	  },
+			          {name:"m11", index:"m11", sortable:false, formatter:"currency", width:30, align:"right", editable:false, frozen:false, formatoptions: {
+						    thousandsSeparator:",",
+						    defaultValue:"",
+						    decimalPlaces:0
+						  }
+	            	  },
+			          {name:"m12", index:"m12", sortable:false, formatter:"currency", width:30, align:"right", editable:false, frozen:false, formatoptions: {
+						    thousandsSeparator:",",
+						    defaultValue:"",
+						    decimalPlaces:0
+						  }
+	            	  },
+			          {name:"total_sum", index:"total_sum", sortable:false, formatter:"currency", width:80, align:"right", editable:false, frozen:false, formatoptions: {
+						    thousandsSeparator:",",
+						    defaultValue:"",
+						    decimalPlaces:0
+						  }
+	            	  }
+					  ];
+
+			gridParam = {
+				viewEdit : [{
+					gridName     : gridName,
+					url          : "doSearchByXos04.do",
+					colNames     : cn,
+					colModel     : cm,
+					height       : "100%",
+					rownumbers   : true,
+					multiselect  : false,
+					cellEdit     : false,
+					fnMerge      : false,
+					paramJson    : fnParamJson(),
+					selectCellFc : "selectCellFcRow(rowid, iCol);",
+					completeFc   : "addGridRow(15, 'htmlTable', 'datarow');setChangeImg();"
+				}]
+			};
+			commonJqGridInit(gridParam);
+		}
+
+		function selectCellFcRow(rowid, iCol){
+			setChangeImg();
+			if(iCol == 6){
+				if(getColValue("prod_nm",rowid, gridName) != ''){
+					imgPreview(rowid);
+				}
+			}
+		}
+
+		function retrieve(btnFlag){
+			switch(btnFlag){
+			   case "search" :
+				   	doSearch();
+					break;
+			   case "excel" :
+				   doExcel();
+				   break;
+			}
+		}
+
+		function fnParamJson(){
+			var paramVo = {
+				year : $("#key_year").val(),
+				dept_cd : $("#key_ops_cd").val(),
+				region_cd : 'xos',
+				prod_cd : $("#key_produto").val(),
+				gs_type : "OS",
+				corp_cd	: sess_corp_cd
+			};
+			return paramVo;
+		}
+
+		function doSearch(){
+
+			doCommonSearch("doSearchByXos04.do", util.jsonToString(fnParamJson()), "loadCallBack();", gridName, "N");
+		}
+
+		function loadCallBack(){
+			setMerge();
+			addGridRow();
+			setChangeImg();
+		}
+
+		function setMerge(){
+		    groupTable($("#"+gridName+" tr:has(td)"), 1, 2);
+//		    $("#"+gridName+" .deleted").remove();
+		    $("#"+gridName+" .deleted").hide();
+		}
+
+		var excelCn = ['<fmt:message key="dept_nm"/>','<fmt:message key="lrg_cd"/>','<fmt:message key="mdl_cd"/>','<fmt:message key="sml_cd"/>', "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", '<fmt:message key="total"/>'];
+		var excelCm = ["dept_nm", "prod_nm", "seqc_nm1", "seqc_nm2", "m01", "m02", "m03", "m04", "m05", "m06", "m07", "m08", "m09", "m010", "m11", "m12", "total_sum"];
+		var excelFm = ["string", "string", "string", "string", "integer", "integer", "integer", "integer", "integer", "integer", "integer", "integer", "integer", "integer", "integer", "integer", "integer", "integer"];
+		function doExcel(){
+			var params = [
+				{name : "fileName",		value : "excel" },
+				{name : "header",		value : util.jsonToArray(excelCn)},
+				{name : "headerName",	value : util.jsonToArray(excelCm)},
+				{name : "fomatter",		value : util.jsonToArray(excelFm)},
+				{name : "paramJson",	value : util.jsonToString(fnParamJson())},
+				{name : "firstUseYn",	value : "Y"},
+				{name : "page",			value : "1"}
+			];
+			gridToExcel("#"+gridName, "doSelectByXos04ListExcel.excel", params);
+		}
+
+		function deptSearch(){
+			if($("#key_ops_cd").val() != ""){
+				var keyData = {
+						xorg_orga_c : $("#key_ops_cd").val(),
+						corp_cd	  : sess_corp_cd
+				};
+				paramData = {
+					paramJson : util.jsonToString(keyData)
+				};
+				doCommonAjax("/doSearchToDeptInfo.do", paramData, "deptCallBack(jsonData.sendResult)");
+			}else{
+				$("#key_ops_nm").val("");
+			}
+		}
+
+		function deptCallBack(result){
+			$("#key_ops_nm").val(result.xorg_orga_e);
+		}
+
+
+
+		function setChangeImg(){
+			var gridId = jQuery('#'+gridName).jqGrid('getDataIDs');
+			for(var i = 1 ; i <= gridId.length ; i++){
+				if(getColValue("prod_nm", i, gridName) != ""){
+					var imgSrc = '<span onClick="imgPreview(\''+i+'\');"><fmt:message key="preview"/></span>';
+					jQuery('#'+gridName).jqGrid("setRowData", i, {pop_img:imgSrc});
+				}
+			}
+		}
+		function imgPreview(rowId){
+			var fileNm = getColValue("ogc_fil_nm",rowId, gridName);
+			if(fileNm == ''){
+				alertUI('<fmt:message key="MSG.VAL.0004"/>');
+				return;
+			} else {
+				fileNm = ctxPath + "/upload/officeSupplies/" + fileNm;
+			}
+
+			$("#layer_pic").remove();
+			var picDiv = $("<div/>");
+		    picDiv.attr("id", "layer_pic");
+		    picDiv.addClass("pic_div2 div_border");
+
+		    $("#div_layer").append(picDiv.load("./xos_img_preview.gas", function(){$("#previewImg").attr("src",fileNm);}));
+		}
+
+		function pageStepHelpPopup(){
+			if(popup != null ){
+				popup.close();
+			}
+
+			popup = popUpWindow3($("#help_url").val());
+		}
+		function deptFind(){
+			var param = "?dcd=key_ops_cd&dcdNm=key_ops_nm&callBackYn=Y&csrfToken="+$("#csrfToken").val();
+			newPopWin(ctxPath+"/hncis/popup/deptPopup.gas"+param, "440", "510", "pop_dept");
+		}
+
+		function deptFindCallBack(){
+		}
+		</script>

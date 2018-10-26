@@ -1,0 +1,61 @@
+<%@page import="org.jsoup.safety.Whitelist"%>
+<%@page import="org.jsoup.Jsoup"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%@ page import="com.hncis.common.util.*" %>
+<%@ page import="jeus.xml.binding.util.Base64;" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<%
+	String indx    = StringUtil.isNullToString(request.getParameter("indx"));
+	String title   = StringUtil.isNullToString(Base64.deserialize(request.getParameter("title")));
+	String content = StringUtil.isNullToString(Base64.deserialize(request.getParameter("content")));
+%>
+
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>NOTICE</title>
+		<link rel='stylesheet' type="text/css" media="screen" href="<%=ctxPath%>/script/css/global_common.css" rel="stylesheet" />
+		<style>
+			.p_t {width:100%; font-family:Verdana, Geneva, sans-serif; font-size:15px; font-weight:bold;}
+			#p_content {padding:0px 10px 0px 10px; }  
+			.p_c {width:100%; height:215px; font-family:Verdana, Geneva, sans-serif; font-size:12px; overflow-y:auto;}
+			#close {width:200px; cursor:hand; font-size:11px; font-weight:lighter;}
+		</style>
+		<script type="text/javascript" src="./js/notice_popup.js"></script>
+		<script language='javaScript'>
+			function closeWin(str){
+				if(str == "1"){
+					setCookie("POP<%=indx%>", "done", 1);
+				}
+				window.close();
+			}
+			
+			function setCookie( name, value, expiredays ){
+				var todayDate = new Date();
+				todayDate.setDate( todayDate.getDate() + expiredays );
+				document.cookie = name + "=" + escape( value ) + "; path=/; expires=" + todayDate.toGMTString() + ";"
+			}
+		</script>
+	</head>
+	<body>
+		<div id="wrap" style="background-color:#fff">
+			<form name="frm" id="frm">
+			<input type=hidden id="M_INDX" value="<%=indx%>">
+				<div id="notice_info" style="width:92%">           
+					<li class='p_t'  id='p_t'></li>
+				</div>
+				<div id='p_content' style='width:435px;word-break:keap-all'>    
+					<li class='p_c' id='p_c'></li>
+				</div>  
+				<div id="footer" align="center">
+					<div id="close" onclick="javascript:closeWin('1');" style="cursor: pointer;">[Do not open this window today]</div>
+				</div>
+			</form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken"	name="hid_csrfToken">
+			</form> 
+		</div>
+	</body>
+</html>

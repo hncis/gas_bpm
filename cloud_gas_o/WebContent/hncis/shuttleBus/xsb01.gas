@@ -1,0 +1,326 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId 		 = "XSB01";
+	String hid_cond  	 = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_cond")));
+	
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH", locale);
+	String strNew = JSPMessageSource.getMessage("BUTTON.NEW",locale);
+	
+	String strBtn = "";
+	strBtn = strSch+"/search@"+strNew+"/new";
+	
+	String tempPath     = request.getServletPath().toString();
+	String stepHelpUrl  = StringUtil.getStepHelp(tempPath);
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>BusinessCard</title>
+	</head>
+	<body>
+		<div id="wrap">
+		<form name="frm" id="frm">
+			<%@ include file="../include/hncis_header.gas"%>
+			<div id="contents_wrap">
+				<%@ include file="../include/hncis_left.gas"%>
+				<div id="contents">
+					<%=CommonGasc.getTitleAndButtonNew(sess_empno
+						,"XSB01"
+						,strBtn
+						,null
+						,null
+						,null
+						,request)
+					%>
+					<div class="search_area">
+						<input type="hidden" id="menu_id" name="menu_id" value="<%=menuId.toLowerCase() %>">
+						<input type="hidden" id="hid_cond" name="hid_cond" value="<%=hid_cond %>">
+						<input type="hidden" id="hid_page" name="hid_page">
+						<input type="hidden" id="help_url" name="help_url" value="<%=stepHelpUrl%>">
+						
+						<table>
+							<colgroup>
+								<col style="width:60px;" />
+	                            <col style="width:300px;" />
+	                            <col style="width:60px;" />
+	                            <col style="width:240px;" />
+	                            <col style="width:60px;" />
+	                            <col style="width:auto;" />
+							</colgroup>
+							<tr>
+								<th><fmt:message key="dept_nm"/></th>
+								<td>
+									<input type="text" name="key_ops_cd" id="key_ops_cd" style="ime-mode:disabled;width:60px" onkeyup="deptSearch();">
+									<input id="key_ops_nm" type="text" style="width:145px" class="disabled" readOnly>
+									<img id="deptBtn" name="img_ignm_pop" src="<%=ctxPath %>/images/hncis_common/find-f.png" style="display:none;cursor:hand;filter:alpha(opacity=100)" class='button' onMouseOver="na_change_img_src('img_ignm_pop','document', '<%=ctxPath %>/images/hncis_common/find-f.png');" onMouseOut="na_restore_img_src('img_ignm_pop');" onclick="deptFind()" align="absmiddle">
+								</td>
+								<th><fmt:message key="eeno"/></th>
+								<td><input id="key_eeno" type="text" style="width:100px" onkeyup="setInsaInfo();clearInsa();"></td>
+								<th><fmt:message key="eenm"/></th>
+								<td><input id="key_eenm" type="text" style="width:180px"></td>
+							</tr>
+							<tr>	
+								<th><fmt:message key="route"/></th>
+								<td><input id="key_line" type="text" style="width:208px"></td>
+								<th><fmt:message key="boarding"/></th>
+								<td><input id="key_busStop" type="text" style="width:180px"></td>
+								<th><fmt:message key="pgs_st_nm"/></th>
+								<td>
+									<select id="key_pgs_st_cd" name="key_pgs_st_cd" style="width:180px"></select>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div class="jq_tbl">
+		                <table id="htmlTable" class="scroll"></table>
+		                <div id="htmlPager" class="scroll"></div>
+		            </div>
+                	<%@ include file="../include/hncis_message.gas"%>
+				</div>
+			</div>
+		</form>
+		</div>
+	</body>
+</html>
+
+<script type="text/javascript">
+	var fnMerge;
+	var gridParam;
+	var gridName1 = "htmlTable";
+	var datarow = {eeno:"", eenm:"", ops_nm:"", line:"", bus_stop:"", pgs_st_nm:"", ops_cd:"", pgs_st_cd:"", doc_no:"", bus_time:""};
+	
+	function fnSetDocumentReady(){
+		if(sess_mstu == "M" || $("#work_auth").val() == 5){
+			$("#deptBtn").attr("style", "cursor:hand;filter:alpha(opacity=100)");
+		}else{
+			$("#key_eeno").val(sess_empno);
+			$("#key_eenm").val(sess_name);
+			$("#key_ops_cd").val(sess_dept_code);
+			$("#key_ops_nm").val(sess_dept_name);
+			readOnlyStyle("key_ops_cd", 1);
+			readOnlyStyle("key_eeno", 1);
+			readOnlyStyle("key_eenm", 1);
+			//$("#deptBtn").attr("disabled", true);
+		}
+		
+		$(".inputOnlyNumber").numeric();
+		
+		getCommonCode("key_pgs_st_cd:X0040:A;", "N", "setCondition();");  
+	}
+	
+	function setCondition(){
+		if($("#hid_cond").val() != ""){
+			var hidCond = $("#hid_cond").val().split("|");
+			if(hidCond[0] != "") $("#key_ops_cd").val(hidCond[0]);
+			if(hidCond[1] != "") $("#key_eeno").val(hidCond[1]);
+			if(hidCond[2] != "") $("#key_eenm").val(hidCond[2]);
+			if(hidCond[3] != "") $("#key_line").val(hidCond[3]);
+			if(hidCond[4] != "") $("#key_busStop").val(hidCond[4]);
+			if(hidCond[5] != "") $("#key_pgs_st_cd").val(hidCond[5]);
+			if(hidCond[6] != "") $("#hid_page").val(hidCond[6]);
+		}
+		
+		init();
+	}
+	
+	function init(){
+		//var cn = ["Status", "ID No.", "Name", "Dept.", "SAP Register", "Line", "Bus Stop", "Type", "dept_code", "Status_code", "doc_no"];
+		var cn = [ '<fmt:message key="pgs_st_nm"/>' // "진행상태"
+		          ,'<fmt:message key="eeno"/>' // "사번"
+		          ,'<fmt:message key="eenm"/>' // "이름"
+		          ,'<fmt:message key="dept_nm"/>' // "부서"
+		          ,'<fmt:message key="route"/>' // 노선
+		          ,'<fmt:message key="sb_time"/>' // 시간
+		          ,'<fmt:message key="boarding"/>' // 승차지
+		          ,'' // 상태코드
+		          ,'' // 문서번호
+		          ];
+		var cm =
+			[
+			 {name:"pgs_st_nm",		index:"pgs_st_nm",	sortable:false,		formatter:"string",		width:100,	align:"center",	editable:false,	frozen : false},
+			 {name:"eeno",			index:"eeno",		sortable:false,		formatter:"string",		width:80,	align:"center",	editable:false,	frozen : false},
+			 {name:"eenm",			index:"eenm",		sortable:false,		formatter:"string",		width:140,	align:"center",	editable:false,	frozen : false},
+			 {name:"ops_nm",		index:"ops_nm",		sortable:false,		formatter:"string",		width:140,	align:"center",	editable:false,	frozen : false},
+			 {name:"line",			index:"line",		sortable:false,		formatter:"string",		width:150,	align:"center",	editable:false,	frozen : false},
+			 {name:"bus_time",		index:"bus_time",	sortable:false,		formatter:"string",		width:80,	align:"center",	editable:false,	frozen : false},
+			 {name:"bus_stop",		index:"bus_stop",	sortable:false,		formatter:"string",		width:280,	align:"left",	editable:false,	frozen : false},
+			 {name:"pgs_st_cd",		index:"pgs_st_cd",	sortable:false,		formatter:"string",		width:0,	align:"center",	editable:false,	frozen : false,	hidden: true},
+			 {name:"doc_no",		index:"doc_no",		sortable:false,		formatter:"string",		width:0,	align:"center",	editable:false,	frozen : false, hidden: true}
+		];
+		
+		var params = {
+			key_eeno		: $("#key_eeno").val(),
+			key_eenm		: $("#key_eenm").val(),
+			key_ops_cd		: $("#key_ops_cd").val(),
+			key_line  		: $("#key_line").val(),
+			key_busStop  	: $("#key_busStop").val(),
+			key_pgs_st_cd	: $("#key_pgs_st_cd").val(),
+			locale			: sess_locale,
+			corp_cd			: sess_corp_cd
+		};
+		
+		gridParam = {
+			viewEdit : [{
+				gridName     : gridName1,
+				url          : "doRequestShuttleBusList.do",
+				colNames     : cn,
+				colModel     : cm,
+				height       : "100%",
+				sortname     : "applyDate",
+				sortorder    : "desc",
+				rownumbers   : true,
+				multiselect  : false,
+				cellEdit     : false,
+				fnMerge      : false,
+				paramJson    : params,
+				pager		 : "htmlPager",
+				page		 : $("#hid_page").val(),
+				completeFc   : "addGridRow();initAfterMenus();"
+			}]
+		};
+		
+		//core jqGrid call...
+		commonJqGridInit(gridParam);
+	
+		jQuery("#"+gridName1).jqGrid("setGridParam",{
+			ondblClickRow : function(rowid, iRow, iCol, e){
+				if(getColValue("doc_no",rowid, gridName1) != ""){
+		            var form = $("<form/>");
+		            form.attr("method" , "post");
+		            form.attr("id"     , "hideForm");
+		            form.attr("action" , "xsb06.gas");
+		            var inp1 = $("<input type='hidden' id='hid_eeno' name='hid_eeno'/>").val(getColValue("eeno", rowid, gridName1));
+		            var inp2 = $("<input type='hidden' id='hid_pgs_st_cd' name='hid_pgs_st_cd'/>").val(getColValue("pgs_st_cd", rowid, gridName1));
+		            var inp3 = $("<input type='hidden' id='hid_doc_no' name='hid_doc_no'/>").val(getColValue("doc_no", rowid, gridName1));
+		            var cond = "";
+		            cond += $("#key_ops_cd").val();
+		            cond += "|" + $("#key_eeno").val();
+		            cond += "|" + $("#key_eenm").val();
+					cond += "|" + $("#key_line").val();
+					cond += "|" + $("#key_busStop").val();
+					cond += "|" + $("#key_pgs_st_cd").val();
+					cond += "|" + $("#page_htmlPager").val();
+		            
+		            var inp4 = $("<input type='hidden' id='hid_cond' name='hid_cond'/>").val(cond);
+		            var token = $("<input type='hidden' id='hid_csrfToken' name='hid_csrfToken'/>").val($("#csrfToken").val());
+		            form.append(inp1, inp2, inp3, inp4, token);
+		            $("body").append(form);
+		            form.submit();
+		            form.remove();
+				}
+			}
+		}).trigger('reloadGrid');
+		
+		jQuery("#"+gridName1).jqGrid("setFrozenColumns");
+		jQuery("#"+gridName1).jqGrid("navGrid","#htmlPager",{edit:false,add:false,del:false,search:false,refresh:false});
+	
+	}
+	
+	function setInsaInfo(){
+		if($("#key_eeno").val() != ""){
+			var keyData = { xusr_empno : $("#key_eeno").val() };
+			paramData = {
+				paramJson : util.jsonToString(keyData)
+			};
+			doCommonAjax("/doSearchToUserInfo.do", paramData, "insaCallBack(jsonData.sendResult)");
+		}
+	}
+	
+	function insaCallBack(result){
+		setBottomMsg(result.message, false);
+		$("#key_eenm").val(result.xusr_name);
+	}
+	
+	function clearInsa(){
+		if($("#key_eeno").val() == ""){
+			$("#key_eenm").val("");
+		}
+	}
+	
+	function retrieve(gubn){
+		switch(gubn){
+			case "search" :
+				doSearch("N");
+				break;
+			case "new" :
+				doNew();
+				break;
+		}
+	}
+	
+	function doSearch(msgFlag){
+		var params = {
+			key_eeno		: $("#key_eeno").val(),
+			key_eenm		: $("#key_eenm").val(),
+			key_ops_cd		: $("#key_ops_cd").val(),
+			key_line  		: $("#key_line").val(),
+			key_busStop  	: $("#key_busStop").val(),
+			key_pgs_st_cd	: $("#key_pgs_st_cd").val(),
+			locale			: sess_locale,
+			corp_cd			: sess_corp_cd
+		};
+		
+		doCommonSearch("doRequestShuttleBusList.do", util.jsonToString(params), "loadCallBack();", gridName1, msgFlag);
+	}
+	
+	/**
+	 * callback
+	 */
+	function loadCallBack(){
+		addGridRow();
+	}
+	
+	function deptFind(){
+		var param = "?dcd=key_ops_cd&dcdNm=key_ops_nm&csrfToken="+$("#csrfToken").val();
+		newPopWin(ctxPath+"/hncis/popup/deptPopup.gas"+param, "440", "510", "pop_dept");
+	}
+	
+	function deptSearch(){
+		if($("#key_ops_cd").val() != ""){
+			var keyData = { 
+				xorg_orga_c : $("#key_ops_cd").val(),
+				copr_cd		: sess_corp_cd 
+			};
+			paramData = {
+				paramJson : util.jsonToString(keyData)
+			};
+			doCommonAjax("/doSearchToDeptInfo.do", paramData, "deptCallBack(jsonData.sendResult)");
+		}else{
+			$("#key_ops_nm").val("");
+		}
+	}
+	
+	function deptCallBack(result){
+		$("#key_ops_nm").val(result.xorg_orga_e);
+	}
+	
+	function doNew(){
+		var form = $("<form/>");
+        form.attr("method" , "post");
+        form.attr("id"     , "hideForm");
+        form.attr("action" , "xsb06.gas");
+        var cond = "";
+        cond += $("#key_ops_cd").val();
+        cond += "|" + $("#key_eeno").val();
+        cond += "|" + $("#key_eenm").val();
+		cond += "|" + $("#key_line").val();
+		cond += "|" + $("#key_busStop").val();
+		cond += "|" + $("#key_pgs_st_cd").val();
+		cond += "|" + $("#page_htmlPager").val();
+        var inp1 = $("<input type='hidden' id='hid_cond' name='hid_cond'/>").val(cond);
+        var token = $("<input type='hidden' id='hid_csrfToken' name='hid_csrfToken'/>").val($("#csrfToken").val());
+        form.append(inp1, token);
+        $("body").append(form);
+        form.submit();
+        form.remove();		
+	}
+	
+	function pageStepHelpPopup(){
+		if(popup != null ){
+			popup.close();
+		}
+
+		popup = popUpWindow3($("#help_url").val());
+	}
+</script>

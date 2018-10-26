@@ -1,0 +1,71 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId = "XSB05";
+	String hid_cond  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_cond")));
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>BusinessCard</title>
+		<script type="text/javascript" src="./js/xsb05.js"></script>
+	</head>
+	<body>
+		<div id="wrap">
+		<form name="frm" id="frm">
+			<%@ include file="../include/hncis_header.gas"%>
+			<div id="contents_wrap">
+				<%@ include file="../include/hncis_left.gas"%>
+				<div id="contents">
+					<%=CommonGasc.getTitleAndButtonNew(sess_empno
+						,"XSB05"
+						,"Search/search@excel/excel"
+						,null
+						,null
+						,null
+						,request)
+					%>
+					<div class="search_area">
+						<input type="hidden" id="menu_id" name="menu_id" value="<%=menuId.toLowerCase() %>">
+						<input type="hidden" id="hid_cond" name="hid_cond" value="<%=hid_cond %>">
+						<input type="hidden" id="hid_page" name="hid_page">
+						<table>
+							<colgroup>
+								<col style="width:60px;" />
+	                            <col style="width:110px;" />
+	                            <col style="width:60px;" />
+	                            <col style="width:110px;" />
+	                            <col style="width:100px;" />
+	                            <col style="width:130px;" />
+	                            <col style="width:60px;" />
+	                            <col style="width:auto;" />
+	                            <col style="width:60px;" />
+	                            <col style="width:130px;" />
+							</colgroup>
+							<tr>
+								<th><fmt:message key="eeno"/></th>
+								<td><input id="key_eeno" type="text" style="width:100px" onkeyup="setInsaInfo();clearInsa();"></td>
+								<th><fmt:message key="eenm"/></th>
+								<td><input id="key_eenm" type="text" style="width:100px"></td>
+								<th>SAP Register</th>
+								<td><select id="key_sap" name="key_sap" style="width: 120px"></select></td>
+								<th><fmt:message key="type"/></th>
+								<td><select id="key_type" name="key_type" style="width: 120px"></select></td>
+								<th><fmt:message key="pgs_st_nm"/></th>
+								<td>
+									<select id="key_pgs_st_cd" name="key_pgs_st_cd" style="width:120px"></select>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div class="jq_tbl">
+		                <table id="htmlTable" class="scroll"></table>
+		                <div id="htmlPager" class="scroll"></div>
+		            </div>
+                	<%@ include file="../include/hncis_message.gas"%>
+				</div>
+			</div>
+		</form>
+		</div>
+	</body>
+</html>

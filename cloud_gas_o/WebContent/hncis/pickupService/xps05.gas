@@ -1,0 +1,297 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XPS05";
+
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH", locale);
+	String strSav = JSPMessageSource.getMessage("BUTTON.SAVE", locale);
+	String strDel = JSPMessageSource.getMessage("BUTTON.DELETE", locale);
+	String strAdd = JSPMessageSource.getMessage("BUTTON.ADD", locale);
+
+	String strBtn = "";
+	strBtn = strSch+"/search@"+strSav+"/save@"+strDel+"/delete@"+strAdd+"/addrow";
+
+	String tempPath     = request.getServletPath().toString();
+	String stepHelpUrl  = StringUtil.getStepHelp(tempPath);
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Code Management</title>
+	</head>
+	<body>
+		<div id="wrap">
+	    	<form name="testForm" id="testForm">
+	    		<input type="hidden" id="help_url" name="help_url" value="<%=stepHelpUrl%>">
+
+		    	<%@ include file="../include/hncis_header.gas"%>
+		        <div id="contents_wrap">
+		        	<%@ include file="../include/hncis_left.gas"%>
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,"XPS05"
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+		                <div class="search_area">
+		                	<table>
+		                        <colgroup>
+		                        	<col style="width:85px;" />
+		                        	<col style="width:275px;" />
+		                        	<col style="width:88px;" />
+		                            <col style="width:auto;" />
+		                        </colgroup>
+		                        <tbody>
+		                            <tr>
+										<th><fmt:message key="car_type"/></th>
+										<td>
+											<SELECT id="key_code_knd" name="key_code_knd" style="width:250px;">
+											</SELECT>
+										</td>
+										<th><fmt:message key="pkup_place"/></th>
+										<td>
+											<SELECT id="key_place_knd" name="key_place_knd" style="width:200px;">
+											</SELECT>
+										</td>
+									</tr>
+		                        </tbody>
+		                    </table>
+		                </div>
+		                <div class="jq_tbl">
+			                <table id="htmlTable" class="scroll"></table>
+							<div id="htmlPager" class="scroll"></div>
+						</div>
+		                <%@ include file="../include/hncis_message.gas"%>
+		            </div>
+		            <div class="clear"></div>
+		        </div>
+	        </form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken"	name="hid_csrfToken">
+			</form>
+	    </div>
+	</body>
+</html>
+		<script type="text/javascript">
+		function fnSetDocumentReady(){
+			initMenus();
+			$('#PS').slideDown('fast');
+
+			getCommonCode("key_code_knd:XPS01;key_place_knd:XPS03:A;", "N", "getCommonCode('cb_stap_cd:XPS03;cb_arvp_cd:XPS03;', 'Y', 'init();', '/getCommonComboByTask.do');", "/getCommonComboByTask.do");
+		}
+
+		/**
+		 * process init() loading
+		 */
+		var params;
+		var fnMerge;
+		var gridParam;
+		var datarow  = {seq:"", car_type_cd:"", stap_cd:"", arvp_cd:"", svca_amt:"", use_yn:"", rem_sbc:""};
+		function init(){
+			//set grid parameter
+			var params = {
+				car_type_cd	: $('#key_code_knd').val(),
+				stap_cd		: $('#key_place_knd').val(),
+				corp_cd 	: sess_corp_cd
+			};
+
+			gridParam = {
+				viewEdit : [{
+					gridName     : "htmlTable",
+					url          : "doSearchGridPsToPlaceManagement.do",
+// 					colNames     : ["", "", "출발", "도착", "금액", "사용여부 Y/N", "비고"],
+					colNames     : [ '' // ""
+						          ,'' // ""
+						          ,'<fmt:message key="dept"/>' // "출발"
+						          ,'<fmt:message key="dest"/>' // "도착"
+						          ,'<fmt:message key="rt_amt"/>' // "금액"
+						          ,'<fmt:message key="use_yn"/>' // "사용여부 Y/N"
+						          ,'<fmt:message key="rem_sbc"/>' // "비고"
+			          ],
+					colModel     : [{name:"seq",			index:"seq"				, sortable:false,		formatter:"string",	width:"0",		align:"center",	editable:false,	frozen:false, hidden : true},
+					                {name:"car_type_cd",index:"car_type_cd"	, sortable:false,		formatter:"string",	width:"110",		align:"center",	editable:false,	frozen:false, hidden : true},
+					            	{name:'stap_cd',index:'stap_cd',edittype:'select',formatter: "select",editable:true,width:150,align:'left',sortable:false,
+										editoptions:{value:getComboValue('cb_stap_cd'),dataInit: function(elem) {$(elem).width(150);}}
+									},
+									{name:'arvp_cd',index:'arvp_cd',edittype:'select',formatter: "select",editable:true,width:150,align:'left',sortable:false,
+										editoptions:{value:getComboValue('cb_arvp_cd'),dataInit: function(elem) {$(elem).width(150);}}
+									},
+					            	{name:"svca_amt", index:"svca_amt", sortable:false,	formatter:"currency",	width:95, align:"right", editable:true, frozen : false, formatoptions: {
+									    thousandsSeparator:",",
+									    defaultValue:"",
+									    decimalPlaces:0
+									  }
+									},
+					            	{name:'use_yn',index:'use_yn',edittype:'select',formatter: "select",editable:true,width:100,align:'center',sortable:false,
+										editoptions:{value:"Y:Y;N:N",dataInit: function(elem) {$(elem).width(100);}}
+									},
+					            	{name:"rem_sbc",			index:"rem_sbc"		, sortable:false,		formatter:"string",	width:"460",  	align:"center",	editable:true,	frozen:false}
+					            	],
+					height       : "100%",
+					rownumbers   : true,
+					multiselect  : true,
+					cellEdit     : true,
+					fnMerge      : false,
+					pager		 : "htmlPager",
+					completeFc   : "initAfterMenus();loadCallBack();",
+					paramJson    : params
+				}]
+			};
+
+			//common jqGrid call...
+			commonJqGridInit(gridParam);
+		}
+
+		function retrieve(gubn){
+			switch(gubn){
+				case "search" :
+					doSearch();
+					break;
+				case "save" :
+					doInsert();
+					break;
+				case "edit" :
+					doModify();
+					break;
+				case "delete" :
+					doDelete();
+					break;
+				case "addrow" :
+					fnAddRow();
+					break;
+			}
+		}
+
+		function doSearch(msgFlag){
+			params = {
+				car_type_cd	: $('#key_code_knd').val(),
+				stap_cd		: $('#key_place_knd').val(),
+				corp_cd		: sess_corp_cd
+			};
+
+			doCommonSearch("doSearchGridPsToPlaceManagement.do", util.jsonToString(params), "loadCallBack();initAfterMenus();", "htmlTable", msgFlag);
+		}
+		
+		/**
+		 * callback
+		 */
+		function loadCallBack(){
+
+			if(fnMerge !== ""){
+				eval(fnMerge);
+			}
+			addGridRow();
+		}
+
+		function doInsert(){
+			var selectRow = jQuery("#htmlTable").jqGrid('getGridParam','selarrrow');
+			var tempStr = [];
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+			for(var i=0; i<selectRow.length; i++){
+				rowId = selectRow[i];
+				if(rowId)	{
+					if(getColValue("stap_cd",rowId) == ''){
+						alertUI(rowId + '<fmt:message key="MSG.ROW.0080"/>');
+						return;
+					}
+					if(getColValue("arvp_cd",rowId) == ''){
+						alertUI(rowId + '<fmt:message key="MSG.ROW.0081"/>');
+						return;
+					}
+					if(getColValue("svca_amt",rowId) == ''){
+						alertUI(rowId + '<fmt:message key="MSG.ROW.0024"/>');
+						return;
+					}
+					if(getColValue("use_yn",rowId) == ''){
+						alertUI(rowId + '<fmt:message key="MSG.ROW.0025"/>');
+						return;
+					}
+					data =
+					{
+							seq					: getColValue("seq",rowId),
+							car_type_cd			: $('#key_code_knd').val(),
+							stap_cd				: getColValue("stap_cd",rowId),
+							arvp_cd				: getColValue("arvp_cd",rowId),
+							svca_amt			: getColValue("svca_amt",rowId).replace(",", "."),
+							use_yn				: getColValue("use_yn",rowId),
+							rem_sbc				: getColValue("rem_sbc",rowId),
+							ipe_eeno			: sess_empno,
+							updr_eeno			: sess_empno,
+							corp_cd				: sess_corp_cd
+
+					};
+					tempStr.push(data);
+
+				} else { alertUI('<fmt:message key="MSG.SEL.0011"/>');}
+			}
+
+			confirmUI('<fmt:message key="MSG.CNF.0004"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramJson : util.jsonToList(tempStr)
+							};
+							doCommonAjax("doInsertPsToPlaceManagement.do", paramData, "setBottomMsg(jsonData.sendResult.message, true);doSearch('N');");
+					}
+				});
+			});
+		}
+
+		function doDelete(){
+			var selectRow = jQuery("#htmlTable").jqGrid('getGridParam','selarrrow');
+			var tempStr = [];
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+
+			for(var i=0; i<selectRow.length; i++){
+				rowId = selectRow[i];
+				if(rowId)	{
+					if(getColValue("seq",rowId) == ""){
+						alertUI(rowId + '<fmt:message key="MSG.ROW.0056"/>');
+						return;
+					}
+					data =
+					{
+							seq					: getColValue("seq",rowId),
+							corp_cd				: sess_corp_cd
+					};
+					tempStr.push(data);;
+
+				} else { alertUI('<fmt:message key="MSG.SEL.0011"/>');}
+			}
+
+			confirmUI('<fmt:message key="MSG.CNF.0002"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramJson : util.jsonToList(tempStr)
+							};
+							doCommonAjax("doDeletePsToPlaceManagement.do", paramData, "setBottomMsg(jsonData.sendResult.message, true);doSearch('N');");
+					}
+				});
+			});
+		}
+
+		function fnAddRow(){
+			var gridRowId = $("#htmlTable").getDataIDs().length;
+			jQuery("#htmlTable").jqGrid("addRowData", gridRowId+1, datarow);
+		}
+
+		function pageStepHelpPopup(){
+			if(popup != null ){
+				popup.close();
+			}
+
+			popup = popUpWindow3($("#help_url").val());
+		}
+		</script>

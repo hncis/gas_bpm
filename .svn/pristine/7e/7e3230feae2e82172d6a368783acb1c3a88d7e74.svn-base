@@ -1,0 +1,585 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId = "XSM06";
+	
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH", locale);
+	
+	String strBtn = "";
+	strBtn = strSch+"/search";
+%>
+
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>회의실관리</title>
+	</head>
+	
+	<body>
+		<div id="wrap">
+			<form id="frm" name="frm" method="post">
+				<input type="hidden" id="nSource" name="nSource">
+				<input type="text" id="hid_regn_cd" name="hid_regn_cd">
+				<input type="text" id="hid_bd_cd" name="hid_bd_cd">
+				
+				<%@ include file="../include/hncis_header.gas"%>
+				<div id="contents_wrap">
+	        		<%@ include file="../include/hncis_left.gas"%>
+	            	<div id="contents">
+						<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,menuId
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+						
+						<div class="con_t_area mt10">
+		                </div>
+						<div class="search_area">
+							<table>
+								<colgroup>
+									<col style="width:100px;" />
+		                            <col style="width:120px;" />
+		                            <col style="width:100px;" />
+		                            <col style="width:*" />
+								</colgroup>
+								<tbody>
+									<tr>
+										<th class="div_nameF"><fmt:message key="region"/></th>
+										<td>
+											<select id="key_regn_cd">
+												<option value=""><fmt:message key="total"/></option>
+											</select>
+										</td>
+										<th class="div_nameF"><fmt:message key="use_yn"/></th>
+										<td>
+											<select id="key_use_yn">
+												<option value=""><fmt:message key="total"/></option>
+											</select>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						
+						<div style="float:left;">
+							<div style="width:270px;height:650px">
+								<div class="con_t_area mt10" style="width:230px; height:30px">
+									<h3 style="width:100px; float:left"><fmt:message key="bld"/></h3>
+								</div>
+								<table id="htmlTable1" class="scroll"></table>
+							</div>
+						</div>
+						<div style="float:left;">
+							<div style="width:600px; height:300px">
+								<div class="con_t_area mt10" style="width:765px; height:30px">
+									<h3 style="width:100px; float:left"><fmt:message key="mt_rm"/></h3>
+									<div class="btn_area mt0">
+										<ul class="btns fr ml20">
+											<li><a href="javascript:retrieve('add', '1')"><fmt:message key="BUTTON.ADD"/><span></span></a></li>
+											<li><a href="javascript:retrieve('save', '1')"><fmt:message key="BUTTON.SAVE"/><span></span></a></li>
+											<li><a href="javascript:retrieve('delete', '1')"><fmt:message key="BUTTON.DELETE"/><span></span></a></li>
+										</ul>
+									</div>
+								</div>
+								<table id="htmlTable2" class="scroll"></table>
+							</div>
+							<div class="clear"></div>
+							<div style="width:450px; height:300px">
+								<div class="con_t_area mt10" style="width:765px; height:30px">
+									<h3 style="width:100px; float:left"><fmt:message key="policy"/></h3>
+									<div class="btn_area mt0">
+										<ul class="btns fr ml20">
+											<li><a href="javascript:retrieve('save', '2')"><fmt:message key="BUTTON.SAVE"/><span></span></a></li>
+										</ul>
+									</div>
+								</div>
+								<table id="htmlTable3" class="scroll"></table>
+							</div>
+						</div>
+						<div class="clear"></div>
+						<%@ include file="../include/hncis_message.gas"%>
+					</div>
+				</div>
+			</form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+			<img id="loading_progress_img" src="../../images/common/progress_bar.gif" width="362" height="131" style="display:none" />
+		</div>
+	</body>
+</html>
+		<script type="text/javascript">
+		function fnSetDocumentReady(){
+			initMenus('1850');
+			$('#SM').slideDown('fast');
+			sess_auth = $("#work_auth").val();
+			conditionCombo();
+		}
+
+		function conditionCombo(){
+			var sCode  = "key_regn_cd:SM001:A;key_use_yn:SM011:A";
+			var sCallBack = "gridCombo()";
+			var sUrl = "doSearchComboByXsm.do";
+			getCommonCode(sCode, "N", sCallBack, sUrl);
+		}
+
+		function gridCombo(){
+			$("#key_use_yn").val("Y");
+			var sCode  = "regn_cd:SM001;use_knd:SM002;conf_yn:SM003;res_max_min:SM004;use_yn:SM011";
+			var sCallBack = "init()";
+			var sUrl = "doSearchComboByXsm.do";
+			getCommonCode(sCode, "Y", sCallBack, sUrl);
+		}
+
+		var gridRowCnt = 15;
+		var gridParam1, gridParam2, gridParam3;
+		var gridName1 = "htmlTable1"; 
+		var gridName2 = "htmlTable2"; 
+		var gridName3 = "htmlTable3"; 
+		var datarow1  = { regn_cd:"", bd_cd:"", regn_nm:"", bd_nm:"" };
+		var datarow2  = { corm_cd:"", corm_nm:"", corm_fl_cd:"", use_knd:"", blns_cpsn:"", desk_qty:"", chair_qty:"", conf_yn:"", file_id_1:"", item_sbc:"", corm_loc_sbc:"", remark:"", use_yn:"", old_regn_cd:"", old_bd_cd:"", old_corm_cd:"" };
+		var datarow3  = { corm_cd:"", res_from_time:"", res_to_time:"", res_lmt_cnt:"", res_max_min:"" };
+		function init(){
+			gridParam1 = {
+				viewEdit : [{
+					gridName     : gridName1,
+					url          : "/doSearchToEmpty.do",
+// 					colNames     : ["지역코드", "건물코드", "지역", "건물명"],
+					colNames     : ['' // "지역코드"
+								  ,'' // "건물코드"
+								  ,'<fmt:message key="region"/>' // "지역"
+								  ,'<fmt:message key="bld_nm"/>' // "건물명"
+						  ],
+					colModel     : [{name:"regn_cd", index:"regn_cd", sortable:false, formatter:"string", width:"80",	align:"center",	editable:false, frozen:false, hidden:true},
+					            	{name:"bd_cd", index:"bd_cd", sortable:false, formatter:"string", width:"80",	align:"center",	editable:false, frozen:false, hidden:true},
+					            	{name:"regn_nm", index:"regn_nm", sortable:false, formatter:"string", width:"100",	align:"center",	editable:false, frozen:false},
+					            	{name:"bd_nm", index:"bd_nm", sortable:false, formatter:"string", width:"150",	align:"center",	editable:false, frozen:false}
+					            	],
+					width        : "250",
+					height       : "100%",
+					rownumbers   : true,
+					multiselect  : false,
+					cellEdit     : true,
+					fnMerge      : false,
+					rowNum		 : 1000,
+					selectCellFc : "celldbClickAction(rowid, iCol, cellcontent);",
+					completeFc	 : "fnGridInitCallBack('"+gridName1+"');"
+				}]
+			};
+			
+			gridParam2 = {
+				viewEdit : [{
+					gridName     : gridName2,
+					url          : "/doSearchToEmpty.do",
+// 					colNames     : ["회의실코드", "회의실명", "층", "사용용도", "가용인원", "책상수", "의자수", "승인구분", "첨부파일", "가용장비", "위치설명", "비고", "사용", "", "", ""],
+					colNames     : ['<fmt:message key="mt_rm_cd"/>' // "회의실코드"
+								  ,'<fmt:message key="mt_rm"/>' // "회의실명"
+								  ,'<fmt:message key="floor"/>' // "층"
+								  ,'<fmt:message key="use_type"/>' // "사용용도"
+								  ,'<fmt:message key="use_psrn"/>' // "가용인원"
+								  ,'<fmt:message key="dsk_cnt"/>' // "책상수"
+								  ,'<fmt:message key="chr_cnt"/>' // "의자수"
+								  ,'<fmt:message key="appr_div"/>' // "승인구분"
+								  ,'<fmt:message key="att_file"/>' // "첨부파일"
+								  ,'<fmt:message key="use_eqmt"/>' // "가용장비"
+								  ,'<fmt:message key="regn_exp"/>' // "위치설명"
+								  ,'<fmt:message key="rem_sbc"/>' // "비고"
+								  ,'<fmt:message key="use_yn"/>' // "사용"
+								  ,'' // "" 
+								  ,'' // "" 
+								  ,'' // "" 
+						  ],
+					colModel     : [{name:"corm_cd", index:"corm_cd", sortable:false, formatter:"string", width:"80", align:"center", editable:false, frozen:false},
+					            	{name:"corm_nm", index:"corm_nm", sortable:false, formatter:"string", width:"150", align:"center", editable:true, frozen:false},
+					            	{name:"corm_fl_cd", index:"corm_fl_cd", sortable:false, formatter:"string", width:"40",	align:"center",	editable:true, frozen:false},
+					            	{name:"use_knd", index:"use_knd", sortable:false, edittype:"select", formatter:"select", width:"105", align:"center", editable:true,
+					            		editoptions:{value:getComboValue('use_knd'),
+					            			dataInit: function(elem) {
+					            				$(elem).width(100);
+					            			}
+					            		}
+					            	},
+					            	{name:"blns_cpsn", index:"blns_cpsn", sortable:false, formatter:"string", width:"80", align:"right", editable:true, frozen:false},
+					            	{name:"desk_qty", index:"desk_qty", sortable:false, formatter:"string", width:"80",	align:"right", editable:true, frozen:false},
+					            	{name:"chair_qty", index:"chair_qty", sortable:false, formatter:"string", width:"80", align:"right", editable:true, frozen:false},
+					            	{name:"conf_yn", index:"conf_yn", sortable:false, edittype:"select", formatter:"select", width:"105", align:"center", editable:true,
+					            		editoptions:{value:getComboValue('conf_yn'),
+					            			dataInit: function(elem) {
+					            				$(elem).width(100);
+					            			}
+					            		}
+					            	},
+					            	{name:"file_id_1", index:"file_id_1", sortable:false, formatter:"string", width:"80", align:"center", editable:false, frozen:false},
+					            	{name:"item_sbc", index:"item_sbc", sortable:false, formatter:"string", width:"150", align:"center", editable:true, frozen:false},
+					            	{name:"corm_loc_sbc", index:"corm_loc_sbc", sortable:false, formatter:"string", width:"200", align:"center", editable:true, frozen:false},
+					            	{name:"remark", index:"remark", sortable:false, formatter:"string", width:"200", align:"center", editable:true, frozen:false},
+					            	{name:"use_yn", index:"use_yn", sortable:false, edittype:"select", formatter:"select", width:"80", align:"center", editable:true,
+					            		editoptions:{value:getComboValue('use_yn'),
+					            			dataInit: function(elem) {
+					            				$(elem).width(75);
+					            			}
+					            		}
+					            	},
+					            	{name:"old_regn_cd", index:"old_regn_cd", sortable:false, formatter:"string", width:"0", align:"center", editable:false, frozen:false, hidden:true},
+					            	{name:"old_bd_cd", index:"old_bd_cd", sortable:false, formatter:"string", width:"0", align:"center", editable:false, frozen:false, hidden:true},
+					            	{name:"old_corm_cd", index:"old_corm_cd", sortable:false, formatter:"string", width:"0", align:"center", editable:false, frozen:false, hidden:true},
+					            	],
+					width        : "758",
+					height       : "100%",
+					rownumbers   : false,
+					multiselect  : true,
+					cellEdit     : true,
+					fnMerge      : false,
+					rowNum		 : 1000,
+					completeFc	 : "fnGridInitCallBack('"+gridName2+"');"
+				}]
+			};
+			
+			gridParam3 = {
+				viewEdit : [{
+					gridName     : gridName3,
+					url          : "/doSearchToEmpty.do",
+// 					colNames     : ["회의실코드", "예약가능시간(from)", "예약가능시간(to)", "예약횟수", "최대예약시간"],
+					colNames     : ['<fmt:message key="mt_rm_cd"/>' // "회의실코드"
+								  ,'<fmt:message key="rsvt_from_time"/>' // "예약가능시간(from)"
+								  ,'<fmt:message key="rsvt_to_time"/>' // "예약가능시간(to)"
+								  ,'<fmt:message key="rsvt_cnt"/>' // "예약횟수"
+								  ,'<fmt:message key="rsvt_max_tm"/>' // "최대예약시간"
+			 			 ],
+					colModel     : [{name:"corm_cd", index:"corm_cd", sortable:false, formatter:"string", width:"80", align:"center", editable:true, frozen:false, hidden:true},
+					                {name:"res_from_time", index:"res_from_time", sortable:false, formatter:"string", width:"120", align:"center", editable:true, frozen:false},
+					            	{name:"res_to_time", index:"res_to_time", sortable:false, formatter:"string", width:"120", align:"center", editable:true, frozen:false},
+					            	{name:"res_lmt_cnt", index:"res_lmt_cnt", sortable:false, formatter:"string", width:"100",	align:"center",	editable:true, frozen:false},
+					            	{name:"res_max_min", index:"res_max_min", sortable:false, edittype:"select", formatter:"select", width:"105", align:"center", editable:true,
+					            		editoptions:{value:getComboValue('res_max_min'),
+					            			dataInit: function(elem) {
+					            				$(elem).width(100);
+					            			}
+					            		}
+					            	}
+					            	],
+					width        : "758",
+					height       : "100%",
+					rownumbers   : false,
+					multiselect  : true,
+					cellEdit     : true,
+					fnMerge      : false,
+					rowNum		 : 1000,
+					completeFc	 : "fnGridInitCallBack('"+gridName3+"');"
+				}]
+			};
+			
+			commonJqGridInit(gridParam1);
+		}
+
+		function fnGridInitCallBack(initGrid){
+			switch(initGrid){
+				case "htmlTable1" :
+					addGridRow(25, initGrid, 'datarow1');
+					commonJqGridInit(gridParam2);
+					break;
+				case "htmlTable2" :
+					addGridRow(10, initGrid, 'datarow2');
+					commonJqGridInit(gridParam3);
+					break;
+				case "htmlTable3" :
+					addGridRow(10, initGrid, 'datarow3');
+					retrieve("search");
+					break;
+			}
+		}
+
+		function retrieve(mode, no){
+			switch(mode){
+				case "search" :
+					doSearch("Y");
+					break;
+				case "save" :
+					doSave(no);
+					break;
+				case "delete" :
+					doDelete(no);
+					break;
+				case "add" :
+					addRow(no);
+					break;
+			}
+		}
+
+		function doSearch(msgYn){
+			var paramVo = {
+				regn_cd : $("#key_regn_cd").val(), 
+				use_yn : $("#key_use_yn").val()
+			};
+			doCommonSearch("doSearchBuildingMgmtByXsm05.do", util.jsonToString(paramVo), "doEndQuery('select');", gridName1, msgYn);
+		}
+
+		function doSearchCorm(msgYn){
+			if($("#hid_regn_cd").val() != ""){
+				var paramVo = {
+					regn_cd : $("#hid_regn_cd").val(), 
+					bd_cd : $("#hid_bd_cd").val(),
+					use_yn : $("#key_use_yn").val()
+				};
+				doCommonSearch("doSearchConferenceRoomMgmtByXsm06.do", util.jsonToString(paramVo), "doEndQuery('select_corm');", gridName2, msgYn);
+			}
+		}
+
+		function doSearchPolicy(msgYn){
+			if($("#hid_regn_cd").val() != ""){
+				var paramVo = {
+					regn_cd : $("#hid_regn_cd").val(), 
+					bd_cd : $("#hid_bd_cd").val(),
+					use_yn : $("#key_use_yn").val()
+				};
+				doCommonSearch("doSearchConferenceRoomMgmtPolicyByXsm06.do", util.jsonToString(paramVo), "doEndQuery('select_policy');", gridName3, msgYn);
+			}
+		}
+
+		function doSave(no){
+			var paramsI = [];
+			var paramsU = [];
+			var actTxt = "";
+			var gridId = "";
+			if(no == "1"){
+				actTxt = "회의실";
+				gridId = gridName2;
+			}else if(no == "2"){
+				actTxt = "회의실 정책";
+				gridId = gridName3;
+			}else{
+				alertUI('<fmt:message key="MSG.VAL.0015"/>');
+				return;
+			}
+			
+			var selectRow = $("#"+gridId).jqGrid("getGridParam", "selarrrow");
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}else{
+				var hidRegnCd = $("#hid_regn_cd").val();
+				var hidBdCd = $("#hid_bd_cd").val();
+				if(no == "1"){
+					for(var i = 0; i < selectRow.length; i++){
+						var rowId = selectRow[i];
+						if(rowId){
+							var cormFlCd = $.trim(getColValue("corm_fl_cd", rowId, gridId));
+							var blnsCpsn = $.trim(getColValue("blns_cpsn", rowId, gridId));
+							var deskQty = $.trim(getColValue("desk_qty", rowId, gridId));
+							var chairQty = $.trim(getColValue("chair_qty", rowId, gridId));
+							var confYn = $.trim(getColValue("conf_yn", rowId, gridId));
+							var personChargeNo = $.trim(getColValue("person_charge_no", rowId, gridId));
+							if(cormFlCd == ""){
+								alertUI(rowId + ' <fmt:message key="MSG.ROW.0033"/>');
+								return;
+							}else if(blnsCpsn == ""){
+								blnsCpsn = "0";
+							}else if(deskQty == ""){
+								deskQty = "0";
+							}else if(chairQty == ""){
+								chairQty = "0";
+							}else if(confYn == "Y"){
+								if(personChargeNo == ""){
+									alertUI(rowId + ' <fmt:message key="MSG.ROW.0053"/>');
+									return;							
+								}
+							}
+							
+							var cormCd = $.trim(getColValue("corm_cd", rowId, gridId));
+							if(cormCd == ""){
+								var list = {
+									regn_cd : hidRegnCd,
+									bd_cd : hidBdCd,
+									corm_cd : "",
+									corm_nm : $.trim(getColValue("corm_nm", rowId, gridId)),
+									corm_fl_cd : cormFlCd,
+									use_knd : $.trim(getColValue("use_knd", rowId, gridId)),
+									blns_cpsn : blnsCpsn,
+									desk_qty : deskQty,
+									chair_qty : chairQty,
+									conf_yn : confYn,
+									person_charge_no : personChargeNo,
+									item_sbc : $.trim(getColValue("item_sbc", rowId, gridId)),
+									corm_loc_sbc : $.trim(getColValue("corm_loc_sbc", rowId, gridId)),
+									file_id_1 : "",
+									remark : $.trim(getColValue("remark", rowId, gridId)),
+									use_yn : $.trim(getColValue("use_yn", rowId, gridId))
+								}
+								paramsI.push(list);
+							}else{
+								var list = {
+									regn_cd : hidRegnCd,
+									bd_cd : hidBdCd,
+									corm_cd : cormCd,
+									corm_nm : $.trim(getColValue("corm_nm", rowId, gridId)),
+									corm_fl_cd : cormFlCd,
+									use_knd : $.trim(getColValue("use_knd", rowId, gridId)),
+									blns_cpsn : blnsCpsn,
+									desk_qty : deskQty,
+									chair_qty : chairQty,
+									conf_yn : confYn,
+									person_charge_no : personChargeNo,
+									item_sbc : $.trim(getColValue("item_sbc", rowId, gridId)),
+									corm_loc_sbc : $.trim(getColValue("corm_loc_sbc", rowId, gridId)),
+									file_id_1 : "",
+									remark : $.trim(getColValue("remark", rowId, gridId)),
+									use_yn : $.trim(getColValue("use_yn", rowId, gridId))
+								}
+								paramsU.push(list);
+							}
+						}
+					}
+				}else if(no == "2"){
+					for(var i = 0; i < selectRow.length; i++){
+						var rowId = selectRow[i];
+						if(rowId){
+							var cormCd = $.trim(getColValue("corm_cd", rowId, gridId));
+							var resFromTime = $.trim(getColValue("res_from_time", rowId, gridId));
+							var resToTime = $.trim(getColValue("res_to_time", rowId, gridId));
+							if(cormCd == ""){
+								alertUI(rowId + ' <fmt:message key="MSG.ROW.0051"/>');
+								return;
+							}else if(resFromTime == ""){
+								alertUI(rowId + ' <fmt:message key="MSG.ROW.0078"/>');
+								return;
+							}else if(resToTime == ""){
+								alertUI(rowId + ' <fmt:message key="MSG.ROW.0079"/>');
+								return;
+							}
+							
+							var list = {
+								regn_cd : hidRegnCd,
+								bd_cd : hidBdCd,
+								corm_cd : cormCd,
+								res_from_time : resFromTime,
+								res_to_time : resToTime,
+								res_lmt_cnt : $.trim(getColValue("res_lmt_cnt", rowId, gridId)),
+								res_max_min : $.trim(getColValue("res_max_min", rowId, gridId))
+							}
+							paramsU.push(list);
+						}
+					}			
+				}
+			}
+			
+			if(confirm(actTxt + '<fmt:message key="MSG.CNF.0034"/>')){
+				var paramData;
+				if(no == "1"){
+					paramData = {
+						paramsI : util.jsonToList(paramsI),
+						paramsU	: util.jsonToList(paramsU)
+					};
+					doCommonAjax("doSaveConferenceRoomMgmtByXsm06.do", paramData, "doEndQuery('save_corm', jsonData.sendResult);");
+				}else if(no == "2"){
+					paramData = {
+						paramsU	: util.jsonToList(paramsU)
+					};
+					doCommonAjax("doSaveConferenceRoomMgmtPolicyByXsm06.do", paramData, "doEndQuery('save_policy', jsonData.sendResult);");
+				}
+			}
+		}
+
+		function doDelete(){
+			var paramsD = [];
+			var selectRow = $("#"+gridName2).jqGrid("getGridParam", "selarrrow");
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}else{
+				var hidRegnCd = $("#hid_regn_cd").val();
+				var hidBdCd = $("#hid_bd_cd").val();
+				for(var i = 0; i < selectRow.length; i++){
+					var rowId = selectRow[i];
+					if(rowId){
+						var cormCd = $.trim(getColValue("corm_cd", rowId, gridName2));
+						if(cormCd == ""){
+							alert(rowId + '<fmt:message key="MSG.ROW.0051"/>');
+							return;
+						}
+						var list = {
+							regn_cd : hidRegnCd,
+							bd_cd : hidBdCd,
+							corm_cd : cormCd
+						}
+						paramsD.push(list);
+					}
+				}
+			}
+			
+			if(confirm('<fmt:message key="MSG.CNF.0035"/>')){
+				var paramData = {
+					paramsD : util.jsonToList(paramsD),
+				};
+				doCommonAjax("doDeleteConferenceRoomMgmtByXsm06.do", paramData, "doEndQuery('delete_corm', jsonData.sendResult);");
+			}
+		}
+
+		function doEndQuery(mode, rs){
+			switch(mode){
+				case "select" : 
+					addGridRow(25, gridName1, datarow1);
+					if(getColValue("regn_cd", 1, gridName1) != ""){
+						$("#hid_regn_cd").val(getColValue("regn_cd", 1, gridName1));
+						$("#hid_bd_cd").val(getColValue("bd_cd", 1, gridName1));
+						$("#"+gridName1).setRowData(1, false, {background : '#B2EBF4'});
+						doSearchCorm("Y");
+					}else{
+						$("#"+gridName2).jqGrid("clearGridData", true);
+						$("#"+gridName3).jqGrid("clearGridData", true);
+						addGridRow(10, gridName2, datarow2);
+						addGridRow(10, gridName3, datarow3);
+					}
+				break;
+				case "select_corm" : 
+					addGridRow(10, gridName2, datarow2);
+					doSearchPolicy("Y");
+					break;
+				case "select_policy" : 
+					addGridRow(10, gridName3, datarow3);
+					break;
+				case "save_corm" : 
+				case "delete_corm" :
+					setBottomMsg(rs.message, true);
+					doSearchCorm("N");
+					break;
+				case "save_policy" : 
+					setBottomMsg(rs.message, true);
+					doSearchPolicy("N");
+				break;
+			}
+		}
+
+		//cell double click event
+		function celldbClickAction(rowId, iCol, cellContent){
+			if(iCol != 0){
+				if(getColValue("regn_cd", rowId, gridName1) != ""){
+					$("#hid_regn_cd").val(getColValue("regn_cd", rowId, gridName1));
+					$("#hid_bd_cd").val(getColValue("bd_cd", rowId, gridName1));
+					doSearchCorm("Y");
+				} else {
+					$("#hid_regn_cd").val("");
+					$("#hid_bd_cd").val("");
+				}
+			}
+		}
+
+		function addRow(no){
+			var gridId = "";
+			var gridDataRow;
+			if(no == "1"){
+				gridId = gridName2;
+				gridDataRow = datarow2;
+			}else if(no == "2"){
+				gridId = gridName3;
+				gridDataRow = datarow3;
+			}else{
+				alertUI('<fmt:message key="MSG.VAL.0015"/>');
+				return;
+			}
+			var gridRowId = $("#"+gridId).getDataIDs().length;
+			$("#"+gridId).jqGrid("addRowData", gridRowId+1, gridDataRow);
+		}
+		</script>

@@ -1,0 +1,1299 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="PickupService"> 
+   
+   <select id="selectComboListFromPlace" resultClass="pickupServiceDto" parameterClass="pickupServiceDto">
+	    /*selectComboListFromPlace*/
+		select	A.CAR_TYPE_CD AS CB_KEY
+				,A.STAP_CD AS CB_CODE
+				,B.XCOD_HNAME AS CB_VALUE
+		from
+		(		
+			SELECT CAR_TYPE_CD,STAP_CD 
+			FROM BGAB_GASCPS03$corp_cd$
+			WHERE USE_YN='Y'
+			<isNotEmpty property="cb_key" prepend="and">
+			CAR_TYPE_CD = #cb_key#
+			</isNotEmpty>
+			GROUP BY CAR_TYPE_CD,STAP_CD
+		)A
+		INNER JOIN BGAB_GASCZ005$corp_cd$ B
+		ON 	A.STAP_CD = B.XCOD_CODE
+		WHERE	B.XCOD_KND='XPS03'
+		AND B.LOCALE = #locale#
+		ORDER BY CB_KEY,CB_CODE
+	</select>
+	<select id="selectComboListToPlace" resultClass="pickupServiceDto" parameterClass="pickupServiceDto">
+	    /*selectComboListToPlace*/
+		SELECT 	A.STAP_CD AS CB_KEY,
+				A.ARVP_CD AS CB_CODE,
+				B.XCOD_HNAME AS CB_VALUE
+		FROM
+		(
+		  	SELECT	CONCAT(CAR_TYPE_CD, '', STAP_CD) AS STAP_CD,
+					ARVP_CD     
+			FROM 	BGAB_GASCPS03$corp_cd$
+			WHERE	USE_YN='Y'
+			<isNotEmpty property="cb_key" prepend="and">
+			CAR_TYPE_CD = #cb_key#
+			</isNotEmpty>
+		)A
+		INNER JOIN BGAB_GASCZ005$corp_cd$ B   
+		ON  A.ARVP_CD = B.XCOD_CODE   
+		WHERE B.XCOD_KND='XPS03'
+		AND B.LOCALE = #locale#
+		ORDER BY CB_KEY,CB_CODE
+	</select>
+	
+   <update id="insertPsToRequest" parameterClass="bgabGascps01Dto">
+     /*insertPsToRequest*/
+     	INSERT INTO BGAB_GASCPS01$corp_cd$(
+			   DOC_NO
+			 , EENO
+			 , PTT_YMD
+			 , COST_CD
+			 , BUDG_TYPE
+			 , BUDG_NO
+			 , BUDG_TEXT
+			 , CAR_TYPE_CD
+			 , PURP_SBC
+			 , DRVR_NM
+			 , CCPC
+			 , FIRM_CD
+			 , GRSS_AMT		
+			 , PGS_ST_CD
+			 , ACPC_PGS_ST_CD
+			 , IF_ID
+			 , SNB_RSON_SBC
+			 , INP_YMD  	
+			 , IPE_EENO   	
+			 , MDFY_YMD   	
+			 , UPDR_EENO
+		) VALUES (
+			   #doc_no#
+			 , #eeno#
+			 , #ptt_ymd#
+			 , #cost_cd#
+			 , #budg_type#
+			 , #budg_no#
+			 , #budg_text#
+			 , #car_type_cd#
+			 , #purp_sbc#
+			 , #drvr_nm#
+			 , #ccpc#
+			 , #firm_cd#
+			 , REPLACE(#grss_amt#, '', 0)
+			 , #pgs_st_cd#
+			 , #acpc_pgs_st_cd#
+			 , #if_id#
+			 , #snb_rson_sbc#
+			 , DATE_FORMAT(SYSDATE(),'%Y%m%d')    
+			 , #ipe_eeno# 
+			 , DATE_FORMAT(SYSDATE(),'%Y%m%d')   
+			 , #updr_eeno#
+		)	
+		ON DUPLICATE KEY
+		UPDATE CAR_TYPE_CD = #car_type_cd#
+			 , PURP_SBC    = #purp_sbc#
+			 , COST_CD     = #cost_cd#
+			 , BUDG_TYPE   = #budg_type#
+			 , BUDG_NO     = #budg_no#
+			 , BUDG_TEXT   = #budg_text#
+			 , DRVR_NM     = #drvr_nm#
+			 , CCPC        = #ccpc#
+			 , FIRM_CD     = #firm_cd#
+			 , GRSS_AMT    = REPLACE(#grss_amt#, '', 0)
+			 , UPDR_EENO   = #updr_eeno#  
+			 , MDFY_YMD    = DATE_FORMAT(SYSDATE(),'%Y%m%d')
+   </update>
+   
+   <update id="insertPsToRequestList" parameterClass="bgabGascPs02Dto">
+     	/*insertPsToRequestList*/
+		INSERT INTO BGAB_GASCPS02$corp_cd$(
+			DOC_NO,
+			SEQ,
+			STAP_CD, 	
+			STAP_ADR,	
+			STAP_YMD,	
+			STA_HHMM,		
+			ARVP_CD, 		
+			ARVP_ADR,			
+			SVCA_AMT,	
+			FLHT_NO, 	
+			REM_SBC, 	
+			INP_YMD,   	
+			IPE_EENO,   	
+			MDFY_YMD,   	
+			UPDR_EENO           	
+		) VALUES (
+			#doc_no#,
+			(select a.seq from (SELECT IFNULL(MAX(CAST(seq AS UNSIGNED)),0 )+1 AS seq FROM BGAB_GASCPS02$corp_cd$ WHERE DOC_NO = #doc_no#)a),
+			#stap_cd#,
+			#stap_adr#,
+			#stap_ymd#,
+			#sta_hhmm#,		
+			#arvp_cd#,		
+			#arvp_adr#,		
+			CASE WHEN #svca_amt# = '' THEN 0 ELSE #svca_amt# END,
+			#flht_no#, 
+			#rem_sbc#,     
+			DATE_FORMAT(SYSDATE(),'%Y%m%d'),    
+			#ipe_eeno#,  
+			DATE_FORMAT(SYSDATE(),'%Y%m%d'),   
+			#updr_eeno# 
+		)
+   </update>
+   <delete id="deletePsToRequest" parameterClass="bgabGascps01Dto">
+   		DELETE	FROM BGAB_GASCPS01$corp_cd$
+   		WHERE	1 = 1
+   		AND		DOC_NO = #doc_no#
+   </delete>
+   <delete id="deletePsToRequestList" parameterClass="bgabGascps01Dto">
+   		DELETE	FROM BGAB_GASCPS02$corp_cd$
+   		WHERE	1 = 1
+   		AND		DOC_NO = #doc_no#
+   </delete>
+   
+    <update id="updateInfoPsToApproval" parameterClass="bgabGascps01Dto">
+   		UPDATE	BGAB_GASCPS01$corp_cd$
+		SET		PGS_ST_CD = #pgs_st_cd#,
+				IF_ID = #if_id#,
+				RPTS_EENO = #rpts_eeno#,
+				RPTS_YMD = DATE_FORMAT(SYSDATE(),'%Y%m%d'),
+				SNB_RSON_SBC = ''
+		WHERE	1 = 1
+		AND		DOC_NO = #doc_no#
+   		
+   </update>
+   
+   <update id="updateInfoPsToConfirm" parameterClass="bgabGascps01Dto">
+   		UPDATE	BGAB_GASCPS01$corp_cd$
+		set		
+				<isEqual property="acpc_type" compareValue="5">
+				ACPC_PGS_ST_CD = 'Z',
+				ACPC_EENO = #acpc_eeno#,
+				ACPC_YMD = DATE_FORMAT(SYSDATE(),'%Y%m%d'),
+				</isEqual>
+				<isEqual property="acpc_type" compareValue="6">
+				PGS_ST_CD = '3',
+				ACPC_PGS_ST_CD = '3',
+				ACPC_EENO = #acpc2_eeno#,
+				ACPC_YMD = DATE_FORMAT(SYSDATE(),'%Y%m%d'),
+				</isEqual>
+				CAR_TYPE_CD         = #car_type_cd#,
+				PURP_SBC            = #purp_sbc#,
+				COST_CD				= #cost_cd#,
+				BUDG_TYPE			= #budg_type#,
+				BUDG_NO				= #budg_no#,
+				DRVR_NM             = #drvr_nm#,
+				CCPC                = #ccpc#,
+				FIRM_CD             = #firm_cd#
+		WHERE	1 = 1
+		AND		DOC_NO = #doc_no#
+   		
+   </update>
+   
+   <update id="updateInfoPsToConfirmcancel" parameterClass="bgabGascps01Dto">
+   		UPDATE	BGAB_GASCPS01$corp_cd$
+		SET 	PGS_ST_CD  = #pgs_st_cd#
+				,ACPC_PGS_ST_CD = #acpc_pgs_st_cd#
+				,IF_ID     = ''
+				,RPTS_EENO = ''
+				,RPTS_YMD  = ''
+				,RDCS_EENO = ''
+				,RDCS_YMD  = ''
+				,ACPC_EENO = ''
+				,ACPC_YMD  = ''
+				,ACPC2_EENO = ''
+				,ACPC2_YMD  = ''
+				,SNB_RSON_SBC = #snb_rson_sbc#
+				,UPDR_EENO = #updr_eeno#
+				,MDFY_YMD  = DATE_FORMAT(SYSDATE(),'%Y%m%d')
+		WHERE	1 = 1
+		AND		DOC_NO = #doc_no#
+   </update>
+   <update id="updateInfoPsToReject" parameterClass="bgabGascps01Dto">
+   		UPDATE	BGAB_GASCPS01$corp_cd$
+		SET 	PGS_ST_CD  = #pgs_st_cd#
+				,IF_ID     = ''
+				,RPTS_EENO = ''
+				,RPTS_YMD  = ''
+				,RDCS_EENO = ''
+				,RDCS_YMD  = ''
+				,ACPC_EENO = ''
+				,ACPC_YMD  = ''
+				,SNB_RSON_SBC = #snb_rson_sbc#
+				,UPDR_EENO = #updr_eeno#
+				,MDFY_YMD  = DATE_FORMAT(SYSDATE(),'%Y%m%d')
+		WHERE	1 = 1
+		AND		DOC_NO = #doc_no#
+   		
+   </update>
+   <select id="selectInfoPsToRequest" parameterClass="bgabGascps01Dto" resultClass="bgabGascps01Dto">
+		/*selectInfoPsToRequest*/
+		SELECT 	A.DOC_NO
+				,A.EENO
+				,B.XUSR_NAME AS EENO_NM
+				,B.XUSR_DEPT_NAME AS DEPT_NM
+				,B.XUSR_STEP_NAME AS POS_NM
+				,B.XUSR_TEL_NO    AS TEL_NO
+				,DATE_FORMAT( CAST( A.PTT_YMD AS DATE ),'%Y-%m-%d' ) AS PTT_YMD
+				,A.COST_CD
+				,A.BUDG_TYPE
+				,A.BUDG_NO
+				,A.BUDG_TEXT
+				,A.COST_CD AS COST_CD_H
+				,A.BUDG_TYPE AS BUDG_TYPE_H
+				,A.BUDG_NO AS BUDG_NO_H
+				,A.CAR_TYPE_CD
+				,A.PURP_SBC
+				,A.DRVR_NM
+				,A.CCPC
+				,A.FIRM_CD
+				,A.GRSS_AMT
+				,A.IF_ID
+				,A.SNB_RSON_SBC
+				,A.PGS_ST_CD
+				,A.ACPC_PGS_ST_CD
+				,C.XCOD_HNAME AS PGS_ST_CD_D
+				,A.RDCS_EENO
+				,A.RDCS_YMD
+				,A.ACPC_EENO
+				,A.ACPC_YMD
+				,A.RPTS_EENO
+				,A.RPTS_YMD
+				,A.INP_YMD
+				,A.IPE_EENO
+				,A.MDFY_YMD
+				,A.UPDR_EENO
+				,IFNULL(D.FILE_CNT,0) AS FILE_CNT 
+				,A.PO_NO
+				,A.TOT_AMT
+			FROM BGAB_GASCPS01$corp_cd$ A
+			LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ B
+			ON A.EENO = B.XUSR_EMPNO
+			LEFT OUTER JOIN 
+			(
+				SELECT * FROM BGAB_GASCZ005$corp_cd$
+				WHERE XCOD_KND='X0021'
+				AND LOCALE = #locale#
+			) C
+			ON A.PGS_ST_CD = C.XCOD_CODE
+			LEFT OUTER JOIN
+			(
+				SELECT DOC_NO AS DOC_NO 
+					   ,COUNT(DOC_NO) AS FILE_CNT
+				FROM BGAB_GASCZ011$corp_cd$
+				WHERE AFFR_SCN_CD = 'PS'
+				GROUP BY DOC_NO
+			)D
+			ON A.DOC_NO = D.DOC_NO
+			WHERE	1=1
+			<isNotEmpty property="doc_no" prepend="and">
+			A.DOC_NO = #doc_no#
+			</isNotEmpty>
+			<isNotEmpty property="if_id" prepend="and">
+			A.IF_ID = #if_id#
+			</isNotEmpty>
+	</select>
+	<select id="selectListPsToRequest" parameterClass="bgabGascps02Dto" resultClass="bgabGascps02Dto">
+		/*selectListPsToRequest*/
+		SELECT	A.DOC_NO
+				,A.SEQ
+				,A.STAP_CD
+				,A.STAP_ADR
+				,DATE_FORMAT( CAST( A.STAP_YMD AS DATE ),'%Y-%m-%d' ) AS STAP_YMD
+				,CASE 
+					WHEN A.STA_HHMM = '' THEN ''
+					ELSE CONCAT(SUBSTR(A.STA_HHMM,1,2), ':', SUBSTR(A.STA_HHMM,3,2))
+				END STA_HHMM
+				,A.ARVP_CD
+				,B.XCOD_HNAME AS STAP_NM
+				,C.XCOD_HNAME AS ARVP_NM
+				,A.ARVP_ADR
+				,A.SVCA_AMT
+				,A.FLHT_NO
+				,A.REM_SBC
+				,A.INP_YMD
+				,A.IPE_EENO
+				,A.MDFY_YMD
+				,A.UPDR_EENO
+		FROM	BGAB_GASCPS02$corp_cd$ A
+		LEFT OUTER JOIN 
+		(
+			SELECT * FROM BGAB_GASCZ005$corp_cd$ WHERE XCOD_KND = 'XPS03' AND LOCALE = #locale#
+		) B
+		ON A.STAP_CD = B.XCOD_CODE
+		LEFT OUTER JOIN 
+		(
+			SELECT * FROM BGAB_GASCZ005$corp_cd$ WHERE XCOD_KND = 'XPS03' AND LOCALE = #locale#
+		) C
+		ON A.ARVP_CD = C.XCOD_CODE
+		WHERE 	A.DOC_NO = #doc_no#
+	</select>
+	<select id="selectApprovalInfoByPs" parameterClass="bgabGascps01Dto" resultClass="String">
+		/*selectApprovalInfoByPc*/
+		SELECT
+		CASE 
+		  WHEN (f.xusr_name = '' OR f.xusr_name IS null)
+		    THEN ' '
+		  ELSE
+		    'P.I.C' 
+		END
+         + '@' + IFNULL(f.xusr_name,'')
+		 + '@' + IFNULL(f.xusr_step_name,'')
+		 + '@' + CASE WHEN (a.acpc_ymd IS NULL OR a.acpc_ymd = '') THEN ' ' 
+		         ELSE DATE_FORMAT( CAST( a.acpc_ymd AS DATE),'%Y-%m-%d' ) END
+		 + '|'
+		 + CASE 
+		     WHEN b.xusr_cnfm_auth = '2'
+			   THEN
+			     CASE 
+				   WHEN (b.xusr_name = '' OR b.xusr_name IS null)
+				     THEN ' '
+				   ELSE
+				     CASE
+					   WHEN g.xorg_rsps_crank = '24' THEN 'H.O.T'       
+					   ELSE 'Planner'
+					 END
+				 END
+			 ELSE
+			    CASE 
+				  WHEN (b.xusr_name = '' OR b.xusr_name IS null) THEN ' '
+				  ELSE 'Planner'
+			    END 
+		   END
+		 + '@' + IFNULL(b.xusr_name,'')
+		 + '@' + IFNULL(b.xusr_step_name,'')
+		 + '@' + CASE WHEN (a.rpts_ymd IS NULL OR a.rpts_ymd = '') THEN ' ' 
+		 		 ELSE DATE_FORMAT( CAST( a.rpts_ymd AS DATE ),'%Y-%m-%d' ) END
+		 + '|' 
+		 + CASE 
+		     WHEN d.xusr_cnfm_auth = '2'
+			   THEN
+			     CASE 
+				   WHEN (d.xusr_name = '' OR d.xusr_name IS NULL)
+				     THEN ' '
+				   ELSE
+				     CASE 
+					   WHEN h.xorg_rsps_crank = '24' THEN 'H.O.T' 
+					   ELSE 'Planner' 
+					 END 
+				 END 
+		     ELSE
+			   CASE WHEN (d.xusr_name = '' OR d.xusr_name IS NULL) THEN ' '
+			   ELSE 'Staff'
+			   END 
+		   END 
+		 + '@' + IFNULL(d.xusr_name, '')
+		 + '@' + IFNULL(d.xusr_step_name, '')
+		 + '@' + CASE WHEN (a.rdcs_ymd IS NULL OR a.rdcs_ymd = '') THEN ' ' 
+		         ELSE DATE_FORMAT( CAST( a.rdcs_ymd AS DATE ),'%Y-%m-%d' ) END  
+		FROM	BGAB_GASCPS01$corp_cd$ a
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ b
+		ON a.ipe_eeno       = b.xusr_empno
+		LEFT OUTER JOIN BGAB_GASCZ009$corp_cd$ bb
+		ON a.if_id = bb.if_id 
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ d
+		ON bb.rdcs_eeno      = d.xusr_empno
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ f
+		ON a.acpc_eeno      = f.xusr_empno
+		LEFT OUTER JOIN BGAB_GASCZ003$corp_cd$ g
+		ON b.xusr_dept_code = g.xorg_orga_c 
+		LEFT OUTER JOIN BGAB_GASCZ003$corp_cd$ h
+		ON d.xusr_dept_code = h.xorg_orga_c
+		LEFT OUTER JOIN BGAB_GASCZ003$corp_cd$ i 
+		ON f.xusr_dept_code = i.xorg_orga_c 
+		WHERE a.if_id          = #if_id#
+	</select>
+	<delete id="deleteScheduleToRequest" parameterClass="bgabGascps02Dto">
+   		DELETE	FROM BGAB_GASCPS02$corp_cd$
+		WHERE	DOC_NO = #doc_no#
+		AND		SEQ = #seq#
+   		
+   </delete>
+   <update id="updateScheduleToRequest" parameterClass="bgabGascps02Dto">
+   		UPDATE	BGAB_GASCPS01$corp_cd$
+   		SET		GRSS_AMT = CAST(SELECT SUM(SVCA_AMT) AS SVCA_AMT FROM BGAB_GASCPS02$corp_cd$ WHERE DOC_NO = #doc_no# AND SEQ != #seq# AS UNSIGNED)   
+		WHERE	DOC_NO = #doc_no#
+   		
+   </update>
+    <select id="selectInfoPsToPickupAmount" parameterClass="bgabGascps03Dto" resultClass="bgabGascps03Dto">
+		/*selectInfoPsToPickupAmount*/
+		SELECT 	SVCA_AMT
+		FROM 	BGAB_GASCPS03$corp_cd$
+		WHERE 	CAR_TYPE_CD = #car_type_cd#
+		AND		STAP_CD = #stap_cd#
+		AND		ARVP_CD = #arvp_cd#
+	</select>
+    <select id="selectPsToDeptHoldBudget" parameterClass="bgabGascps01Dto" resultClass="String">
+		/*selectPsToDeptHoldBudget*/
+		SELECT	IFNULL(SUM(X.GRSS_AMT),0) AS GRSS_AMT
+		FROM
+		(
+			SELECT	IFNULL(GRSS_AMT,0) AS GRSS_AMT
+			FROM BGAB_GASCPS01$corp_cd$
+			WHERE COST_CD = #cost_cd#
+			AND IFNULL(ARSL_REFL_YN,'N') != 'Y'
+			AND (PGS_ST_CD='A' OR PGS_ST_CD='Z' OR PGS_ST_CD='3')
+			AND SUBSTR(PTT_YMD,1,4) = DATE_FORMAT(SYSDATE(), '%Y') 
+		)X
+	</select>
+	
+   <select id="selectCountPsToList" parameterClass="bgabGascps01Dto" resultClass="String">
+		/*selectCountPsToList*/
+		SELECT COUNT(*) AS tot_cnt
+		FROM BGAB_GASCPS01$corp_cd$ A
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ B
+		ON A.EENO = B.XUSR_EMPNO
+		LEFT OUTER JOIN
+		(
+			SELECT 	DOC_NO,MIN(STAP_YMD) AS STAP_YMD FROM BGAB_GASCPS02$corp_cd$
+			GROUP BY DOC_NO,STAP_YMD
+		)E
+		ON A.DOC_NO=E.DOC_NO
+		WHERE   A.PTT_YMD BETWEEN #from_ymd# and #to_ymd#
+		<isNotEmpty property="eeno" prepend="and">
+			A.EENO = #eeno#
+		</isNotEmpty>
+		<isNotEmpty property="dept_cd" prepend="and">
+			B.XUSR_DEPT_CODE = #dept_cd#
+		</isNotEmpty>
+		AND		E.STAP_YMD BETWEEN #stap_from_ymd# and #stap_to_ymd#
+		<isNotEmpty property="firm_cd" prepend="and">
+			A.FIRM_CD = #firm_cd#
+		</isNotEmpty>
+		<isNotEmpty property="pgs_st_cd" prepend="and">
+			A.PGS_ST_CD = #pgs_st_cd#
+		</isNotEmpty>
+		<isNotEmpty property="regn_cd" prepend="and">
+			B.XUSR_PLAC_WORK = #regn_cd#
+		</isNotEmpty>
+	</select>
+	<select id="selectListPsToList" parameterClass="bgabGascps01Dto" resultClass="bgabGascps01Dto">
+		/*selectListPsToList*/
+		SELECT *
+		FROM
+		(
+			SELECT 	ROW_NUMBER() OVER(ORDER BY STAP_YMD DESC, CAR_TYPE_CD ASC) AS rnum
+					,A.INVC_NO
+					,A.DOC_NO
+					,A.EENO
+					,B.XUSR_NAME AS EENO_NM
+					,B.XUSR_DEPT_NAME AS DEPT_NM
+					,DATE_FORMAT( CAST( A.PTT_YMD AS DATE ),'%Y-%m-%d' ) AS PTT_YMD
+					,D.XCOD_HNAME AS CAR_TYPE_CD
+					,A.PURP_SBC
+					,A.DRVR_NM
+					,A.FIRM_CD
+					,A.GRSS_AMT
+					,A.COST_CD
+					,C.XCOD_HNAME AS PGS_ST_CD_D
+					,A.PGS_ST_CD
+					,A.ACPC_PGS_ST_CD
+					,DATE_FORMAT( CAST( E.STAP_YMD AS DATE ),'%Y-%m-%d' ) AS STAP_YMD
+					,CONCAT(E.STAP_NM, ' - ', E.ARVP_NM) AS STAP_NM
+					,E.REM_SBC
+					,F.FIRM_NM AS FIRM_NM
+					,E.DTL_CNT
+			FROM BGAB_GASCPS01$corp_cd$ A
+			LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ B
+			ON A.EENO = B.XUSR_EMPNO
+			LEFT OUTER JOIN 
+			(
+				SELECT * FROM BGAB_GASCZ005$corp_cd$ WHERE XCOD_KND = 'X0021' AND LOCALE = #locale#
+			) C
+			ON A.PGS_ST_CD = C.XCOD_CODE
+			LEFT OUTER JOIN 
+			(
+				SELECT * FROM BGAB_GASCZ005$corp_cd$ WHERE XCOD_KND = 'XPS01' AND LOCALE = #locale#
+			) D
+			ON A.CAR_TYPE_CD = D.XCOD_CODE
+			LEFT OUTER JOIN
+			(
+				SELECT A.DOC_NO
+						,A.STAP_YMD
+						,A.REM_SBC
+						,C.XCOD_HNAME AS STAP_NM
+						,D.XCOD_HNAME AS ARVP_NM
+						,B.DTL_CNT
+				FROM BGAB_GASCPS02$corp_cd$ A
+				INNER JOIN
+				(
+				SELECT 	DOC_NO,MIN(SEQ) AS SEQ, COUNT(*) DTL_CNT FROM BGAB_GASCPS02$corp_cd$
+				GROUP BY DOC_NO
+				) B
+				ON A.DOC_NO=B.DOC_NO
+				AND A.SEQ=B.SEQ
+				LEFT OUTER JOIN 
+				(
+					SELECT * FROM BGAB_GASCZ005$corp_cd$ WHERE XCOD_KND='XPS03' AND LOCALE = #locale#
+				)C
+				ON A.STAP_CD=C.XCOD_CODE
+				LEFT OUTER JOIN 
+				(
+					SELECT * FROM BGAB_GASCZ005$corp_cd$ WHERE XCOD_KND='XPS03' AND LOCALE = #locale#
+				)D
+				ON A.ARVP_CD=D.XCOD_CODE
+			)E
+			ON A.DOC_NO=E.DOC_NO
+			LEFT OUTER JOIN BGAB_GASCZ012$corp_cd$ F
+			ON A.FIRM_CD=F.FIRM_CD
+			WHERE   A.PTT_YMD BETWEEN #from_ymd# and #to_ymd#
+			<isNotEmpty property="eeno" prepend="and">
+				A.EENO = #eeno#
+			</isNotEmpty>
+			<isNotEmpty property="dept_cd" prepend="and">
+				B.XUSR_DEPT_CODE = #dept_cd#
+			</isNotEmpty>
+			AND		E.STAP_YMD BETWEEN #stap_from_ymd# and #stap_to_ymd#
+			<isNotEmpty property="firm_cd" prepend="and">
+				A.FIRM_CD = #firm_cd#
+			</isNotEmpty>
+			<isNotEmpty property="pgs_st_cd" prepend="and">
+				A.PGS_ST_CD = #pgs_st_cd#
+			</isNotEmpty>
+			<isNotEmpty property="regn_cd" prepend="and">
+				B.XUSR_PLAC_WORK = #regn_cd#
+			</isNotEmpty>
+		)X
+		WHERE rnum BETWEEN #startRow# AND #endRow#
+	</select>
+	
+	<select id="selectCountPsToConfirm" parameterClass="bgabGascps01Dto" resultClass="String">
+		/*selectCountPsToConfirm*/
+		SELECT COUNT(*) AS tot_cnt
+		FROM BGAB_GASCPS01$corp_cd$ A
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ B
+		ON A.EENO = B.XUSR_EMPNO
+		LEFT OUTER JOIN
+		(
+			SELECT A.DOC_NO
+				  ,A.STAP_YMD
+				  ,A.REM_SBC
+				  ,C.XCOD_HNAME AS STAP_NM
+				  ,D.XCOD_HNAME AS ARVP_NM
+			FROM BGAB_GASCPS02$corp_cd$ A
+			INNER JOIN
+			(
+			SELECT 	DOC_NO,MIN(SEQ) AS SEQ FROM BGAB_GASCPS02$corp_cd$
+			GROUP BY DOC_NO
+			) B
+			ON A.DOC_NO=B.DOC_NO
+			AND A.SEQ=B.SEQ
+			LEFT OUTER JOIN 
+			(
+				SELECT * FROM BGAB_GASCZ005$corp_cd$ WHERE XCOD_KND='XPS03' AND LOCALE = #locale#
+			)C
+			ON A.STAP_CD=C.XCOD_CODE
+			LEFT OUTER JOIN 
+			(
+				SELECT * FROM BGAB_GASCZ005$corp_cd$ WHERE XCOD_KND='XPS03' AND LOCALE = #locale#
+			)D
+			ON A.ARVP_CD=D.XCOD_CODE
+		)E
+		ON A.DOC_NO=E.DOC_NO
+		WHERE   A.PTT_YMD BETWEEN #from_ymd# and #to_ymd#
+		<isNotEmpty property="eeno" prepend="and">
+			A.EENO = #eeno#
+		</isNotEmpty>
+		<isNotEmpty property="dept_cd" prepend="and">
+			B.XUSR_DEPT_CODE = #dept_cd#
+		</isNotEmpty>
+		AND		E.STAP_YMD BETWEEN #stap_from_ymd# and #stap_to_ymd#
+		<isNotEmpty property="firm_cd" prepend="and">
+			A.FIRM_CD = #firm_cd#
+		</isNotEmpty>
+		<isNotEmpty property="pgs_st_cd" prepend="and">
+			A.PGS_ST_CD = #pgs_st_cd#
+		</isNotEmpty>
+		<isNotEmpty property="invc_no" prepend="and">
+			A.INVC_NO = #invc_no#
+		</isNotEmpty>
+		<isNotEmpty property="regn_cd" prepend="and">
+			B.XUSR_PLAC_WORK = #regn_cd#
+		</isNotEmpty>
+		<isNotEmpty property="key_eenm" prepend="and">
+			B.XUSR_NAME LIKE CONCAT('%', #key_eenm#, '%')
+		</isNotEmpty>
+	</select>
+	<select id="selectListPsToConfirm" parameterClass="bgabGascps01Dto" resultClass="bgabGascps01Dto">
+		/*selectListPsToConfirm*/
+		SELECT *
+		FROM
+		(
+			SELECT @ROWNUM := @ROWNUM + 1 AS rnum, X.*
+			FROM
+			(
+				SELECT 	A.INVC_NO
+						,A.DOC_NO
+						,A.EENO
+						,B.XUSR_NAME AS EENO_NM
+						,B.XUSR_DEPT_NAME AS DEPT_NM
+						,DATE_FORMAT( CAST( A.PTT_YMD AS DATE ), '%Y-%m-%d' ) AS PTT_YMD
+						,D.XCOD_HNAME AS CAR_TYPE_CD
+						,A.PURP_SBC
+						,A.DRVR_NM
+						,A.FIRM_CD
+						,(SELECT SUM(SVCA_AMT) FROM BGAB_GASCPS02$corp_cd$ WHERE DOC_NO = A.DOC_NO) AS GRSS_AMT
+						,A.COST_CD
+						,A.BUDG_NO
+						,A.PGS_ST_CD
+						,C.XCOD_HNAME AS PGS_ST_CD_D
+						,A.ACPC_PGS_ST_CD
+						,DATE_FORMAT( CAST( E.STAP_YMD AS DATE ), '%Y-%m-%d' ) AS STAP_YMD
+						,CONCAT(E.STAP_NM, ' - ', E.ARVP_NM) AS STAP_NM
+						,E.REM_SBC
+						,F.FIRM_NM AS FIRM_NM
+						,E.DTL_CNT
+						,'' AS PO_NO
+				FROM BGAB_GASCPS01$corp_cd$ A
+				LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ B
+				ON A.EENO = B.XUSR_EMPNO
+				LEFT OUTER JOIN ( SELECT * FROM BGAB_GASCZ005$corp_cd$ WHERE XCOD_KND = 'X0021' AND LOCALE = #locale# ) C
+				ON A.PGS_ST_CD = C.XCOD_CODE
+				LEFT OUTER JOIN ( SELECT * FROM BGAB_GASCZ005$corp_cd$ WHERE XCOD_KND = 'XPS01' AND LOCALE = #locale# ) D
+				ON A.CAR_TYPE_CD = D.XCOD_CODE
+				LEFT OUTER JOIN (
+					SELECT A.DOC_NO
+							,A.STAP_YMD
+							,A.REM_SBC
+							,C.XCOD_HNAME AS STAP_NM
+							,D.XCOD_HNAME AS ARVP_NM
+							,B.DTL_CNT
+					FROM BGAB_GASCPS02$corp_cd$ A
+					INNER JOIN ( SELECT DOC_NO,MIN(SEQ) AS SEQ, COUNT(*) DTL_CNT FROM BGAB_GASCPS02$corp_cd$ GROUP BY DOC_NO ) B
+					ON A.DOC_NO=B.DOC_NO
+					AND A.SEQ=B.SEQ
+					LEFT OUTER JOIN ( SELECT * FROM BGAB_GASCZ005$corp_cd$ WHERE XCOD_KND='XPS03' AND LOCALE = #locale# )C
+					ON A.STAP_CD=C.XCOD_CODE
+					LEFT OUTER JOIN ( SELECT * FROM BGAB_GASCZ005$corp_cd$ WHERE XCOD_KND='XPS03' AND LOCALE = #locale# )D
+					ON A.ARVP_CD=D.XCOD_CODE
+				)E
+				ON A.DOC_NO = E.DOC_NO
+				LEFT OUTER JOIN BGAB_GASCZ012$corp_cd$ F
+				ON A.FIRM_CD=F.FIRM_CD
+				WHERE A.PTT_YMD BETWEEN #from_ymd# AND #to_ymd#
+				AND E.STAP_YMD BETWEEN #stap_from_ymd# AND #stap_to_ymd#
+				<isNotEmpty property="eeno" prepend="and">
+					A.EENO = #eeno#
+				</isNotEmpty>
+				<isNotEmpty property="dept_cd" prepend="and">
+					B.XUSR_DEPT_CODE = #dept_cd#
+				</isNotEmpty>
+				<isNotEmpty property="firm_cd" prepend="and">
+					A.FIRM_CD = #firm_cd#
+				</isNotEmpty>
+				<isNotEmpty property="pgs_st_cd" prepend="and">
+					A.PGS_ST_CD = #pgs_st_cd#
+				</isNotEmpty>
+				<isNotEmpty property="invc_no" prepend="and">
+					A.INVC_NO = #invc_no#
+				</isNotEmpty>
+				<isNotEmpty property="regn_cd" prepend="and">
+					B.XUSR_PLAC_WORK = #regn_cd#
+				</isNotEmpty>
+				<isNotEmpty property="key_eenm" prepend="and">
+					B.XUSR_NAME LIKE CONCAT('%', #key_eenm#, '%')
+				</isNotEmpty>
+				ORDER BY STAP_YMD DESC, CAR_TYPE_CD ASC
+			)X,
+			(SELECT @ROWNUM := 0) R
+		)K
+		WHERE rnum BETWEEN #startRow# AND #endRow#
+	</select>
+	<update id="updatePsToReportBySapYn" parameterClass="bgabGascps01Dto">
+		/*updatePsToReportBySapYn*/
+		UPDATE	BGAB_GASCPS01$corp_cd$
+		SET		INVC_NO = #invc_no#,
+				ARSL_REFL_YN = 'Y',
+				ARSL_REFL_YMD = DATE_FORMAT(SYSDATE(),'%Y%m%d')
+		WHERE	DOC_NO = #doc_no#
+	</update>
+	<update id="updatePsToCancelSapData" parameterClass="bgabGascps01Dto">
+		/*updatePsToReportBySapYn*/
+		UPDATE	BGAB_GASCPS01$corp_cd$
+		SET		INVC_NO = '',
+				ARSL_REFL_YN = 'N',
+				ARSL_REFL_YMD = ''
+		WHERE	DOC_NO = #doc_no#
+	</update>
+	<select id="selectCheckPsToSrlNo" parameterClass="bgabGascps01Dto" resultClass="String">
+		/*selectCountPsToConfirm*/
+		SELECT COUNT(*) AS tot_cnt
+		FROM BGAB_GASCPS01$corp_cd$ A
+		WHERE INVC_NO = #invc_no#
+	</select>
+	
+	<select id="selectCountPsToAgencyManagement" parameterClass="bgabGascps05Dto" resultClass="String">
+		/*selectCountPsToAgencyManagement*/
+		SELECT COUNT(*) AS tot_cnt
+		FROM 	BGAB_GASCZ012$corp_cd$
+		WHERE   1 = 1
+		AND		AFFR_SCN_CD = #affr_scn_cd#
+		<isNotEmpty property="firm_nm" prepend="and">
+			FIRM_NM LIKE CONCAT('%', #firm_nm#, '%')
+		</isNotEmpty>
+
+	</select>
+	<select id="selectListPsToAgencyManagement" parameterClass="bgabGascps05Dto" resultClass="bgabGascps05Dto">
+		/*selectListPsToAgencyManagement*/
+		SELECT	SEQ
+				,AFFR_SCN_CD
+				,FIRM_CD
+				,FIRM_NM
+				,USE_YN
+				,REM_SBC
+				,INP_YMD
+				,IPE_EENO
+				,MDFY_YMD
+				,UPDR_EENO
+		FROM 	BGAB_GASCZ012$corp_cd$
+		WHERE	1 = 1
+		AND		AFFR_SCN_CD = #affr_scn_cd#
+		<isNotEmpty property="firm_nm" prepend="and">
+			FIRM_NM LIKE CONCAT('%', #firm_nm#, '%')
+		</isNotEmpty>
+		ORDER BY FIRM_CD
+	</select>
+	
+	<insert id="insertPsToAgencyManagement" parameterClass="bgabGascps05Dto">
+    	/*insertPsToAgencyManagement*/
+		INSERT INTO BGAB_GASCZ012$corp_cd$(
+			   SEQ
+			 , AFFR_SCN_CD
+			 , FIRM_CD
+			 , FIRM_NM
+			 , USE_YN
+			 , REM_SBC
+			 , INP_YMD  	
+			 , IPE_EENO   	
+			 , MDFY_YMD   	
+			 , UPDR_EENO
+		)values(
+			   (SELECT A.SEQ FROM(SELECT IFNULL(MAX(CASE(SEQ AS UNSIGNED), 0)+1 AS SEQ FROM BGAB_GASCZ012$corp_cd$)A)
+			 , #affr_scn_cd#
+			 , #firm_cd#
+			 , #firm_nm#
+			 , #use_yn#
+			 , #rem_sbc#
+			 , DATE_FORMAT(SYSDATE(),'%Y%m%d')    
+			 , #ipe_eeno# 
+			 , DATE_FORMAT(SYSDATE(),'%Y%m%d')   
+			 , #updr_eeno#
+		) 
+   </insert>
+   
+	<update id="updatePsToAgencyManagement" parameterClass="bgabGascps05Dto">
+    	/*updatePsToAgencyManagement*/
+		UPDATE BGAB_GASCZ012$corp_cd$
+		   SET FIRM_CD   = #firm_cd#,
+			 , FIRM_NM   = #firm_nm#,
+			 , USE_YN    = #use_yn#,
+			 , REM_SBC   = #rem_sbc#,
+			 , UPDR_EENO = #updr_eeno#,  
+			 , MDFY_YMD  = DATE_FORMAT(SYSDATE(),'%Y%m%d')
+		 WHERE SEQ       = #seq#
+   </update>
+   
+   <delete id="deletePsToAgencyManagement" parameterClass="bgabGascps05Dto">
+		/*deletePsToAgencyManagement*/
+		DELETE FROM BGAB_GASCZ012$corp_cd$
+		WHERE SEQ = #seq#
+   </delete>
+   
+   <select id="selectCountPsToPlaceManagement" parameterClass="bgabGascps03Dto" resultClass="String">
+		/*selectCountPsToPlaceManagement*/
+		SELECT COUNT(*) AS tot_cnt
+		FROM BGAB_GASCPS03$corp_cd$
+		WHERE   1 = 1
+		AND 	CAR_TYPE_CD = #car_type_cd#
+		<isNotEmpty property="stap_cd" prepend="and">
+			(STAP_CD = #stap_cd# OR ARVP_CD = #stap_cd#)
+		</isNotEmpty>
+	</select>
+	<select id="selectListPsToPlaceManagement" parameterClass="bgabGascps03Dto" resultClass="bgabGascps03Dto">
+		/*selectListPsToPlaceManagement*/
+		SELECT *
+		FROM
+		(
+			SELECT @ROWNUM := @ROWNUM + 1 AS rnum, X.*
+			FROM
+			(
+				SELECT 	SEQ
+						,STAP_CD
+						,ARVP_CD
+						,CAR_TYPE_CD
+						,SVCA_AMT
+						,USE_YN
+						,REM_SBC
+						,INP_YMD
+						,IPE_EENO
+						,MDFY_YMD
+						,UPDR_EENO
+				FROM BGAB_GASCPS03$corp_cd$ 
+				WHERE	1 = 1
+				AND 	CAR_TYPE_CD = #car_type_cd#
+				<isNotEmpty property="stap_cd" prepend="and">
+					(STAP_CD = #stap_cd# OR ARVP_CD = #stap_cd#)
+				</isNotEmpty>
+				ORDER BY STAP_CD ASC,ARVP_CD ASC
+			)X,
+			(SELECT @ROWNUM := 0) r
+		)K
+		WHERE rnum BETWEEN #startRow# AND #endRow#
+	</select>
+	
+	<insert id="insertPsToPlaceManagement" parameterClass="bgabGascps03Dto">
+     	/*insertPsToPlaceManagement*/
+		INSERT INTO BGAB_GASCPS03$corp_cd$ (
+			   SEQ
+			 , STAP_CD
+			 , ARVP_CD
+			 , CAR_TYPE_CD
+			 , SVCA_AMT
+			 , USE_YN
+			 , REM_SBC
+			 , INP_YMD
+			 , IPE_EENO
+			 , MDFY_YMD
+			 , UPDR_EENO
+		) VALUES (
+			   (SELECT A.SEQ FROM(SELECT IFNULL(MAX(SEQ), 0)+1 AS SEQ FROM BGAB_GASCPS03$corp_cd$)A)
+			 , #stap_cd#
+			 , #arvp_cd#
+			 , #car_type_cd#
+			 , #svca_amt#
+			 , #use_yn#   
+			 , #rem_sbc#  
+			 , DATE_FORMAT(SYSDATE(),'%Y%m%d') 
+			 , #ipe_eeno# 
+			 , DATE_FORMAT(SYSDATE(),'%Y%m%d')   
+			 , #updr_eeno#
+		) 
+   </insert>
+   
+	<update id="updatePsToPlaceManagement" parameterClass="bgabGascps03Dto">
+     	/*updatePsToPlaceManagement*/
+		UPDATE BGAB_GASCPS03$corp_cd$ 
+		   SET STAP_CD	 = #stap_cd#
+			 , ARVP_CD	 = #arvp_cd#
+			 , SVCA_AMT	 = #svca_amt#
+			 , USE_YN	 = #use_yn#
+			 , REM_SBC	 = #rem_sbc#
+			 , UPDR_EENO = #updr_eeno#  
+			 , MDFY_YMD  = DATE_FORMAT(SYSDATE(),'%Y%m%d')
+		 WHERE SEQ       = #seq# 
+   </update>
+   
+   <delete id="deletePsToPlaceManagement" parameterClass="bgabGascps03Dto">
+   /*deletePsToPlaceManagement*/
+   		DELETE FROM BGAB_GASCPS03$corp_cd$
+   		 WHERE SEQ = #seq#
+   </delete>
+   
+    <select id="selectInfoPsToRequestForApprove" parameterClass="bgabGascps01Dto" resultClass="bgabGascps01Dto">
+		/*selectInfoPsToRequestForApprove*/
+		SELECT 	A.DOC_NO
+				,A.EENO
+				,B.XUSR_NAME AS EENO_NM
+				,B.XUSR_DEPT_NAME AS DEPT_NM
+				,B.XUSR_STEP_NAME AS POS_NM
+				,B.XUSR_TEL_NO    AS TEL_NO
+				,DATE_FORMAT( CAST( A.PTT_YMD AS DATE ),'%Y-%m-%d' ) AS PTT_YMD
+				,A.COST_CD
+				,A.CAR_TYPE_CD
+				,A.PURP_SBC
+				,A.DRVR_NM
+				,A.CCPC
+				,A.FIRM_CD
+				,A.GRSS_AMT
+				,A.IF_ID
+				,A.SNB_RSON_SBC
+				,A.PGS_ST_CD
+				,C.XCOD_HNAME AS PGS_ST_CD_D
+				,A.RDCS_EENO
+				,A.RDCS_YMD
+				,A.ACPC_EENO
+				,A.ACPC_YMD
+				,A.RPTS_EENO
+				,A.RPTS_YMD
+				,A.INP_YMD
+				,A.IPE_EENO
+				,A.MDFY_YMD
+				,A.UPDR_EENO
+			FROM BGAB_GASCPS01$corp_cd$ A
+			LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ B
+			ON A.EENO = B.XUSR_EMPNO
+			LEFT OUTER JOIN 
+			(
+				SELECT * FROM BGAB_GASCZ005$corp_cd$ WHERE XCOD_KND='X0021' AND LOCALE = #locale#
+			) C
+			ON A.PGS_ST_CD = C.XCOD_CODE
+			WHERE A.IF_ID = #if_id#
+	</select>
+	<select id="selectListPsToRequestForApprove" parameterClass="bgabGascps02Dto" resultClass="bgabGascps02Dto">
+		SELECT	A.DOC_NO
+				,A.SEQ
+				,B.XCOD_HNAME AS STAP_CD
+				,A.STAP_ADR
+				,DATE_FORMAT( CAST( A.STAP_YMD AS DATE ),'%Y-%m-%d' ) AS STAP_YMD
+				,CASE 
+					WHEN A.STA_HHMM = '' THEN ''
+					ELSE CONCAT(SUBSTR(A.STA_HHMM,1,2), ':', SUBSTR(A.STA_HHMM,3,2))
+				END STA_HHMM
+				,C.XCOD_HNAME AS ARVP_CD
+				,A.ARVP_ADR
+				,A.SVCA_AMT
+				,A.FLHT_NO
+				,A.REM_SBC
+				,A.INP_YMD
+				,A.IPE_EENO
+				,A.MDFY_YMD
+				,A.UPDR_EENO
+		FROM	BGAB_GASCPS02$corp_cd$ A
+		LEFT OUTER JOIN 
+		(
+			SELECT * FROM BGAB_GASCZ005$corp_cd$ WHERE XCOD_KND = 'XPS03' AND LOCALE = #locale#
+		) B
+		ON A.STAP_CD = B.XCOD_CODE
+		LEFT OUTER JOIN 
+		(
+			SELECT * FROM BGAB_GASCZ005$corp_cd$ WHERE XCOD_KND = 'XPS03' AND LOCALE = #locale#
+		) C
+		ON A.ARVP_CD = C.XCOD_CODE
+		WHERE 	A.DOC_NO = #doc_no#
+	</select>
+	<insert id="insertPsToFile" parameterClass="BgabGascZ011Dto">
+		INSERT INTO BGAB_GASCZ011$corp_cd$ (
+			DOC_NO				,
+			EENO				,
+			SEQ					,
+			AFFR_SCN_CD			,		
+			OGC_FIL_NM			,
+			FIL_NM				,
+			FIL_MGN_QTY			,
+			INP_YMD				,
+			IPE_EENO
+		)VALUES(
+			#doc_no#			,
+			#eeno#				,
+			#seq#				,
+			#affr_scn_cd#		,		
+			#ogc_fil_nm#		,
+			#fil_nm#			,
+			#fil_mgn_qty#		,
+			DATE_FORMAT(SYSDATE(),'%Y%m%d')	,
+			#ipe_eeno#
+		)
+   </insert>
+   
+   <select id="selectPsToFile" resultClass="BgabGascZ011Dto" parameterClass="BgabGascZ011Dto">
+		SELECT
+			DOC_NO				,
+			EENO				,
+			SEQ					,
+			AFFR_SCN_CD			,
+			FIL_NM				,
+			OGC_FIL_NM			,
+			FIL_MGN_QTY			,
+			INP_YMD				,
+			IPE_EENO
+		FROM BGAB_GASCZ011$corp_cd$
+		WHERE DOC_NO = #doc_no#
+		AND EENO = #eeno#
+		AND SEQ = #seq#
+		AND AFFR_SCN_CD = #affr_scn_cd#
+		<isNotEmpty property="ogc_fil_nm" prepend="and">
+			OGC_FIL_NM = #ogc_fil_nm#
+		</isNotEmpty>
+		ORDER BY FIL_NM
+   </select>
+   
+   <delete id="deletePsToFile" parameterClass="BgabGascZ011Dto">
+		DELETE FROM BGAB_GASCZ011$corp_cd$
+		WHERE DOC_NO = #doc_no#
+		AND EENO = #eeno#
+		AND SEQ = #seq#
+		AND AFFR_SCN_CD = #affr_scn_cd#
+		AND OGC_FIL_NM = #ogc_fil_nm#
+   </delete>
+   
+	<select id="selectCountPsToPickupSchedule" parameterClass="bgabGascps02Dto" resultClass="String">
+		/*selectCountPsToPickupSchedule*/
+		SELECT COUNT(*)
+		FROM (
+			SELECT	 D.EENO
+					,D.EENM
+					,D.OPS_NM
+					,A.DOC_NO
+					,A.STAP_CD
+					,A.STAP_ADR
+					,DATE_FORMAT( CAST( A.STAP_YMD AS DATE ),'%Y-%m-%d' ) AS STAP_YMD
+					,A.STAP_YMD AS ROW_STAP_YMD
+					,CASE 
+						WHEN A.STA_HHMM = '' THEN ''
+						ELSE CONCAT(SUBSTR(A.STA_HHMM,1,2), ':', SUBSTR(A.STA_HHMM,3,2))
+					END STA_HHMM
+					,A.ARVP_CD
+					,A.ARVP_ADR
+					,A.SVCA_AMT
+					,A.FLHT_NO
+					,A.REM_SBC
+					,D.FIRM_CD
+					,D.XUSR_DEPT_CODE
+			FROM	BGAB_GASCPS02$corp_cd$ A
+			LEFT OUTER JOIN 
+			(
+				SELECT * FROM BGAB_GASCZ005$corp_cd$ WHERE XCOD_KND = 'XPS03' AND LOCALE = #locale#
+			) B
+			ON A.STAP_CD = B.XCOD_CODE
+			LEFT OUTER JOIN 
+			(
+				SELECT * FROM BGAB_GASCZ005$corp_cd$ WHERE XCOD_KND = 'XPS03' AND LOCALE = #locale#
+			) C
+			ON A.ARVP_CD = C.XCOD_CODE
+			LEFT OUTER JOIN
+			(
+				SELECT A.EENO
+					 , A.DOC_NO
+					 , A.FIRM_CD
+					 , B.XUSR_NAME      AS EENM
+					 , B.XUSR_DEPT_CODE
+					 , B.XUSR_DEPT_NAME AS OPS_NM
+				FROM BGAB_GASCPS01$corp_cd$ A
+				LEFT OUTER JOIN
+				BGAB_GASCZ002$corp_cd$ B
+				ON A.EENO = B.XUSR_EMPNO
+			) D
+			ON A.DOC_NO = D.DOC_NO
+		) A
+		WHERE A.ROW_STAP_YMD BETWEEN #from_ymd# and #to_ymd#
+		<isNotEmpty property="eeno" prepend="and">
+			A.EENO = #eeno#
+		</isNotEmpty>
+		<isNotEmpty property="dept_cd" prepend="and">
+			A.XUSR_DEPT_CODE = #dept_cd#
+		</isNotEmpty>
+		<isNotEmpty property="firm_cd" prepend="and">
+			A.FIRM_CD = #firm_cd#
+		</isNotEmpty>
+		<isNotEmpty property="stap_cd" prepend="and">
+			(A.STAP_CD = #stap_cd# OR A.ARVP_CD = #stap_cd#)
+		</isNotEmpty>
+	</select>
+   
+	<select id="selectListPsToPickupSchedule" parameterClass="bgabGascps02Dto" resultClass="bgabGascps02Dto">
+		/*selectListPsToPickupSchedule*/
+		SELECT *
+		FROM
+		(
+			SELECT @ROWNUM := @ROWNUM + 1 AS rnum
+				 , EENO
+				 , EENM
+				 , OPS_NM
+				 , DOC_NO
+				 , SEQ
+				 , STAP_CD
+				 , STAP_NM
+				 , STAP_ADR
+				 , STAP_YMD
+				 , STA_HHMM
+				 , ARVP_CD
+				 , ARVP_NM
+				 , ARVP_ADR
+				 , SVCA_AMT
+				 , FLHT_NO
+				 , REM_SBC
+				 , INP_YMD
+				 , IPE_EENO
+				 , MDFY_YMD
+				 , UPDR_EENO
+			FROM (
+				SELECT EENO
+					 , EENM
+					 , OPS_NM
+					 , DOC_NO
+					 , SEQ
+					 , STAP_CD
+					 , STAP_NM
+					 , STAP_ADR
+					 , STAP_YMD
+					 , STA_HHMM
+					 , ARVP_CD
+					 , ARVP_NM
+					 , ARVP_ADR
+					 , SVCA_AMT
+					 , FLHT_NO
+					 , REM_SBC
+					 , INP_YMD
+					 , IPE_EENO
+					 , MDFY_YMD
+					 , UPDR_EENO
+					 , XUSR_DEPT_CODE
+					 , FIRM_CD
+					 , CAR_TYPE_CD
+				FROM (
+					SELECT	 D.EENO
+							,D.EENM
+							,D.OPS_NM
+							,A.DOC_NO
+							,A.SEQ
+							,A.STAP_CD
+							,B.XCOD_HNAME AS STAP_NM
+							,A.STAP_ADR
+							,DATE_FORMAT( CAST( A.STAP_YMD AS DATE ), '%Y-%m-%d' ) AS STAP_YMD
+							,A.STAP_YMD AS ROW_STAP_YMD
+							,CASE 
+								WHEN A.STA_HHMM = '' THEN ''
+								ELSE CONCAT(SUBSTR(A.STA_HHMM,1,2), ':', SUBSTR(A.STA_HHMM,3,2))
+							END STA_HHMM
+							,A.ARVP_CD
+							,C.XCOD_HNAME AS ARVP_NM
+							,A.ARVP_ADR
+							,A.SVCA_AMT
+							,A.FLHT_NO
+							,A.REM_SBC
+							,A.INP_YMD
+							,A.IPE_EENO
+							,A.MDFY_YMD
+							,A.UPDR_EENO
+							,D.XUSR_DEPT_CODE
+							,D.FIRM_CD
+							,D.CAR_TYPE_CD
+					FROM	BGAB_GASCPS02$corp_cd$ A
+					LEFT OUTER JOIN 
+					(
+						SELECT * FROM BGAB_GASCZ005$corp_cd$ WHERE XCOD_KND = 'XPS03' AND LOCALE = #locale#
+					) B
+					ON A.STAP_CD = B.XCOD_CODE
+					LEFT OUTER JOIN 
+					(
+						SELECT * FROM BGAB_GASCZ005$corp_cd$ WHERE XCOD_KND = 'XPS03' AND LOCALE = #locale#
+					) C
+					ON A.ARVP_CD = C.XCOD_CODE
+					LEFT OUTER JOIN
+					(
+						SELECT A.EENO
+							 , A.DOC_NO
+							 , A.FIRM_CD
+							 , A.CAR_TYPE_CD
+							 , B.XUSR_NAME      AS EENM
+							 , B.XUSR_DEPT_CODE
+							 , B.XUSR_DEPT_NAME AS OPS_NM
+						FROM BGAB_GASCPS01$corp_cd$ A
+						LEFT OUTER JOIN
+						BGAB_GASCZ002$corp_cd$ B
+						ON A.EENO = B.XUSR_EMPNO
+					) D
+					ON A.DOC_NO = D.DOC_NO
+				) A
+				WHERE A.ROW_STAP_YMD BETWEEN #from_ymd# and #to_ymd#
+				<isNotEmpty property="eeno" prepend="and">
+					A.EENO = #eeno#
+				</isNotEmpty>
+				<isNotEmpty property="dept_cd" prepend="and">
+					A.XUSR_DEPT_CODE = #dept_cd#
+				</isNotEmpty>
+				<isNotEmpty property="firm_cd" prepend="and">
+					A.FIRM_CD = #firm_cd#
+				</isNotEmpty>
+				<isNotEmpty property="stap_cd" prepend="and">
+					(A.STAP_CD = #stap_cd# OR A.ARVP_CD = #stap_cd#)
+				</isNotEmpty>
+				<isNotEmpty property="car_type_cd" prepend="and">
+					A.CAR_TYPE_CD = #car_type_cd#
+				</isNotEmpty>
+				ORDER BY ROW_STAP_YMD DESC, STA_HHMM ASC
+			) A,
+			(SELECT @ROWNUM := 0) R
+		)K
+		WHERE RNUM BETWEEN #startRow# and #endRow#
+	</select>
+	
+	<select id="selectPsDriverInfoToRequestList" parameterClass="bgabGascps04Dto" resultClass="bgabGascps04Dto">
+		/* selectPsDriverInfoToRequestList */
+		SELECT A.DOC_NO
+			 , A.SEQ
+			 , A.DRIVER_AGENCY
+			 , A.DRIVER_TOT_AMT
+			 , A.DRIVER_AGENCY AS H_DRIVER_AGENCY
+			 , B.FIRM_NM AS FIL_NM
+			 , A.PO_NO AS F_PO_NO
+		  FROM BGAB_GASCPS04$corp_cd$ A 
+ 		  LEFT OUTER JOIN BGAB_GASCZ012$corp_cd$ B  
+    	    ON A.DRIVER_AGENCY = B.FIRM_CD
+	  	 WHERE DOC_NO = #doc_no#
+	</select>
+	
+	<insert id="insertPsDriverInfoToRequestList" parameterClass="bgabGascps04Dto">
+		/* insertPsDriverInfoToRequestList */
+		INSERT INTO BGAB_GASCPS04$corp_cd$ (
+			  DOC_NO
+			, SEQ
+			, DRIVER_AGENCY
+			, DRIVER_TOT_AMT
+			, PO_NO
+			, INP_YMD
+			, IPE_EENO
+		) VALUES (
+			  #doc_no#
+			, (select a.seq from (SELECT IFNULL(MAX(CAST(SEQ AS UNSIGNED)),0 )+1 AS seq FROM BGAB_GASCPS04$corp_cd$ WHERE DOC_NO = #doc_no#)a)
+			, #driver_agency#
+			, #driver_tot_amt#
+			, #po_no#
+			, DATE_FORMAT(SYSDATE(),'%Y%m%d')
+			, #ipe_eeno#
+		)
+	</insert>
+	
+	<update id="updatePsDriverInfoToRequestList" parameterClass="bgabGascps04Dto">
+		/* updatePsDriverInfoToRequestList */
+		UPDATE BGAB_GASCPS04$corp_cd$ SET
+			  DRIVER_AGENCY  = #driver_agency#
+			, DRIVER_TOT_AMT = #driver_tot_amt#
+			, MDFY_YMD       = DATE_FORMAT(SYSDATE(),'%Y%m%d')
+			, UPDR_EENO      = #updr_eeno#
+		WHERE DOC_NO = #doc_no#
+		  AND SEQ    = #seq#
+	</update>
+	
+	<delete id="deletePsDriverInfoToRequestList" parameterClass="bgabGascps04Dto">
+		/* deletePsDriverInfoToRequestList */
+		DELETE FROM BGAB_GASCPS04$corp_cd$
+		WHERE DOC_NO = #doc_no#
+		<isNotEqual property="seq" compareValue="0">
+		  AND SEQ    = #seq#
+		</isNotEqual>
+	</delete>
+   
+	<update id="updatePickupServicePoInfo" parameterClass="bgabGascps01Dto">
+		/* updatePickupServicePoInfo */
+		UPDATE BGAB_GASCPS01$corp_cd$
+		   SET PO_NO = #po_no#
+		     , TOT_AMT = #tot_amt#
+		 WHERE DOC_NO = #doc_no#
+	</update>
+	
+	<update id="updatePickupServiceFinalPoInfo" parameterClass="bgabGascps04Dto">
+		/* updatePickupServiceFinalPoInfo */
+		UPDATE BGAB_GASCPS04$corp_cd$
+		   SET PO_NO = #po_no#
+		 WHERE DOC_NO = #doc_no#
+		   AND SEQ = #seq#
+	</update>
+	
+	<update id="approveCancelPSToRequest" parameterClass="bgabGascps01Dto">
+		/* approveCancelPSToRequest */
+		update BGAB_GASCPS01$corp_cd$
+		set	    pgs_st_cd	= #pgs_st_cd#
+			   ,mdfy_ymd	= DATE_FORMAT( SYSDATE(),'%Y%m%d' )
+			   ,updr_eeno	= #updr_eeno#
+		where doc_no = #doc_no#
+	</update>
+	
+</sqlMap>

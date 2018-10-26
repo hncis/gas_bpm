@@ -1,0 +1,1504 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="dashBoard">
+	<select id="selectDbToDeptCombo" parameterClass="dashBoardVo" resultClass="dashBoardVo">
+	/*selectDbToDeptCombo*/
+		SELECT XORG_ORGA_C AS DEPT_CODE
+				,XORG_ORGA_E AS DEPT_NAME
+		FROM BGAB_GASCZ003$corp_cd$
+		/*WHERE XORG_DEPT_LV='4'*/
+		ORDER BY XORG_ORGA_E
+	</select>
+
+	<select id="selectDbToDashBoardForEt" resultClass="dashBoardVo" parameterClass="dashBoardVo">
+		/*selectDbToDashBoardForEt*/
+		SELECT  NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '01' THEN 1
+			                        ELSE 0
+			                   END),0) AS M01,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '02' THEN 1
+			                        ELSE 0
+			                   END),0) AS M02,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '03' THEN 1
+			                        ELSE 0
+			                   END),0) AS M03,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '04' THEN 1
+			                        ELSE 0
+			                   END),0) AS M04,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '05' THEN 1
+			                        ELSE 0
+			                   END),0) AS M05,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '06' THEN 1
+			                        ELSE 0
+			                   END),0) AS M06,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '07' THEN 1
+			                        ELSE 0
+			                   END),0) AS M07,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '08' THEN 1
+			                        ELSE 0
+			                   END),0) AS M08,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '09' THEN 1
+			                        ELSE 0
+			                   END),0) AS M09,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '10' THEN 1
+			                        ELSE 0
+			                   END),0) AS M10,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '11' THEN 1
+			                        ELSE 0
+			                   END),0) AS M11,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '12' THEN 1
+			                        ELSE 0
+			                   END),0) AS M12
+		FROM BGAB_GASCSE01$corp_cd$ SE01
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON	SE01.EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		AND SE01.PGS_ST_CD = '3'
+		AND SE01.TYPE='5'
+		<isNotEmpty property="key_year" prepend="and">
+			SE01.APPLY_DATE LIKE #key_year# || '%'
+		</isNotEmpty>
+		<isNotEmpty property="key_dept_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #key_dept_cd#
+		</isNotEmpty>
+	</select>
+	<select id="selectDbToDashBoardForVe" resultClass="dashBoardVo" parameterClass="dashBoardVo">
+		/*selectDbToDashBoardForVe*/
+		SELECT  NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '01' THEN 1
+	                        ELSE 0
+	                   END),0) AS M01,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '02' THEN 1
+			                        ELSE 0
+			                   END),0) AS M02,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '03' THEN 1
+			                        ELSE 0
+			                   END),0) AS M03,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '04' THEN 1
+			                        ELSE 0
+			                   END),0) AS M04,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '05' THEN 1
+			                        ELSE 0
+			                   END),0) AS M05,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '06' THEN 1
+			                        ELSE 0
+			                   END),0) AS M06,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '07' THEN 1
+			                        ELSE 0
+			                   END),0) AS M07,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '08' THEN 1
+			                        ELSE 0
+			                   END),0) AS M08,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '09' THEN 1
+			                        ELSE 0
+			                   END),0) AS M09,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '10' THEN 1
+			                        ELSE 0
+			                   END),0) AS M10,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '11' THEN 1
+			                        ELSE 0
+			                   END),0) AS M11,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '12' THEN 1
+			                        ELSE 0
+			                   END),0) AS M12
+		FROM BGAB_GASCSE01$corp_cd$ SE01
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON	SE01.EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		AND SE01.TYPE='1'
+		AND SE01.PGS_ST_CD = '3'
+		<isNotEmpty property="key_year" prepend="and">
+			SE01.APPLY_DATE LIKE CONCAT(#key_year#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="key_dept_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #key_dept_cd#
+		</isNotEmpty>
+	</select>
+	<select id="selectDbToDashBoardForMl" resultClass="dashBoardVo" parameterClass="dashBoardVo">
+		/*selectDbToDashBoardForMl*/
+		SELECT  NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '01' THEN 1
+	                        ELSE 0
+	                   END),0) AS M01,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '02' THEN 1
+			                        ELSE 0
+			                   END),0) AS M02,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '03' THEN 1
+			                        ELSE 0
+			                   END),0) AS M03,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '04' THEN 1
+			                        ELSE 0
+			                   END),0) AS M04,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '05' THEN 1
+			                        ELSE 0
+			                   END),0) AS M05,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '06' THEN 1
+			                        ELSE 0
+			                   END),0) AS M06,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '07' THEN 1
+			                        ELSE 0
+			                   END),0) AS M07,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '08' THEN 1
+			                        ELSE 0
+			                   END),0) AS M08,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '09' THEN 1
+			                        ELSE 0
+			                   END),0) AS M09,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '10' THEN 1
+			                        ELSE 0
+			                   END),0) AS M10,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '11' THEN 1
+			                        ELSE 0
+			                   END),0) AS M11,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '12' THEN 1
+			                        ELSE 0
+			                   END),0) AS M12
+		FROM BGAB_GASCSE01$corp_cd$ SE01
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON	SE01.EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		AND SE01.TYPE='2'
+		<isNotEmpty property="key_year" prepend="and">
+			SE01.APPLY_DATE LIKE CONCAT(#key_year#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="key_dept_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #key_dept_cd#
+		</isNotEmpty>
+	</select>
+	<select id="selectDbToDashBoardForIt" resultClass="dashBoardVo" parameterClass="dashBoardVo">
+		/*selectDbToDashBoardForIt*/
+		SELECT  NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '01' THEN 1
+	                        ELSE 0
+	                   END),0) AS M01,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '02' THEN 1
+			                        ELSE 0
+			                   END),0) AS M02,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '03' THEN 1
+			                        ELSE 0
+			                   END),0) AS M03,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '04' THEN 1
+			                        ELSE 0
+			                   END),0) AS M04,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '05' THEN 1
+			                        ELSE 0
+			                   END),0) AS M05,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '06' THEN 1
+			                        ELSE 0
+			                   END),0) AS M06,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '07' THEN 1
+			                        ELSE 0
+			                   END),0) AS M07,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '08' THEN 1
+			                        ELSE 0
+			                   END),0) AS M08,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '09' THEN 1
+			                        ELSE 0
+			                   END),0) AS M09,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '10' THEN 1
+			                        ELSE 0
+			                   END),0) AS M10,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '11' THEN 1
+			                        ELSE 0
+			                   END),0) AS M11,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '12' THEN 1
+			                        ELSE 0
+			                   END),0) AS M12
+		FROM BGAB_GASCSE01$corp_cd$ SE01
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON	SE01.EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		AND SE01.TYPE='3'
+		AND SE01.PGS_ST_CD = '3'
+		<isNotEmpty property="key_year" prepend="and">
+			SE01.APPLY_DATE LIKE CONCAT(#key_year#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="key_dept_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #key_dept_cd#
+		</isNotEmpty>
+	</select>
+	<select id="selectDbToDashBoardForFp" resultClass="dashBoardVo" parameterClass="dashBoardVo">
+		/*selectDbToDashBoardForFp*/
+		SELECT  NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '01' THEN 1
+	                        ELSE 0
+	                   END),0) AS M01,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '02' THEN 1
+			                        ELSE 0
+			                   END),0) AS M02,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '03' THEN 1
+			                        ELSE 0
+			                   END),0) AS M03,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '04' THEN 1
+			                        ELSE 0
+			                   END),0) AS M04,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '05' THEN 1
+			                        ELSE 0
+			                   END),0) AS M05,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '06' THEN 1
+			                        ELSE 0
+			                   END),0) AS M06,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '07' THEN 1
+			                        ELSE 0
+			                   END),0) AS M07,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '08' THEN 1
+			                        ELSE 0
+			                   END),0) AS M08,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '09' THEN 1
+			                        ELSE 0
+			                   END),0) AS M09,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '10' THEN 1
+			                        ELSE 0
+			                   END),0) AS M10,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '11' THEN 1
+			                        ELSE 0
+			                   END),0) AS M11,
+			        NVL(sum(
+			                   CASE WHEN TO_CHAR(TO_DATE(APPLY_DATE,'YYYY-MM-DD'), 'MM') = '12' THEN 1
+			                        ELSE 0
+			                   END),0) AS M12
+		FROM BGAB_GASCSE01$corp_cd$ SE01
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON	SE01.EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		AND SE01.TYPE='4'
+		<isNotEmpty property="key_year" prepend="and">
+			SE01.APPLY_DATE LIKE CONCAT(#key_year#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="key_dept_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #key_dept_cd#
+		</isNotEmpty>
+	</select>
+	<select id="selectDbToDashBoardForRm" resultClass="dashBoardVo" parameterClass="dashBoardVo">
+	/* selectDbToDashBoardForRm */
+		SELECT  NVL(sum(
+                  CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '01' THEN 1
+                       ELSE 0
+                  END),0) AS M01,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '02' THEN 1
+	                        ELSE 0
+	                   END),0) AS M02,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '03' THEN 1
+	                        ELSE 0
+	                   END),0) AS M03,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '04' THEN 1
+	                        ELSE 0
+	                   END),0) AS M04,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '05' THEN 1
+	                        ELSE 0
+	                   END),0) AS M05,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '06' THEN 1
+	                        ELSE 0
+	                   END),0) AS M06,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '07' THEN 1
+	                        ELSE 0
+	                   END),0) AS M07,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '08' THEN 1
+	                        ELSE 0
+	                   END),0) AS M08,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '09' THEN 1
+	                        ELSE 0
+	                   END),0) AS M09,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '10' THEN 1
+	                        ELSE 0
+	                   END),0) AS M10,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '11' THEN 1
+	                        ELSE 0
+	                   END),0) AS M11,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '12' THEN 1
+	                        ELSE 0
+	                   END),0) AS M12
+		FROM BGAB_GASCRM01$corp_cd$ RM01
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON	RM01.REQ_EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		AND RM01.PGS_ST_CD = '3'
+		<isNotEmpty property="key_year" prepend="and">
+			TO_CHAR(RM01.PTT_YMD, 'YYYYMMDD') LIKE CONCAT(#key_year#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="key_dept_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #key_dept_cd#
+		</isNotEmpty>
+		<isNotEmpty property="key_room_plant" prepend="and">
+			RM01.ROOM_PLANT = #key_room_plant#
+		</isNotEmpty>
+	</select>
+	<select id="selectDbToDashBoardForBc" resultClass="dashBoardVo" parameterClass="dashBoardVo">
+		SELECT  NVL(sum(
+                  CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYY-MM-DD'), 'MM') = '01' THEN 1
+                       ELSE 0
+                  END),0) AS M01,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYY-MM-DD'), 'MM') = '02' THEN 1
+	                        ELSE 0
+	                   END),0) AS M02,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYY-MM-DD'), 'MM') = '03' THEN 1
+	                        ELSE 0
+	                   END),0) AS M03,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYY-MM-DD'), 'MM') = '04' THEN 1
+	                        ELSE 0
+	                   END),0) AS M04,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYY-MM-DD'), 'MM') = '05' THEN 1
+	                        ELSE 0
+	                   END),0) AS M05,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYY-MM-DD'), 'MM') = '06' THEN 1
+	                        ELSE 0
+	                   END),0) AS M06,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYY-MM-DD'), 'MM') = '07' THEN 1
+	                        ELSE 0
+	                   END),0) AS M07,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYY-MM-DD'), 'MM') = '08' THEN 1
+	                        ELSE 0
+	                   END),0) AS M08,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYY-MM-DD'), 'MM') = '09' THEN 1
+	                        ELSE 0
+	                   END),0) AS M09,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYY-MM-DD'), 'MM') = '10' THEN 1
+	                        ELSE 0
+	                   END),0) AS M10,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYY-MM-DD'), 'MM') = '11' THEN 1
+	                        ELSE 0
+	                   END),0) AS M11,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYY-MM-DD'), 'MM') = '12' THEN 1
+	                        ELSE 0
+	                   END),0) AS M12
+		FROM BGAB_GASCBA02$corp_cd$ BA02
+		WHERE 1 = 1
+		AND BA02.PGS_ST_CD = '3'
+		<isNotEmpty property="key_year" prepend="and">
+			BA02.REQ_DATE LIKE CONCAT(#key_year#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="key_dept_cd" prepend="and">
+			BA02.OPS_CD = #key_dept_cd#
+		</isNotEmpty>
+	</select>
+	<select id="selectDbToDashBoardForTx" resultClass="dashBoardVo" parameterClass="dashBoardVo">
+	/* selectDbToDashBoardForTx */
+		SELECT  NVL(sum(
+                  CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYY-MM-DD'), 'MM') = '01' THEN 1
+                       ELSE 0
+                  END),0) AS M01,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'yyyy-mm-dd'), 'MM') = '02' THEN 1
+	                        ELSE 0
+	                   END),0) AS M02,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'yyyy-mm-dd'), 'MM') = '03' THEN 1
+	                        ELSE 0
+	                   END),0) AS M03,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'yyyy-mm-dd'), 'MM') = '04' THEN 1
+	                        ELSE 0
+	                   END),0) AS M04,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'yyyy-mm-dd'), 'MM') = '05' THEN 1
+	                        ELSE 0
+	                   END),0) AS M05,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'yyyy-mm-dd'), 'MM') = '06' THEN 1
+	                        ELSE 0
+	                   END),0) AS M06,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'yyyy-mm-dd'), 'MM') = '07' THEN 1
+	                        ELSE 0
+	                   END),0) AS M07,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'yyyy-mm-dd'), 'MM') = '08' THEN 1
+	                        ELSE 0
+	                   END),0) AS M08,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'yyyy-mm-dd'), 'MM') = '09' THEN 1
+	                        ELSE 0
+	                   END),0) AS M09,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'yyyy-mm-dd'), 'MM') = '10' THEN 1
+	                        ELSE 0
+	                   END),0) AS M10,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'yyyy-mm-dd'), 'MM') = '11' THEN 1
+	                        ELSE 0
+	                   END),0) AS M11,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'yyyy-mm-dd'), 'MM') = '12' THEN 1
+	                        ELSE 0
+	                   END),0) AS M12
+		FROM BGAB_GASCTX02$corp_cd$ TX01
+		WHERE 1 = 1
+		AND TX01.PGS_ST_CD = '3'
+		<isNotEmpty property="key_year" prepend="and">
+			TX01.REQ_DATE LIKE CONCAT(#key_year#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="key_dept_cd" prepend="and">
+			TX01.OPS_CD = #key_dept_cd#
+		</isNotEmpty>
+	</select>
+	<select id="selectDbToDashBoardForTw" resultClass="dashBoardVo" parameterClass="dashBoardVo">
+		/*selectDbToDashBoardForTw*/
+	    SELECT  NVL(sum(
+	                   CASE WHEN TO_CHAR(UNIF_PTT_YMD, 'MM') = '01' THEN 1
+	                        ELSE 0
+	                   END),0) AS M01,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(UNIF_PTT_YMD, 'MM') = '02' THEN 1
+	                        ELSE 0
+	                   END),0) AS M02,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(UNIF_PTT_YMD, 'MM') = '03' THEN 1
+	                        ELSE 0
+	                   END),0) AS M03,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(UNIF_PTT_YMD, 'MM') = '04' THEN 1
+	                        ELSE 0
+	                   END),0) AS M04,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(UNIF_PTT_YMD, 'MM') = '05' THEN 1
+	                        ELSE 0
+	                   END),0) AS M05,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(UNIF_PTT_YMD, 'MM') = '06' THEN 1
+	                        ELSE 0
+	                   END),0) AS M06,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(UNIF_PTT_YMD, 'MM') = '07' THEN 1
+	                        ELSE 0
+	                   END),0) AS M07,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(UNIF_PTT_YMD, 'MM') = '08' THEN 1
+	                        ELSE 0
+	                   END),0) AS M08,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(UNIF_PTT_YMD, 'MM') = '09' THEN 1
+	                        ELSE 0
+	                   END),0) AS M09,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(UNIF_PTT_YMD, 'MM') = '10' THEN 1
+	                        ELSE 0
+	                   END),0) AS M10,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(UNIF_PTT_YMD, 'MM') = '11' THEN 1
+	                        ELSE 0
+	                   END),0) AS M11,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(UNIF_PTT_YMD, 'MM') = '12' THEN 1
+	                        ELSE 0
+	                   END),0) AS M12
+		FROM BGAB_GASCAF01$corp_cd$ AF01
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON	AF01.EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		AND UAPS1_CD = '3'
+		<isNotEmpty property="key_year" prepend="and">
+			TO_CHAR(AF01.UNIF_PTT_YMD,'YYYY-MM-DD') LIKE CONCAT(#key_year#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="key_dept_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #key_dept_cd#
+		</isNotEmpty>
+	</select>
+	<select id="selectDbToDashBoardForSb" resultClass="dashBoardVo" parameterClass="dashBoardVo">
+		/*selectDbToDashBoardForSb*/
+	    SELECT  NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '01' THEN 1
+	                        ELSE 0
+	                   END),0) AS M01,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '02' THEN 1
+	                        ELSE 0
+	                   END),0) AS M02,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '03' THEN 1
+	                        ELSE 0
+	                   END),0) AS M03,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '04' THEN 1
+	                        ELSE 0
+	                   END),0) AS M04,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '05' THEN 1
+	                        ELSE 0
+	                   END),0) AS M05,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '06' THEN 1
+	                        ELSE 0
+	                   END),0) AS M06,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '07' THEN 1
+	                        ELSE 0
+	                   END),0) AS M07,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '08' THEN 1
+	                        ELSE 0
+	                   END),0) AS M08,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '09' THEN 1
+	                        ELSE 0
+	                   END),0) AS M09,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '10' THEN 1
+	                        ELSE 0
+	                   END),0) AS M10,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '11' THEN 1
+	                        ELSE 0
+	                   END),0) AS M11,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '12' THEN 1
+	                        ELSE 0
+	                   END),0) AS M12
+		FROM BGAB_GASCSB01$corp_cd$ SB01
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON	SB01.EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		  AND SB01.PGS_ST_CD = '3'
+		<isNotEmpty property="key_year" prepend="and">
+			TO_CHAR(SB01.PTT_YMD,'YYYYMMDD') LIKE CONCAT(#key_year#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="key_dept_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #key_dept_cd#
+		</isNotEmpty>
+	</select>
+
+	<select id="selectDbToDashBoardForBt" resultClass="dashBoardVo" parameterClass="dashBoardVo">
+	   	/*selectDbToDashBoardForBt*/
+	    SELECT  NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '01' THEN 1
+	                        ELSE 0
+	                   END),0) AS M01,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '02' THEN 1
+	                        ELSE 0
+	                   END),0) AS M02,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '03' THEN 1
+	                        ELSE 0
+	                   END),0) AS M03,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '04' THEN 1
+	                        ELSE 0
+	                   END),0) AS M04,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '05' THEN 1
+	                        ELSE 0
+	                   END),0) AS M05,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '06' THEN 1
+	                        ELSE 0
+	                   END),0) AS M06,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '07' THEN 1
+	                        ELSE 0
+	                   END),0) AS M07,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '08' THEN 1
+	                        ELSE 0
+	                   END),0) AS M08,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '09' THEN 1
+	                        ELSE 0
+	                   END),0) AS M09,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '10' THEN 1
+	                        ELSE 0
+	                   END),0) AS M10,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '11' THEN 1
+	                        ELSE 0
+	                   END),0) AS M11,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '12' THEN 1
+	                        ELSE 0
+	                   END),0) AS M12
+		FROM BGAB_GASCBT01$corp_cd$ BT01
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON	BT01.EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		AND BT01.PGS_ST_CD = '3'
+		<isNotEmpty property="key_year" prepend="and">
+			TO_CHAR(BT01.PTT_YMD, 'YYYYMMDD') LIKE CONCAT(#key_year#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="key_dept_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #key_dept_cd#
+		</isNotEmpty>
+	</select>
+
+	<select id="selectDbToDashBoardForCc" resultClass="dashBoardVo" parameterClass="dashBoardVo">
+		/*"selectDbToDashBoardForBv"*/
+		SELECT  NVL(sum(
+		                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '01' THEN 1
+		                        ELSE 0
+		                   END),0) AS M01,
+		        NVL(sum(
+		                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '02' THEN 1
+		                        ELSE 0
+		                   END),0) AS M02,
+		        NVL(sum(
+		                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '03' THEN 1
+		                        ELSE 0
+		                   END),0) AS M03,
+		        NVL(sum(
+		                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '04' THEN 1
+		                        ELSE 0
+		                   END),0) AS M04,
+		        NVL(sum(
+		                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '05' THEN 1
+		                        ELSE 0
+		                   END),0) AS M05,
+		        NVL(sum(
+		                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '06' THEN 1
+		                        ELSE 0
+		                   END),0) AS M06,
+		        NVL(sum(
+		                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '07' THEN 1
+		                        ELSE 0
+		                   END),0) AS M07,
+		        NVL(sum(
+		                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '08' THEN 1
+		                        ELSE 0
+		                   END),0) AS M08,
+		        NVL(sum(
+		                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '09' THEN 1
+		                        ELSE 0
+		                   END),0) AS M09,
+		        NVL(sum(
+		                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '10' THEN 1
+		                        ELSE 0
+		                   END),0) AS M10,
+		        NVL(sum(
+		                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '11' THEN 1
+		                        ELSE 0
+		                   END),0) AS M11,
+		        NVL(sum(
+		                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '12' THEN 1
+		                        ELSE 0
+		                   END),0) AS M12
+		FROM BGAB_GASCBV02$corp_cd$ BV02
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON	BV02.EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		AND BV02.PGS_ST_CD = '3'
+		<isNotEmpty property="key_year" prepend="and">
+			TO_CHAR(PTT_YMD,'YYYYMMDD') LIKE CONCAT(#key_year#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="key_dept_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #key_dept_cd#
+		</isNotEmpty>
+	</select>
+
+	<select id="selectDbToDashBoardForPs" resultClass="dashBoardVo" parameterClass="dashBoardVo">
+		/*selectDbToDashBoardForPs*/
+		SELECT  NVL(sum(
+	                 CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '01' THEN 1
+	                      ELSE 0
+	                 END),0) AS M01,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '02' THEN 1
+	                        ELSE 0
+	                   END),0) AS M02,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '03' THEN 1
+	                        ELSE 0
+	                   END),0) AS M03,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '04' THEN 1
+	                        ELSE 0
+	                   END),0) AS M04,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '05' THEN 1
+	                        ELSE 0
+	                   END),0) AS M05,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '06' THEN 1
+	                        ELSE 0
+	                   END),0) AS M06,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '07' THEN 1
+	                        ELSE 0
+	                   END),0) AS M07,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '08' THEN 1
+	                        ELSE 0
+	                   END),0) AS M08,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '09' THEN 1
+	                        ELSE 0
+	                   END),0) AS M09,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '10' THEN 1
+	                        ELSE 0
+	                   END),0) AS M10,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '11' THEN 1
+	                        ELSE 0
+	                   END),0) AS M11,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '12' THEN 1
+	                        ELSE 0
+	                   END),0) AS M12
+		FROM BGAB_GASCPS01$corp_cd$ PS01
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON	PS01.EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		AND PS01.PGS_ST_CD = '3'
+		<isNotEmpty property="key_year" prepend="and">
+			TO_CHAR(PTT_YMD, 'YYYYMMDD') LIKE CONCAT(#key_year#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="key_dept_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #key_dept_cd#
+		</isNotEmpty>
+   </select>
+
+   <select id="selectDbToDashBoardForGs" resultClass="dashBoardVo" parameterClass="dashBoardVo">
+   		/*selectDbToDashBoardForGs*/
+		SELECT  NVL(sum(
+	                 CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '01' THEN 1
+	                      ELSE 0
+	                 END),0) AS M01,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '02' THEN 1
+	                        ELSE 0
+	                   END),0) AS M02,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '03' THEN 1
+	                        ELSE 0
+	                   END),0) AS M03,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '04' THEN 1
+	                        ELSE 0
+	                   END),0) AS M04,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '05' THEN 1
+	                        ELSE 0
+	                   END),0) AS M05,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '06' THEN 1
+	                        ELSE 0
+	                   END),0) AS M06,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '07' THEN 1
+	                        ELSE 0
+	                   END),0) AS M07,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '08' THEN 1
+	                        ELSE 0
+	                   END),0) AS M08,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '09' THEN 1
+	                        ELSE 0
+	                   END),0) AS M09,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '10' THEN 1
+	                        ELSE 0
+	                   END),0) AS M10,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '11' THEN 1
+	                        ELSE 0
+	                   END),0) AS M11,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '12' THEN 1
+	                        ELSE 0
+	                   END),0) AS M12
+		FROM BGAB_GASCGS01$corp_cd$ GS01
+		LEFT OUTER JOIN BGAB_GASCGS03$corp_cd$ GS03                    
+		ON GS01.DOC_NO = GS03.DOC_NO                 
+		WHERE 1 = 1
+		AND GS03.PGS_ST_CD = '3'
+		<isNotEmpty property="key_year" prepend="and">
+			TO_CHAR(GS01.PTT_YMD,'YYYYMMDD') LIKE CONCAT(#key_year#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="key_dept_cd" prepend="and">
+			GS01.DEPT_CD = #key_dept_cd#
+		</isNotEmpty>
+   </select>
+
+   <select id="selectDbToDashBoardForOs" resultClass="dashBoardVo" parameterClass="dashBoardVo">
+   		/*selectDbToDashBoardForOs*/
+		SELECT  NVL(sum(
+	                 CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '01' THEN 1
+	                      ELSE 0
+	                 END),0) AS M01,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '02' THEN 1
+	                        ELSE 0
+	                   END),0) AS M02,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '03' THEN 1
+	                        ELSE 0
+	                   END),0) AS M03,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '04' THEN 1
+	                        ELSE 0
+	                   END),0) AS M04,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '05' THEN 1
+	                        ELSE 0
+	                   END),0) AS M05,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '06' THEN 1
+	                        ELSE 0
+	                   END),0) AS M06,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '07' THEN 1
+	                        ELSE 0
+	                   END),0) AS M07,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '08' THEN 1
+	                        ELSE 0
+	                   END),0) AS M08,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '09' THEN 1
+	                        ELSE 0
+	                   END),0) AS M09,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '10' THEN 1
+	                        ELSE 0
+	                   END),0) AS M10,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '11' THEN 1
+	                        ELSE 0
+	                   END),0) AS M11,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '12' THEN 1
+	                        ELSE 0
+	                   END),0) AS M12
+		FROM BGAB_GASCOS01$corp_cd$ GS01
+		LEFT OUTER JOIN BGAB_GASCOS03$corp_cd$ GS03                    
+		ON GS01.DOC_NO = GS03.DOC_NO                 
+		WHERE 1 = 1
+		AND GS03.PGS_ST_CD = '3'
+		<isNotEmpty property="key_year" prepend="and">
+			TO_CHAR(GS01.PTT_YMD,'YYYYMMDD') LIKE CONCAT(#key_year#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="key_dept_cd" prepend="and">
+			GS01.DEPT_CD = #key_dept_cd#
+		</isNotEmpty>
+    </select>
+	<select id="selectDbToDashBoardForPo" resultClass="dashBoardVo" parameterClass="dashBoardVo">
+		SELECT  NVL(sum(
+                  CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '01' THEN 1
+                       ELSE 0
+                  END),0) AS M01,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '02' THEN 1
+	                        ELSE 0
+	                   END),0) AS M02,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '03' THEN 1
+	                        ELSE 0
+	                   END),0) AS M03,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '04' THEN 1
+	                        ELSE 0
+	                   END),0) AS M04,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '05' THEN 1
+	                        ELSE 0
+	                   END),0) AS M05,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '06' THEN 1
+	                        ELSE 0
+	                   END),0) AS M06,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '07' THEN 1
+	                        ELSE 0
+	                   END),0) AS M07,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '08' THEN 1
+	                        ELSE 0
+	                   END),0) AS M08,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '09' THEN 1
+	                        ELSE 0
+	                   END),0) AS M09,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '10' THEN 1
+	                        ELSE 0
+	                   END),0) AS M10,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '11' THEN 1
+	                        ELSE 0
+	                   END),0) AS M11,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '12' THEN 1
+	                        ELSE 0
+	                   END),0) AS M12
+		FROM BGAB_GASCPO01$corp_cd$ PO01
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON	PO01.REQ_EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		<isNotEmpty property="key_year" prepend="and">
+			PO01.PTT_YMD LIKE CONCAT(#key_year#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="key_dept_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #key_dept_cd#
+		</isNotEmpty>
+	</select>
+	<select id="selectDbToDashBoardForTt" resultClass="dashBoardVo" parameterClass="dashBoardVo">
+		SELECT  NVL(sum(
+                  CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '01' THEN 1
+                       ELSE 0
+                  END),0) AS M01,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '02' THEN 1
+	                        ELSE 0
+	                   END),0) AS M02,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '03' THEN 1
+	                        ELSE 0
+	                   END),0) AS M03,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '04' THEN 1
+	                        ELSE 0
+	                   END),0) AS M04,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '05' THEN 1
+	                        ELSE 0
+	                   END),0) AS M05,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '06' THEN 1
+	                        ELSE 0
+	                   END),0) AS M06,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '07' THEN 1
+	                        ELSE 0
+	                   END),0) AS M07,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '08' THEN 1
+	                        ELSE 0
+	                   END),0) AS M08,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '09' THEN 1
+	                        ELSE 0
+	                   END),0) AS M09,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '10' THEN 1
+	                        ELSE 0
+	                   END),0) AS M10,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '11' THEN 1
+	                        ELSE 0
+	                   END),0) AS M11,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(PTT_YMD, 'MM') = '12' THEN 1
+	                        ELSE 0
+	                   END),0) AS M12
+		FROM BGAB_GASCTM01$corp_cd$ TM01
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON	TM01.EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		<isNotEmpty property="key_year" prepend="and">
+			TM01.PTT_YMD LIKE CONCAT(#key_year#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="key_dept_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #key_dept_cd#
+		</isNotEmpty>
+	</select>
+	<select id="selectDbToDashBoardForCe" resultClass="dashBoardVo" parameterClass="dashBoardVo">
+		/* selectDbToDashBoardForCe */
+		SELECT  NVL(sum(
+                  CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYY-MM-DD'), 'MM') = '01' THEN 1
+                       ELSE 0
+                  END),0) AS M01,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYY-MM-DD'), 'MM') = '02' THEN 1
+	                        ELSE 0
+	                   END),0) AS M02,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYY-MM-DD'), 'MM') = '03' THEN 1
+	                        ELSE 0
+	                   END),0) AS M03,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYY-MM-DD'), 'MM') = '04' THEN 1
+	                        ELSE 0
+	                   END),0) AS M04,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYY-MM-DD'), 'MM') = '05' THEN 1
+	                        ELSE 0
+	                   END),0) AS M05,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYY-MM-DD'), 'MM') = '06' THEN 1
+	                        ELSE 0
+	                   END),0) AS M06,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYY-MM-DD'), 'MM') = '07' THEN 1
+	                        ELSE 0
+	                   END),0) AS M07,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYY-MM-DD'), 'MM') = '08' THEN 1
+	                        ELSE 0
+	                   END),0) AS M08,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYY-MM-DD'), 'MM') = '09' THEN 1
+	                        ELSE 0
+	                   END),0) AS M09,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYY-MM-DD'), 'MM') = '10' THEN 1
+	                        ELSE 0
+	                   END),0) AS M10,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYY-MM-DD'), 'MM') = '11' THEN 1
+	                        ELSE 0
+	                   END),0) AS M11,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYY-MM-DD'), 'MM') = '12' THEN 1
+	                        ELSE 0
+	                   END),0) AS M12
+		FROM BGAB_GASCCE01$corp_cd$ TM01
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON	TM01.EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		AND TM01.PGS_ST_CD = '3'
+		<isNotEmpty property="key_year" prepend="and">
+			TM01.REQ_DATE LIKE CONCAT(#key_year#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="key_dept_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #key_dept_cd#
+		</isNotEmpty>
+	</select>
+	<select id="selectDbToDashBoardForVl" resultClass="dashBoardVo" parameterClass="dashBoardVo">
+		SELECT  NVL(sum(
+                  CASE WHEN TO_CHAR(REG_YMD, 'MM') = '01' THEN 1
+                       ELSE 0
+                  END),0) AS M01,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REG_YMD, 'MM') = '02' THEN 1
+	                        ELSE 0
+	                   END),0) AS M02,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REG_YMD, 'MM') = '03' THEN 1
+	                        ELSE 0
+	                   END),0) AS M03,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REG_YMD, 'MM') = '04' THEN 1
+	                        ELSE 0
+	                   END),0) AS M04,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REG_YMD, 'MM') = '05' THEN 1
+	                        ELSE 0
+	                   END),0) AS M05,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REG_YMD, 'MM') = '06' THEN 1
+	                        ELSE 0
+	                   END),0) AS M06,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REG_YMD, 'MM') = '07' THEN 1
+	                        ELSE 0
+	                   END),0) AS M07,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REG_YMD, 'MM') = '08' THEN 1
+	                        ELSE 0
+	                   END),0) AS M08,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REG_YMD, 'MM') = '09' THEN 1
+	                        ELSE 0
+	                   END),0) AS M09,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REG_YMD, 'MM') = '10' THEN 1
+	                        ELSE 0
+	                   END),0) AS M10,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REG_YMD, 'MM') = '11' THEN 1
+	                        ELSE 0
+	                   END),0) AS M11,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REG_YMD, 'MM') = '12' THEN 1
+	                        ELSE 0
+	                   END),0) AS M12
+		FROM BGAB_GASCVL01$corp_cd$ TM01
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON	TM01.EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		AND TM01.PGS_ST_CD = '3'
+		<isNotEmpty property="key_year" prepend="and">
+			TO_CHAR(TM01.REG_YMD,'YYYYMMDD') LIKE CONCAT(#key_year#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="key_dept_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #key_dept_cd#
+		</isNotEmpty>
+	</select>
+	<select id="selectDbToDashBoardForRc" resultClass="dashBoardVo" parameterClass="dashBoardVo">
+		/* selectDbToDashBoardForRc */
+		SELECT  NVL(sum(
+                  CASE WHEN TO_CHAR(REQ_YMD, 'MM') = '01' THEN 1
+                       ELSE 0
+                  END),0) AS M01,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REQ_YMD, 'MM') = '02' THEN 1
+	                        ELSE 0
+	                   END),0) AS M02,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REQ_YMD, 'MM') = '03' THEN 1
+	                        ELSE 0
+	                   END),0) AS M03,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REQ_YMD, 'MM') = '04' THEN 1
+	                        ELSE 0
+	                   END),0) AS M04,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REQ_YMD, 'MM') = '05' THEN 1
+	                        ELSE 0
+	                   END),0) AS M05,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REQ_YMD, 'MM') = '06' THEN 1
+	                        ELSE 0
+	                   END),0) AS M06,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REQ_YMD, 'MM') = '07' THEN 1
+	                        ELSE 0
+	                   END),0) AS M07,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REQ_YMD, 'MM') = '08' THEN 1
+	                        ELSE 0
+	                   END),0) AS M08,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REQ_YMD, 'MM') = '09' THEN 1
+	                        ELSE 0
+	                   END),0) AS M09,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REQ_YMD, 'MM') = '10' THEN 1
+	                        ELSE 0
+	                   END),0) AS M10,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REQ_YMD, 'MM') = '11' THEN 1
+	                        ELSE 0
+	                   END),0) AS M11,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REQ_YMD, 'MM') = '12' THEN 1
+	                        ELSE 0
+	                   END),0) AS M12
+		FROM BGAB_GASCRC06$corp_cd$ RC06
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON	RC06.EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		AND RC06.PGS_ST_CD = '3' 
+		<isNotEmpty property="key_year" prepend="and">
+			TO_CHAR(RC06.REQ_YMD,'YYYY-MM-DD') LIKE CONCAT(#key_year#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="key_dept_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #key_dept_cd#
+		</isNotEmpty>
+	</select>
+	<select id="selectDbToDashBoardForTr" resultClass="dashBoardVo" parameterClass="dashBoardVo">
+		/*selectDbToDashBoardForTr*/
+		SELECT  NVL(sum(
+                  CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYYMMDD'), 'MM') = '01' THEN 1
+                       ELSE 0
+                  END),0) AS M01,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYYMMDD'), 'MM') = '02' THEN 1
+	                        ELSE 0
+	                   END),0) AS M02,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYYMMDD'), 'MM') = '03' THEN 1
+	                        ELSE 0
+	                   END),0) AS M03,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYYMMDD'), 'MM') = '04' THEN 1
+	                        ELSE 0
+	                   END),0) AS M04,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYYMMDD'), 'MM') = '05' THEN 1
+	                        ELSE 0
+	                   END),0) AS M05,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYYMMDD'), 'MM') = '06' THEN 1
+	                        ELSE 0
+	                   END),0) AS M06,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYYMMDD'), 'MM') = '07' THEN 1
+	                        ELSE 0
+	                   END),0) AS M07,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYYMMDD'), 'MM') = '08' THEN 1
+	                        ELSE 0
+	                   END),0) AS M08,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYYMMDD'), 'MM') = '09' THEN 1
+	                        ELSE 0
+	                   END),0) AS M09,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYYMMDD'), 'MM') = '10' THEN 1
+	                        ELSE 0
+	                   END),0) AS M10,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYYMMDD'), 'MM') = '11' THEN 1
+	                        ELSE 0
+	                   END),0) AS M11,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(TO_DATE(REQ_DATE,'YYYYMMDD'), 'MM') = '12' THEN 1
+	                        ELSE 0
+	                   END),0) AS M12
+		FROM BGAB_GASCTR01$corp_cd$ TR01
+		WHERE 1 = 1
+		AND TR01.PGS_ST_CD = '3'
+		<isNotEmpty property="key_year" prepend="and">
+			TR01.REQ_DATE LIKE CONCAT(#key_year#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="key_dept_cd" prepend="and">
+			TR01.OPS_CD = #key_dept_cd#
+		</isNotEmpty>
+	</select>
+	<select id="selectDbToDashBoardForLv" resultClass="dashBoardVo" parameterClass="dashBoardVo">
+		/* selectDbToDashBoardForLv */
+		SELECT  NVL(sum(
+                  CASE WHEN TO_CHAR(REQ_YMD, 'MM') = '01' THEN 1
+                       ELSE 0
+                  END),0) AS M01,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REQ_YMD, 'MM') = '02' THEN 1
+	                        ELSE 0
+	                   END),0) AS M02,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REQ_YMD, 'MM') = '03' THEN 1
+	                        ELSE 0
+	                   END),0) AS M03,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REQ_YMD, 'MM') = '04' THEN 1
+	                        ELSE 0
+	                   END),0) AS M04,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REQ_YMD, 'MM') = '05' THEN 1
+	                        ELSE 0
+	                   END),0) AS M05,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REQ_YMD, 'MM') = '06' THEN 1
+	                        ELSE 0
+	                   END),0) AS M06,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REQ_YMD, 'MM') = '07' THEN 1
+	                        ELSE 0
+	                   END),0) AS M07,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REQ_YMD, 'MM') = '08' THEN 1
+	                        ELSE 0
+	                   END),0) AS M08,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REQ_YMD, 'MM') = '09' THEN 1
+	                        ELSE 0
+	                   END),0) AS M09,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REQ_YMD, 'MM') = '10' THEN 1
+	                        ELSE 0
+	                   END),0) AS M10,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REQ_YMD, 'MM') = '11' THEN 1
+	                        ELSE 0
+	                   END),0) AS M11,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REQ_YMD, 'MM') = '12' THEN 1
+	                        ELSE 0
+	                   END),0) AS M12
+		FROM BGAB_GASCLV01$corp_cd$ LV01
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON	LV01.EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		AND LV01.PGS_ST_CD = '3'
+		<isNotEmpty property="key_year" prepend="and">
+			TO_CHAR(LV01.REQ_YMD,'YYYYMMDD') LIKE CONCAT(#key_year#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="key_dept_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #key_dept_cd#
+		</isNotEmpty>
+	</select>
+	<select id="selectDbToDashBoardForFc" resultClass="dashBoardVo" parameterClass="dashBoardVo">
+		/* selectDbToDashBoardForFc */
+		SELECT  NVL(sum(
+                  CASE WHEN TO_CHAR(REG_YMD, 'MM') = '01' THEN 1
+                       ELSE 0
+                  END),0) AS M01,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REG_YMD, 'MM') = '02' THEN 1
+	                        ELSE 0
+	                   END),0) AS M02,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REG_YMD, 'MM') = '03' THEN 1
+	                        ELSE 0
+	                   END),0) AS M03,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REG_YMD, 'MM') = '04' THEN 1
+	                        ELSE 0
+	                   END),0) AS M04,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REG_YMD, 'MM') = '05' THEN 1
+	                        ELSE 0
+	                   END),0) AS M05,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REG_YMD, 'MM') = '06' THEN 1
+	                        ELSE 0
+	                   END),0) AS M06,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REG_YMD, 'MM') = '07' THEN 1
+	                        ELSE 0
+	                   END),0) AS M07,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REG_YMD, 'MM') = '08' THEN 1
+	                        ELSE 0
+	                   END),0) AS M08,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REG_YMD, 'MM') = '09' THEN 1
+	                        ELSE 0
+	                   END),0) AS M09,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REG_YMD, 'MM') = '10' THEN 1
+	                        ELSE 0
+	                   END),0) AS M10,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REG_YMD, 'MM') = '11' THEN 1
+	                        ELSE 0
+	                   END),0) AS M11,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(REG_YMD, 'MM') = '12' THEN 1
+	                        ELSE 0
+	                   END),0) AS M12
+		FROM BGAB_GASCFC01$corp_cd$ LV01
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON	LV01.EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		AND LV01.PGS_ST_CD = '3'
+		<isNotEmpty property="key_year" prepend="and">
+			TO_CHAR(LV01.REG_YMD, 'YYYYMMDD') LIKE CONCAT(#key_year#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="key_dept_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #key_dept_cd#
+		</isNotEmpty>
+	</select>
+	<select id="selectDbToDashBoardForFj" resultClass="dashBoardVo" parameterClass="dashBoardVo">
+		/* selectDbToDashBoardForFj */
+		SELECT  NVL(sum(
+                  CASE WHEN TO_CHAR(INP_YMD, 'MM') = '01' THEN 1
+                       ELSE 0
+                  END),0) AS M01,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(INP_YMD, 'MM') = '02' THEN 1
+	                        ELSE 0
+	                   END),0) AS M02,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(INP_YMD, 'MM') = '03' THEN 1
+	                        ELSE 0
+	                   END),0) AS M03,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(INP_YMD, 'MM') = '04' THEN 1
+	                        ELSE 0
+	                   END),0) AS M04,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(INP_YMD, 'MM') = '05' THEN 1
+	                        ELSE 0
+	                   END),0) AS M05,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(INP_YMD, 'MM') = '06' THEN 1
+	                        ELSE 0
+	                   END),0) AS M06,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(INP_YMD, 'MM') = '07' THEN 1
+	                        ELSE 0
+	                   END),0) AS M07,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(INP_YMD, 'MM') = '08' THEN 1
+	                        ELSE 0
+	                   END),0) AS M08,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(INP_YMD, 'MM') = '09' THEN 1
+	                        ELSE 0
+	                   END),0) AS M09,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(INP_YMD, 'MM') = '10' THEN 1
+	                        ELSE 0
+	                   END),0) AS M10,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(INP_YMD, 'MM') = '11' THEN 1
+	                        ELSE 0
+	                   END),0) AS M11,
+	        NVL(sum(
+	                   CASE WHEN TO_CHAR(INP_YMD, 'MM') = '12' THEN 1
+	                        ELSE 0
+	                   END),0) AS M12
+		FROM BGAB_GASCFJ01$corp_cd$ LV01
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON	LV01.EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		AND LV01.PGS_ST_CD = '3'
+		<isNotEmpty property="key_year" prepend="and">
+			TO_CHAR(LV01.INP_YMD, 'YYYYMMDD') LIKE CONCAT(#key_year#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="key_dept_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #key_dept_cd#
+		</isNotEmpty>
+	</select>
+</sqlMap>

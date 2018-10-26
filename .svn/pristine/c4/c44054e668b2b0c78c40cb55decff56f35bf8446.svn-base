@@ -1,0 +1,336 @@
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page import="com.hncis.common.application.SessionInfo" %>
+<%@ page import="com.hncis.common.application.CommonGasc" %>
+<%@ page import="com.hncis.common.exception.impl.SessionException" %>
+<%@ page import="com.hncis.common.util.*" %>
+<%@ page import="java.util.List" %>
+<%@ page errorPage = "/WEB-INF/view/sessionError.gas" %>
+<!DOCTYPE html>
+
+<%
+	String ctxPath = request.getContextPath();
+	String ymd = CurrentDateTime.getDate1();
+%> 
+
+<html> 
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>Entrance Mgmt.</title>
+		<link rel="stylesheet" type="text/css" media="screen" href="<%=ctxPath%>/script/css/jquery-ui-1.8.18.custom.css" />    
+		<link rel="stylesheet" type="text/css" media="screen" href="<%=ctxPath%>/script/css/ui.jqgrid.css" />
+		<link rel='stylesheet' type="text/css" media="screen" href="<%=ctxPath%>/script/css/global_sub.css"/>
+		<link rel='stylesheet' type="text/css" media="screen" href="<%=ctxPath%>/script/css/hncis_common.css" />
+		<link rel="stylesheet" type="text/css" media="screen" href="<%=ctxPath%>/script/css/jquery.ui.datepicker.css" />
+		 
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/i18n/grid.locale-en.js"></script>
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery.jqGrid.min.js"></script> 
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery-groupTable.js"></script> 
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery.ui.datepicker.js"></script>
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery-menu.js"></script>
+		<script type="text/javascript" src='<%=ctxPath%>/script/js/jsonUtil.js'></script>
+		<script type="text/javascript" src='<%=ctxPath%>/script/js/common.js'></script> 
+		
+		<script>
+			var ctxPath = "<%=ctxPath%>"; 
+		</script>
+	</head>
+	<body>
+		<div id="wrap">
+	    	<form name="frm" id="frm">
+		        <div id="contents_wrap" class="any_page">
+		        	<%-- <%@ include file="../include/hncis_left.gas"%> --%>
+		            <div id="contents">
+		            	<div class="sub_title_area">
+		                	<h3 class="sub_title fl">PO CREATE</h3>
+		               	</div>
+		                <div class="btn_area">
+		                    <ul class="btns">
+		                        <li><a href="javascript:retrieve('create');">CREATE<span></span></a></li>
+		                    </ul>
+		                </div>
+		                <div class="search_area">
+		                	<table>
+		                        <colgroup>
+		                        	<col style="width:15%;" />
+		                            <col style="width:35%;" />
+		                            <col style="width:15%;" />
+		                            <col style="width:35%;" />
+		                        </colgroup>
+		                        <tbody>
+		                            <tr>
+										<th>DATE</th>
+										<td>
+											<input id="i_date" type="text" style="width:80%" value="<%=CurrentDateTime.getDate()%>">
+										</td> 
+										<th>VENDOR_CODE</th>
+										<td>
+											<input id="i_vendor_code" type="text" style="width:80%" value="AQHT">
+										</td> 
+									</tr>
+									<tr>
+										<th>VENDOR_NAME</th>
+										<td>
+											<input id="i_vendor_name" type="text" style="width:80%" value="">
+										</td> 
+										<th>PUR_ORG_CODE</th>
+										<td>
+											<input id="i_pur_org_code" type="text" style="width:80%" value="H301">
+										</td> 
+									</tr>
+									<tr>
+										<th>PUR_GROUP</th>
+										<td>
+											<input id="i_pur_group" type="text" style="width:80%" value="B11">
+										</td> 
+										<th>COMPANY_CODE</th>
+										<td>
+											<input id="i_company_code" type="text" style="width:80%" value="H301">
+										</td> 
+									</tr>
+									<tr>
+										<th>ACCOUNT_CATEGORY(K/F/P)</th>
+										<td>
+											<input id="i_account_category" type="text" style="width:80%" value="K">
+										</td> 
+										<th>MATERIAL_CODE</th>
+										<td>
+											<input id="i_material_code" type="text" style="width:80%" value="GL68020120630A002">
+										</td> 
+									</tr>
+									<tr>
+										<th>MATERIAL_DESC</th>
+										<td>
+											<input id="i_material_desc" type="text" style="width:80%" value="">
+										</td> 
+										<th>MAT_GROUP</th>
+										<td>
+											<input id="i_mat_group" type="text" style="width:80%" value="H1_00002">
+										</td> 
+									</tr>
+									<tr>
+										<th>QTY</th>
+										<td>
+											<input id="i_qty" type="text" style="width:80%" value="1">
+										</td> 
+										<th>PRICE</th>
+										<td>
+											<input id="i_price" type="text" style="width:80%" value="1000">
+										</td> 
+									</tr>
+									<tr>
+										<th>DELIVERY_DATE</th>
+										<td>
+											<input id="i_delivery_date" type="text" style="width:80%" value="<%=CurrentDateTime.getDate()%>">
+										</td> 
+										<th>COST_CD</th>
+										<td>
+											<input id="i_cost_cd" type="text" style="width:80%" value="H4200">
+										</td> 
+									</tr>
+									<tr>
+										<th>WBS_CODE</th>
+										<td>
+											<input id="i_wbs_cd" type="text" style="width:80%" value="">
+										</td> 
+										<th>IO_CODE</th>
+										<td>
+											<input id="i_io_cd" type="text" style="width:80%" value="">
+										</td> 
+									</tr>
+									<tr>
+										<th>ACCOUNT_CODE</th>
+										<td>
+											<input id="i_account_code" type="text" style="width:80%" value="51021010">
+										</td> 
+										<th>WRKPLC_CD</th>
+										<td>
+											<input id="i_wrkplc_cd" type="text" style="width:80%" value="HVD1">
+										</td> 
+									</tr>
+									<tr>
+										<th>USN</th>
+										<td>
+											<input id="i_usn" type="text" style="width:80%" value="37102488">
+										</td> 
+										<th></th>
+										<td>
+										</td> 
+									</tr>
+		                        </tbody>
+		                    </table>
+		                </div>
+		                <div class="search_area">
+		                    <table>
+		                        <colgroup>
+		                        	<col style="width:15%;" />
+		                            <col style="width:35%;" />
+		                            <col style="width:15%;" />
+		                            <col style="width:35%;" />
+		                        </colgroup>
+		                        <tbody>
+		                            <tr>
+										<th>ZSPACK</th>
+										<td>
+											<input id="o_zspack" type="text" style="width:80%" value="" readonly>
+										</td> 
+										<th>IFRESULT</th>
+										<td>
+											<input id="o_if_result" type="text" style="width:80%" value="" readonly>
+										</td> 
+									</tr>
+									<tr>
+										<th>IFFAILMSG</th>
+										<td>
+											<input id="o_if_fail_msg" type="text" style="width:80%" value="" readonly>
+										</td> 
+										<th>PO_NO</th>
+										<td>
+											<input id="o_po_no" type="text" style="width:80%" value="" readonly>
+										</td> 
+									</tr>
+		                        </tbody>
+		                    </table>
+		                </div>
+		                
+		                <div class="sub_title_area">
+		                	<h3 class="sub_title fl">PO DELETE</h3>
+		               	</div>
+		                <div class="btn_area">
+		                    <ul class="btns">
+		                        <li><a href="javascript:retrieve('delete');">DELETE<span></span></a></li>
+		                    </ul>
+		                </div>
+		                <div class="search_area">
+		                	<table>
+		                        <colgroup>
+		                        	<col style="width:15%;" />
+		                            <col style="width:35%;" />
+		                            <col style="width:15%;" />
+		                            <col style="width:35%;" />
+		                        </colgroup>
+		                        <tbody>
+		                            <tr>
+										<th>DATE</th>
+										<td>
+											<input id="id_date" type="text" style="width:80%" value="<%=CurrentDateTime.getDate()%>">
+										</td> 
+										<th>PO_NO</th>
+										<td>
+											<input id="id_po_no" type="text" style="width:80%" value="">
+										</td> 
+									</tr>
+									<tr>
+										<th>PO_DESC</th>
+										<td>
+											<input id="id_po_desc" type="text" style="width:80%" value="">
+										</td> 
+										<th></th>
+										<td>
+										</td> 
+									</tr>
+		                        </tbody>
+		                    </table>
+		                </div>
+		                <div class="search_area">
+		                    <table>
+		                        <colgroup>
+		                        	<col style="width:15%;" />
+		                            <col style="width:35%;" />
+		                            <col style="width:15%;" />
+		                            <col style="width:35%;" />
+		                        </colgroup>
+		                        <tbody>
+		                            <tr>
+										<th>IFRESULT</th>
+										<td>
+											<input id="od_if_result" type="text" style="width:80%" value="" readonly>
+										</td> 
+										<th>IFFAILMSG</th>
+										<td>
+											<input id="od_if_fail_msg" type="text" style="width:80%" value="" readonly>
+										</td> 
+									</tr>
+		                        </tbody>
+		                    </table>
+		                </div>
+		            </div>
+		            <div class="clear"></div>
+		        </div>
+	        </form>
+	    </div>
+	</body>
+</html>
+<script type="text/javascript">
+
+	function retrieve(btnFlag){
+		var f = document.frm;
+		switch(btnFlag){
+		   case "create" :
+			    doCreate();
+				break;	
+
+		   case "delete" :
+			    doDelete();
+				break;	
+		}
+	}
+
+	function doCreate(){
+
+		var paramVo = {
+				i_date 				: $("#i_date").val()				,
+				i_vendor_code 		: $("#i_vendor_code").val()			,
+				i_vendor_name 		: $("#i_vendor_name").val()			,
+				i_pur_org_code 		: $("#i_pur_org_code").val()		,
+				i_pur_group 		: $("#i_pur_group").val()			,
+				i_company_code 		: $("#i_company_code").val()		,
+				i_account_category 	: $("#i_account_category").val()	,
+				i_material_code 	: $("#i_material_code").val()		,
+				i_material_desc 	: $("#i_material_desc").val()		,
+				i_mat_group 		: $("#i_mat_group").val()			,
+				i_qty 				: $("#i_qty").val()					,
+				i_price 			: $("#i_price").val()				,
+				i_delivery_date 	: $("#i_delivery_date").val()		,
+				i_cost_cd 			: $("#i_cost_cd").val()				,
+				i_wbs_cd 			: $("#i_wbs_cd").val()				,
+				i_io_cd 			: $("#i_io_cd").val()				,
+				i_account_code 		: $("#i_account_code").val()		,
+				i_wrkplc_cd 		: $("#i_wrkplc_cd").val()			,
+				i_usn 				: $("#i_usn").val()
+		};
+		
+		var paramData = {
+			paramJson : util.jsonToString(paramVo),
+		};
+		
+		doCommonAjax("/hncis/generalService/doSearchPoCreate.do", paramData, "createCallBack(jsonData.sendResult);");
+	}
+	
+	function createCallBack(result){
+		$("#o_po_no").val(result.o_po_no);
+		$("#o_if_result").val(result.o_if_result);
+		$("#o_if_fail_msg").val(result.o_if_fail_msg);
+	}
+	
+	function doDelete(){
+
+		var paramVo = {
+				i_date 				: $("#id_date").val()				,
+				i_po_no 			: $("#id_po_no").val()				,
+				i_po_desc			: $("#id_po_desc").val()
+		};
+		
+		var paramData = {
+			paramJson : util.jsonToString(paramVo),
+		};
+		
+		doCommonAjax("/hncis/generalService/doSearchPoDelete.do", paramData, "deleteCallBack(jsonData.sendResult);");
+	}
+	
+	function deleteCallBack(result){
+		$("#od_if_result").val(result.o_if_result);
+		$("#od_if_fail_msg").val(result.o_if_fail_msg);
+	}
+</script> 

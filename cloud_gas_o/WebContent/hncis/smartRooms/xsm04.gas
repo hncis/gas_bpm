@@ -1,0 +1,606 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId = "XSM04";
+	String getDate     = CurrentDateTime.getDate();
+	String getDatetime = CurrentDateTime.getDatetime();
+	String getFromDate = CurrentDateTime.getDashDate(getDate, 0);
+	String getToDate   = CurrentDateTime.getDashDate(getDate, +7);
+	String isAdminAuth = sess_mstu_gubb.equals("M") ? "true" : "false";
+	
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH",locale);
+	String strDel = JSPMessageSource.getMessage("BUTTON.DELETE", locale);
+	String strApr = JSPMessageSource.getMessage("BUTTON.APPROVE", locale);
+	String strApc = JSPMessageSource.getMessage("BUTTON.REQUESTCANCEL", locale);
+	String strExl = JSPMessageSource.getMessage("BUTTON.EXCEL", locale);
+
+	String strBtn = "";
+	strBtn = strSch+"/search@"+strDel+"/delete@"+strApr+"/use_approve@"+strApc+"/not_use_approve@"+strExl+"/excel";
+%>
+
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>예약현황</title>
+	</head>
+	
+	<body>
+		<div id="wrap">
+			<form id="frm" name="frm" method="post">
+				<input type="hidden" id="gubun" name="gubun">
+				<input type="hidden" id="codeKnd" name="codeKnd">
+				<input type="hidden" id="jsonData" name="jsonData">
+				<input type="hidden" id="nSource" name="nSource">
+				<input type="hidden" id="nTarget" name="nTarget">
+				<input type="hidden" id="pagingIndex" name="pagingIndex" value="0">
+				<input type="hidden" id="menuId" name="menuId" value="<%=menuId%>">
+				<input type="hidden" id="curYmd" name="curYmd" value="<%=getDate%>">
+				<input type="hidden" id="datetime" name="datetime" value="<%=getDatetime%>">
+				<input type="hidden" id="KEY_PARAM_DAY" name="KEY_PARAM_DAY">
+				<input type="hidden" id="KEY_GUBUN" name="KEY_GUBUN">
+				<input type="hidden" id="p_regn_cd" name="p_regn_cd">
+				<input type="hidden" id="p_bd_cd" name="p_bd_cd">
+				<input type="hidden" id="p_corm_fl_cd" name="p_corm_fl_cd">
+				<input type="hidden" id="p_corm_cd" name="p_corm_cd">
+				<input type="hidden" id="p_corm_nm" name="p_corm_nm">
+				<input type="hidden" id="p_from_ymd" name="p_from_ymd">
+				<input type="hidden" id="p_to_ymd" name="p_to_ymd">
+				<input type="hidden" id="p_from_time" name="p_from_time">
+				<input type="hidden" id="p_to_time" name="p_to_time">
+				<input type="hidden" id="hid_doc_no" name="hid_doc_no">
+				<input type="hidden" id="hid_key_no" name="hid_key_no">
+				<input type="hidden" id="etc_user" name="etc_user">
+				<input type="hidden" id="etc_org" name="etc_org">
+				<input type="hidden" id="etc_user_data" name="etc_user_data">
+				<input type="hidden" id="etc_org_data1" name="etc_org_data1">
+				<input type="hidden" id="etc_org_data2" name="etc_org_data2">
+				<input type="hidden" id="hid_page" name="hid_page">
+				<select id="KEY_FROM_TIME" name="KEY_FROM_TIME" style="display:none"></select>
+				<select id="KEY_TO_TIME" name="KEY_TO_TIME" style="display:none"></select>
+				
+				<%@ include file="../include/hncis_header.gas"%>
+				<div id="contents_wrap">
+	        		<%@ include file="../include/hncis_left.gas"%>
+	            	<div id="contents">
+						<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,menuId
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+						
+		                <div class="search_area">
+							<table>
+								<colgroup>
+									<col width="60px">
+									<col width="160px">
+									<col width="60px">
+									<col width="160px">
+									<col width="60px">
+									<col width="120px">
+									<col width="60px">
+									<col width="160px">
+									<col width="60px">
+									<col width="*">
+								</colgroup>
+								<tr>
+									<td align="left"><fmt:message key="svc_ar"/></td>
+									<td align="left">
+										<select id="KEY_REGN_CD" name="KEY_REGN_CD" style="width:140px">
+											<option value="">전 체</option>
+										</select>
+									</td>
+									<td align="left"><fmt:message key="bld"/></td>
+									<td align="left">
+										<select id="KEY_BD_CD" name="KEY_BD_CD" style="width:140px" disabled>
+											<option value="">전 체</option>
+										</select>
+									</td>
+									<td align="left"><fmt:message key="floor"/></td>
+									<td align="left">
+										<select id="KEY_CORM_FL_CD" name="KEY_CORM_FL_CD" style="width:90px" disabled>
+											<option value="">전 체</option>
+										</select>
+									</td>
+									<td align="left"><fmt:message key="mt_rm"/></td>
+									<td align="left">
+										<select id="KEY_CORM_CD" name="KEY_CORM_CD" style="width:140px" disabled>
+											<option value="">전 체</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td align="left"><fmt:message key="type"/></td>
+									<td align="left">
+										<select id="KEY_PTT_GUBUN" style="width:110px"></select>										
+									</td>
+									<td align="left"><fmt:message key="eeno"/></td>
+									<td align="left" colspan="3">
+										<input type="text" id="KEY_EENO" name="KEY_EENO" style="width:80px" onkeyup="cearInsa();insaSearch();" >
+										<input type="text" id="KEY_EENM" name="KEY_EENM" style="width:120px" class="disabled" readonly>
+										<img id="btn_insa" name="img_ignm_pop" src="<%=ctxPath %>/images/hncis_common/find-f.png" style="cursor:hand;filter:alpha(opacity=100)" class='button' onMouseOver="na_change_img_src('img_ignm_pop','document', '<%=ctxPath %>/images/hncis_common/find-n.png');" onMouseOut="na_restore_img_src('img_ignm_pop');">
+									</td>
+									<td align="left"><fmt:message key="dept_nm"/></td>
+									<td align="left" colspan="3">
+										<input type="text" id="KEY_DEPT_CD" name="KEY_DEPT_CD" style="width:80px;" onkeyup="cearDept();deptSearch();" maxLength="8">
+										<input type="text" id="KEY_DEPT_NM" name="KEY_DEPT_NM" style="width:120px" class="disabled" readonly>
+										<img id="btn_dept" name="img_ignm_pop" src="<%=ctxPath %>/images/hncis_common/find-f.png" style="cursor:hand;filter:alpha(opacity=100)" class='button' onMouseOver="na_change_img_src('img_ignm_pop','document', '<%=ctxPath %>/images/hncis_common/find-n.png');" onMouseOut="na_restore_img_src('img_ignm_pop');">
+									</td>
+								</tr>
+								<tr>
+									<td align="left"><fmt:message key="rsvt_st"/></td>
+									<td align="left">
+										<select id="KEY_PGS_ST_CD" style="width:110px"></select>
+									</td>
+									<td align="left"><fmt:message key="mt_st"/></td>
+									<td align="left">
+										<select id="KEY_CNF_ST_CD" style="width:110px"></select>
+									</td>
+									<td align="left"><fmt:message key="search_dt"/></td>
+									<td align="left" colspan="6">
+										<input type="text" id="KEY_FROM_YMD" name="KEY_FROM_YMD" style="width:80px" class="mr5" value="<%=getFromDate%>">
+										<fmt:message key="from"/>
+										<input type="text" id="KEY_TO_YMD" name="KEY_TO_YMD" style="width:80px"  class="mr5" value="<%=getToDate%>">
+										<fmt:message key="to"/>
+									</td>
+								</tr>
+							</table> 
+						</div>
+						<div class="jq_tbl">
+		                	<table id="htmlTable1" class="scroll"></table>
+		                	<div id="htmlPager1" class="scroll"></div>
+		                </div>
+						<%@ include file="../include/hncis_message.gas"%>
+					</div>
+				</div>
+			</form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+			<img id="loading_progress_img" src="../../images/common/progress_bar.gif" width="362" height="131" style="display:none" />
+		</div>
+	</body>
+</html>
+		<script type="text/javascript">
+		function fnSetDocumentReady(){
+			initMenus('1850');
+			$('#SM').slideDown('fast');
+			sess_auth = $("#work_auth").val();
+			
+			$("#btn_insa").live("click", function(){
+				var cw = 440;   // 오픈할 윈도우 창 width
+				var ch = 510;   // 오픈할 윈도우 창 height
+				var wd = (eval(screen.width) - cw) /2;
+				var ht = (eval(screen.height) - ch) /2;
+				var winOpt = "top="+ht+",left="+wd +',toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=no,width='+cw+',height='+ch;
+				win = window.open("", "pop_insa", winOpt);
+
+				var form = $("<form/>").attr("id", "frmInsa");
+				form.attr("method", "POST");
+				form.attr("target", "pop_insa");
+				form.attr("action", ctxPath+"/hncis/popup/userPopup.gas");
+				var str1 = $("<input type='hidden' id='popGubun' name='popGubun'/>");
+				var str2 = $("<input type='hidden' id='csrfToken' name='csrfToken'/>");
+				str1.val("XSM");
+				str2.val($("#csrfToken").val());
+				form.append(str1, str2);
+				$("body").append(form);
+				form.submit();
+				form.remove();
+			});
+			
+			$("#btn_dept").live("click", function(){
+				var cw = 440;   // 오픈할 윈도우 창 width
+				var ch = 510;   // 오픈할 윈도우 창 height
+				var wd = (eval(screen.width) - cw) /2;
+				var ht = (eval(screen.height) - ch) /2;
+				var winOpt = "top="+ht+",left="+wd +',toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=no,width='+cw+',height='+ch;
+				win = window.open("", "pop_dept", winOpt);
+				
+				var form = $("<form/>").attr("id", "frmDept");
+				form.attr("method", "POST");
+				form.attr("target", "pop_dept");
+				form.attr("action", ctxPath+"/hncis/popup/deptPopup.gas");
+				var str1 = $("<input type='hidden' id='dcd' name='dcd'/>");
+				var str2 = $("<input type='hidden' id='dcdNm' name='dcdNm'/>");
+				var str3 = $("<input type='hidden' id='csrfToken' name='csrfToken'/>");
+				str1.val("KEY_DEPT_CD");
+				str2.val("KEY_DEPT_NM");
+				str3.val($("#csrfToken").val());
+				form.append(str1, str2, str3);
+				$("body").append(form);
+				form.submit();
+				form.remove();
+			});
+			
+			$("#KEY_FROM_YMD").datepicker({
+				dateFormat: "yy/mm/dd",
+				showOn: "button",
+				buttonImage: "../../images/sub/ico_datepicker.gif",
+				buttonImageOnly: true
+			});
+			
+			$("#KEY_TO_YMD").datepicker({
+				dateFormat: "yy/mm/dd",
+				showOn: "button",
+				buttonImage: "../../images/sub/ico_datepicker.gif",
+				buttonImageOnly: true
+			});
+			
+			//공통 콤보 조회
+			var sCode  = "KEY_REGN_CD:SM001:Z;";
+				sCode += "KEY_PTT_GUBUN:SM007:A;KEY_PGS_ST_CD:SM008:A;KEY_CNF_ST_CD:SM009:A;";
+				sCode += "KEY_FROM_TIME:SM005:S;KEY_TO_TIME:SM006:S;";
+			var sCallBack = "init()";
+			var sUrl = "doSearchComboByXsm.do";
+			getCommonCode(sCode, "N", sCallBack, sUrl);
+		}
+
+		function setInsaInfo(rs){
+			$("#KEY_EENO").val(rs.xusr_empno);
+			$("#KEY_EENM").val(rs.xusr_name);
+		}
+
+
+		var tempInsaCode1 = "";
+		var tempInsaCode2 = "";
+		function cearInsa(){
+			if($("#KEY_EENO").val() == ""){
+				tempInsaCode1 = "";
+				tempInsaCode2 = "";
+				$("#nSource").val("");
+				$("#KEY_EENO").val("");
+				$("#KEY_EENM").val("");
+			}
+		}
+
+		function insaSearch(){
+			var keyEeno = $.trim($("#KEY_EENO").val());
+			if(keyEeno != ""){
+				if(keyEeno.length > 8) return;
+				if(keyEeno.length == 8){
+					tempInsaCode1 = keyEeno;
+					if(tempInsaCode2 == tempInsaCode1){ return; }
+					tempInsaCode2 = tempInsaCode1;
+
+					var keyData = { 
+						xusr_empno : keyEeno
+					};
+					var paramData = {
+						paramJson : util.jsonToString(keyData)
+					};
+					doCommonAjax("/doSearchToUserInfo.do", paramData, "insaCallBack(jsonData.sendResult)");
+				}
+			}
+		}
+
+		function insaCallBack(result){
+			$("#KEY_EENO").val(result.xusr_empno);
+			$("#KEY_EENM").val(result.xusr_name);
+		}
+
+		var tempDeptCode1 = "";
+		var tempDeptCode2 = "";
+		function cearDept(){
+			if($("#KEY_DEPT_NM").val() == ""){
+				tempDeptCode1 = "";
+				tempDeptCode2 = "";
+				$("#KEY_DEPT_NM").val("");
+			}
+		}
+
+		function deptSearch(){
+			var KeyDeptCd = $.trim($("#KEY_DEPT_CD").val()); 
+			if(KeyDeptCd != ""){
+				if(KeyDeptCd.length > 8) return;
+				if(KeyDeptCd.length == 8){
+					tempDeptCode1 = KeyDeptCd;
+					if(tempDeptCode2 == tempDeptCode1){ return; }
+					tempDeptCode2 = tempDeptCode1;
+					
+					var keyData = { 
+						xorg_orga_c : KeyDeptCd
+					};
+					var paramData = {
+						paramJson : util.jsonToString(keyData)
+					};
+					doCommonAjax("/doSearchToDeptInfo.do", paramData, "deptCallBack(jsonData.sendResult)");
+				}
+			}else{
+				$("#KEY_DEPT_NM").val("");
+			}
+		}
+
+		function deptCallBack(result){
+			$("#KEY_DEPT_NM").val(result.xorg_orga_e);
+		}
+
+		var gridRowCnt = 15;
+		var gridParam1;
+		var gridName1 = "htmlTable1"; 
+		var gridPage1 = "htmlPager1";
+		var datarow  = { doc_no:"", cnf_title:"", cnf_from_ymd:"", cnf_from_time:"", cnf_to_ymd:"", cnf_to_time:"", cnf_proc_time:"",
+						 cnf_eeno:"", cnf_eenm:"", cnf_dept_name:"", pgs_st_cd:"", pgs_st_nm:"", cnf_st_nm:"",
+						 corm_nm:"", cnf_attde_name:"", cnf_attde_cnt:"" };
+		function init(){
+			gridParam1 = {
+				viewEdit : [{
+					gridName     : gridName1,
+					url          : "doSearchByXsm04.do",
+// 					colNames     : ["문서번호", "회의제목", "시작일자", "시작시간", "종료일자", "종료시간", "사용시간", "회의장소", "회의주관자사번", "회의주관자", "부서명", "참석자", "참석자수(명)", "예약상태코드", "예약상태", "회의상태"],
+					colNames     : ['<fmt:message key="doc_no"/>' // "문서번호"
+						          ,'<fmt:message key="mt_title"/>' // "회의제목"
+						          ,'<fmt:message key="strt_ymd"/>' // "시작일자"
+						          ,'<fmt:message key="strt_tm"/>' // "시작시간"
+						          ,'<fmt:message key="end_ymd"/>' // "종료일자"
+						          ,'<fmt:message key="end_tm"/>' // "종료시간"
+						          ,'<fmt:message key="use_tm"/>' // "사용시간"
+						          ,'<fmt:message key="mt_plc"/>' // "회의장소"
+						          ,'<fmt:message key="mt_spr_no"/>' // "회의주관자사번"
+						          ,'<fmt:message key="mt_spr_nm"/>' // "회의주관자"
+						          ,'<fmt:message key="dept_nm"/>' // "부서명"
+						          ,'<fmt:message key="attend_psrn_nm"/>' // "참석자"
+						          ,'<fmt:message key="attend_psrn_cnt"/>' // "참석자수(명)"
+						          ,'' // "예약상태코드"
+						          ,'<fmt:message key="rsvt_st"/>' // "예약상태"
+						          ,'<fmt:message key="mt_st"/>' // "회의상태"
+			          ],
+					colModel     : [{name:"doc_no", index:"doc_no", sortable:false, formatter:"string", width:"0",	align:"center",	editable:false, frozen:false, hidden:true},
+					            	{name:"cnf_title", index:"cnf_title", sortable:false, formatter:"string", width:"230",	align:"left",	editable:false, frozen:false},
+					            	{name:"cnf_from_ymd", index:"cnf_from_ymd", sortable:false, formatter:"string", width:"80", align:"center", editable:false, frozen:false},
+					            	{name:"cnf_from_time", index:"cnf_from_time", sortable:false, formatter:"string", width:"50", align:"center", editable:false, frozen:false},
+					            	{name:"cnf_to_ymd", index:"cnf_to_ymd", sortable:false, formatter:"string", width:"80", align:"center", editable:false, frozen:false},
+					            	{name:"cnf_to_time", index:"cnf_to_time", sortable:false, formatter:"string", width:"50", align:"center", editable:false, frozen:false},
+					            	{name:"cnf_proc_time", index:"cnf_proc_time", sortable:false, formatter:"string", width:"50", align:"center", editable:false, frozen:false},
+					            	{name:"corm_nm", index:"corm_nm", sortable:false, formatter:"string", width:"200", align:"left", editable:false, frozen:false},
+					            	{name:"cnf_eeno", index:"cnf_eeno", sortable:false, formatter:"string", width:"0", align:"left", editable:false, frozen:false, hidden:true},
+					            	{name:"cnf_eenm", index:"cnf_eenm", sortable:false, formatter:"string", width:"100", align:"left", editable:false, frozen:false},
+					            	{name:"cnf_dept_name", index:"cnf_dept_name", sortable:false, formatter:"string", width:"120",	align:"left",	editable:false, frozen:false},
+					            	{name:"cnf_attde_name", index:"cnf_attde_name", sortable:false, formatter:"string", width:"200", align:"left", editable:false, frozen:false},
+					            	{name:"cnf_attde_cnt", index:"cnf_attde_cnt", sortable:false, formatter:"string", width:"60", align:"right", editable:false, frozen:false},
+					            	{name:"pgs_st_cd", index:"pgs_st_cd", sortable:false, formatter:"string", width:"100", align:"center", editable:false, frozen:false, hidden:true},
+					            	{name:"pgs_st_nm", index:"pgs_st_nm", sortable:false, formatter:"string", width:"80", align:"center", editable:false, frozen:false},
+					            	{name:"cnf_st_nm", index:"cnf_st_nm", sortable:false, formatter:"string", width:"80", align:"center", editable:false, frozen:false}
+					            	],
+					paramJson    : fnParamJson(),
+					height       : "100%",
+					rownumbers   : false,
+					multiselect  : true,
+					cellEdit     : true,
+					fnMerge      : false,
+					pager		 : gridPage1,
+					rowNum		 : 15,
+					completeFc	 : "fnGridInitCallBack('"+gridName1+"');"
+				}]
+			};
+			commonJqGridInit(gridParam1);
+		}
+
+		function fnGridInitCallBack(initGrid){
+			switch(initGrid){
+				case "htmlTable1" :
+					addGridRow(gridRowCnt, initGrid, 'datarow');
+					break;
+			}
+		}
+
+		function retrieve(mode){
+			switch(mode){
+				case "search" :
+					doSearch("Y");
+					break;
+				case "delete" :
+					doDelete();
+					break;
+				case "use_approve" :
+					doUseApprove();
+					break;
+				case "not_use_approve" :
+					doNotUseApprove();
+					break;
+				case "excel" :
+					doExcel();
+					break;
+			}
+		}
+
+		function fnParamJson(){
+		    var fromYmd = selectNum($("#KEY_FROM_YMD").val());
+		    var toYmd = selectNum($("#KEY_TO_YMD").val());
+		    if(fromYmd > toYmd){
+		    	alertUI('<fmt:message key="MSG.VAL.0033"/>', false, '$("#KEY_FROM_YMD").select()');
+		    	return false;
+		    }else if($("#KEY_PTT_GUBUN").val() != "" && $.trim($("#KEY_EENO").val()) == ""){
+		    	alertUI('<fmt:message key="MSG.INP.0010"/>', false, '$("#KEY_EENO").focus()');
+		    	return false;    	
+		    }
+		    
+			var paramVo = {
+				regn_cd : $("#KEY_REGN_CD").val(),
+				bd_cd : $("#KEY_BD_CD").val(),
+				corm_fl_cd : $("#KEY_CORM_FL_CD").val(),
+				corm_cd : $("#KEY_CORM_CD").val(),
+				cnf_from_ymd : fromYmd,
+				cnf_to_ymd : toYmd,
+				gubun : $("#KEY_PTT_GUBUN").val(),
+				pgs_st_cd : $("#KEY_PGS_ST_CD").val(),
+				cnf_st_cd : $("#KEY_CNF_ST_CD").val(),
+				cnf_eeno : $("#KEY_EENO").val(),
+				cnf_dept_code : $("#KEY_DEPT_CD").val()
+			};
+			
+			return paramVo;
+		}
+
+		function doSearch(msgYn){
+			if(!fnParamJson()) return;
+			doCommonSearch("doSearchByXsm04.do", util.jsonToString(fnParamJson()), "doEndQuery('select');", gridName1, msgYn);
+		}
+
+		function doUseApprove(){
+			var paramsU = [];
+			var selectRow = $("#"+gridName1).jqGrid("getGridParam", "selarrrow");
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}else{
+				for(var i = 0; i < selectRow.length; i++){
+					var rowId = selectRow[i];
+					if(rowId){
+						var docNo = getColValue("doc_no", rowId, gridName1);
+						var pgsStCd = getColValue("pgs_st_cd", rowId, gridName1);
+						
+						if(pgsStCd != "1") {
+							alertUI((i+1) + ' <fmt:message key="MSG.ROW.0094"/>');
+							return;
+						}
+						
+						var list = {
+							doc_no : docNo
+						};
+						paramsU.push(list);
+					}
+				}
+			}
+			
+			confirmUI('<fmt:message key="MSG.CNF.0017"/>')
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+							paramsU : util.jsonToList(paramsU),
+						};
+						doCommonAjax("doUpdateUseApproveByXsm04.do", paramData, "doEndQuery('use_approve', jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function doNotUseApprove(gubn){
+			var paramsU = [];
+			var selectRow = $("#"+gridName1).jqGrid("getGridParam", "selarrrow");
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}else{
+				for(var i = 0; i < selectRow.length; i++){
+					var rowId = selectRow[i];
+					if(rowId){
+						var docNo = getColValue("doc_no", rowId, gridName1);
+						var pgsStCd = getColValue("pgs_st_cd", rowId, gridName1);
+						
+						if(pgsStCd != "1") {
+							alertUI((i+1) + ' <fmt:message key="MSG.ROW.0095"/>');
+							return;
+						}
+						
+						var list = {
+							doc_no : docNo
+						};
+						paramsU.push(list);
+					}
+				}
+			}
+			
+			confirmUI('<fmt:message key="MSG.CNF.0031"/>')
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramsU : util.jsonToList(paramsU),
+						};
+						doCommonAjax("doUpdateNotUseApproveByXsm04.do", paramData, "doEndQuery('not_use_approve', jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function doDelete(){
+			var paramsD = [];
+			var selectRow = $("#"+gridName1).jqGrid("getGridParam", "selarrrow");
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}else{
+				for(var i = 0; i < selectRow.length; i++){
+					var rowId = selectRow[i];
+					if(rowId){
+						var docNo = getColValue("doc_no", rowId, gridName1);
+						var pgsStCd = getColValue("pgs_st_cd", rowId, gridName1);
+						
+						if(docNo == ""){
+							alertUI((i+1) + ' <fmt:message key="MSG.ROW.0071"/>');
+							return;					
+						}else if(pgsStCd == "2") {
+							alertUI((i+1) + ' <fmt:message key="MSG.ROW.0072"/>');
+							return;
+						}else if(pgsStCd == "3") {
+							alertUI((i+1) + ' <fmt:message key="MSG.ROW.0073"/>');
+							return;				
+						}
+						
+						var list = {
+							doc_no : docNo
+						};
+						paramsD.push(list);
+					}
+				}
+			}
+			
+			confirmUI('<fmt:message key="MSG.CNF.0002"/>')
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+							paramsD : util.jsonToList(paramsD),
+						};
+						doCommonAjax("doDeleteByXsm04.do", paramData, "doEndQuery('delete', jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function doExcel(){
+//			var excelCn = ["회의제목", "회의시작일자", "회의시작시간", "회의종료일자", "회의종료시간", "사용시간", "회의장소", "회의주관자", "부서명", "참석자", "참석자수(명)", "예약상태", "회의상태"];
+			var excelCn = ['<fmt:message key="mt_title"/>',				//회의제목 
+			               '<fmt:message key="mt_strt_ymd"/>',			//회의시작일자 
+			               '<fmt:message key="mt_strt_tm"/>',			//회의시작시간 
+			               '<fmt:message key="mt_end_ymd"/>',			//회의종료일자
+			               '<fmt:message key="mt_end_tm"/>',			//회의종료시간
+			               '<fmt:message key="use_tm"/>',				//사용시간 
+			               '<fmt:message key="mt_plc"/>',				//회의장소 
+			               '<fmt:message key="mt_spr_nm"/>',			//회의주관자 
+			               '<fmt:message key="dept_nm"/>',				//부서명 
+			               '<fmt:message key="attend_psrn_nm"/>',		//참석자 
+			               '<fmt:message key="attend_psrn_cnt"/>',		//참석자수(명) 
+			               '<fmt:message key="rsvt_st"/>',				//예약상태 
+			               '<fmt:message key="mt_st"/>'];				//회의상태
+			var excelCm = ["cnf_title", "cnf_from_ymd", "cnf_from_time", "cnf_to_ymd", "cnf_to_time", "cnf_proc_time", "corm_nm", "cnf_eenm", "cnf_dept_name", "cnf_attde_name", "cnf_attde_cnt", "pgs_st_nm", "cnf_st_nm"];
+			var excelFm = ["string", "string", "string", "string", "string", "string", "string", "string", "string", "string", "integer", "string", "string"];
+			var params  = [
+				{name : "fileName",		value : "reservation_excel_"+$("#datetime").val() },
+				{name : "header",		value : util.jsonToArray(excelCn)},
+				{name : "headerName",	value : util.jsonToArray(excelCm)},
+				{name : "fomatter",		value : util.jsonToArray(excelFm)},
+				{name : "paramJson",	value : util.jsonToString(fnParamJson())},
+				{name : "firstUseYn",	value : "Y"},
+				{name : "page",			value : "1"}
+			];
+			gridToExcel("#"+gridName1, "doSearchExcelByXsm04.excel", params);
+		}
+
+		function doEndQuery(mode, rs){
+			switch(mode){
+				case "select" : 
+					addGridRow(gridRowCnt, gridName1, datarow);
+				break;
+				case "use_approve" : 
+				case "not_use_approve" : 
+				case "delete" :
+					alertUI(rs.message, true, "doSearch('N')");
+				break;
+			}
+		}
+		</script>

@@ -1,0 +1,334 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XST13";
+
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH", locale);
+	
+	String strBtn = "";
+	strBtn = strSch+"/search";
+
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Dash Board</title>
+		
+		<link class="include" rel="stylesheet" type="text/css" href="<%=ctxPath%>/script/css/jquery.jqplot.min.css" />
+		<!--[if lt IE 9]><script language="javascript" type="text/javascript" src="<%=ctxPath%>/script/js/excanvas.js"></script><![endif]-->
+		<script class="include" type="text/javascript" src="<%=ctxPath%>/script/js/jquery.min.js"></script>
+		 
+		<script class="include" type="text/javascript" src="<%=ctxPath%>/script/js/jquery.jqplot.min.js"></script>
+		<script class="include" type="text/javascript" src="<%=ctxPath%>/script/js/jqplot.barRenderer.min.js"></script><!--그래프 바 모양으로 나타내게 함-->
+		<script class="include" type="text/javascript" src="<%=ctxPath%>/script/js/jqplot.categoryAxisRenderer.min.js"></script>
+		<script class="include" type="text/javascript" src="<%=ctxPath%>/script/js/jqplot.pointLabels.min.js"></script> <!-- 포인트 그래프 그래프 바 위에 숫자 나타남-->
+	</head>
+	<body>
+		<div id="wrap">
+	    	<form name="frm" id="frm">
+		    	<%@ include file="../include/hncis_header.gas"%>
+		        <div id="contents_wrap">
+		        	<%@ include file="../include/hncis_left.gas"%>
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,"XDB01"
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+		                <div class="search_area">
+		                	<table>
+		                        <colgroup>
+		                        	<col style="width:45px;" />
+		                            <col style="width:auto;" />
+		                        </colgroup>
+		                        <tbody>
+		                            <tr>
+										<th>Year</th>
+										<td align="left">
+							    			<SELECT id="keyYmdYY" NAME="keyYmdYY">
+											</SELECT>
+							    		</td>
+									</tr>
+		                        </tbody>
+		                    </table>
+		                </div>
+						<div id="cont_dt" style="width:1033px;height:500px;margin-bottom:20px;">
+							<div>
+								<table>
+								<tr>
+									<td>
+										<div id="chart1" style="margin-top:10px; margin-left:5px; width:465px; height:250px;"></div>
+									</td>
+									<td>
+										<div id="chart2" style="margin-top:10px; margin-left:15px; width:465px; height:250px;"></div>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div id="chart3" style="margin-top:10px; margin-left:5px; width:465px; height:250px;"></div>
+									</td>
+									<td>
+										<div id="chart4" style="margin-top:10px; margin-left:15px; width:465px; height:250px;"></div>
+									</td>
+								</tr>
+							</table>
+							</div>
+						</div>
+		                <div class="jq_tbl">
+			                <table id="htmlTable" class="scroll"></table>
+							<div id="htmlPager" class="scroll"></div>
+						</div>
+		                <%@ include file="../include/hncis_message.gas"%>
+		            </div>
+		            <div class="clear"></div>
+		        </div>
+	        </form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>				
+			<script language="JavaScript">
+				var f = document.frm;
+				setFrmYear (f, f.keyYmdYY, <%=CurrentDateTime.getMonth(CurrentDateTime.getDate(), 0).substring(0,4)%>);
+			</script>
+	    </div>
+		<%-- <div id="wrap">
+			<div id="GASC">
+				<form name="frm" id="frm">
+				<input type="hidden" id="initYn" value="N">
+					<%@ include file="../include/leftMenu.gas"%>
+					<div id="container_wrap">
+						<div id="container">
+							<%=CommonGasc.getTitleAndButtonNew(sess_empno
+								,"XDB01"
+								,"search/search"
+								,null
+								,null
+								,null
+								,request)
+							%>
+							<div style="width:936px; border:7px solid #eeeeee; background-color:#f7f7f7;">
+								<table style="table-layout: fixed; margin-top:10px; margin-bottom:10px">
+									<tr>
+										<td align="left" width="45px" style="padding-left: 20px">
+											Year
+										</td>
+										<td align="left">
+							    			<SELECT id="keyYmdYY" NAME="keyYmdYY">
+											</SELECT>
+							    		</td>
+									</tr>
+								</table>
+							</div>
+							<div id="cont_dt" style="width:936px;height:500px;margin-bottom:20px;">
+								<div>
+									<table >
+									<tr>
+										<td>
+											<div id="chart1" style="margin-top:10px; margin-left:5px; width:465px; height:250px;"></div>
+										</td>
+										<td>
+											<div id="chart2" style="margin-top:10px; margin-left:15px; width:465px; height:250px;"></div>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<div id="chart3" style="margin-top:10px; margin-left:5px; width:465px; height:250px;"></div>
+										</td>
+										<td>
+											<div id="chart4" style="margin-top:10px; margin-left:15px; width:465px; height:250px;"></div>
+										</td>
+									</tr>
+								</table>
+								</div>
+							</div>
+							<table id="htmlTable" class="scroll"></table>
+							<div id="htmlPager" class="scroll"></div>
+							<iframe id="msgFrame" src="<%=ctxPath %>/bottom.gas" style="padding-top:10px; width:100%; height:30px;" border="0" frameborder="0" framespacing="0" hspace="0" vspace="10" scrolling="no" noresize></iframe>
+						</div>
+					</div>
+				</form>
+				<form id="hideForm" name="hideForm" method="post">
+					<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+				</form>				
+				<script language="JavaScript">
+					var f = document.frm;
+					setFrmYear (f, f.keyYmdYY, <%=CurrentDateTime.getMonth(CurrentDateTime.getDate(), 0).substring(0,4)%>);
+				</script>
+			</div>
+		</div> --%>
+	</body>
+</html>
+<script type="text/javascript">
+
+var ticks = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+
+var s_em = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+var s_bt = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+var s_bv = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+var s_ps = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+function fnSetDocumentReady(){
+	initMenus();
+	$('#DB').slideDown('fast');
+	doSearch();
+	
+	//init();
+}
+
+function init(){
+	$.jqplot.config.enablePlugins = true;
+
+	plot1 = $.jqplot('chart1', [s_em], {
+		title: 'Entrance and Meal',
+		seriesDefaults:{
+			renderer:$.jqplot.BarRenderer,
+			pointLabels: { show: true }
+		},
+		series: [{color:'#4674A6'}],
+		axes: {
+			xaxis: {
+				renderer: $.jqplot.CategoryAxisRenderer,
+				ticks: ticks
+			},
+			yaxis:{tickOptions:{formatString:'%i'}} 
+		}
+	});
+	plot1.redraw({resetAxes:true});
+
+	plot2 = $.jqplot('chart2', [s_bt], {
+		title: 'Business Travel',
+		seriesDefaults:{
+		renderer:$.jqplot.BarRenderer,
+		pointLabels: { show: true }
+	},
+	series: [{color:'#4674A6'}],
+	axes: {
+		xaxis: {
+			renderer: $.jqplot.CategoryAxisRenderer,
+			ticks: ticks
+		},
+		yaxis:{tickOptions:{formatString:'%i'}} 
+	}
+	});
+	plot2.redraw({resetAxes:true});
+	plot3 = $.jqplot('chart3', [s_bv], {
+		title: 'Business Vehicles',
+		seriesDefaults:{
+		renderer:$.jqplot.BarRenderer,
+		pointLabels: { show: true }
+	},
+	series: [{color:'#4674A6'}],
+	axes: {
+		xaxis: {
+			renderer: $.jqplot.CategoryAxisRenderer,
+			ticks: ticks
+		},
+		yaxis:{tickOptions:{formatString:'%i'}} 
+	}
+	});
+	plot3.redraw({resetAxes:true});
+	plot4 = $.jqplot('chart4', [s_ps], {
+		title: 'Pick-up Service',
+		seriesDefaults:{
+		renderer:$.jqplot.BarRenderer,
+		pointLabels: { show: true }
+	},
+	series: [{color:'#4674A6'}],
+	axes: {
+		xaxis: {
+			renderer: $.jqplot.CategoryAxisRenderer,
+			ticks: ticks
+		},
+		yaxis:{tickOptions:{formatString:'%i'}} 
+	}
+	});
+	plot4.redraw({resetAxes:true});
+	initAfterMenus();
+	if($('#initYn').val() == 'N'){
+		$('#initYn').val('Y');
+	}
+}
+
+function retrieve(btnFlag){
+	var f = document.frm;
+	switch(btnFlag){
+	   case "search" :
+		    doSearch();
+			break;
+	   case "search1" :
+		    doSearch1();
+			break;
+	}
+}
+function doSearch(){
+	
+	frmWait_open1();
+	document.getElementById("chart1").style.display="none";
+	document.getElementById("chart2").style.display="none";
+	document.getElementById("chart3").style.display="none";
+	document.getElementById("chart4").style.display="none";
+	setTimeout("doSearch1()","500");
+	
+}
+function doSearch1(){
+	params = {
+			key_year: $('#keyYmdYY').val()
+	};
+	doCommonAjax("doSearchChartToDashBoard.do", params,"loadCallBack(jsonData.sendResult);");
+}
+/**
+ * callback
+ */
+function loadCallBack(jsonData){
+	document.getElementById("chart1").style.display="";
+	document.getElementById("chart2").style.display="";
+	document.getElementById("chart3").style.display="";
+	document.getElementById("chart4").style.display="";
+	frmWait_close1();
+	$.each(eval(jsonData),function(targetNm,optionData){
+			$.each(eval(optionData),function(index,optionData){
+				if(targetNm == 'EM'){
+					s_em[index] = Number(optionData);
+				}
+				if(targetNm == 'BT'){
+					s_bt[index] = Number(optionData);
+				}
+				if(targetNm == 'BV'){
+					s_bv[index] = Number(optionData);
+				}
+				if(targetNm == 'PS'){
+					s_ps[index] = Number(optionData);
+				}
+				if(targetNm == 'MSG'){
+					setBottomMsg(optionData, false);
+				}
+			});
+      });
+	   
+	init();
+	
+}
+
+function frmWait_open1(){
+	window.document.getElementById("cont_dt").style.cursor	=	"wait";
+	var msgW						= 280;
+	var msgH						= 48;
+	var leftPos = "530px";
+	var topPos = "370px";
+	var _WaitImage					= document.createElement("<div id='WaitImage' style='z-index:1000;position:absolute;left:"+leftPos+";top:"+topPos+";display:inline;'></div>");
+	document.getElementById("cont_dt").insertBefore(_WaitImage);
+	var waitImage 				= "<img src='"+ctxPath+"/images/wait_msg.gif' width="+msgW+"px height="+msgH+"px>";
+	_WaitImage.innerHTML		= waitImage;
+}
+function frmWait_close1(){
+	window.document.getElementById("cont_dt").style.cursor	=	"default";
+	var waitImage 			= document.getElementById("WaitImage");
+	
+	waitImage.removeNode(true);
+}
+
+  
+</script>

@@ -1,0 +1,188 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@page import="org.jsoup.safety.Whitelist"%>
+<%@page import="org.jsoup.Jsoup"%>
+<%@ page import="com.hncis.common.application.CommonGasc" %>
+<%@ page import="com.hncis.common.util.*" %>
+<%@ page import="com.hncis.common.exception.impl.SessionException" %>
+
+<%@page import="com.hncis.common.util.RSA"%>
+<%@page import="java.security.KeyFactory"%>
+<%@page import="java.security.KeyPair"%>
+<%@page import="java.security.KeyPairGenerator"%>
+<%@page import="java.security.NoSuchAlgorithmException"%>
+<%@page import="java.security.PrivateKey"%>
+<%@page import="java.security.PublicKey"%>
+<%@page import="java.security.spec.InvalidKeySpecException"%>
+<%@page import="java.security.spec.RSAPublicKeySpec"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<%
+	String ctxPath = request.getContextPath();
+
+	System.out.println(request.getParameter("id"));
+	System.out.println(request.getParameter("auth_key"));
+	String corp_cd 	= Base64.decode(StringUtil.isNullToString(request.getParameter("corp_cd")));
+	String user_id 	= Base64.decode(StringUtil.isNullToString(request.getParameter("id")));
+	String auth_key = Base64.decode(StringUtil.isNullToString(request.getParameter("auth_key")));
+	
+	
+	int chkCnt = CommonGasc.getCheckAuthKeyForPw(corp_cd, user_id, auth_key);
+	
+	HttpSession hss = request.getSession();
+	hss.invalidate();
+	hss = request.getSession();
+
+	KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+	generator.initialize(1024);
+	KeyPair keyPair = generator.genKeyPair();
+	KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+	PublicKey publicKey = keyPair.getPublic();
+	PrivateKey privateKey = keyPair.getPrivate();
+	
+	hss.setAttribute("_RSA_WEB_Key_", privateKey);
+	RSAPublicKeySpec publicSpec = (RSAPublicKeySpec) keyFactory.getKeySpec(publicKey, RSAPublicKeySpec.class);
+	String publicKeyModulus = publicSpec.getModulus().toString(16);
+	String publicKeyExponent = publicSpec.getPublicExponent().toString(16);
+	
+%>
+
+<html>
+	<head>
+			<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+			<title>비밀번호 재설정</title>
+			<link rel="stylesheet" type="text/css" media="screen" href="<%=ctxPath%>/script/css/pop_up.css" />
+			<link rel='stylesheet' type="text/css" media="screen" href="<%=ctxPath%>/script/css/hncis_common.css" />
+			<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery-1.7.2.min.js"></script>
+			<script type="text/javascript" src='<%=ctxPath%>/script/js/jsonUtil.js'></script>
+			<script type="text/javascript" src='<%=ctxPath%>/script/js/common.js'></script>
+			<script type="text/javascript" src='<%=ctxPath%>/script/js/Base64.js'></script>
+			<script type="text/javascript" src="<%=ctxPath%>/script/js/RSA/jsbn.js"></script>
+			<script type="text/javascript" src="<%=ctxPath%>/script/js/RSA/rsa.js"></script>
+			<script type="text/javascript" src="<%=ctxPath%>/script/js/RSA/prng4.js"></script>
+			<script type="text/javascript" src="<%=ctxPath%>/script/js/RSA/rng.js"></script>
+			<style>
+				.p_t {width:100%; font-family:Verdana, Geneva, sans-serif; font-size:15px; font-weight:bold;}
+				#p_content {padding:0px 10px 0px 10px; }  
+				.p_c {width:100%; height:215px; font-family:Verdana, Geneva, sans-serif; font-size:12px; overflow-y:auto;}
+				#close {width:200px; cursor:hand; font-size:11px; font-weight:lighter;}
+			</style>
+	</head>
+	
+	<body>
+		<fmt:setLocale value="${reqLocale}"/>
+		<fmt:setBundle basename="com.hncis.common.message.messages"/>
+		<div class="pop_wrap">
+	    	<div class="pop_header">
+	        	<div class="pop_title">
+	            	<h1>비밀번호 재설정</h1>
+	                <a href="javascript:selfClose();" class="pop_close"></a>
+	            </div>
+	        </div>
+	        <div class="pop_header_shadow"></div>
+	        <div class="pop_content">
+	        	<div class="div_box pop_con">
+	            	<form name="sForm" id="sForm">
+	            	<input type="hidden" id="corp_cd" value="<%=corp_cd%>">
+	            	<input type="hidden" id="user_id" value="<%=user_id%>">
+			        <div id="contents_wrap" class="any_page">
+			            <div id="contents">
+			            	<div class="btn_area"> 
+								<ul class="btns"> 
+									<li><a href="javascript:doSubmit();" style="width:80px; height:30px">재설정<span></span></a></li>
+									<li></li>
+								</ul> 
+							</div> 
+							<div style="clear:both"></div>
+			                <div class="search_area" style="width: 350px;">
+			                	<table>
+			                        <colgroup>
+			                        	<col style="width:60px;" />
+			                            <col style="width:auto;" />
+			                        </colgroup>
+			                        <tbody>
+			                        	<tr>
+											<th>비밀번호</th>
+											<td>
+												<input id="user_pw1" type="password" style="width:200px">
+											</td>
+										</tr>
+			                            <tr>
+											<th>확인</th>
+											<td>
+												<input id="user_pw2" type="password" style="width:200px">
+											</td>
+										</tr>
+			                        </tbody>
+			                    </table>
+			                </div>
+			            </div>
+			            <div class="clear"></div>
+			        </div>
+			        </form>
+	            </div>
+	        </div>
+	    </div>
+	</body>
+</html>
+<script type="text/javascript">
+	
+	var public1 = "<%=publicKeyModulus%>";
+	var public2 = "<%=publicKeyExponent%>";
+	
+	var ctxPath = "<%=ctxPath%>";
+	var chkCnt  = "<%=chkCnt%>";
+	
+	$(document).ready(function(){
+		if(chkCnt == 0){
+			alert('<fmt:message key="MSG.STAT.0043"/>');
+			selfClose();
+		}
+	});
+	
+	function doSubmit(){
+		var frm = document.sForm;
+		if(frm.user_pw1.value==""){
+			alert('<fmt:message key="MSG.INP.0077"/>');
+			frm.user_pw1.focus();
+			return;
+		}
+		
+		if(frm.user_pw1.value.length < 6){
+			alert('<fmt:message key="MSG.INP.0078"/>');
+			frm.user_pw1.focus();
+			return;
+		} 
+		
+		if(frm.user_pw2.value==""){
+			alert('<fmt:message key="MSG.INP.0077"/>');
+			frm.user_pw2.focus();
+			return;
+		}
+		if(frm.user_pw1.value != frm.user_pw2.value){
+			alert('<fmt:message key="MSG.INP.0079"/>');
+			frm.user_pw1.focus();
+			return;
+		}
+		
+		var rsa = new RSAKey();
+		rsa.setPublic(public1, public2);
+		
+		var params = 
+		{
+			xusr_empno : rsa.encrypt(frm.user_id.value),
+			xusr_pswd  : rsa.encrypt(frm.user_pw1.value),
+			corp_cd	   : rsa.encrypt(frm.corp_cd.value)
+		};
+
+		paramData = {
+			paramJson : util.jsonToString(params)
+		};
+
+		doCommonAjax("/doResetPassword.do", paramData, "resetCallBack(jsonData.sendResult);");
+	}
+	
+	function resetCallBack(result){
+		alert(result.message);
+		selfClose();
+	}
+</script>

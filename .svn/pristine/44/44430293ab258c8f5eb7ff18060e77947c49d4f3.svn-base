@@ -1,0 +1,50 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId = "XVE01";
+	String hid_req_date = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_req_date")));
+	String hid_eeno     = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_eeno")));
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>BusinessCard</title>
+		<script type="text/javascript" src="./js/xve01_film.js"></script>
+	</head>
+	<body onload="fnSetDocumentReady();">
+		<form name="frm" id="frm">
+			<div id="contents">
+				<div class="search_area">
+	                <table>
+	                	<tr>
+							<th width="150px">지역</th>
+							<td><select id="area"></select></td>
+							<th width="200px">노출</th>
+							<td><select id="exposure"></select></td>
+						</tr>
+	                </table>
+	            </div>
+               	<div class="btn_area mt10" id="btn_add">
+                    <ul class="btns fr ml20">
+                    	<li><a href="javascript:doFileAttach();">파일첨부<span></span></a></li>
+                        <li><a href="javascript:gridRowAdd();">추가<span></span></a></li>
+                    </ul>
+                </div>
+                <div class="jq_tbl">
+	                <table id="htmlTable" class="scroll"></table>
+	                <div id="htmlPager" class="scroll" style="display:none"></div>
+	            </div>
+			</div>
+			<div class="clear"></div>
+		</form>
+		<form id="fileForm" name="fileForm">
+			<input type="hidden" id="file_doc_no" name="file_doc_no">
+			<input type="hidden" id="file_eeno"  name="file_eeno">
+			<input type="hidden" id="hid_use_yn"  name="hid_use_yn">
+			<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+		</form>
+		<form id="hideForm" name="hideForm" method="post">
+			<input type="hidden" id="hid_csrfToken"	name="hid_csrfToken">
+		</form>
+	</body>
+</html>

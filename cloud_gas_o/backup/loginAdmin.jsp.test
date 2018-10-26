@@ -1,0 +1,138 @@
+<%@ page contentType="text/html; charset=UTF-8"%>
+<%
+	String ctxPath = request.getContextPath();
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>[GLOBAL HMB]</title>
+<link rel="stylesheet" href="<%=ctxPath%>/script/css/logIn.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="<%=ctxPath%>/script/css/jquery-ui-1.7.1.custom.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="<%=ctxPath%>/script/css/ui.jqgrid.css" />
+<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery-1.5.2.min.js"></script>
+<script type="text/javascript" src="<%=ctxPath%>/script/js/i18n/grid.locale-kr.js"></script>
+<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery.jqGrid.min.js"></script> 
+<link rel="stylesheet" type="text/css" media="screen" href="<%=ctxPath%>/script/css/jquery.ui.datepicker.css" />
+<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery.ui.datepicker.js"></script>
+<script type="text/javascript" src='<%=ctxPath%>/script/js/jsonUtil.js'></script>
+<script type="text/javascript" src='<%=ctxPath%>/script/js/common.js'></script>
+<script type="text/javascript" src='<%=ctxPath%>/script/js/Base64.js'></script>
+<script language="JavaScript">
+
+	var ctxPath = "<%=ctxPath%>";
+	
+	function goLogin(){
+		var frm = document.sForm;
+		if(frm.KEY_EMPNO.value==""){
+			alert("Please enter Id.");
+			frm.KEY_EMPNO.focus();
+			return;
+		}
+		if(frm.KEY_EMPNO.value.length < 8){
+			alert("Id Number is 8 digits.");
+			frm.KEY_EMPNO.value="";
+			frm.KEY_EMPNO.focus();
+			return;
+		}
+
+		var params = 
+		{
+			xusr_empno : Base64.encode(frm.KEY_EMPNO.value.toUpperCase()),
+			xusr_pswd : Base64.encode(frm.KEY_PSWD.value)
+		};
+
+		paramData = {
+				paramJson : util.jsonToString(params)
+			};
+
+		doCommonAjax("/doLogin.do", paramData, "loginCallBack(jsonData.sendResult);");
+	}
+
+	function loginCallBack(result){
+		var frm = document.sForm;
+		
+		//alert("message="+result.message);
+		//alert("code="+result.code);
+		if(result.message == "Y"){
+			frm.action = "<%=ctxPath%>/main.html";
+			frm.csrfToken.value = result.code;
+			frm.submit();
+		}else{						
+			alert(result.message);
+			frm.KEY_EMPNO.value = "";
+			frm.KEY_PSWD.value = "";
+			frm.KEY_EMPNO.focus();
+		}
+	}
+
+	function setFocus(){
+		var frm = document.sForm;
+		frm.KEY_EMPNO.focus();
+		return;
+	}
+
+	function moveFocus(){
+		if (window.event.keyCode==13){
+			goLogin();
+		}
+		var frm = document.sForm;
+		var obj = frm.KEY_EMPNO;
+		if(obj.value.length==8){
+			frm.KEY_PSWD.focus();
+		}
+		return;
+	}
+
+	function openNewWindow(url){
+		window.open(url, "_blank", "width=516, height=400, directories=no, location=no, menubar=no, resizable=no, status=no, toolbar=no");
+	}
+
+	function openPopWindow(theURL,winName,features,cookie_key_val) {
+		var c = document.cookie + ';';
+		if( c.indexOf(cookie_key_val) < 0 )
+			window.open(theURL,winName,features);
+	}
+
+	function openPopups2() {
+		var cnt = 0;
+		openPopWindow('popup/pop_060630.html', 'pop2',  'fullscreen=no,titlebar=no,toolbar=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=no,left=0,top=0,width=450,height=210','NOPOPTODAY=NoPop');
+		if(0) alert(cnt); // pseudo for not-empty-function
+	}
+	
+	function openPopups3() {
+		var cnt = 0;
+		openPopWindow('popup/pop_090210.html', 'pop2',  'fullscreen=no,titlebar=no,toolbar=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=no,left=0,top=0,width=450,height=180','NOPOPTODAY=NoPop');
+		if(0) alert(cnt); // pseudo for not-empty-function
+	}
+</script>
+</head>
+<body>
+  <div id="wrap">
+    <div id="log_con">
+      <form name="sForm" method="post" action="" onSubmit="return false">
+      <input type='hidden' name='okmod' value='login'>
+	  <input type='hidden' name='func' value=''>
+	  <input type='hidden' name='auto_func' value=''>
+	  <input type="hidden" id="csrfToken" name="csrfToken"/>
+      <dl class="clear">
+        <dt><label for="Id"><img src="<%=ctxPath%>/images/login/id.gif" alt="Id" /></label></dt>
+        <dd><input name="KEY_EMPNO" type="text" class="login_input" size="15" onKeyUp="moveFocus()" ></dd>
+        <dt><label for="Password"><img src="<%=ctxPath%>/images/login/password.gif" alt="Password" /></label></dt>
+        <dd><input name="KEY_PSWD" type="password" class="login_input" size="15" onKeyUp="moveFocus()"></dd>
+      </dl>
+      </form>
+      <p class="logIn_btn"><img src="<%=ctxPath%>/images/login/login_btn.jpg" alt="Log In button" onClick="goLogin();" style="cursor:hand"/></p>
+      <p class="infomation">In case of any question please contact Administrator. <br />hncis@hncis.co.kr</p>
+      <div class="cz_point">
+       <img src="<%=ctxPath%>/images/login/pointer_bra.gif" alt="pointer" />
+      </div>
+    </div>
+    <!--  
+    <div id="footer" class="clear">
+      <p>COPYRIGHT &#169; 2012 HTUNDAI MOTOR COMPANY ALL RIGHT RESERVED</p>
+    </div>
+    -->
+  </div>
+</body>
+</html>

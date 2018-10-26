@@ -1,0 +1,824 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ShuttleBus">
+
+	<insert id="insertShuttleBusRequstNew" parameterClass="bgabGascsb01">
+		/* insertShuttleBusRequstNew */
+		insert into bgab_gascsb01(
+			 doc_no
+			,eeno
+			,ptt_ymd
+			,line
+			,bus_stop
+			,address
+			,numb
+			,complement
+			,district
+			,city
+			,zip_code
+			,work_shift
+			,org_fil_nm
+			,fil_nm
+			,fil_size
+			,remark
+			,if_id
+			,final_yn
+			,req_type
+			,bef_doc_no
+			,pgs_st_cd
+			,inp_ymd
+			,ipe_eeno
+			,mdfy_ymd
+			,updr_eeno
+		)values(
+			 #doc_no#
+			,#eeno#
+			,SYSDATE 
+			,#line#
+			,#bus_stop#
+			,#address#
+			,#numb#
+			,#complement#
+			,#district#
+			,#city#
+			,#zip_code#
+			,#work_shift#
+			,#org_fil_nm#
+			,#fil_nm#
+			,#fil_size#
+			,#remark#
+			,#if_id#
+			,#final_yn#
+			,#req_type#
+			,#bef_doc_no#
+			,#pgs_st_cd#
+			,SYSDATE  
+			,#ipe_eeno#
+			,SYSDATE 
+			,#updr_eeno#
+		)
+	</insert>
+
+	<update id="updateShuttleBusRequstFinalN" parameterClass="bgabGascsb01">
+		/* updateShuttleBusRequstFinalN */
+		update bgab_gascsb01
+		   set final_yn = 'N'
+		 where eeno = #eeno#
+		   and final_yn = 'S'
+	</update>
+	
+	<update id="updateShuttleBusRequstNew" parameterClass="bgabGascsb01">
+		/* updateShuttleBusRequstNew */
+		update bgab_gascsb01
+		   set line = #line#
+			 , bus_stop = #bus_stop#
+			 , address = #address#
+			 , numb = #numb#
+			 , complement = #complement#
+			 , district = #district#
+			 , city = #city#
+			 , zip_code = #zip_code#
+			 , work_shift = #work_shift#
+			 <isNotEmpty property="org_fil_nm">
+			 , org_fil_nm = #org_fil_nm#
+			 </isNotEmpty>
+			 <isNotEmpty property="fil_nm">
+			 , fil_nm = #fil_nm#
+			 </isNotEmpty>
+			 <isNotEmpty property="fil_size">
+			 , fil_size = #fil_size#
+			 </isNotEmpty>
+			 , remark = #remark#
+			 , mdfy_ymd = SYSDATE 
+			 , updr_eeno = #updr_eeno#
+		 where doc_no = #doc_no#
+		   and eeno = #eeno#
+		   and TO_CHAR(ptt_ymd, 'YYYYMMDD') = #ptt_ymd#
+	</update>
+	
+	<delete id="deleteShuttleBusRequstNew" parameterClass="bgabGascsb01">
+		/* deleteShuttleBusRequstNew */
+		delete from bgab_gascsb01$corp_cd$
+		 where doc_no = #doc_no#
+	</delete>
+	
+	<update id="updateShuttleBusRequstNewRequest" parameterClass="bgabGascsb01">
+		/* updateShuttleBusRequstNewRequest */
+		update bgab_gascsb01
+		   set pgs_st_cd  = #key_pgs_st_cd#
+		       <isEqual property="key_mode" compareValue="request">
+		       	,if_id     = #if_id#
+		       	,rpts_eeno = #rpts_eeno#
+		       	,rpts_ymd  = SYSDATE
+		       	,final_yn  = #final_yn#
+		       	,snb_rson_sbc = ''
+		       </isEqual>
+		       <isEqual property="key_mode" compareValue="requestCancel">
+		       	,if_id     = ''
+		       	,rpts_eeno = ''
+		       	,rpts_ymd  = null
+		       	,final_yn  = #final_yn#
+		       </isEqual>
+		       <isEqual property="key_mode" compareValue="confirm">
+		        ,remark_answer = #remark_answer#
+		       	,acpc_eeno = #updr_eeno#
+		       	,acpc_ymd  = SYSDATE
+		       	,final_yn = #final_yn#
+		       </isEqual>
+		       <isEqual property="key_mode" compareValue="confirmCancel">
+		        ,if_id = ''
+		       	,acpc_eeno = ''
+		       	,acpc_ymd  = null
+		       	,rpts_eeno = ''
+		       	,rpts_ymd  = null
+		       	,rdcs_eeno = ''
+		       	,rdcs_ymd  = null
+		       	,final_yn  = #final_yn#
+		       	,snb_rson_sbc = #snb_rson_sbc#
+		       </isEqual>
+		       <isEqual property="key_mode" compareValue="confirm2">
+		        ,rdcs_eeno = #updr_eeno#
+		        ,rdcs_ymd	= SYSDATE
+		        </isEqual>
+		       ,updr_eeno = #updr_eeno#
+		       ,mdfy_ymd  = SYSDATE
+		 where eeno       = #eeno#
+		   and doc_no     = #doc_no#
+	</update>
+	
+	<update id="updateShuttleBusRequstConfirmFinal" parameterClass="bgabGascsb01">
+		/* updateShuttleBusRequstConfirmFinal */
+		update bgab_gascsb01
+		   set final_yn = #bef_yn#
+		 where eeno = #eeno#
+		  <isNotEmpty property="bef_doc_no">
+		  and doc_no = #bef_doc_no#
+		  </isNotEmpty>
+		  <isEmpty property="bef_doc_no">
+		  and doc_no = (select doc_no from bgab_gascsb01 where final_yn = 'Y' and eeno = #eeno# and doc_no != #doc_no#)
+		  </isEmpty>
+	</update>
+	
+	<select id="selectShuttleBusNewInfo" parameterClass="bgabGascsb01" resultClass="bgabGascsb01">
+		/* selectShuttleBusNewInfo */
+		select doc_no
+			 , eeno
+			 , TO_CHAR(ptt_ymd, 'YYYY-MM-DD') as ptt_ymd
+			 , line
+			 , bus_stop
+			 , line.route_name as line_nm
+			 , bus.route_name as bus_nm
+			 , address
+			 , numb
+			 , complement
+		 	 , district
+			 , city
+	 		 , zip_code
+			 , work_shift
+			 , org_fil_nm
+			 , fil_nm
+			 , fil_size
+			 , remark
+			 , if_id
+			 , bef_doc_no
+			 , final_yn
+			 , req_type
+			 , pgs_st_cd
+			 , pgcNm.xcod_hname pgs_st_nm
+			 , a.ipe_eeno
+			 , req_type
+			 , snb_rson_sbc
+			 , remark_answer
+			 , TO_CHAR(a.inp_ymd, 'YYYY-MM-DD') AS INP_YMD
+		  from BGAB_GASCSB01$corp_cd$ a
+		  JOIN (SELECT xcod_code, 
+					  xcod_hname 
+				 FROM BGAB_GASCZ005$corp_cd$ 
+				WHERE xcod_knd = 'X0040' 
+				  AND locale = #locale#
+			   )pgcNm 
+			   ON pgcNm.xcod_code = a.pgs_st_cd 
+		  left outer join BGAB_GASCSB02$corp_cd$ line
+		    on a.line = line.seq
+		   and line.f_levl = 0
+		  left outer join BGAB_GASCSB02$corp_cd$ bus
+		    on a.line = bus.type
+		   and a.bus_stop = bus.seq
+		   and bus.f_levl = 1
+		 where 1=1
+		   <isNotEmpty property="if_id">
+		   	   and a.if_id = #if_id#
+		   </isNotEmpty>
+		   <isEmpty property="if_id">
+		   and doc_no = #doc_no#
+		   </isEmpty>
+	</select>
+	
+	<select id="getSelectShuttleBusListCount" parameterClass="bgabGascsb01" resultClass="String">
+		/* getSelectShuttleBusListCount */
+		select count(*)
+		  from BGAB_GASCSB01$corp_cd$ a
+		  left outer join BGAB_GASCZ002$corp_cd$ usr
+		    on a.eeno = usr.xusr_empno
+		  left outer join BGAB_GASCSB02$corp_cd$ line
+		    on a.line = line.seq
+		   and line.f_levl = 0
+		  left outer join BGAB_GASCSB02$corp_cd$ bus
+		    on a.line = bus.type
+		   and a.bus_stop = bus.seq
+		   and bus.f_levl = 1
+		 where 1=1
+		   <isNotEmpty property="key_eeno">
+		   and a.eeno = #key_eeno#
+		   </isNotEmpty>
+		   <isNotEmpty property="key_eenm">
+		   and usr.xusr_name like '%'||#key_eenm#||'%'
+		   </isNotEmpty>
+		   <isNotEmpty property="key_line">
+		   and line.route_name LIKE '%'||#key_line#||'%'
+		   </isNotEmpty>
+		   <isNotEmpty property="key_busStop">
+		   and bus.route_name LIKE '%'||#key_busStop#||'%'
+		   </isNotEmpty>
+		   <isNotEmpty property="key_ops_cd">
+		   and usr.xusr_dept_code = #key_ops_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="key_pgs_st_cd">
+		   and a.pgs_st_cd = #key_pgs_st_cd#
+		   </isNotEmpty>
+	</select>
+	
+	<select id="getSelectShuttleBusList" parameterClass="bgabGascsb01" resultClass="bgabGascsb01">
+		/* getSelectShuttleBusList */
+		select * 
+		  from (
+				select row_number() over(order by ptt_ymd desc, doc_no desc) as rnum
+				     , k.*
+				  from (
+						select eeno
+							  , ptt_ymd
+							  , line.route_name as line
+							  , bus.route_name as bus_stop
+							  , bus.route_time as bus_time
+							  , remark
+							  , if_id
+							  , pgs_st_cd
+							  , b.xcod_hname as pgs_st_nm
+							  , doc_no
+							  , usr.xusr_name as eenm
+							  , usr.xusr_dept_code as ops_cd
+							  , usr.xusr_dept_name as ops_nm
+						  from BGAB_GASCSB01$corp_cd$ a
+						  left outer join(
+								select xcod_code, xcod_hname
+								  from BGAB_GASCZ005$corp_cd$
+								 where xcod_knd = 'X0040'
+								   and locale = #locale#
+								 ) b
+							on b.xcod_code = a.pgs_st_cd
+						  left outer join BGAB_GASCZ002$corp_cd$ usr
+						    on a.eeno = usr.xusr_empno
+						   left outer join BGAB_GASCSB02$corp_cd$ line
+						     on a.line = line.seq
+						  and line.f_levl = 0
+						  left outer join BGAB_GASCSB02$corp_cd$ bus
+						     on a.line = bus.type
+						    and a.bus_stop = bus.seq
+						  and bus.f_levl = 1
+						 where 1=1
+						   <isNotEmpty property="key_eeno">
+						   and a.eeno = #key_eeno#
+						   </isNotEmpty>
+						   <isNotEmpty property="key_eenm">
+						   and usr.xusr_name like '%'||#key_eenm#||'%'
+						   </isNotEmpty>
+						   <isNotEmpty property="key_line">
+						   and line.route_name LIKE '%'||#key_line#||'%'
+						   </isNotEmpty>
+						   <isNotEmpty property="key_busStop">
+						   and bus.route_name LIKE '%'||#key_busStop#||'%'
+						   </isNotEmpty>
+						   <isNotEmpty property="key_ops_cd">
+						   and usr.xusr_dept_code = #key_ops_cd#
+						   </isNotEmpty>
+						   <isNotEmpty property="key_pgs_st_cd">
+						   and a.pgs_st_cd = #key_pgs_st_cd#
+						   </isNotEmpty>
+					) k
+			) z
+		WHERE rnum between #startRow# AND #endRow#
+	</select>
+	
+	<select id="selectTransporteFretadoList" parameterClass="bgabGascsb02" resultClass="bgabGascsb02">
+		/* selectTransporteFretadoList */
+		select seq as fret_seq
+			 , type as fret_type
+			 , route_name as fret_name
+			 , route_sort as fret_sort
+			 , route_use_yn as fret_use_yn
+			 , (select count(*) from bgab_gascsb02 where f_levl = '1' and type = a.type) as fret_cnt
+		  from bgab_gascsb02$corp_cd$ a
+		 where a.f_levl = #f_levl#
+		 order by fret_name asc
+	</select>
+	
+	<select id="selectPonteExistenteList" parameterClass="bgabGascsb02" resultClass="bgabGascsb02">
+		/* selectPonteExistenteList */
+		select seq
+			 , type
+			 , route_name
+			 , route_sort
+			 , route_use_yn
+			 , route_cidade
+			 , route_time
+		  from bgab_gascsb02$corp_cd$
+		 where f_levl = #f_levl#
+		   and type = #type#
+		 order by TO_NUMBER(route_sort)
+	</select>
+	
+	<insert id="insertTransporteFretadoList" parameterClass="bgabGascsb02">
+		/* insertTransporteFretadoList */
+		insert into bgab_gascsb02$corp_cd$ (
+			   seq
+			 , type
+			 , route_name
+			 , route_sort
+			 , route_use_yn
+			 , f_levl
+			 , inp_ymd
+			 , ipe_eeno
+			 , mdfy_ymd
+			 , updr_eeno
+		)values(
+			   (select NVL(max(TO_NUMBER(seq)),0 )+1 as seq from bgab_gascsb02$corp_cd$)
+			 , (select NVL(max(TO_NUMBER(seq)),0 )+1 as seq from bgab_gascsb02$corp_cd$)
+			 , #fret_name#
+			 , #fret_sort#
+			 , #fret_use_yn#
+			 , #f_levl#
+			 , SYSDATE
+			 , #ipe_eeno#
+			 , SYSDATE
+			 , #updr_eeno#
+		)
+	</insert>
+	
+	<update id="updateTransporteFretadoList" parameterClass="bgabGascsb02">
+		/* updateTransporteFretadoList */
+		update bgab_gascsb02$corp_cd$
+		   set route_name = #fret_name#
+			 , route_sort = #fret_sort#
+			 , route_use_yn = #fret_use_yn#
+		 where seq = #fret_seq#
+		   and type = #fret_type#
+		   and f_levl = #f_levl#
+	</update>
+	
+	<insert id="insertPontoExistenteList" parameterClass="bgabGascsb02">
+		/* insertPontoExistenteList */
+		insert into bgab_gascsb02$corp_cd$ (
+			   seq
+			 , type
+			 , route_name
+			 , route_cidade
+			 , route_time
+			 , route_sort
+			 , route_use_yn
+			 , f_levl
+			 , inp_ymd
+			 , ipe_eeno
+			 , mdfy_ymd
+			 , updr_eeno
+		)values(
+			   (select NVL(max(TO_NUMBER(seq)),0 )+1 as seq from bgab_gascsb02$corp_cd$)
+			 , #type#
+			 , #route_name#
+			 , #route_cidade#
+			 , #route_time#
+			 , #route_sort#
+			 , #route_use_yn#
+			 , #f_levl#
+			 , SYSDATE
+			 , #ipe_eeno#
+			 , SYSDATE
+			 , #updr_eeno#
+		)
+	</insert>
+	
+	<update id="updatePontoExistenteList" parameterClass="bgabGascsb02">
+		/* updatePontoExistenteList */
+		update bgab_gascsb02$corp_cd$
+		   set route_name = #route_name#
+		   	 , route_cidade = #route_cidade#
+			 , route_time = #route_time#
+			 , route_sort = #route_sort#
+			 , route_use_yn = #route_use_yn#
+		 where seq = #seq#
+		   and type = #type#
+		   and f_levl = #f_levl#
+	</update>
+	
+	<delete id="deleteTransporteFretadoList" parameterClass="bgabGascsb02">
+		/* deleteTransporteFretadoList */
+		delete from bgab_gascsb02$corp_cd$
+		 where seq = #fret_seq#
+		   and type = #fret_type#
+		   and f_levl = #f_levl#
+	</delete>
+	
+	<delete id="deletePontoExistenteList" parameterClass="bgabGascsb02">
+		/* deletePontoExistenteList */
+		delete from bgab_gascsb02$corp_cd$
+		 where seq = #seq#
+		   and type = #type#
+		   and f_levl = #f_levl#
+	</delete>
+	
+	<select id="selectShuttleBusRequestCheck" parameterClass="bgabGascsb01" resultClass="bgabGascsb01">
+		/* selectShuttleBusRequestCheck */
+		select *
+		  from (
+				 select row_number() over(order by final_yn) as rnum
+					  , z.*
+				   from (
+						select xusr_benefit_plan_cd as register
+							 , doc_no 
+						     , eeno  
+						     , ptt_ymd 
+						     , final_yn
+						  from BGAB_GASCZ002$corp_cd$ a 
+						  left outer join bgab_gascsb01 b 
+						       on a.xusr_empno = b.eeno
+							   and final_yn = 'S' 
+							   <isNotEmpty property="doc_no">
+							   and doc_no != #doc_no#
+							   </isNotEmpty>
+						 where xusr_empno = #eeno# 
+						 
+						 union all 
+						 
+						 select xusr_benefit_plan_cd as register
+							 , doc_no 
+						     , eeno  
+						     , ptt_ymd 
+						     , final_yn
+						  from BGAB_GASCZ002$corp_cd$ a 
+						  left outer join bgab_gascsb01 b 
+						       on a.xusr_empno = b.eeno
+							   and final_yn = 'Y' 
+							   <isNotEmpty property="doc_no">
+							   and doc_no != #doc_no#
+							   </isNotEmpty>
+						 where xusr_empno = #eeno# 
+					   ) Z
+				where final_yn is not null
+				) X
+		 where rnum = 1
+	</select>
+	
+	<select id="selectShuttleBusBeforeView" parameterClass="bgabGascsb01" resultClass="bgabGascsb03">
+		/* selectShuttleBusBeforeView */
+		select line as r_line
+			 , bus_stop as r_busStop
+			 , line.route_name as r_line_nm
+			 , bus.route_name as r_busStop_nm
+			 , address as r_address
+			 , numb as r_numb
+			 , complement as r_complement
+		 	 , district as r_district
+			 , city as r_city
+	 		 , zip_code as r_zipCode
+			 , work_shift as r_workShift
+			 , org_fil_nm as r_org_fil_nm
+			 , fil_nm as r_fil_nm
+			 , fil_size as r_fil_size
+			 , bus.route_time as bus_time
+		  from BGAB_GASCSB01 a
+		   left outer join BGAB_GASCSB02 line
+		     on a.line = line.seq
+		  and line.f_levl = 0
+		  left outer join BGAB_GASCSB02 bus
+		     on a.line = bus.type
+		    and a.bus_stop = bus.seq
+		  and bus.f_levl = 1
+		 where doc_no = #doc_no#
+		   and eeno = #eeno#
+	</select>
+	
+	<select id="selectShuttleBusLineCombo" parameterClass="bgabGascsb02" resultClass="bgabGascsb02">
+		/* selectShuttleBusLineCombo */
+		select seq as type
+			 , route_name
+		  from bgab_gascsb02
+		 where 1=1
+		   and f_levl = #f_levl#
+		   <isEqual property="f_levl" compareValue="1">
+		   and type = #type#
+		   </isEqual>
+		 order by route_name
+	</select>
+	
+	<select id="selectPonteExistentePopupList" parameterClass="bgabGascsb02" resultClass="bgabGascsb02">
+		/* "selectPonteExistentePopupList" */
+		select * 
+		  from (
+				select row_number() over(order by route_time, route_sort) as rnum
+				     , k.*
+				  from (
+						SELECT SEQ , 
+						       TYPE , 
+						       C.XUSR_NAME AS ROUTE_NAME , 
+						       ROUTE_SORT , 
+						       ROUTE_USE_YN , 
+						       PGCNM.XCOD_HNAME AS ROUTE_CIDADE , 
+						       ROUTE_NAME AS ROUTE_POINT , 
+						       ROUTE_TIME 
+						  FROM BGAB_GASCSB02 A 
+						  LEFT OUTER JOIN BGAB_GASCSB01 B
+						    ON A.SEQ = B.BUS_STOP
+						   AND B.FINAL_YN = 'Y'
+						  LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ C
+						    ON C.XUSR_EMPNO = B.EENO
+						  LEFT OUTER JOIN 
+						       (SELECT XCOD_CODE, 
+						              XCOD_HNAME 
+						         FROM BGAB_GASCZ005$corp_cd$ 
+						        WHERE XCOD_KND = 'X3007' 
+						       )PGCNM 
+						       ON PGCNM.XCOD_CODE = A.ROUTE_CIDADE 
+						 where f_levl = #f_levl#
+						   and type = #type#
+						) k
+			) z
+		WHERE rnum between #startRow# AND #endRow#
+	</select>
+	
+	<select id="selectPonteExistentePopupListCount" parameterClass="bgabGascsb02" resultClass="String">
+		/* selectPonteExistentePopupListCount */
+		select count(*)
+		  from bgab_gascsb02 a
+		  LEFT OUTER JOIN BGAB_GASCSB01 B
+		    ON A.ROUTE_NAME = B.BUS_STOP
+		  LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ C
+		    ON C.XUSR_EMPNO = B.EENO
+		  left outer JOIN 
+		       (SELECT XCOD_CODE, 
+		              XCOD_HNAME 
+		         FROM BGAB_GASCZ005$corp_cd$ 
+		        WHERE XCOD_KND = 'X3007' 
+		       )PGCNM 
+		       ON PGCNM.XCOD_CODE = A.ROUTE_CIDADE 
+		 where f_levl = #f_levl#
+		   and type = #type#
+	</select>
+	
+	<select id="selectShuttleBusSapInformationView" parameterClass="BgabGascsb04" resultClass="BgabGascsb04">
+		/* selectShuttleBusSapInformationView */
+		select xcod_hname as s_status
+			 , xusr_street as s_address
+			 , xusr_house as s_num
+			 , xusr_district as s_district
+			 , xusr_city as s_city
+			 , xusr_postal_code as s_zipCode
+			 , xusr_work_schedule_nm as s_workShift
+		  from BGAB_GASCZ002$corp_cd$ a
+		  left outer join (SELECT xcod_code, 
+					  xcod_hname 
+				 FROM BGAB_GASCZ005$corp_cd$ 
+				WHERE xcod_knd = 'X3014' 
+			   )pgcNm 
+			on pgcNm.xcod_code = a.xusr_benefit_plan_cd
+		 where xusr_empno = #key_eeno#
+	</select>
+	
+	<select id="selectWorkShiftComboList" parameterClass="commonCode" resultClass="commonCode">
+		/* selectWorkShiftComboList */
+		select distinct xusr_work_schedule_nm as value
+			 , xusr_work_schedule_nm as name
+			 , '' as 'key'
+		  from BGAB_GASCZ002$corp_cd$
+		 where NVL(xusr_work_schedule_nm, '') != ''
+		 order by xusr_work_schedule_nm
+	</select>
+	
+	<update id="updateInfoSbToReject" parameterClass="bgabGascsb01">
+   		UPDATE	BGAB_GASCSB01
+		SET 	PGS_ST_CD  = #pgs_st_cd#
+				,remark_answer = #remark_answer#
+				,IF_ID     = ''
+				,RPTS_EENO = ''
+				,RPTS_YMD  = ''
+				,RDCS_EENO = ''
+				,RDCS_YMD  = ''
+				,ACPC_EENO = ''
+				,ACPC_YMD  = ''
+				,SNB_RSON_SBC = #snb_rson_sbc#
+				,UPDR_EENO = #updr_eeno#
+				,MDFY_YMD  = SYSDATE
+				,FINAL_YN = #final_yn#
+		WHERE	1 = 1
+		AND		DOC_NO = #doc_no#
+	</update>
+	
+	<update id="updateShuttleBusApprovalStatus" parameterClass="bgabGascsb01">
+		/* updateShuttleBusApprovalStatus */
+		UPDATE BGAB_GASCSB01$corp_cd$
+		   SET PGS_ST_CD  = #pgs_st_cd#
+			 , UPDR_EENO = #updr_eeno#
+			 , MDFY_YMD  = SYSDATE
+		 WHERE DOC_NO = #doc_no#
+	</update>
+	
+	<select id="selectShuttleBusChangeToDocNo" parameterClass="bgabGascsb01" resultClass="bgabGascsb01">
+		/* selectShuttleBusChangeToDocNo */
+		SELECT TOP(1) DOC_NO
+		FROM BGAB_GASCSB01
+		WHERE EENO = #eeno#
+		ORDER BY DOC_NO DESC
+	</select>
+	
+	<select id="selectShuttleBusLineTime" parameterClass="bgabGascsb02" resultClass="bgabGascsb02">
+		/* selectShuttleBusLineTime */
+		select route_time
+		  from bgab_gascsb02
+		 where SEQ = #route_name#
+	</select>
+	
+	<insert id="insertShuttleBusToFile" parameterClass="BgabGascZ011Dto">
+		/* insertShuttleBusToFile */
+		INSERT INTO BGAB_GASCZ011$corp_cd$ (
+		DOC_NO ,
+		EENO ,
+		SEQ ,
+		AFFR_SCN_CD ,
+		OGC_FIL_NM ,
+		FIL_NM ,
+		FIL_MGN_QTY ,
+		INP_YMD ,
+		IPE_EENO
+		)VALUES(
+		#doc_no# ,
+		#eeno# ,
+		#seq# ,
+		#affr_scn_cd# ,
+		#ogc_fil_nm# ,
+		#fil_nm# ,
+		#fil_mgn_qty# ,
+		SYSDATE,
+		#ipe_eeno#
+		)
+	</insert>
+
+	<select id="selectShuttleBusToFile" resultClass="BgabGascZ011Dto" parameterClass="BgabGascZ011Dto">
+		/* selectShuttleBusToFile */
+		SELECT
+		DOC_NO ,
+		EENO ,
+		SEQ ,
+		AFFR_SCN_CD ,
+		FIL_NM ,
+		OGC_FIL_NM ,
+		FIL_MGN_QTY ,
+		INP_YMD ,
+		IPE_EENO
+		FROM BGAB_GASCZ011$corp_cd$
+		WHERE DOC_NO = #doc_no#
+		AND EENO = #eeno#
+		AND SEQ = #seq#
+		AND AFFR_SCN_CD = #affr_scn_cd#
+		<isNotEmpty property="ogc_fil_nm" prepend="and">
+			OGC_FIL_NM =
+			#ogc_fil_nm#
+		</isNotEmpty>
+		ORDER BY FIL_NM
+	</select>
+
+	<delete id="deleteShuttleBusToFile" parameterClass="BgabGascZ011Dto">
+		/* deleteShuttleBusToFile */
+		DELETE FROM BGAB_GASCZ011$corp_cd$
+		WHERE DOC_NO = #doc_no#
+		AND EENO = #eeno#
+		AND SEQ = #seq#
+		AND AFFR_SCN_CD = #affr_scn_cd#
+		AND
+		OGC_FIL_NM = #ogc_fil_nm#
+	</delete>
+	
+	<select id="selectShuttleBusCombo1" parameterClass="commonCode" resultClass="commonCode">
+		/* Query Id : selectShuttleBusCombo1 */
+		SELECT SEQ AS VALUE
+		     , ROUTE_NAME AS NAME 
+		  FROM BGAB_GASCSB02$corp_cd$
+		 WHERE F_LEVL = '0' 
+		   AND ROUTE_USE_YN = 'Y'
+ 		 ORDER BY ROUTE_SORT ASC
+	</select>
+	
+	<select id="selectShuttleBusCombo2" parameterClass="commonCode" resultClass="commonCode">
+		/* Query Id : selectShuttleBusCombo2 */
+		SELECT SEQ AS VALUE
+		     , '(' || ROUTE_TIME ||') ' || ROUTE_NAME AS NAME 
+		     , TYPE AS "KEY"
+		  FROM BGAB_GASCSB02$corp_cd$
+		 WHERE F_LEVL = '1' 
+		   AND ROUTE_USE_YN = 'Y'
+		 ORDER BY ROUTE_SORT ASC
+	</select>
+	
+	<insert id="insertShuttleBusRequst" parameterClass="bgabGascsb01">
+		/* shuttleBus.xml :: insertShuttleBusRequst */
+		insert into bgab_gascsb01$corp_cd$ (
+			 doc_no
+			,eeno
+			,ptt_ymd
+			,line
+			,bus_stop
+			,remark
+			,pgs_st_cd
+			,inp_ymd
+			,ipe_eeno
+			,mdfy_ymd
+			,updr_eeno
+		)values(
+			 #doc_no#
+			,#eeno#
+			,TO_DATE(#ptt_ymd#,'YYYY-MM-DD')
+			,#line#
+			,#bus_stop#
+			,#remark#
+			,#pgs_st_cd#
+			,SYSDATE  
+			,#ipe_eeno#
+			,SYSDATE 
+			,#updr_eeno#
+		)
+	</insert>
+	
+	<update id="updateShuttleBusRequst" parameterClass="bgabGascsb01">
+		/* shuttleBus.xml :: updateShuttleBusRequst */
+		update bgab_gascsb01$corp_cd$
+		   set ptt_ymd = TO_DATE(#ptt_ymd#, 'YYYY-MM-DD')
+			 , line = #line#
+			 , bus_stop = #bus_stop#
+			 , remark = #remark#
+			 , mdfy_ymd = SYSDATE
+			 , updr_eeno = #updr_eeno#
+		 where doc_no = #doc_no#
+	</update>
+	
+	
+	<select id="selectShuttleBusBeforeRequestInfo" parameterClass="bgabGascsb01" resultClass="bgabGascsb01">
+		/* shuttleBus.xml :: selectShuttleBusBeforeRequestInfo */
+		select doc_no
+			 , eeno
+			 , ptt_ymd
+			 , line
+			 , bus_stop
+			 , line.route_name as line_nm
+			 , bus.route_name as bus_nm
+			 , address
+			 , numb
+			 , complement
+		 	 , district
+			 , city
+	 		 , zip_code
+			 , work_shift
+			 , org_fil_nm
+			 , fil_nm
+			 , fil_size
+			 , remark
+			 , if_id
+			 , bef_doc_no
+			 , final_yn
+			 , req_type
+			 , pgs_st_cd
+			 , pgcNm.xcod_hname pgs_st_nm
+			 , a.ipe_eeno
+			 , req_type
+			 , snb_rson_sbc
+			 , remark_answer
+			 , TO_CHAR(a.inp_ymd, 'YYYY-MM-DD') AS INP_YMD
+		  from BGAB_GASCSB01$corp_cd$ a
+		  JOIN (SELECT xcod_code, 
+					  xcod_hname 
+				 FROM BGAB_GASCZ005$corp_cd$ 
+				WHERE xcod_knd = 'X0040' 
+				  AND locale = #locale#
+			   )pgcNm 
+			   ON pgcNm.xcod_code = a.pgs_st_cd 
+		  left outer join BGAB_GASCSB02$corp_cd$ line
+		    on a.line = line.seq
+		   and line.f_levl = 0
+		  left outer join BGAB_GASCSB02$corp_cd$ bus
+		    on a.line = bus.type
+		   and a.bus_stop = bus.seq
+		   and bus.f_levl = 1
+		 where eeno = #eeno#
+		   and pgs_st_cd in ('0','3')
+	</select>
+</sqlMap>

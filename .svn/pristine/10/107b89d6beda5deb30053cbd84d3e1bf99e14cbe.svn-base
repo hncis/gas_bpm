@@ -1,0 +1,267 @@
+
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="com.hncis.common.util.*"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String docId = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("docid")));
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>주유비</title>
+		<style type="text/css">
+			#wrap.submit_page #contents_wrap,
+			#wrap.submit_page .any_page,
+			#wrap.submit_page #contents{width:100%}
+		</style>
+	</head>
+	<body>
+		<div id="wrap" class="submit_page">
+	    	<form name="frm" id="frm">
+				<input type="hidden" id="if_id" name="if_id" value="<%=docId %>">
+		        <div id="contents_wrap" class="any_page">
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(
+							sess_empno
+							,"XFC01"
+							,""
+							,""
+							,""
+							,null
+							,"Y"
+							,request)
+						%>
+						<div id="basic">
+			                <div class="con_t_area">
+			                	<h3><fmt:message key="basic_info"/></h3>
+			                </div>
+			                <div class="search_area">
+			                	<table>
+			                        <colgroup>
+			                        	<col style="width:110px;" />
+			                        	<col style="width:170px;" />
+			                        	<col style="width:60px;" />
+			                        	<col style="width:170px;" />
+			                        	<col style="width:60px;" />
+			                        	<col style="width:170px;" />
+			                        	<col style="width:60px;" />
+			                            <col style="width:auto;" />
+			                        </colgroup>
+			                        <tbody>
+			                            <tr>
+											<th><fmt:message key="eeno"/></th>
+											<td>
+												<input type="text" id="eeno" name="eeno" style="width:155px;ime-mode:disabled;" class="disabled inputOnlyNumber" readOnly>
+											</td>
+											<th><fmt:message key="eenm"/></th>
+											<td>
+												<input type="text" id="eeno_nm" name="eeno_nm" style="width:155px;" class="disabled" readOnly/>
+											</td>
+											<th><fmt:message key="position"/></th>
+											<td>
+												<input type="text" id="pos_nm" name="pos_nm" style="width:155px;" class="disabled" readOnly/>
+											</td>
+											<th><fmt:message key="dept_nm"/></th>
+											<td>
+												<input type="text" id="dept_nm" name="dept_nm" style="width:155px;" class="disabled" readOnly/>
+											</td>
+										</tr>
+										<tr>
+											<th><fmt:message key="req_ymd"/></th>
+											<td>
+												<input type="text" id="reg_ymd" name="reg_ymd" style="width:155px;" class="disabled" readOnly/>
+											</td>
+											<th><fmt:message key="doc_no"/></th>
+											<td>
+												<input type="text" id="doc_no" name="doc_no" style="width:155px;" class="disabled" readOnly/>
+											</td>
+											<th><fmt:message key="tel_no"/></th>
+											<td>
+												<input type="text" id="tel_no" name="tel_no" style="width:155px;" class="disabled" readOnly/>
+											</td>
+											<th><fmt:message key="pgs_st_nm"/></th>
+											<td>
+												<input type="text" id="pgs_st_nm" name="pgs_st_nm" style="width:155px;" class="disabled" readOnly/>
+											</td>
+										</tr>
+			                        </tbody>
+			                    </table>
+			                </div>
+			                <div class="con_t_area">
+			                	<h3><fmt:message key="req_info"/></h3>
+			                </div>
+			                <div class="vehicle_tbl">
+								<table>
+									<colgroup>
+									  <col style="width:105px;" />
+									  <col style="width:420px;" />
+									  <col style="width:105px;" />
+									  <col style="width:auto;" />
+									</colgroup>
+									<tbody>
+										<tr>
+											<th><fmt:message key="y_m"/></th>
+											<td colspan="3">
+												<select id="req_year" name="req_year" style="width: 80px" disabled>
+													<option value="2014">2014</option>
+													<option value="2015">2015</option>
+													<option value="2016">2016</option>
+													<option value="2017">2017</option>
+													<option value="2018">2018</option>
+													<option value="2019">2019</option>
+													<option value="2020">2020</option>
+													<option value="2021">2021</option>
+													<option value="2022">2022</option>
+													<option value="2023">2023</option>
+												</select>
+												<select id="req_month" name="req_month" style="width: 50px" disabled>
+													<option value="01">01</option>
+													<option value="02">02</option>
+													<option value="03">03</option>
+													<option value="04">04</option>
+													<option value="05">05</option>
+													<option value="06">06</option>
+													<option value="07">07</option>
+													<option value="08">08</option>
+													<option value="09">09</option>
+													<option value="10">10</option>
+													<option value="11">11</option>
+													<option value="12">12</option>
+												</select>
+											</td>
+										</tr>
+										<tr>
+											<th><fmt:message key="mil_oil_pay"/></th>
+											<td>
+												<input type="text" id="trvg_dist" name="trvg_dist" style="ime-mode:disabled;width:86px;" class="disabled" readOnly/>
+												<input type="text" id="fuel_cost" name="fuel_cost" style="ime-mode:disabled;width:86px;" class="disabled" readOnly/>
+											</td>
+											<th><fmt:message key="run_ymd"/></th>
+											<td>
+												<input type="text" id="strt_ymd" name="strt_ymd" style="width:100px;" class="disabled" readonly /> ~
+												<input type="text" id="fnh_ymd" name="fnh_ymd" style="width:100px;" class="disabled" readonly />
+											</td>
+										</tr>
+										<tr>
+											<th><fmt:message key="car"/></th>
+											<td colspan="3">
+												<select id="corp_div" name="corp_div" style="width: 100px" onchange="changeCorpDiv();" disabled>
+												</select>
+												<input type="text" id="car_no" name="car_no" style="width:80px;" class="disabled" readonly />
+												<input type="text" id="vehl_nm" name="vehl_nm" style="width:180px;" class="disabled" readonly />
+												<select id="fuel_type_cd" name="fuel_type_cd" style="width: 100px" disabled="disabled">
+												</select>
+											</td>
+										</tr>
+										<tr>
+											<th><fmt:message key="dept"/></th>
+											<td>
+												<input type="text" id="start_loc" name="start_loc" style="" class="disabled" readonly/>
+											</td>
+											<th><fmt:message key="dept_acc_dist"/></th>
+											<td>
+												<input type="text" id="strt_trvg_dist" name="strt_trvg_dist" style="width:60px;ime-mode:disabled;text-align:right;" class="disabled inputOnlyNumber" maxlength="7" readonly/> KM
+											</td>
+										</tr>
+										<tr>
+											<th><fmt:message key="pass_loc"/></th>
+											<td colspan="3">
+												<input type="text" id="pass_loc" name="pass_loc" class="disabled" readonly/>
+											</td>
+										</tr>
+										<tr>
+											<th><fmt:message key="dest"/></th>
+											<td>
+												<input type="text" id="fnh_loc" name="fnh_loc" style="" class="disabled" readonly/>
+											</td>
+											<th><fmt:message key="dest_acc_dist"/></th>
+											<td>
+												<input type="text" id="fnh_trvg_dist" name="fnh_trvg_dist" style="width:60px;ime-mode:disabled;text-align:right;" class="disabled inputOnlyNumber" maxlength="7" readonly/> KM
+											</td>
+										</tr>
+										<tr>
+											<th><fmt:message key="run_purp"/></th>
+											<td colspan="3">
+												<input type="text" id="purpose" name="purpose" style="" maxlength="100" class="disabled" readonly/>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+		            </div>
+		            <div class="clear"></div>
+		        </div>
+	        </form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken"	name="hid_csrfToken">
+			</form>
+	    </div>
+	</body>
+	<script type="text/javascript">
+
+	function fnSetDocumentReady(){
+		$(".sub_title").hide();
+	
+		initMenus();
+		$('#BV').slideDown('fast');
+		$(".inputOnlyNumber").numeric();
+		var date = new Date();
+		var year = date.getFullYear();
+		var month = date.getMonth()+1;
+		month = month < 10 ? '0'+(month) : month;
+		$("#req_year").val(year);
+		$("#req_month").val(month);
+
+		sess_auth = $("#work_auth").val();
+
+		getCommonCode("fuel_type_cd:XBV05:S;corp_div:XFC01:", "N", "init()");
+	}
+
+	function init(){
+		doSearch();
+	}
+
+	function chk_auth(){
+		var f = document.frm;
+		with(f){
+			if($("#work_auth").val() < 5 && sess_mstu != "M"){
+				$("#eeno").val(sess_empno);
+				readOnlyStyle("eeno", 1);
+			}else{
+				if($("#M_DOC_NO").val() != ""){
+					$("#eeno").val(sess_empno);
+					readOnlyStyle("eeno", 1);
+				}else{
+					readOnlyStyle("eeno", 2);
+				}
+			}
+		}
+	}
+
+	function doSearch(msgFlag){
+		var keyData = {
+			if_id		: $('#if_id').val(),
+			corp_cd		: sess_corp_cd,
+			locale		: sess_locale
+		};
+		paramData = {
+				paramJson      	: util.jsonToString(keyData)
+		};
+		doCommonAjax("doSearchXfc01InfoByIfId.do", paramData, "doSearchCallBack(jsonData.sendResult,'"+msgFlag+"');");
+	}
+
+	/**
+	 * callback
+	 */
+	function doSearchCallBack(result,msgFlag){
+		loadJsonSet(result);
+		$('#car_no').val(result.car_no);
+		$('#vehl_nm').val(result.vehl_nm);
+		$('#fuel_type_cd').val(result.fuel_type_cd);
+		
+		fnSubmitInfoSettings($("#pgs_st_cd").val(), $("#if_id").val(), result.code, "snb_rson_sbc", "1");
+	}
+
+	</script>
+</html>

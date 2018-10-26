@@ -1,0 +1,24 @@
+@charset "utf-8";
+/* CSS Document */
+*{margin:0; padding:0;}
+html, body{width:100%;}
+body{font-family:Verdana, Geneva, sans-serif; font-size:12px; font-weight:lighter; color:#6a6e71; background-color:#FFF;}
+ul, li{list-style:none;}
+/*label{font-size:0; z-index:-2; overflow:hidden; *display:none;}*/
+#wrap{width:1000px; margin:0 auto;}
+#log_con{position:relative; margin-top:150px; height:457px; background:url('/images/login/login_bg2.jpg') top left no-repeat;}
+#log_con ul{position:absolute; top:140px; left:362px;}
+#log_con ul li{float:left;}
+#log_con ul li p{margin-left:5px; *margin-top:3px; margin-right:10px;}
+#log_con dl{position:absolute; top:145px; left:355px;}
+#log_con dl dt{float:left; margin-right:7px; margin-top:5px;}
+#log_con dl dd{margin-bottom:4px; *margin-bottom:1px;}
+#log_con dl input{border:1px solid #d5dbe3; height:18px; width:130px; padding-left:5px; padding-top:1px;}
+#log_con .logIn_btn{position:absolute; top:145px; *top:146px; left:565px;}
+#log_con .infomation{position:absolute; width:286px; top:210px; left:352px; font-size:11px; word-break:break-all; letter-spacing:-1px;}
+#footer{text-align:center; font-size:10px; margin:20px 0 10px 0; color:#b1b1b1;}
+.cz_point{position:absolute; top:311px; left:640px;}
+
+.fL{float:left;}
+.fR{float:right;}
+.clear{clear:both;}

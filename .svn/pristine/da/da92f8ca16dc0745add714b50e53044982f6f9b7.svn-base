@@ -1,0 +1,335 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XFC02";
+	String hid_eeno  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_eeno")));
+	String hid_cond  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_cond")));
+	String fdate = CurrentDateTime.getDate(CurrentDateTime.getDate(),-7);
+	String fyy = fdate.substring(0,4);
+	String fmm = fdate.substring(4,6);
+	String fdd = fdate.substring(6,8);
+	String yy = CurrentDateTime.getYear();
+	String mm = CurrentDateTime.getMonth();
+	String dd = CurrentDateTime.getDay();
+
+	String fromDay = fyy + "-" + fmm + "-" + fdd;
+	String toDay   = yy + "-" + mm + "-" + dd;
+
+	String work_auth = CommonGasc.getScnAuth(sess_empno, menuId, request);
+	
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH", locale);
+	String strNew = JSPMessageSource.getMessage("BUTTON.NEW",locale);
+	
+	String strBtn = "";
+	strBtn = strSch+"/search@"+strNew+"/new";
+	
+	String tempPath     = request.getServletPath().toString();
+	String stepHelpUrl  = StringUtil.getStepHelp(tempPath);
+%>
+<html>
+	<head>
+		<title>운행일지 - 조회</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	</head>
+	<body>
+		<div id="wrap">
+			<form name="mainForm" id="mainForm">
+				<input type="hidden" id="nSource" name="nSource">
+				<input type="hidden" id="hid_eeno" name="hid_eeno" value="<%=hid_eeno%>">
+				<input type="hidden" id="hid_cond" name="hid_cond" value="<%=hid_cond%>">
+				<input type="hidden" id="menu_id" name="menu_id" value="<%=menuId.toLowerCase()%>">
+				<input type=hidden id="work_auth" name="work_auth" value="<%=work_auth%>">
+				<input type="hidden" id="hid_page" name="hid_page">
+				<input type="hidden" id="help_url" name="help_url" value="<%=stepHelpUrl%>">
+				
+				<%@ include file="../include/hncis_header.gas"%>
+				<div id="contents_wrap">
+					<%@ include file="../include/hncis_left.gas"%>
+					<div id="contents">
+						<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,menuId
+							//,"조회/search@신규/new "
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+		                <div class="search_area">
+		                	<table>
+								<colgroup>
+									<col style="width:80px;" />
+		                            <col style="width:200px;" />
+		                            <col style="width:80px;" />
+		                            <col style="width:200px;" />
+		                            <col style="width:80px;" />
+		                            <col style="width:auto;" />
+		                        </colgroup>
+		                        <tbody>
+									<tr>
+										<th><fmt:message key="dept_nm"/></th>
+										<td><input id="key_dept_nm" type="text" maxlength="8" style="width: 170px"></td>
+										<th><fmt:message key="eeno"/></th>
+										<td><input id="key_eeno" type="text" style="width: 170px"></td>
+										<th><fmt:message key="eenm"/></th>
+										<td><input type="text" id="key_eenm" name="key_eenm" style="width: 170px"></td>
+									</tr>
+									<tr>
+										<th><fmt:message key="req_ymd"/></th>
+										<td>
+											<input type="text" id="key_strt_ymd" name="key_strt_ymd" style="width:80px" value="<%=fromDay%>" readonly>~
+											<input type="text" id="key_fnh_ymd" name="key_fnh_ymd" style="width:80px" value="<%=toDay %>" readonly>
+										</td>
+										<th><fmt:message key="car_no"/></th>
+										<td><input type="text" id="key_car_no" name="key_car_no" style="width: 170px"></td>
+										<th><fmt:message key="pgs_st_nm"/></th>
+										<td>
+											<select id="key_pgs_st_cd" name="key_pgs_st_cd">
+											</select>
+										</td>
+									</tr>
+		                        </tbody>
+							</table>
+		                </div>
+		                <div id="div_layer"></div>
+		                <div class="jq_tbl">
+		                	<table id="htmlTable" class="scroll"></table>
+		                	<div id="htmlPager" class="scroll"></div>
+		                </div>
+	                	<%@ include file="../include/hncis_message.gas"%>
+	            	</div>
+	            	<div class="clear"></div>
+				</div>
+			</form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+		</div>
+	</body>
+</html>
+		<script type="text/javascript">
+		var lastsel;
+		var fnMerge;
+
+		function fnSetDocumentReady(){
+			initMenus();
+			$("#key_strt_ymd").datepicker({ dateFormat: "yy-mm-dd" });
+			$("#key_fnh_ymd").datepicker({ dateFormat: "yy-mm-dd" });
+
+			$(".inputOnlyNumber").numeric();
+
+			getCommonCode("key_pgs_st_cd:XFC02:A", "N", "chkAuth();");
+
+		}
+
+		function chkAuth(){
+			sess_auth = $("#work_auth").val();
+			if(sess_auth != 5 && sess_mstu != "M"){
+				$("#key_eeno").val(sess_empno);
+				$("#key_eenm").val(sess_name);
+				$("#key_dept_nm").val(sess_dept_name);
+
+				readOnlyStyle("key_eeno", 1);
+				readOnlyStyle("key_eenm", 1);
+				readOnlyStyle("key_dept_nm", 1);
+			}else{
+				readOnlyStyle("key_eeno", 2);
+				readOnlyStyle("key_eenm", 2);
+			}
+			setCondition();
+		}
+
+
+		function setCondition(){
+
+			if($("#hid_cond").val() != ""){
+				var hidCond = $("#hid_cond").val().split("|");
+				if(hidCond[0] != "") $("#key_eeno").val(hidCond[0]);
+				if(hidCond[1] != "") $("#key_eenm").val(hidCond[1]);
+				if(hidCond[2] != "") $("#key_strt_ymd").val(hidCond[2]);
+				if(hidCond[3] != "") $("#key_fnh_ymd").val(hidCond[3]);
+				if(hidCond[4] != "") $("#key_pgs_st_cd").val(hidCond[4]);
+				if(hidCond[5] != "") $("#key_dept_nm").val(hidCond[5]);
+				if(hidCond[6] != "") $("#key_car_no").val(hidCond[6]);
+				if(hidCond[7] != "") $("#hid_page").val(hidCond[7]);
+			}
+			init();
+		}
+
+		var gridParam;
+		var gridName = "htmlTable";
+		var datarow = {rnum:"", reg_ymd:"", pgs_st_nm:"",dept_nm:"",eeno:"",eeno_nm:"", term:"", trvg_dist:"",corp_div_nm:"",vehl_nm:"", doc_no:"" };
+		function init(){
+		
+		var paramVo = {
+				eeno 		: $("#key_eeno").val(),
+				eeno_nm		: $("#key_eenm").val(),
+				strt_ymd 	: trimChar($("#key_strt_ymd").val(), "-"),
+				fnh_ymd 	: trimChar($("#key_fnh_ymd").val(), "-"),
+				dept_nm 	: $("#key_dept_nm").val(),
+				pgs_st_cd 	: $("#key_pgs_st_cd").val(),
+				car_no 		: $("#key_car_no").val(),
+				corp_cd		: sess_corp_cd,
+				locale		: sess_locale
+			};
+		
+// 			var cn = [ '문서번호','신청일자','진행상태','부서','사번','이름','운행일자', '주행거리/유류대','법인구분','차량'];
+			var cn = [ '<fmt:message key="doc_no"/>' // "문서번호"
+			          ,'<fmt:message key="req_ymd"/>' // "신청일자"
+			          ,'<fmt:message key="pgs_st_nm"/>' // "진행상태"
+			          ,'<fmt:message key="dept_nm"/>' // "부서"
+			          ,'<fmt:message key="eeno"/>' // "사번"
+			          ,'<fmt:message key="eenm"/>' // "이름"
+			          ,'<fmt:message key="run_ymd"/>' // "운행일자"
+			          ,'<fmt:message key="mil_oil_pay"/>' // "주행거리/유류대"
+			          ,'<fmt:message key="corp_type"/>' // "법인구분"
+			          ,'<fmt:message key="car"/>' // "차량"
+		          ];
+			var cm = [{name:"doc_no"		,index:"doc_no"		, sortable:false, formatter:"string", width:0, align:"center", editable:false, frozen:false, hidden:true},
+		 	  		  {name:'reg_ymd'		,index:'reg_ymd'	, formatter:'string',width:80,align:'center',editable:false,sortable:false},
+			  		  {name:'pgs_st_nm'		,index:'pgs_st_nm'	, formatter:'string',width:80,align:'center',editable:false,sortable:false},
+			  		  {name:'dept_nm'		,index:'dept_nm'	, formatter:'string',width:80,align:'center',editable:false,sortable:false},
+			  		  {name:'eeno'			,index:'eeno'		, formatter:'string',width:80,align:'center',editable:false,sortable:false},
+			  		  {name:'eeno_nm'		,index:'eeno_nm'	, formatter:'string',width:80,align:'center',editable:false,sortable:false},
+			  		  {name:'term'			,index:'term'		, formatter:'string',width:150,align:'center',editable:false,sortable:false},
+			  		  {name:'trvg_dist'		,index:'trvg_dist'	, formatter:'string',width:120,align:'center',editable:false,sortable:false},
+			  		  {name:'corp_div_nm'	,index:'corp_div_nm', formatter:'string',width:70,align:'center',editable:false,sortable:false},
+			  		  {name:'vehl_nm'		,index:'vehl_nm'	, formatter:'string',width:220,align:'center',editable:false,sortable:false}
+			];
+
+			gridParam = {
+				viewEdit : [{
+					gridName     : gridName,
+					url          : "doSearchXfcRequestInfoList.do",
+					colNames     : cn,
+					colModel     : cm,
+					height       : "100%",
+					rowNum		 : 15,
+					rownumbers   : true,
+					multiselect  : false,
+					cellEdit     : false,
+					fnMerge      : false,
+					page		 : $("#hid_page").val(),
+					pager		 : "htmlPager",
+					completeFc   : "addGridRow();initAfterMenus();",
+					dblClickRowFc : "celldbClickAction(rowId,iRow,iCol,e);",
+					paramJson    : paramVo
+				}]
+			};
+			commonJqGridInit(gridParam);
+
+			if($("#hid_cond").val() != ""){
+				setTimeout('doSearch();',50);
+			}
+		}
+
+		function retrieve(btnFlag){
+			switch(btnFlag){
+			   case "search" :
+				   	doSearch();
+					break;
+			   case "new" :
+				   doNew();
+				   break;
+			}
+		}
+
+		function fnParamJson(){
+			var paramVo = {
+				eeno 		: $("#key_eeno").val(),
+				eeno_nm		: $("#key_eenm").val(),
+				strt_ymd 	: trimChar($("#key_strt_ymd").val(), "-"),
+				fnh_ymd 	: trimChar($("#key_fnh_ymd").val(), "-"),
+				dept_nm 	: $("#key_dept_nm").val(),
+				pgs_st_cd 	: $("#key_pgs_st_cd").val(),
+				car_no 		: $("#key_car_no").val(),
+				corp_cd		: sess_corp_cd,
+				locale		: sess_locale
+			};
+			return paramVo;
+		}
+
+		function doNew(){
+			var form = $("<form/>");
+		    form.attr("method" , "post");
+		    form.attr("id"     , "submitForm").attr("name", "submitForm");
+		    form.attr("action" , "xfc01.gas");
+		    var token = $("<input type='hidden' id='hid_csrfToken' name='hid_csrfToken'/>").val($("#csrfToken").val());
+		    form.append(token);
+		    $("body").append(form);
+		    form.submit();
+		    form.remove();
+		}
+
+		function doSearch(){
+			doCommonSearch("doSearchXfcRequestInfoList.do", util.jsonToString(fnParamJson()), "loadCallBack();", gridName, "Y");
+		}
+
+		function loadCallBack(){
+			$("#hid_page").val($("#page_htmlPager").val());
+			addGridRow();
+		}
+
+		function celldbClickAction(rowId,iRow,iCol,e){
+			if(getColValue("doc_no",rowId, gridName) == ""){
+				return;
+			}
+		
+	        var form = $("<form/>");
+	        form.attr("method" , "post");
+	        form.attr("id"     , "hideForm");
+	        form.attr("action" , "xfc01.gas");
+	        var inp1 = $("<input type='hidden' id='M_DOC_NO' name='M_DOC_NO'/>").val(getColValue("doc_no",rowId, gridName));
+	        var inp2 = $("<input type='hidden' id='hid_view_nm' name='hid_view_nm'/>").val($("#menu_id").val());
+	        var cond = "";
+	        cond += $("#key_eeno").val();
+	        cond += "|" + $("#key_eenm").val();
+	        cond += "|" + $("#key_strt_ymd").val();
+	        cond += "|" + $("#key_fnh_ymd").val();
+	        cond += "|" + $("#key_pgs_st_cd").val();
+	        cond += "|" + $("#key_dept_nm").val();
+	        cond += "|" + $("#key_car_no").val();
+	        cond += "|" + $("#page_htmlPager").val();
+
+	        var inp3 = $("<input type='hidden' id='hid_cond' name='hid_cond'/>").val(cond);
+	        var token = $("<input type='hidden' id='hid_csrfToken' name='hid_csrfToken'/>").val($("#csrfToken").val());
+	        form.append(inp1, inp2, inp3, token);
+	        $("body").append(form);
+	        form.submit();
+	        form.remove();
+		}
+
+
+		function setInsaInfo(){
+			if($("#key_eeno").val() != ""){
+				var keyData = { 
+						xusr_empno : $("#key_eeno").val(),
+						corp_cd		: sess_corp_cd
+				};
+				paramData = {
+					paramJson : util.jsonToString(keyData)
+				};
+				doCommonAjax("/doSearchToUserInfo.do", paramData, "insaCallBack(jsonData.sendResult)");
+			}
+		}
+
+		function insaCallBack(result){
+			setBottomMsg(result.message, false);
+			$("#key_eeno").val(result.xusr_empno);
+			$("#key_eenm").val(result.xusr_name);
+		}
+
+		function clearInsa(){
+			if($("#key_eeno").val() == ""){
+				$("#key_eenm").val("");
+			}
+		}
+		
+		function pageStepHelpPopup(){
+			if(popup != null ){
+				popup.close();
+			}
+			
+			popup = popUpWindow3($("#help_url").val());
+		}
+		</script>

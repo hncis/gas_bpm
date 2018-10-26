@@ -1,0 +1,760 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XOS04";
+	String hid_req_date = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_req_date")));
+	String hid_eeno     = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_eeno")));
+
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH", locale);
+
+	String strBtn = "";
+	strBtn = strSch+"/search1";
+
+	String tempPath     = request.getServletPath().toString();
+	String stepHelpUrl  = StringUtil.getStepHelp(tempPath);
+%>
+<html>
+	<head>
+		<title>GeneralService - Product Management</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	</head>
+	<body>
+		<div id="wrap">
+			<form name="frm" id="frm">
+				<%@ include file="../include/hncis_header.gas"%>
+				<input type="hidden" id="tmp_cat_1" name="tmp_cat_1"/>
+				<input type="hidden" id="tmp_cat_1_sel" name="tmp_cat_1_sel"/>
+				<input type="hidden" id="tmp_cat_2_sel" name="tmp_cat_2_sel"/>
+				<input type="hidden" id="tmp_cat_2" name="tmp_cat_2"/>
+				<input type="hidden" id="tmp_cat_3" name="tmp_cat_3"/>
+				<input type="hidden" id="region_cd" name="region_cd" value="xos"/>
+				<input type="hidden" id="help_url" name="help_url" value="<%=stepHelpUrl%>">
+
+				<div id="contents_wrap">
+					<%@ include file="../include/hncis_left.gas"%>
+					<div id="contents">
+						<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,menuId
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+
+						<div style="float:left; width:450px; height:300px">
+							<h3 style="width:200px; padding-left:9px; background: url(../../images/hncis_common/con_t_point.png) left center no-repeat; font-size:16px; color:#000;"><fmt:message key="lrg_cd"/></h3>
+							<div class="con_t_area mt10" style="width:406px; height:30px">
+								<div class="btn_area mt0">
+				                    <ul class="btns fr ml20">
+										<li><a href="javascript:retrieve('add1')"><fmt:message key="BUTTON.ADD"/><span></span></a></li>
+										<li><a href="javascript:retrieve('save1')"><fmt:message key="BUTTON.SAVE"/><span></span></a></li>
+										<li><a href="javascript:retrieve('delete1')"><fmt:message key="BUTTON.DELETE"/><span></span></a></li>
+									</ul>
+								</div>
+							</div>
+							<table id="htmlTable1" class="scroll"></table>
+						</div>
+						<div style="float:left; width:450px; height:300px">
+							<h3 style="width:200px; padding-left:9px; background: url(../../images/hncis_common/con_t_point.png) left center no-repeat; font-size:16px; color:#000;"><fmt:message key="mdl_cd"/></h3>
+							<div class="con_t_area mt10" style="width:406px; height:30px">
+								<div class="btn_area mt0">
+									<ul class="btns fr ml20">
+										<li><a href="javascript:retrieve('add2')"><fmt:message key="BUTTON.ADD"/><span></span></a></li>
+										<li><a href="javascript:retrieve('save2')"><fmt:message key="BUTTON.SAVE"/><span></span></a></li>
+										<li><a href="javascript:retrieve('delete2')"><fmt:message key="BUTTON.DELETE"/><span></span></a></li>
+									</ul>
+								</div>
+							</div>
+							<table id="htmlTable2" class="scroll"></table>
+						</div>
+						<div class="clear"></div>
+						<div style="float:left; width:900px; height:300px">
+							<h3 style="width:200px; padding-left:9px; background: url(../../images/hncis_common/con_t_point.png) left center no-repeat; font-size:16px; color:#000;"><fmt:message key="sml_cd"/></h3>
+							<div class="con_t_area mt10" style="width:855px; height:30px">
+								<div class="btn_area mt0">
+									<ul class="btns fr ml20">
+										<li><a href="javascript:retrieve('add3')"><fmt:message key="BUTTON.ADD"/><span></span></a></li>
+										<li><a href="javascript:retrieve('save3')"><fmt:message key="BUTTON.SAVE"/><span></span></a></li>
+										<li><a href="javascript:retrieve('delete3')"><fmt:message key="BUTTON.DELETE"/><span></span></a></li>
+									</ul>
+								</div>
+							</div>
+							<table id="htmlTable3" class="scroll"></table>
+						</div>
+						<div class="clear"></div>
+						<%@ include file="../include/hncis_message.gas"%>
+					</div>
+					<div class="clear"></div>
+				</div>
+			</form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+			<form id="fileForm" name="fileForm">
+				<input type="hidden" id="file_doc_no" name="file_doc_no">
+				<input type="hidden" id="hid_use_yn"  name="hid_use_yn">
+				<input type="hidden" id="file_status"  name="file_status">
+				<input type="hidden" id="file_eeno" name="file_eeno">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+		</div>
+	</body>
+</html>
+		<script type="text/javascript">
+		function fnSetDocumentReady(){
+			initMenus();
+			getCommonCode("region_cd:X0004:S;", "N", "init();");
+		}
+
+		var gridName1 = "htmlTable1";
+		var gridName2 = "htmlTable2";
+		var gridName3 = "htmlTable3";
+		var gridName4 = "htmlTable4";
+		var catg1datarow  = {catg_1:"", catg_nm:"", sort_no:"", use_yn:"", old_catg_1:"", old_catg_2:"", old_catg_3:""};
+		var catg2datarow  = {a_catg_3:"", a_catg_nm:"", a_sort_no:"", a_use_yn:"", a_old_catg_1:"", a_old_catg_2:"", a_old_catg_3:""};
+		var catg3datarow  = {b_catg_3:"", b_catg_nm:"", pop_img:"", remark:"", b_sort_no:"", b_use_yn:"", file_doc_no:"", b_old_catg_1:"", b_old_catg_2:"", b_old_catg_3:""};
+		var catg4datarow  = {c_catg_3:"", c_catg_nm:"", c_sort_no:"", c_use_yn:"", c_old_catg_1:"", c_old_catg_2:"", c_old_catg_3:""};
+		var gridParam1,gridParam2,gridParam3,gridParam4;
+		function init(){
+			gridParam1 = {
+				viewEdit : [{
+					gridName     : gridName1,
+					url          : "/doSearchToEmpty.do",
+// 					colNames     : ["코드", "코드명", "정렬", "사용", "", "", ""],
+					colNames 	 : ['<fmt:message key="code"/>' // "코드"
+							          ,'<fmt:message key="code_nm"/>' // "코드명"
+							          ,'<fmt:message key="sort"/>' // "정렬"
+							          ,'<fmt:message key="use_yn"/>' // "사용"
+							          ,'' // ""
+							          ,'' // ""
+							      	  ,'' // ""
+						          ],
+					colModel     : [{name:"catg_1", index:"catg_1" , sortable:false, formatter:"string", width:"40", align:"center", editable:true, frozen:false},
+					            	{name:"catg_nm", index:"catg_nm" , sortable:false, formatter:"string", width:"210",	align:"center",	editable:true, frozen:false},
+					            	{name:"sort_no", index:"sort_no" , sortable:false, formatter:"string", width:"30",	align:"right", editable:true, frozen:false},
+					            	{name:"use_yn", index:"use_yn" , sortable:false, edittype:"select", formatter:"select",	width:"55", align:"center", editable:true,
+					            		editoptions:{value:"Y:Y;N:N"}
+					            	},
+					            	{name:"old_catg_1", index:"old_catg_1" , sortable:false, formatter:"string", width:"0", align:"center", hidden:true},
+					            	{name:"old_catg_2", index:"old_catg_2" , sortable:false, formatter:"string", width:"0", align:"center", hidden:true},
+					            	{name:"old_catg_3", index:"old_catg_3" , sortable:false, formatter:"string", width:"0", align:"center", hidden:true}],
+					width        : "400",
+					height       : "200",
+					rownumbers   : false,
+					multiselect  : true,
+					cellEdit     : true,
+					fnMerge      : false,
+					rowNum		 : 1000,
+					selectCellFc  : "celldbClickAction(rowid, iCol, cellcontent);",
+//					dblClickRowFc : "celldbClickAction(rowId,iRow,iCol,e);",
+					completeFc	 : "fnGridInitCallBack('"+gridName1+"');"
+				}]
+			};
+
+			gridParam2 = {
+				viewEdit : [{
+					gridName     : gridName2,
+					url          : "/doSearchToEmpty.do",
+// 					colNames     : ["코드", "코드명", "정렬", "사용", "", "", ""],
+					colNames 	 : ['<fmt:message key="code"/>' // "코드"
+							          ,'<fmt:message key="code_nm"/>' // "코드명"
+							          ,'<fmt:message key="sort"/>' // "정렬"
+							          ,'<fmt:message key="use_yn"/>' // "사용"
+							          ,'' // ""
+							          ,'' // ""
+							      	  ,'' // ""
+						          ],
+					colModel     : [{name:"a_catg_3", index:"a_catg_3" , sortable:false, formatter:"string", width:"40", align:"center", editable:true, frozen:false},
+					                {name:"a_catg_nm", index:"a_catg_nm" , sortable:false, formatter:"string", width:"210",	align:"center",	editable:true, frozen:false},
+					                {name:"a_sort_no", index:"a_sort_no" , sortable:false, formatter:"string", width:"30",	align:"right", editable:true, frozen:false},
+					                {name:"a_use_yn", index:"a_use_yn" , sortable:false, edittype:"select", formatter:"select",	width:"55", align:"center", editable:true,
+					                	editoptions:{value:"Y:Y;N:N"}
+					            	},
+					            	{name:"a_old_catg_1", index:"a_old_catg_1" , sortable:false, formatter:"string", width:"0", align:"center", hidden:true},
+					            	{name:"a_old_catg_2", index:"a_old_catg_2" , sortable:false, formatter:"string", width:"0", align:"center", hidden:true},
+					            	{name:"a_old_catg_3", index:"a_old_catg_3" , sortable:false, formatter:"string", width:"0", align:"center", hidden:true}],
+					width        : "400",
+					height       : "200",
+		            rownumbers   : false,
+		            multiselect  : true,
+		            cellEdit     : true,
+		            fnMerge      : false,
+		            rowNum		 : 1000,
+		            dblClickRowFc : "",
+		            selectCellFc  : "celldbClickAction2(rowid, iCol, cellcontent);",
+		            completeFc	 : "fnGridInitCallBack('"+gridName2+"');"
+				}]
+			};
+
+			gridParam3 = {
+				viewEdit : [{
+					gridName     : gridName3,
+					url          : "/doSearchToEmpty.do",
+// 					colNames     : ["코드", "코드명","사진", "설명", "정렬", "사용", "", "", "", ""],
+					colNames 	 : ['<fmt:message key="code"/>' // "코드"
+							          ,'<fmt:message key="code_nm"/>' // "코드명"
+							          ,'<fmt:message key="pctr"/>' // "사진"
+							          ,'<fmt:message key="exp"/>' // "설명"
+							          ,'<fmt:message key="sort"/>' // "정렬"
+							          ,'<fmt:message key="use_yn"/>' // "사용"
+							          ,'' // ""
+							          ,'' // ""
+							          ,'' // ""
+							      	  ,'' // ""
+						          ],
+					colModel     : [{name:"b_catg_3", index:"b_catg_3" , sortable:false, formatter:"string", width:"40", align:"center", editable:true, frozen:false},
+					                {name:"b_catg_nm", index:"b_catg_nm" , sortable:false, formatter:"string", width:"250",	align:"center",	editable:true, frozen:false},
+					                {name:"pop_img",    index:"pop_img", sortable:false,	formatter:"string",	width:60,  align:"center",	editable:false,	frozen : false},
+					                {name:"remark", index:"remark" , sortable:false, formatter:"string", width:"340",	align:"center",	editable:true, frozen:false},
+					                {name:"b_sort_no", index:"b_sort_no" , sortable:false, formatter:"string", width:"30",	align:"right", editable:true, frozen:false},
+					                {name:"b_use_yn", index:"b_use_yn" , sortable:false, edittype:"select", formatter:"select",	width:"55", align:"center", editable:true,
+					                	editoptions:{value:"Y:Y;N:N"}
+					            	},
+					            	{name:"file_doc_no",  index:"file_doc_no"  , sortable:false, formatter:"string", width:"0", align:"center", hidden:true},
+					            	{name:"b_old_catg_1", index:"b_old_catg_1" , sortable:false, formatter:"string", width:"0", align:"center", hidden:true},
+					            	{name:"b_old_catg_2", index:"b_old_catg_2" , sortable:false, formatter:"string", width:"0", align:"center", hidden:true},
+					            	{name:"b_old_catg_3", index:"b_old_catg_3" , sortable:false, formatter:"string", width:"0", align:"center", hidden:true}],
+					width        : "850",
+					height       : "200",
+				    rownumbers   : false,
+				    multiselect  : true,
+				    cellEdit     : true,
+				    fnMerge      : false,
+				    rowNum		 : 1000,
+				    dblClickRowFc : "",
+				    selectCellFc  : "setChangeImg();",
+				    completeFc	 : "fnGridInitCallBack('"+gridName3+"');setChangeImg()"
+				}]
+			};
+
+			commonJqGridInit(gridParam1);
+			setTimeout("doSearch('1')", "300");
+		}
+
+		function fnGridInitCallBack(initGrid){
+			var cnt = 9;
+			switch(initGrid){
+				case "htmlTable1" :
+					addGridRow(cnt, initGrid, 'catg1datarow');
+					commonJqGridInit(gridParam2);
+					break;
+				case "htmlTable2" :
+					addGridRow(cnt, initGrid, 'catg2datarow');
+					commonJqGridInit(gridParam3);
+					break;
+				case "htmlTable3" :
+					addGridRow(cnt, initGrid, 'catg3datarow');
+//					commonJqGridInit(gridParam4);
+					break;
+//				case "htmlTable4" :
+//					addGridRow(cnt, initGrid, 'catg4datarow');
+//					break;
+			}
+		}
+
+		function retrieve(gubn){
+			switch(gubn){
+				case "search1" :
+				case "search2" :
+				case "search3" :
+				case "search4" :
+					doSearch(selectNum(gubn));
+					break;
+				case "save1" :
+				case "save2" :
+				case "save3" :
+				case "save4" :
+					doInsert(selectNum(gubn));
+					break;
+				case "delete1" :
+				case "delete2" :
+				case "delete3" :
+				case "delete4" :
+					doDelete(selectNum(gubn));
+					break;
+				case "add1" :
+				case "add2" :
+				case "add3" :
+				case "add4" :
+					addRow(selectNum(gubn));
+					break;
+			}
+		}
+
+		function doSearch(no){
+//			var regionCd = $("#region_cd").val();
+//			if(regionCd == ""){
+//				alertUI("Please select region code");
+//				$("#region_cd").focus();
+//				return;
+//			}
+
+			var params = {
+				region_cd : $("#region_cd").val(),
+				catg_1 : $("#tmp_cat_1").val(),
+				corp_cd	  : sess_corp_cd
+			};
+
+			doCommonSearch("doSearchByOffice"+no+".do", util.jsonToString(params), "searchCallBack('"+no+"');", eval("gridName"+no));
+		}
+
+		function searchCallBack(no){
+			addGridRow(9, eval("gridName"+no), eval("catg"+no+"datarow"));
+
+			switch(no){
+			case "1" :
+				if(getColValue("catg_1",1, "htmlTable1") != ""){
+					$("#tmp_cat_1").val(getColValue("catg_1",1, "htmlTable1"));
+					previSRow1 = 1;
+					jQuery("#"+gridName1).setRowData (1,false,{background:'#B2EBF4'});
+					doSearch(2);
+				}
+				break;
+			case "2" :
+				if(getColValue("a_catg_3",1, "htmlTable2") != ""){
+					$("#tmp_cat_1").val(getColValue("a_catg_3",1, "htmlTable2"));
+					previSRow1 = 1;
+					jQuery("#"+gridName2).setRowData (1,false,{background:'#B2EBF4'});
+					doSearch(3);
+				}
+				break;
+			case "3" :
+				setChangeImg();
+//				if(getColValue("b_catg_3",1, "htmlTable3") != ""){
+//					$("#tmp_cat_1").val(getColValue("b_catg_3",1, "htmlTable3"));
+//					previSRow1 = 1;
+//					jQuery("#"+gridName3).setRowData (1,false,{background:'#B2EBF4'});
+//					doSearch(4);
+//				}
+//				break;
+			case 4 :
+					break;
+			}
+		}
+
+		function doInsert(no){
+			var paramsI = [];
+			var paramsU = [];
+			var selectRow = jQuery("#htmlTable"+no).jqGrid("getGridParam", "selarrrow");
+			var regionCd = $("#region_cd").val();
+//			if(regionCd == ""){
+//				alertUI("Please select region code");
+//				$("#region_cd").focus();
+//				return;
+//			}
+
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}else{
+				for(var i = 0; i < selectRow.length; i++){
+					var rowId = selectRow[i];
+
+					if(no == "1"){
+						if(getColValue("catg_1", rowId, "htmlTable"+no) == ""){
+							alertUI('<fmt:message key="MSG.INP.0029"/>');
+							return;
+						}
+						if(getColValue("catg_nm", rowId, "htmlTable"+no) == ""){
+							alertUI('<fmt:message key="MSG.INP.0030"/>');
+							return;
+						}
+
+						if(getColValue("use_yn", rowId, "htmlTable"+no) == ""){
+							alertUI('<fmt:message key="MSG.SEL.0030"/>');
+							return;
+						}
+					}else if(no == "2" || no == "3" || no == "4"){
+						var gubn = "a";
+						var str = '<fmt:message key="mdl_cd"/>';
+						if(no == "3"){
+							gubn = "b";
+							str = '<fmt:message key="sml_cd"/>';
+						}else if(no == "4"){
+							gubn = "c";
+						}
+
+						if(getColValue(gubn+"_catg_3", rowId, "htmlTable"+no) == ""){
+							alertUI(str + '<fmt:message key="MSG.INP.0029"/>');
+							return;
+						}
+						if(getColValue(gubn+"_catg_nm", rowId, "htmlTable"+no) == ""){
+							alertUI(str + '<fmt:message key="MSG.INP.0030"/>');
+							return;
+						}
+
+						if(getColValue(gubn+"_use_yn", rowId, "htmlTable"+no) == ""){
+							alertUI(str + '<fmt:message key="MSG.SEL.0030"/>');
+							return;
+						}
+					}
+
+
+					if(rowId){
+						if(no == "1"){
+							if($.trim(getColValue("old_catg_1", rowId, "htmlTable"+no)) != ""){
+								list = {
+									region_cd   : $("#region_cd").val(),
+									old_catg_1 	: getColValue("old_catg_1", rowId, "htmlTable1"),
+									old_catg_2 	: getColValue("old_catg_2", rowId, "htmlTable1"),
+									old_catg_3 	: '000',
+									catg_1     	: getColValue("catg_1", rowId, "htmlTable1"),
+									catg_3     	: '000',
+									catg_nm     : changeToUni(getColValue("catg_nm", rowId, "htmlTable1")),
+									sort_no   	: getColValue("sort_no", rowId, "htmlTable1"),
+									use_yn  	: getColValue("use_yn", rowId, "htmlTable1"),
+									corp_cd	    : sess_corp_cd
+								};
+								paramsU.push(list);
+							}else{
+								list = {
+									region_cd   : $("#region_cd").val(),
+									catg_1     	: getColValue("catg_1", rowId, "htmlTable1"),
+									catg_3     	: '000',
+									catg_nm     : changeToUni(getColValue("catg_nm", rowId, "htmlTable1")),
+									sort_no   	: getColValue("sort_no", rowId, "htmlTable1"),
+									use_yn  	: getColValue("use_yn", rowId, "htmlTable1"),
+									corp_cd	    : sess_corp_cd
+								};
+								paramsI.push(list);
+							}
+						}else if(no == "2"){
+							if($.trim(getColValue("a_old_catg_1", rowId, "htmlTable"+no)) != ""){
+								list = {
+									region_cd   : $("#region_cd").val(),
+									old_catg_1  : getColValue("a_old_catg_1", rowId, "htmlTable2"),
+									old_catg_2  : getColValue("a_old_catg_2", rowId, "htmlTable2"),
+									old_catg_3  : getColValue("a_old_catg_3", rowId, "htmlTable2"),
+									catg_3     	: getColValue("a_catg_3", rowId, "htmlTable2"),
+									catg_nm     : changeToUni(getColValue("a_catg_nm", rowId, "htmlTable2")),
+									sort_no   	: getColValue("a_sort_no", rowId, "htmlTable2"),
+									use_yn  	: getColValue("a_use_yn", rowId, "htmlTable2"),
+									corp_cd	    : sess_corp_cd
+								};
+								paramsU.push(list);
+							}else{
+								list = {
+									region_cd   : $("#region_cd").val(),
+									catg_1     	: $("#tmp_cat_1").val(),
+									catg_3     	: getColValue("a_catg_3", rowId, "htmlTable2"),
+									catg_nm     : changeToUni(getColValue("a_catg_nm", rowId, "htmlTable2")),
+									sort_no   	: getColValue("a_sort_no", rowId, "htmlTable2"),
+									use_yn  	: getColValue("a_use_yn", rowId, "htmlTable2"),
+									corp_cd	    : sess_corp_cd
+								};
+								paramsI.push(list);
+							}
+						}else if(no == "3"){
+							if($.trim(getColValue("b_old_catg_1", rowId, "htmlTable"+no)) != ""){
+								list = {
+									region_cd   : $("#region_cd").val(),
+									old_catg_1  : getColValue("b_old_catg_1", rowId, "htmlTable3"),
+									old_catg_2  : getColValue("b_old_catg_2", rowId, "htmlTable3"),
+									old_catg_3  : getColValue("b_old_catg_3", rowId, "htmlTable3"),
+									catg_3     	: getColValue("b_catg_3", rowId, "htmlTable3"),
+									catg_nm     : changeToUni(getColValue("b_catg_nm", rowId, "htmlTable3")),
+									file_doc_no : getColValue("file_doc_no", rowId, "htmlTable3"),
+									remark   	: getColValue("remark", rowId, "htmlTable3"),
+									sort_no   	: getColValue("b_sort_no", rowId, "htmlTable3"),
+									use_yn  	: getColValue("b_use_yn", rowId, "htmlTable3"),
+									corp_cd	    : sess_corp_cd
+								};
+								paramsU.push(list);
+							}else{
+								list = {
+									region_cd   : $("#region_cd").val(),
+									catg_1     	: $("#tmp_cat_1").val(),
+									catg_3     	: getColValue("b_catg_3", rowId, "htmlTable3"),
+									catg_nm     : changeToUni(getColValue("b_catg_nm", rowId, "htmlTable3")),
+									file_doc_no : getColValue("file_doc_no", rowId, "htmlTable3"),
+									remark   	: getColValue("remark", rowId, "htmlTable3"),
+									sort_no   	: getColValue("b_sort_no", rowId, "htmlTable3"),
+									use_yn  	: getColValue("b_use_yn", rowId, "htmlTable3"),
+									corp_cd	    : sess_corp_cd
+								};
+								paramsI.push(list);
+							}
+						}else if(no == "4"){
+							if($.trim(getColValue("c_old_catg_1", rowId, "htmlTable"+no)) != ""){
+								list = {
+									region_cd   : $("#region_cd").val(),
+									old_catg_1  : getColValue("c_old_catg_1", rowId, "htmlTable4"),
+									old_catg_2  : getColValue("c_old_catg_2", rowId, "htmlTable4"),
+									old_catg_3  : getColValue("c_old_catg_3", rowId, "htmlTable4"),
+									catg_3     	: getColValue("c_catg_3", rowId, "htmlTable4"),
+									catg_nm     : changeToUni(getColValue("c_catg_nm", rowId, "htmlTable4")),
+									sort_no   	: getColValue("c_sort_no", rowId, "htmlTable4"),
+									use_yn  	: getColValue("c_use_yn", rowId, "htmlTable4"),
+									corp_cd	    : sess_corp_cd
+								};
+								paramsU.push(list);
+							}else{
+								list = {
+									region_cd   : $("#region_cd").val(),
+									catg_1     	: $("#tmp_cat_1").val(),
+									catg_3     	: getColValue("c_catg_3", rowId, "htmlTable4"),
+									catg_nm     : changeToUni(getColValue("c_catg_nm", rowId, "htmlTable4")),
+									sort_no   	: getColValue("c_sort_no", rowId, "htmlTable4"),
+									use_yn  	: getColValue("c_use_yn", rowId, "htmlTable4"),
+									corp_cd	    : sess_corp_cd
+								};
+								paramsI.push(list);
+							}
+						}
+					}
+				}
+			}
+
+			confirmUI('<fmt:message key="MSG.CNF.0004"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramsG : no,
+								paramsI : util.jsonToList(paramsI),
+								paramsU	: util.jsonToList(paramsU)
+						};
+						doCommonAjax("doInsertByOffice"+no+".do", paramData, "submitCallBack('save"+no+"', jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function submitCallBack(gubn, data){
+			alertUI(data.message);
+
+			if(data.result == "Y"){
+				var no = selectNum(gubn);
+				doSearch(no);
+			}
+		}
+
+		function doDelete(no){
+			var params = [];
+			var selectRow = jQuery("#htmlTable"+no).jqGrid("getGridParam", "selarrrow");
+			var regionCd = $("#region_cd").val();
+//			if(regionCd == ""){
+//				alertUI("Please select region code");
+//				$("#region_cd").focus();
+//				return;
+//			}
+
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}else{
+				for(var i = 0; i < selectRow.length; i++){
+					var rowId = selectRow[i];
+					var gubn = "a";
+					if(no == "3"){
+						gubn = "b";
+					}else if(no == "4"){
+						gubn = "c";
+					}
+
+					if(no == "1"){
+						if(getColValue("old_catg_1", rowId, "htmlTable"+no) == ""){
+							alertUI(rowId + ' <fmt:message key="MSG.ROW.0057"/>');
+							return;
+						}
+					}else if(no == "2"){
+						if(getColValue(gubn + "_old_catg_3", rowId, "htmlTable"+no) == ""){
+							alertUI(rowId + ' <fmt:message key="MSG.ROW.0057"/>');
+							return;
+						}
+					}else if(no == "3"){
+						if(getColValue(gubn + "_old_catg_3", rowId, "htmlTable"+no) == ""){
+							alertUI(rowId + ' <fmt:message key="MSG.ROW.0057"/>');
+							return;
+						}
+					}else if(no == "4"){
+						if(getColValue(gubn + "_old_catg_3", rowId, "htmlTable"+no) == ""){
+							alertUI(rowId + ' <fmt:message key="MSG.ROW.0057"/>');
+							return;
+						}
+					}
+
+					if(rowId){
+						if(no == "1"){
+							list ={
+								region_cd   : $("#region_cd").val(),
+								old_catg_1 	: getColValue("old_catg_1", rowId, "htmlTable"+no),
+								old_catg_2 	: getColValue("old_catg_2", rowId, "htmlTable"+no),
+								old_catg_3 	: getColValue("old_catg_3", rowId, "htmlTable"+no),
+								corp_cd	  : sess_corp_cd
+							};
+							params.push(list);
+						}else  if(no == "2" || no == "3" || no == "4"){
+							list ={
+								region_cd   : $("#region_cd").val(),
+								old_catg_1 	: getColValue(gubn + "_old_catg_1", rowId, "htmlTable"+no),
+								old_catg_2 	: getColValue(gubn + "_old_catg_2", rowId, "htmlTable"+no),
+								old_catg_3 	: getColValue(gubn + "_old_catg_3", rowId, "htmlTable"+no),
+								corp_cd	  : sess_corp_cd
+							};
+							params.push(list);
+						}
+					}
+				}
+			}
+
+			confirmUI('<fmt:message key="MSG.CNF.0002"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramJson : util.jsonToList(params)
+						};
+						doCommonAjax("doDeleteByOffice"+no+".do", paramData, "submitCallBack('delete"+no+"', jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function addRow(no){
+			var gridRowId = jQuery("#htmlTable"+no).getDataIDs().length;
+			jQuery("#htmlTable"+no).jqGrid("addRowData", gridRowId+1, eval("catg"+no+"datarow"));
+		}
+
+		//cell double click event
+		function celldbClickAction(rowid, iCol, cellcontent){
+			if(iCol != 0){
+				if(getColValue("old_catg_1",rowid, "htmlTable1") != ""){
+					$("#tmp_cat_1").val(getColValue("catg_1",rowid, "htmlTable1"));
+					$("#tmp_cat_1_sel").val(getColValue("catg_1",rowid, "htmlTable1"));
+					doSubSearch('2');
+				} else {
+					$("#tmp_cat_1").val('');
+					$("#tmp_cat_1_sel").val('');
+				}
+			}
+		}
+
+		function celldbClickAction2(rowid, iCol, cellcontent){
+			if(iCol != 0){
+//				alertUI(getColValue("a_old_catg_3",rowid, "htmlTable2"));
+				if(getColValue("a_old_catg_3",rowid, "htmlTable2") != ""){
+					$("#tmp_cat_1").val(getColValue("a_catg_3",rowid, "htmlTable2"));
+					$("#tmp_cat_2_sel").val(getColValue("a_catg_3",rowid, "htmlTable2"));
+					doSubSearch('3');
+				} else {
+					$("#tmp_cat_1").val($("#tmp_cat_1_sel").val());
+					$("#tmp_cat_2_sel").val('');
+					doSubSearchEmpty("3");
+				}
+			}
+		}
+
+		function celldbClickAction3(rowid, iCol, cellcontent){
+			if(iCol != 0){
+//				alertUI(getColValue("b_old_catg_3",rowid, "htmlTable3"));
+//				if(getColValue("b_old_catg_3",rowid, "htmlTable3") != ""){
+//					$("#tmp_cat_1").val(getColValue("b_catg_3",rowid, "htmlTable3"));
+//					doSubSearch('4');
+//				}
+			}
+		}
+
+		function doSubSearch(no){
+			var params = {
+				region_cd : $("#region_cd").val(),
+				catg_1 : $("#tmp_cat_1").val(),
+				corp_cd	  : sess_corp_cd
+			};
+			doCommonSearch("doSearchByOffice"+no+".do", util.jsonToString(params), "subSearchCallBack('"+no+"');", eval("gridName"+no));
+		}
+
+		function doSubSearchEmpty(no){
+			doCommonSearch("/doSearchToEmpty.do", "", "doSubSearchEmptyCallBack('"+no+"');", eval("gridName"+no));
+		}
+
+		function doSubSearchEmptyCallBack(no){
+			switch(no){
+			case "2" :
+				addGridRow(9, eval("gridName"+no), eval("catg"+no+"datarow"));
+			case "3" :
+				addGridRow(9, eval("gridName"+no), eval("catg"+no+"datarow"));
+			case "4" :
+				addGridRow(9, eval("gridName"+no), eval("catg"+no+"datarow"));
+			}
+		}
+
+		function subSearchCallBack(no){
+			addGridRow(9, eval("gridName"+no), eval("catg"+no+"datarow"));
+
+			if(no == "2"){
+				if(getColValue("a_old_catg_1", "1", gridName2) == ""){
+					doSubSearchEmpty("3");
+//					doSubSearchEmpty("4");
+				}else{
+					$("#tmp_cat_1").val(getColValue("a_catg_3", "1", "htmlTable2"));
+					jQuery("#"+gridName2).setRowData (1,false,{background:'#B2EBF4'});
+					doSubSearch("3");
+				}
+			}else if(no == "3"){
+				if(getColValue("b_old_catg_3", "1", gridName3) == ""){
+//					doSubSearchEmpty("4");
+				}else{
+//					$("#tmp_cat_1").val(getColValue("b_catg_3", "1", "htmlTable3"));
+					jQuery("#"+gridName3).setRowData (1,false,{background:'#B2EBF4'});
+					setChangeImg();
+//					doSubSearch("4");
+				}
+			}
+		}
+
+		function changeRegion(obj){
+			doSearch('1');
+		}
+
+		var win;
+		var pRowId;
+		function doFileAttachOpen(seq){
+			pRowId = seq;
+			if(win != null){ win.close(); }
+			var url = "xos05_img_file.gas", width = "460", height = "453";
+
+			$("#file_doc_no").val(getColValue("file_doc_no", pRowId, "htmlTable3"));
+			$("#hid_use_yn").val("Y");
+			$("#file_eeno").val("00000000");
+			$("#file_seq").val("1");
+			$("#file_pgs_st_cd").val("0");
+
+			win = newPopWin("about:blank", width, height, "win_file");
+			document.fileForm.hid_csrfToken.value = $("#csrfToken").val();
+			document.fileForm.action = url;
+			document.fileForm.target = "win_file";
+			document.fileForm.method = "post";
+			document.fileForm.submit();
+			win.focus();
+		}
+
+		function doFileAttachCallback(fileDocNo){
+			if(getColValue("file_doc_no", pRowId, "htmlTable3") == '' && fileDocNo != 'null'){
+				$("#htmlTable3").setCell(pRowId,'file_doc_no',fileDocNo);
+				var cbs = jQuery("#jqg_htmlTable3_"+pRowId);
+				if(!cbs.is(":checked")){
+					jQuery("#htmlTable3").jqGrid("setSelection", pRowId, true);
+				}
+			}
+		}
+
+		function setChangeImg(){
+			var gridId = jQuery('#'+gridName3).jqGrid('getDataIDs');
+			for(var i = 1 ; i <= gridId.length ; i++){
+//				if(getColValue("seqc_2", i, gridName3) != ""){
+					var imgSrc = "<img src='../../images/hncis_bttn/open-n.gif' onClick='doFileAttachOpen(\""+i+"\");'/>";
+					jQuery('#'+gridName3).jqGrid("setRowData", i, {pop_img:imgSrc});
+//				}
+			}
+		}
+
+		function pageStepHelpPopup(){
+			if(popup != null ){
+				popup.close();
+			}
+
+			popup = popUpWindow3($("#help_url").val());
+		}
+		</script>

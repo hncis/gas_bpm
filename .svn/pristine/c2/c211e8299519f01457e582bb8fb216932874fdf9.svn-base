@@ -1,0 +1,175 @@
+<%@page import="org.jsoup.safety.Whitelist"%>
+<%@page import="org.jsoup.Jsoup"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+%>
+
+<html>
+	<head>
+			<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+			<title><fmt:message key="zipCode_sch"/></title>
+			<script type="text/javascript">
+			</script>
+			<link rel="stylesheet" type="text/css" media="screen" href="../../script/css/pop_up.css" />
+	</head>
+
+	<body>
+		<div class="pop_wrap">
+	    	<div class="pop_header">
+	        	<div class="pop_title">
+	            	<h1><fmt:message key="zipCode_sch"/></h1>
+	                <a href="javascript:selfClose();" class="pop_close"></a>
+	            </div>
+	        </div>
+	        <div class="pop_header_shadow"></div>
+	        <div class="pop_content">
+	        	<div class="div_box pop_con">
+	            	<form name="testForm" id="testForm">
+			        <div id="contents_wrap" class="any_page">
+			            <div id="contents">
+			            	<div class="btn_area">
+								<ul class="btns">
+									<li><a href="javascript:doSearch();"><fmt:message key="search"/><span></span></a></li>
+									<!-- <li><a href="javascript:selfClose();">Close<span></span></a></li> -->
+								</ul>
+							</div>
+			                <div class="search_area">
+			                	<table>
+			                        <colgroup>
+			                        	<col style="width:70px;" />
+			                            <col style="width:auto;" />
+			                        </colgroup>
+			                        <tbody>
+			                            <tr>
+											<th><fmt:message key="addr"/></th>
+											<td>
+												<input id="key_address" type="text" style="width:90%" onkeyup="enterKey();">
+											</td>
+										</tr>
+			                        </tbody>
+			                    </table>
+			                </div>
+			                <div class="jq_tbl">
+				                <table id="htmlTable" class="scroll"></table>
+								<div id="htmlPager" class="scroll"></div>
+							</div>
+			                <%@ include file="../include/hncis_message.gas"%>
+			            </div>
+			            <div class="clear"></div>
+			        </div>
+			        </form>
+	                <div class="box_corner box_lt"></div>
+	                <div class="box_corner box_rt"></div>
+	                <div class="box_corner box_lb"></div>
+	                <div class="box_corner box_rb"></div>
+	            </div>
+	        </div>
+	    </div>
+	</body>
+</html>
+<script type="text/javascript">
+	function fnSetDocumentReady(){
+		init();
+	}
+
+	/**
+	 * process init() loading
+	 */
+	var params;
+	var comboVal;
+	var lastsel;
+	var fnMerge;
+	var gridParam;
+	var gridName1 = "htmlTable";
+// 	var cn        = ["부서 코드", "부서명"];
+	var cn = [ '<fmt:message key="zip_code"/>' // "우편번호"
+		          ,'<fmt:message key="new_addr"/>' // "신주소"
+		          ,'<fmt:message key="old_addr"/>' // "구주소"
+		          ];
+	var datarow   = {zip_code:"",address:"",new_address:""};
+	var cm =
+	[
+		{name:"zip_code",	index:"zip_code", sortable:false,	formatter:"string",	width:70,	align:"center",	editable:false,	frozen:false},
+		{name:"new_address",index:"new_address"	, sortable:false,	formatter:"string",	width:285,	align:"left",	editable:false,	frozen:false},
+		{name:"address",	index:"address"	, sortable:false,	formatter:"string",	width:285,	align:"left",	editable:false,	frozen:false}
+	];
+	function init(){
+		//set grid parameter
+
+		var params = {
+			};
+
+		gridParam = {
+			viewEdit : [{
+				gridName     : gridName1,
+				url          : "/doSearchToEmpty.do",
+				colNames     : cn,
+				colModel     : cm,
+				height       : 230,
+				width		 : 680,
+				rowNum       : 10,
+				rownumbers   : true,
+				multiselect  : false,
+				cellEdit     : false,
+				fnMerge      : false,
+				pager		 : "htmlPager",
+				completeFc   : "addGridRow(10);",
+				paramJson    : params
+			}]
+		};
+
+		//common jqGrid call...
+		commonJqGridInit(gridParam);
+
+		jQuery("#"+gridName1).jqGrid("setGridParam",{
+			ondblClickRow : function(rowid, iRow, iCol, e){
+				if(getColValue("zip_code", rowid, gridName1) != ""){
+					var rtnData = {
+							zip_code : getColValue("zip_code", rowid, gridName1)
+							,address : getColValue("address", rowid, gridName1)
+							,new_address : getColValue("new_address", rowid, gridName1)
+					}
+					opener.zipCodeFindCallBack(rtnData);
+					selfClose();
+				}
+			}
+		}).trigger('reloadGrid');
+	}
+
+
+	function doSearch(){
+		if($("#key_address").val() == ""){
+			alertUI('<fmt:message key="MSG.INP.0003"/>');
+			$("#key_address").focus();
+			return;
+		}
+
+		var params = {
+			address         : $("#key_address").val().replace(/ /gi, ""),
+			corp_cd			: sess_corp_cd
+		};
+
+		doCommonSearch("../../doSearchZipCode.do", util.jsonToString(params), "loadCallBack();", gridName1);
+	}
+
+	/**
+	 * callback
+	 */
+	function loadCallBack(){
+		addGridRow();
+	}
+
+
+	function retrieve(gubn){
+		switch(gubn){
+			case "search" :
+				doSearch();
+				break;
+		}
+	}
+
+	function afterClose(){
+
+	}
+	</script>

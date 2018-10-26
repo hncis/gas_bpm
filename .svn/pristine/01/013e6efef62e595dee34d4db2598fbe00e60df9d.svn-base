@@ -1,0 +1,4 @@
+# File Path
+#fileItemReaderResource=/wasapp/gasc/upload/batch/
+fileItemReaderResource=D:/test/
+fileItemWriterResource=/wasapp/gasc/family/

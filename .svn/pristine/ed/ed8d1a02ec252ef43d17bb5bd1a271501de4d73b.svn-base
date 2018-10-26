@@ -1,0 +1,1690 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Uniform"> 
+	<select id="selectUniformTypeofclothesComboList" parameterClass="String" resultClass="bgabGascaf02Dto">
+		/* uniform.xml :: selectUniformTypeofclothesComboList */
+		SELECT UNIF_CD
+			 , UNIF_NM
+			 , UNIF_SEX_CD
+		FROM BGAB_GASCAF02$corp_cd$
+		WHERE UNIF_TYPE_CD = 'CLOTHES'
+		ORDER BY CAST(UNIF_SORT as DECIMAL) ASC
+	</select>
+	
+	<select id="selectUniformColorComboList" resultClass="bgabGascaf02Dto">
+		/* uniform.xml :: selectUniformColorComboList */
+		SELECT UNIF_PRN_CD
+			 , UNIF_CD
+			 , UNIF_NM
+			 , UNIF_DEPT_CD
+		FROM BGAB_GASCAF02$corp_cd$
+		WHERE UNIF_TYPE_CD = 'COLOR'
+		ORDER BY CAST(UNIF_SORT as DECIMAL) ASC
+	</select>
+	
+	<select id="selectUniformSizeComboList" resultClass="bgabGascaf02Dto">
+		/* uniform.xml :: selectUniformSizeComboList */
+		SELECT A.UNIF_PRN_CD
+			 , A.UNIF_CD
+			 , A.UNIF_NM
+			 , A.UNIF_DEPT_CD
+		FROM BGAB_GASCAF02$corp_cd$ A
+		JOIN (SELECT *
+				FROM BGAB_GASCAF02$corp_cd$
+				WHERE UNIF_TYPE_CD = 'COLOR') B
+		  ON A.UNIF_PRN_CD = B.UNIF_CD
+		WHERE A.UNIF_TYPE_CD = 'SIZE'
+		ORDER BY CAST(A.UNIF_SORT as DECIMAL) ASC
+	</select>
+	
+	<select id="selectUniformCycleToRequest" parameterClass="bgabGascaf01Dto" resultClass="String">
+		/* uniform.xml :: selectUniformCycleToRequest */
+		SELECT UNIF_CYCLE_CD
+		FROM BGAB_GASCAF02$corp_cd$
+		WHERE UNIF_TYPE_CD = 'CLOTHES'
+		  AND UNIF_CD      = #search_unif_type_cd#
+	</select>
+	
+	<select id="selectUniformCountToRequest" parameterClass="bgabGascaf01Dto" resultClass="String">
+		/* uniform.xml :: selectUniformCountToRequest */
+		SELECT COUNT(*)
+		FROM (
+			SELECT rownum rnum
+				 , Z.*
+			  FROM (SELECT EENO
+						 , EENM
+						 , POA_NM
+						 , OPS_NM
+						 , OPS_CD
+						 , COST_CD
+						 , UNIF_TYPE_CD
+						 , HID_UNIF_TYPE_CD
+						 , UNIF_CLR_CD
+						 , HID_UNIF_CLR_CD
+						 <isNotEmpty property="search_unif_msm_cd">
+						 , #search_unif_msm_cd#  AS UNIF_MSM_CD
+						 </isNotEmpty>
+						 <isEmpty property="search_unif_msm_cd">
+						 , ''                    AS UNIF_MSM_CD
+						 </isEmpty>
+						 , CAST(NVL(UNIF_CYCLE_CD, '0') AS NUMBER) - CAST(NVL(REMAIN_CNT, '0') AS NUMBER) AS REMAIN_FLAG
+					FROM (
+						SELECT INSA.XUSR_EMPNO   AS EENO
+							 , XUSR_NAME         AS EENM
+							 , XUSR_STEP_NAME    AS POA_NM
+							 , XUSR_DEPT_NAME    AS OPS_NM
+							 , XUSR_DEPT_CODE    AS OPS_CD
+							 , XUSR_COST_CD      AS COST_CD
+							 , UNIF.UNIF_TYPE_CD
+							 , UNIF.UNIF_TYPE_CD AS HID_UNIF_TYPE_CD
+							 , UNIF.UNIF_SORT
+							 , UNIF.UNIF_CLR_CD
+							 , UNIF.UNIF_CLR_CD AS HID_UNIF_CLR_CD
+							 , UNIF.UNIF_CLR_SORT
+							 , UNIF.UNIF_CYCLE_CD
+		                     , (SELECT NVL(SUM(CAST(UNIF_PTT_QTY AS NUMBER)), '0')
+		                          FROM BGAB_GASCAF01$corp_cd$ AF01
+		                          WHERE AF01.EENO         = INSA.XUSR_EMPNO
+		                            AND AF01.UNIF_TYPE_CD = UNIF.UNIF_TYPE_CD
+		                            AND AF01.UNIF_CLR_CD  = UNIF.UNIF_CLR_CD
+		                            AND AF01.UNIF_PTT_YMD <![CDATA[<=]]> SYSDATE
+		                            AND AF01.UNIF_PTT_YMD <![CDATA[>=]]> ADD_MONTHS(SYSDATE, -1 * NVL(UNIF_TERM_CD, 0)) 
+		                            AND AF01.UAPS1_CD     != '2'
+		                            AND AF01.ADMIN_YN     = 'N') AS REMAIN_CNT
+						FROM (
+							SELECT XUSR_EMPNO
+								 , XUSR_NAME
+								 , XUSR_STEP_NAME
+								 , XUSR_DEPT_NAME
+								 , XUSR_DEPT_CODE
+								 , XUSR_COST_CD
+								 , XUSR_SEX
+							FROM BGAB_GASCZ002$corp_cd$
+							WHERE XUSR_RETR_FLAG = 'N'
+							<isNotEmpty property="search_ops_cd">
+							  AND XUSR_DEPT_CODE = #search_ops_cd#
+							</isNotEmpty>
+							<isNotEmpty property="search_sex_cd">
+							  AND XUSR_SEX = #search_sex_cd#
+							</isNotEmpty>
+							<isNotEmpty property="search_eeno">
+							  AND XUSR_EMPNO     = #search_eeno#
+							</isNotEmpty>
+							<isNotEmpty property="search_eenm">
+							  AND XUSR_NAME      LIKE '%' || #search_eenm# || '%'
+							</isNotEmpty>
+						) INSA LEFT OUTER JOIN (
+							SELECT UNIF_TYPE_CD
+								 , UNIF_SORT
+								 , UNIF_CLR_CD
+								 , UNIF_CLR_SORT
+								 , UNIF_SEX_CD
+		                         , UNIF_TERM_CD
+		                         , UNIF_CYCLE_CD
+							FROM (
+								SELECT UNIF_CD AS UNIF_TYPE_CD
+									 , UNIF_SORT
+									 , UNIF_SEX_CD
+								FROM BGAB_GASCAF02$corp_cd$
+								WHERE 1=1
+								  AND UNIF_TYPE_CD = 'CLOTHES'
+								  AND UNIF_PRN_CD  = 'CLOTHES'
+								<isNotEmpty property="search_unif_type_cd">
+								  AND UNIF_CD      = #search_unif_type_cd#
+								</isNotEmpty>
+							) TYPE_CD
+							LEFT OUTER JOIN (
+								SELECT UNIF_PRN_CD
+									 , UNIF_CD     AS UNIF_CLR_CD
+									 , UNIF_SORT   AS UNIF_CLR_SORT
+		                             , CAST(UNIF_TERM_CD AS NUMBER) * 12 AS UNIF_TERM_CD
+			       					 , UNIF_CYCLE_CD
+								FROM BGAB_GASCAF02$corp_cd$
+								WHERE UNIF_TYPE_CD = 'COLOR'
+								<isNotEmpty property="search_unif_clr_cd">
+								  AND UNIF_CD = #search_unif_clr_cd#
+								</isNotEmpty>
+							) CLR_CD
+							 ON TYPE_CD.UNIF_TYPE_CD = CLR_CD.UNIF_PRN_CD
+						) UNIF
+						 ON UNIF.UNIF_SEX_CD IN (INSA.XUSR_SEX, 3)
+					) UNIF
+					ORDER BY EENO ASC, UNIF_TYPE_CD ASC, UNIF_CLR_SORT ASC 
+				)Z
+				WHERE REMAIN_FLAG != '0'
+		) UNIF
+		 
+	</select>
+	
+	<parameterMap id="selectUnifClrRemainQtyInfoParamMap" class="java.util.HashMap" >
+		<parameter property="eeno"       	jdbcType="VARCHAR" javaType="java.lang.String" mode="IN" />
+		<parameter property="unif_type_cd" jdbcType="VARCHAR" javaType="java.lang.String" mode="IN" />
+		<parameter property="unif_clr_cd"  jdbcType="VARCHAR" javaType="java.lang.String" mode="IN" />
+		<parameter property="corp_cd"     	jdbcType="VARCHAR" javaType="java.lang.String" mode="IN" />
+		<parameter property="ResultVal"   	jdbcType="VARCHAR" javaType="java.lang.String" mode="OUT" />
+	</parameterMap>
+	<!-- <procedure id="selectUnifClrRemainQtyInfo" parameterMap="selectUnifClrRemainQtyInfoParamMap" resultClass="java.util.HashMap">
+	 	{ call P_UNIF_CLR_REMAIN_QTY(?,?,?,?,?) }
+	</procedure> -->
+	
+	<select id="selectUnifClrRemainQtyInfo" parameterClass="bgabGascaf01Dto" resultClass="String">
+		SELECT F_UNIF_CLR_REMAIN_QTY(#eeno#,#unif_type_cd#,#unif_clr_cd#,#corp_cd#) FROM DUAL
+	</select>
+	
+	<select id="selectUniformListToRequest" parameterClass="bgabGascaf01Dto" resultClass="bgabGascaf01Dto">
+		/* uniform.xml :: selectUniformListToRequest */
+		SELECT EENO
+			 , EENM
+			 , POA_NM
+			 , OPS_NM
+			 , OPS_CD
+			 , COST_CD
+			 , UNIF_TYPE_CD
+			 , HID_UNIF_TYPE_CD
+			 , UNIF_CLR_CD
+			 , HID_UNIF_CLR_CD
+			 , UNIF_MSM_CD
+			 , REMAIN_FLAG
+		FROM (
+			SELECT rownum rnum
+				 , Z.*
+			  FROM (SELECT EENO
+						 , EENM
+						 , POA_NM
+						 , OPS_NM
+						 , OPS_CD
+						 , COST_CD
+						 , UNIF_TYPE_CD
+						 , HID_UNIF_TYPE_CD
+						 , UNIF_CLR_CD
+						 , HID_UNIF_CLR_CD
+						 <isNotEmpty property="search_unif_msm_cd">
+						 , #search_unif_msm_cd#  AS UNIF_MSM_CD
+						 </isNotEmpty>
+						 <isEmpty property="search_unif_msm_cd">
+						 , ''                    AS UNIF_MSM_CD
+						 </isEmpty>
+						 , CAST(NVL(UNIF_CYCLE_CD, '0') AS NUMBER) - CAST(NVL(REMAIN_CNT, '0') AS NUMBER) AS REMAIN_FLAG
+					FROM (
+						SELECT INSA.XUSR_EMPNO   AS EENO
+							 , XUSR_NAME         AS EENM
+							 , XUSR_STEP_NAME    AS POA_NM
+							 , XUSR_DEPT_NAME    AS OPS_NM
+							 , XUSR_DEPT_CODE    AS OPS_CD
+							 , XUSR_COST_CD      AS COST_CD
+							 , UNIF.UNIF_TYPE_CD
+							 , UNIF.UNIF_TYPE_CD AS HID_UNIF_TYPE_CD
+							 , UNIF.UNIF_SORT
+							 , UNIF.UNIF_CLR_CD
+							 , UNIF.UNIF_CLR_CD AS HID_UNIF_CLR_CD
+							 , UNIF.UNIF_CLR_SORT
+							 , UNIF.UNIF_CYCLE_CD
+		                     , (SELECT NVL(SUM(CAST(UNIF_PTT_QTY AS NUMBER)), '0')
+		                          FROM BGAB_GASCAF01$corp_cd$ AF01
+		                          WHERE AF01.EENO         = INSA.XUSR_EMPNO
+		                            AND AF01.UNIF_TYPE_CD = UNIF.UNIF_TYPE_CD
+		                            AND AF01.UNIF_CLR_CD  = UNIF.UNIF_CLR_CD
+		                            AND AF01.UNIF_PTT_YMD <![CDATA[<=]]> SYSDATE
+		                            AND AF01.UNIF_PTT_YMD <![CDATA[>=]]> ADD_MONTHS(SYSDATE, -1 * NVL(UNIF_TERM_CD, 0))
+		                            AND AF01.UAPS1_CD     != '2'
+		                            AND AF01.ADMIN_YN     = 'N') AS REMAIN_CNT
+						FROM (
+							SELECT XUSR_EMPNO
+								 , XUSR_NAME
+								 , XUSR_STEP_NAME
+								 , XUSR_DEPT_NAME
+								 , XUSR_DEPT_CODE
+								 , XUSR_COST_CD
+								 , XUSR_SEX
+							FROM BGAB_GASCZ002$corp_cd$
+							WHERE XUSR_RETR_FLAG = 'N'
+							<isNotEmpty property="search_ops_cd">
+							  AND XUSR_DEPT_CODE = #search_ops_cd#
+							</isNotEmpty>
+							<isNotEmpty property="search_sex_cd">
+							  AND XUSR_SEX = #search_sex_cd#
+							</isNotEmpty>
+							<isNotEmpty property="search_eeno">
+							  AND XUSR_EMPNO     = #search_eeno#
+							</isNotEmpty>
+							<isNotEmpty property="search_eenm">
+							  AND XUSR_NAME      LIKE '%' || #search_eenm# || '%'
+							</isNotEmpty>
+						) INSA LEFT OUTER JOIN (
+							SELECT UNIF_TYPE_CD
+								 , UNIF_SORT
+								 , UNIF_CLR_CD
+								 , UNIF_CLR_SORT
+								 , UNIF_SEX_CD
+		                         , UNIF_TERM_CD
+		                         , UNIF_CYCLE_CD
+							FROM (
+								SELECT UNIF_CD AS UNIF_TYPE_CD
+									 , UNIF_SORT
+									 , UNIF_SEX_CD
+								FROM BGAB_GASCAF02$corp_cd$
+								WHERE 1=1
+								  AND UNIF_TYPE_CD = 'CLOTHES'
+								  AND UNIF_PRN_CD  = 'CLOTHES'
+								<isNotEmpty property="search_unif_type_cd">
+								  AND UNIF_CD      = #search_unif_type_cd#
+								</isNotEmpty>
+							) TYPE_CD
+							LEFT OUTER JOIN (
+								SELECT UNIF_PRN_CD
+									 , UNIF_CD     AS UNIF_CLR_CD
+									 , UNIF_SORT   AS UNIF_CLR_SORT
+		                             , CAST(UNIF_TERM_CD AS NUMBER) * 12 AS UNIF_TERM_CD
+			       					 , UNIF_CYCLE_CD
+								FROM BGAB_GASCAF02$corp_cd$
+								WHERE UNIF_TYPE_CD = 'COLOR'
+								<isNotEmpty property="search_unif_clr_cd">
+								  AND UNIF_CD = #search_unif_clr_cd#
+								</isNotEmpty>
+							) CLR_CD
+							 ON TYPE_CD.UNIF_TYPE_CD = CLR_CD.UNIF_PRN_CD
+						) UNIF
+						 ON UNIF.UNIF_SEX_CD IN (INSA.XUSR_SEX, 3)
+					) UNIF
+					ORDER BY EENO ASC, UNIF_TYPE_CD ASC, UNIF_CLR_SORT ASC 
+				)Z
+				WHERE REMAIN_FLAG != '0'
+		) UNIF
+		WHERE RNUM BETWEEN #startRow# AND #endRow#
+	</select>
+	
+	<select id="selectUniformStockCheckToRequest" parameterClass="bgabGascaf01Dto" resultClass="String">
+		/* uniform.xml :: selectUniformStockCheckToRequest */
+		SELECT sum(CAST(NVL(UNIF_IN_COUNT,0) as DECIMAL))-sum(CAST(NVL(UNIF_OUT_COUNT,0) as DECIMAL)) UNIF_TOTAL_COUNT 
+		  FROM BGAB_GASCAF03$corp_cd$
+		 WHERE UNIF_TYPE_CD = #unif_type_cd#
+		   AND UNIF_CLR_CD  = #unif_clr_cd#
+  		   AND UNIF_MSM_CD  = #unif_msm_cd#
+	</select>
+	
+	<insert id="insertUniformListToRequest" parameterClass="bgabGascaf01Dto">
+		/* uniform.xml :: insertUniformListToRequest */
+		INSERT INTO BGAB_GASCAF01$corp_cd$ (
+			  EENO
+			, UNIF_TYPE_CD
+			, UNIF_CLR_CD
+			, UNIF_MSM_CD
+			, TRTM_YYMM
+			, UNIF_PTT_SCN_CD
+			, ADMIN_YN
+			, UNIF_PTT_QTY
+			, UAPS1_CD
+			, UNIF_PTT_YMD
+			, INP_YMD
+			, IPE_EENO
+			, DOC_NO
+		) VALUES (
+			  #eeno#
+			, #unif_type_cd#
+			, #unif_clr_cd#
+			, #unif_msm_cd#
+			,TO_CHAR(SYSDATE, 'YYYYMM')
+			, (select a.seq from (SELECT NVL(MAX(TO_NUMBER(UNIF_PTT_SCN_CD)), 0) + 1 as seq
+				FROM BGAB_GASCAF01$corp_cd$
+				WHERE EENO         = #eeno#
+				  AND UNIF_TYPE_CD = #unif_type_cd#
+				  AND UNIF_CLR_CD  = #unif_clr_cd#
+				  AND UNIF_MSM_CD  = #unif_msm_cd#
+				  AND TRTM_YYMM    = TO_CHAR(SYSDATE, 'YYYYMM'))a)
+			, #admin_yn#
+			, #unif_ptt_qty#
+			, #uaps1_cd#
+			, SYSDATE
+			, SYSDATE
+			, #ipe_eeno#
+			, #doc_no#
+		)
+	</insert>
+	
+	<select id="selectUniformCountToList" parameterClass="bgabGascaf01Dto" resultClass="String">
+		/* uniform.xml :: selectUniformCountToList */
+		SELECT COUNT(*)
+		FROM (
+			SELECT UNIF.UNIF_PTT_YMD
+				 , UNIF.EENO
+				 , UNIF.UNIF_TYPE_CD
+				 , UNIF.UNIF_CLR_CD
+				 , UNIF.UNIF_MSM_CD
+				 , UNIF.UNIF_PTT_SCN_CD
+				 , UNIF.TRTM_YYMM
+				 , UNIF.UNIF_PTT_QTY
+				 , UNIF.UAPS1_CD
+				 , INSA.EENM
+				 , INSA.POA_NM
+				 , INSA.OPS_NM
+				 , INSA.OPS_CD
+				 , INSA.XUSR_SEX
+			FROM (
+				SELECT UNIF_PTT_YMD
+					 , EENO
+					 , UNIF_TYPE_CD
+					 , UNIF_CLR_CD
+					 , UNIF_MSM_CD
+					 , UNIF_PTT_SCN_CD
+					 , TRTM_YYMM
+					 , UNIF_PTT_QTY
+					 , UAPS1_CD
+				FROM BGAB_GASCAF01$corp_cd$
+			) UNIF
+			LEFT OUTER JOIN (
+				SELECT XUSR_EMPNO
+					 , XUSR_NAME      AS EENM
+					 , XUSR_STEP_NAME AS POA_NM
+					 , XUSR_DEPT_NAME AS OPS_NM
+					 , XUSR_DEPT_CODE AS OPS_CD
+					 , XUSR_SEX
+				FROM BGAB_GASCZ002$corp_cd$
+			) INSA
+			 ON UNIF.EENO = INSA.XUSR_EMPNO
+		) UNIF
+		WHERE 1=1
+		<isNotEmpty property="search_ops_cd">
+		  AND OPS_CD = #search_ops_cd#
+		</isNotEmpty>
+		<isNotEmpty property="search_sex_cd">
+		  AND XUSR_SEX = #search_sex_cd#
+		</isNotEmpty>
+		<isNotEmpty property="search_eeno">
+		  AND EENO = #search_eeno#
+		</isNotEmpty>
+		<isNotEmpty property="search_eenm">
+		  AND EENM LIKE '%' || #search_eenm# || '%'
+		</isNotEmpty>
+		<!-- <isNotEmpty property="search_unif_ptt_ymd">
+		  AND UNIF_PTT_YMD = #search_unif_ptt_ymd#
+		</isNotEmpty> -->
+		<isNotEmpty property="fr_ymd">
+		  AND TO_CHAR(UNIF_PTT_YMD, 'YYYYMMDD') BETWEEN #fr_ymd# AND #to_ymd#
+		</isNotEmpty>
+		<isNotEmpty property="search_unif_type_cd">
+		  AND UNIF_TYPE_CD = #search_unif_type_cd#
+		</isNotEmpty>
+		<isNotEmpty property="search_unif_clr_cd">
+		  AND UNIF_CLR_CD = #search_unif_clr_cd#
+		</isNotEmpty>
+		<isNotEmpty property="search_unif_msm_cd">
+		  AND UNIF_MSM_CD = #search_unif_msm_cd#
+		</isNotEmpty>
+		<isNotEmpty property="search_uaps1_cd">
+		  AND UAPS1_CD    = #search_uaps1_cd#
+		</isNotEmpty>
+	</select>
+	
+	<select id="selectUniformListToList" parameterClass="bgabGascaf01Dto" resultClass="bgabGascaf01Dto">
+		/* uniform.xml :: selectUniformListToList */
+		SELECT TO_CHAR( UNIF_PTT_YMD,'YYYY-MM-DD' ) AS UNIF_PTT_YMD
+			 , EENO
+			 , UNIF_TYPE_CD
+			 , UNIF_CLR_CD
+			 , UNIF_MSM_CD
+			 , UNIF_PTT_SCN_CD
+			 , TRTM_YYMM
+			 , UNIF_PTT_QTY
+			 , UAPS1_CD
+			 , EENM
+			 , POA_NM
+			 , OPS_NM
+			 , COST_CD
+			 , UNIF_TYPE_NM
+			 , UNIF_CLR_NM
+			 , UNIF_MSM_NM
+			 , UAPS1_NM
+			 , SNB_RSON_SBC
+  			 , DOC_NO||UNIF_TYPE_CD||UNIF_CLR_CD AS DOC_NO
+		FROM (
+			SELECT rownum rnum
+				 , UNIF_PTT_YMD
+				 , EENO
+				 , UNIF_TYPE_CD
+				 , UNIF_CLR_CD
+				 , UNIF_MSM_CD
+				 , UNIF_PTT_SCN_CD
+				 , TRTM_YYMM
+				 , UNIF_PTT_QTY
+				 , UAPS1_CD
+				 , EENM
+				 , POA_NM
+				 , OPS_NM
+				 , COST_CD
+				 , UNIF_TYPE_NM
+				 , UNIF_CLR_NM
+				 , UNIF_MSM_NM
+				 , UAPS1_NM
+				 , SNB_RSON_SBC
+				 , DOC_NO
+			FROM (
+				SELECT UNIF.UNIF_PTT_YMD
+					 , UNIF.EENO
+					 , UNIF.UNIF_TYPE_CD
+					 , UNIF.UNIF_CLR_CD
+					 , UNIF.UNIF_MSM_CD
+					 , UNIF.UNIF_PTT_SCN_CD
+					 , UNIF.TRTM_YYMM
+					 , UNIF.UNIF_PTT_QTY
+					 , UNIF.UAPS1_CD
+					 , INSA.EENM
+					 , INSA.POA_NM
+					 , INSA.OPS_NM
+					 , INSA.OPS_CD
+					 , INSA.COST_CD
+					 , INSA.XUSR_SEX
+					 , CLOTHES.UNIF_TYPE_NM
+					 , COLOR.UNIF_CLR_NM
+					 , SIZ.UNIF_MSM_NM
+					 , UAPS1.UAPS1_NM
+					 , UNIF.SNB_RSON_SBC
+					 , DOC_NO
+				FROM (
+					SELECT UNIF_PTT_YMD
+						 , EENO
+						 , UNIF_TYPE_CD
+						 , UNIF_CLR_CD
+						 , UNIF_MSM_CD
+						 , UNIF_PTT_SCN_CD
+						 , TRTM_YYMM
+						 , UNIF_PTT_QTY
+						 , UAPS1_CD
+						 , SNB_RSON_SBC
+						 , DOC_NO
+					FROM BGAB_GASCAF01$corp_cd$
+				) UNIF
+				LEFT OUTER JOIN (
+					SELECT XUSR_EMPNO
+						 , XUSR_NAME      AS EENM
+						 , XUSR_STEP_NAME AS POA_NM
+						 , XUSR_DEPT_NAME AS OPS_NM
+						 , XUSR_DEPT_CODE AS OPS_CD
+						 , XUSR_COST_CD   AS COST_CD
+						 , XUSR_SEX
+					FROM BGAB_GASCZ002$corp_cd$
+				) INSA
+				 ON UNIF.EENO = INSA.XUSR_EMPNO
+				LEFT OUTER JOIN (
+					SELECT UNIF_CD
+						 , UNIF_NM AS UNIF_TYPE_NM
+					FROM BGAB_GASCAF02$corp_cd$
+					WHERE UNIF_TYPE_CD = 'CLOTHES'
+				) CLOTHES
+				 ON CLOTHES.UNIF_CD = UNIF.UNIF_TYPE_CD
+				LEFT OUTER JOIN (
+					SELECT UNIF_PRN_CD
+						 , UNIF_CD
+						 , UNIF_NM AS UNIF_CLR_NM
+					FROM BGAB_GASCAF02$corp_cd$
+					WHERE UNIF_TYPE_CD = 'COLOR'
+				) COLOR 
+				 ON COLOR.UNIF_PRN_CD = UNIF.UNIF_TYPE_CD
+				AND COLOR.UNIF_CD     = UNIF.UNIF_CLR_CD
+				LEFT OUTER JOIN (
+					SELECT UNIF_PRN_CD
+						 , UNIF_CD
+						 , UNIF_NM AS UNIF_MSM_NM
+					FROM BGAB_GASCAF02$corp_cd$
+					WHERE UNIF_TYPE_CD = 'SIZE'
+				) SIZ
+				 ON SIZ.UNIF_PRN_CD = UNIF.UNIF_CLR_CD
+				AND SIZ.UNIF_CD     = UNIF.UNIF_MSM_CD
+				LEFT OUTER JOIN (
+					SELECT XCOD_CODE
+						 , XCOD_HNAME AS UAPS1_NM
+					FROM BGAB_GASCZ005$corp_cd$
+					WHERE XCOD_KND = 'XUF03'
+					AND LOCALE = #locale#
+				) UAPS1
+				 ON UAPS1.XCOD_CODE = UNIF.UAPS1_CD
+			) UNIF
+			WHERE 1=1
+			<isNotEmpty property="search_ops_cd">
+			  AND OPS_CD = #search_ops_cd#
+			</isNotEmpty>
+			<isNotEmpty property="search_sex_cd">
+			  AND XUSR_SEX = #search_sex_cd#
+			</isNotEmpty>
+			<isNotEmpty property="search_eeno">
+			  AND EENO = #search_eeno#
+			</isNotEmpty>
+			<isNotEmpty property="search_eenm">
+			  AND EENM LIKE '%' || #search_eenm# || '%'
+			</isNotEmpty>
+			<!-- <isNotEmpty property="search_unif_ptt_ymd">
+			  AND UNIF_PTT_YMD = #search_unif_ptt_ymd#
+			</isNotEmpty> -->
+			<isNotEmpty property="fr_ymd">
+			  AND TO_CHAR(UNIF_PTT_YMD, 'YYYYMMDD') BETWEEN #fr_ymd# AND #to_ymd#
+			</isNotEmpty>
+			<isNotEmpty property="search_unif_type_cd">
+			  AND UNIF_TYPE_CD = #search_unif_type_cd#
+			</isNotEmpty>
+			<isNotEmpty property="search_unif_clr_cd">
+			  AND UNIF_CLR_CD = #search_unif_clr_cd#
+			</isNotEmpty>
+			<isNotEmpty property="search_unif_msm_cd">
+			  AND UNIF_MSM_CD = #search_unif_msm_cd#
+			</isNotEmpty>
+			<isNotEmpty property="search_uaps1_cd">
+			  AND UAPS1_CD    = #search_uaps1_cd#
+			</isNotEmpty>
+			ORDER BY UNIF_PTT_YMD DESC, EENO, UNIF_TYPE_CD, UNIF_CLR_CD, UNIF_MSM_CD ASC
+		) UNIF
+		WHERE RNUM BETWEEN #startRow# AND #endRow#
+	</select>
+	
+	<delete id="deleteUniformRequestToList" parameterClass="bgabGascaf01Dto">
+		/* uniform.xml :: deleteUniformRequestToList */
+		DELETE FROM BGAB_GASCAF01$corp_cd$
+		WHERE EENO            = #eeno#
+		  AND UNIF_TYPE_CD    = #unif_type_cd#
+		  AND UNIF_CLR_CD     = #unif_clr_cd#
+		  AND UNIF_MSM_CD     = #unif_msm_cd#
+		  AND TRTM_YYMM       = #trtm_yymm#
+		  AND UNIF_PTT_SCN_CD = #unif_ptt_scn_cd#
+	</delete>
+	
+	<select id="selectUniformCountToConfirm" parameterClass="bgabGascaf01Dto" resultClass="String">
+		/* uniform.xml :: selectUniformCountToConfirm */
+		SELECT COUNT(*)
+		FROM (
+			SELECT UNIF.UNIF_PTT_YMD
+				 , UNIF.EENO
+				 , UNIF.UNIF_TYPE_CD
+				 , UNIF.UNIF_CLR_CD
+				 , UNIF.UNIF_MSM_CD
+				 , UNIF.UNIF_PTT_SCN_CD
+				 , UNIF.TRTM_YYMM
+				 , UNIF.UNIF_PTT_QTY
+				 , UNIF.UAPS1_CD
+				 , INSA.EENM
+				 , INSA.POA_NM
+				 , INSA.OPS_NM
+				 , INSA.OPS_CD
+				 , CLOTHES.UNIF_SEX_CD
+			FROM (
+				SELECT UNIF_PTT_YMD
+					 , EENO
+					 , UNIF_TYPE_CD
+					 , UNIF_CLR_CD
+					 , UNIF_MSM_CD
+					 , UNIF_PTT_SCN_CD
+					 , TRTM_YYMM
+					 , UNIF_PTT_QTY
+					 , UAPS1_CD
+				FROM BGAB_GASCAF01$corp_cd$
+			) UNIF
+			LEFT OUTER JOIN (
+				SELECT XUSR_EMPNO
+					 , XUSR_NAME      AS EENM
+					 , XUSR_STEP_NAME AS POA_NM
+					 , XUSR_DEPT_NAME AS OPS_NM
+					 , XUSR_DEPT_CODE AS OPS_CD
+					 , XUSR_SEX
+				FROM BGAB_GASCZ002$corp_cd$
+			) INSA
+			 ON UNIF.EENO = INSA.XUSR_EMPNO
+			LEFT OUTER JOIN (
+				SELECT UNIF_CD
+					 , UNIF_NM AS UNIF_TYPE_NM
+					 , UNIF_SEX_CD
+				FROM BGAB_GASCAF02$corp_cd$
+				WHERE UNIF_TYPE_CD = 'CLOTHES'
+			) CLOTHES
+			 ON UNIF.UNIF_TYPE_CD = CLOTHES.UNIF_CD
+		) UNIF
+		WHERE 1=1
+		<isNotEmpty property="search_ops_cd">
+		  AND OPS_CD = #search_ops_cd#
+		</isNotEmpty>
+		<isNotEmpty property="search_sex_cd">
+		  AND UNIF_SEX_CD IN (#search_sex_cd#, '3')
+		</isNotEmpty>
+		<isNotEmpty property="search_eeno">
+		  AND EENO = #search_eeno#
+		</isNotEmpty>
+		<isNotEmpty property="search_eenm">
+		  AND EENM LIKE '%' || #search_eenm# || '%'
+		</isNotEmpty>
+		<!-- <isNotEmpty property="search_unif_ptt_ymd">
+		  AND UNIF_PTT_YMD = #search_unif_ptt_ymd#
+		</isNotEmpty> -->
+		<isNotEmpty property="fr_ymd">
+		  AND TO_CHAR(UNIF_PTT_YMD, 'YYYYMMDD') BETWEEN #fr_ymd# AND #to_ymd# 
+		</isNotEmpty>
+		<isNotEmpty property="search_unif_type_cd">
+		  AND UNIF_TYPE_CD = #search_unif_type_cd#
+		</isNotEmpty>
+		<isNotEmpty property="search_unif_clr_cd">
+		  AND UNIF_CLR_CD = #search_unif_clr_cd#
+		</isNotEmpty>
+		<isNotEmpty property="search_unif_msm_cd">
+		  AND UNIF_MSM_CD = #search_unif_msm_cd#
+		</isNotEmpty>
+		<isNotEmpty property="search_uaps1_cd">
+		  AND UAPS1_CD    = #search_uaps1_cd#
+		</isNotEmpty>
+	</select>
+	
+	<select id="selectUniformListToConfirm" parameterClass="bgabGascaf01Dto" resultClass="bgabGascaf01Dto">
+		/* uniform.xml :: selectUniformListToConfirm */
+		SELECT TO_CHAR( UNIF_PTT_YMD,'YYYY-MM-DD' ) AS UNIF_PTT_YMD
+			 , EENO
+			 , OLD_UNIF_TYPE_CD
+			 , OLD_UNIF_CLR_CD
+			 , OLD_UNIF_MSM_CD
+			 , UNIF_TYPE_CD
+			 , UNIF_CLR_CD
+			 , UNIF_MSM_CD
+			 , UNIF_PTT_SCN_CD
+			 , TRTM_YYMM
+			 , UNIF_PTT_QTY
+			 , UAPS1_CD
+			 , EENM
+			 , POA_NM
+			 , OPS_NM
+			 , OPS_CD
+			 , COST_CD
+			 , UNIF_TYPE_NM
+			 , UNIF_CLR_NM
+			 , UNIF_MSM_NM
+			 , UAPS1_NM
+			 , REMAIN_QTY
+			 , UNIF_SEX_CD
+			 , SNB_RSON_SBC
+  			 , DOC_NO||UNIF_TYPE_CD||UNIF_CLR_CD as DOC_NO
+		FROM (
+			SELECT rownum rnum
+				 , Z.*
+		 	  FROM (SELECT UNIF_PTT_YMD
+						 , EENO
+						 , OLD_UNIF_TYPE_CD
+						 , OLD_UNIF_CLR_CD
+						 , OLD_UNIF_MSM_CD
+						 , UNIF_TYPE_CD
+						 , UNIF_CLR_CD
+						 , UNIF_MSM_CD
+						 , UNIF_PTT_SCN_CD
+						 , TRTM_YYMM
+						 , UNIF_PTT_QTY
+						 , UAPS1_CD
+						 , EENM
+						 , POA_NM
+						 , OPS_NM
+						 , OPS_CD
+						 , COST_CD
+						 , UNIF_TYPE_NM
+						 , UNIF_CLR_NM
+						 , UNIF_MSM_NM
+						 , UAPS1_NM
+						 , CAST(NVL(UNIF_CYCLE_CD, '0') AS NUMBER) - CAST(NVL(REMAIN_CNT, '0') AS NUMBER) AS REMAIN_QTY
+						 , UNIF_SEX_CD
+						 , SNB_RSON_SBC
+						 , DOC_NO
+					FROM (
+						SELECT UNIF.UNIF_PTT_YMD
+							 , UNIF.EENO
+							 , UNIF.UNIF_TYPE_CD AS OLD_UNIF_TYPE_CD
+							 , UNIF.UNIF_CLR_CD  AS OLD_UNIF_CLR_CD
+							 , UNIF.UNIF_MSM_CD  AS OLD_UNIF_MSM_CD
+							 , UNIF.UNIF_TYPE_CD
+							 , UNIF.UNIF_CLR_CD
+							 , UNIF.UNIF_MSM_CD
+							 , UNIF.UNIF_PTT_SCN_CD
+							 , UNIF.TRTM_YYMM
+							 , UNIF.UNIF_PTT_QTY
+							 , UNIF.UAPS1_CD
+							 , INSA.EENM
+							 , INSA.POA_NM
+							 , INSA.OPS_NM
+							 , INSA.OPS_CD
+							 , INSA.COST_CD
+							 , INSA.XUSR_SEX
+							 , CLOTHES.UNIF_SEX_CD
+							 , CLOTHES.UNIF_TYPE_NM
+							 , COLOR.UNIF_CLR_NM
+							 , SIZ.UNIF_MSM_NM
+							 , UAPS1.UAPS1_NM
+							 , UNIF_CYCLE_CD
+							 , UNIF.SNB_RSON_SBC
+							 , DOC_NO
+							 , (SELECT NVL(SUM(CAST(UNIF_PTT_QTY AS NUMBER)), '0')
+			                          FROM BGAB_GASCAF01$corp_cd$
+			                          WHERE EENO         = INSA.XUSR_EMPNO
+			                            AND UNIF_TYPE_CD = UNIF.UNIF_TYPE_CD
+			                            AND UNIF_CLR_CD  = UNIF.UNIF_CLR_CD
+			                            AND UNIF_PTT_YMD <![CDATA[<=]]> SYSDATE
+			                            AND UNIF_PTT_YMD <![CDATA[>=]]> ADD_MONTHS(SYSDATE, -1 * NVL(UNIF_TERM_CD,'0') )
+			                            AND UAPS1_CD     != '2'
+			                            AND ADMIN_YN     = 'N') AS REMAIN_CNT
+						FROM (
+							SELECT UNIF_PTT_YMD
+								 , EENO
+								 , UNIF_TYPE_CD
+								 , UNIF_CLR_CD
+								 , UNIF_MSM_CD
+								 , UNIF_PTT_SCN_CD
+								 , TRTM_YYMM
+								 , UNIF_PTT_QTY
+								 , UAPS1_CD
+								 , SNB_RSON_SBC
+								 , DOC_NO
+							FROM BGAB_GASCAF01$corp_cd$
+						) UNIF
+						LEFT OUTER JOIN (
+							SELECT XUSR_EMPNO
+								 , XUSR_NAME      AS EENM
+								 , XUSR_STEP_NAME AS POA_NM
+								 , XUSR_DEPT_NAME AS OPS_NM
+								 , XUSR_DEPT_CODE AS OPS_CD
+								 , XUSR_COST_CD   AS COST_CD
+								 , XUSR_SEX
+							FROM BGAB_GASCZ002$corp_cd$
+						) INSA
+						 ON UNIF.EENO = INSA.XUSR_EMPNO
+						LEFT OUTER JOIN (
+							SELECT UNIF_CD
+								 , UNIF_NM AS UNIF_TYPE_NM
+								 , UNIF_SEX_CD
+							FROM BGAB_GASCAF02$corp_cd$
+							WHERE UNIF_TYPE_CD = 'CLOTHES'
+						) CLOTHES
+						 ON CLOTHES.UNIF_CD = UNIF.UNIF_TYPE_CD
+						LEFT OUTER JOIN (
+							SELECT UNIF_PRN_CD
+								 , UNIF_CD     AS UNIF_CLR_CD
+								 , UNIF_NM     AS UNIF_CLR_NM
+		                         , CAST(UNIF_TERM_CD AS NUMBER) * 12 AS UNIF_TERM_CD
+		    					 , UNIF_CYCLE_CD
+							FROM BGAB_GASCAF02$corp_cd$
+							WHERE UNIF_TYPE_CD = 'COLOR'
+						) COLOR 
+						 ON COLOR.UNIF_PRN_CD = UNIF.UNIF_TYPE_CD
+						AND COLOR.UNIF_CLR_CD = UNIF.UNIF_CLR_CD
+						LEFT OUTER JOIN (
+							SELECT UNIF_PRN_CD
+								 , UNIF_CD
+								 , UNIF_NM AS UNIF_MSM_NM
+							FROM BGAB_GASCAF02$corp_cd$
+							WHERE UNIF_TYPE_CD = 'SIZE'
+						) SIZ
+						 ON SIZ.UNIF_PRN_CD = UNIF.UNIF_CLR_CD
+						AND SIZ.UNIF_CD     = UNIF.UNIF_MSM_CD
+						LEFT OUTER JOIN (
+							SELECT XCOD_CODE
+								 , XCOD_HNAME AS UAPS1_NM
+							FROM BGAB_GASCZ005$corp_cd$
+							WHERE XCOD_KND = 'XUF03'
+							AND LOCALE = #locale#
+						) UAPS1
+						 ON UAPS1.XCOD_CODE = UNIF.UAPS1_CD
+					) UNIF
+					WHERE 1=1
+					<isNotEmpty property="search_ops_cd">
+					  AND OPS_CD = #search_ops_cd#
+					</isNotEmpty>
+					<isNotEmpty property="search_sex_cd">
+					  AND UNIF_SEX_CD IN (#search_sex_cd#, '3')
+					</isNotEmpty>
+					<isNotEmpty property="search_eeno">
+					  AND EENO = #search_eeno#
+					</isNotEmpty>
+					<isNotEmpty property="search_eenm">
+					  AND EENM LIKE '%' || #search_eenm# || '%'
+					</isNotEmpty>
+					<!-- <isNotEmpty property="search_unif_ptt_ymd">
+					  AND UNIF_PTT_YMD = #search_unif_ptt_ymd#
+					</isNotEmpty> -->
+					<isNotEmpty property="fr_ymd">
+					  AND TO_CHAR(UNIF_PTT_YMD, 'YYYYMMDD') BETWEEN #fr_ymd# AND #to_ymd# 
+					</isNotEmpty>
+					<isNotEmpty property="search_unif_type_cd">
+					  AND UNIF_TYPE_CD = #search_unif_type_cd#
+					</isNotEmpty>
+					<isNotEmpty property="search_unif_clr_cd">
+					  AND UNIF_CLR_CD = #search_unif_clr_cd#
+					</isNotEmpty>
+					<isNotEmpty property="search_unif_msm_cd">
+					  AND UNIF_MSM_CD = #search_unif_msm_cd#
+					</isNotEmpty>
+					<isNotEmpty property="search_uaps1_cd">
+					  AND UAPS1_CD    = #search_uaps1_cd#
+					</isNotEmpty>
+					ORDER BY UNIF_PTT_YMD DESC, EENO, OLD_UNIF_TYPE_CD, OLD_UNIF_CLR_CD, OLD_UNIF_MSM_CD ASC
+				) Z
+		) UNIF
+		WHERE RNUM BETWEEN #startRow# AND #endRow#
+	</select>
+	
+	<update id="updateUniformStatusToConfirm" parameterClass="bgabGascaf01Dto">
+		/* uniform.xml :: updateUniformStatusToConfirm */
+		UPDATE BGAB_GASCAF01$corp_cd$ SET
+			  UAPS1_CD          = #uaps1_cd#
+		<isEqual property="uaps1_cd" compareValue="3">
+			, APLC_EENO         = #aplc_eeno#
+			, UNIF_PTT_ACPC_YMD = SYSDATE
+		</isEqual>
+			, UPDR_YMD          = SYSDATE
+			, UPDR_EENO         = #updr_eeno#
+		WHERE EENO            = #eeno#
+		  AND UNIF_TYPE_CD    = #unif_type_cd#
+		  AND UNIF_CLR_CD     = #unif_clr_cd#
+		  AND UNIF_MSM_CD     = #unif_msm_cd#
+		  AND TRTM_YYMM       = #trtm_yymm#
+		  AND UNIF_PTT_SCN_CD = #unif_ptt_scn_cd#
+	</update>
+	
+	<select id="selectUniformTypeofclothesListToItemInfo" parameterClass="bgabGascaf02Dto" resultClass="bgabGascaf02Dto">
+		/* uniform.xml :: selectUniformTypeofclothesListToItemInfo */
+		SELECT UNIF_PRN_CD   AS TYPE_PRN_CD
+			 , UNIF_CD       AS TYPE_CD
+			 , UNIF_NM       AS TYPE_NM
+			 , UNIF_CYCLE_CD AS TYPE_CYCLE_CD
+			 , UNIF_SEX_CD   AS TYPE_SEX_CD
+			 , TO_NUMBER(UNIF_SORT)  AS TYPE_SORT
+			 , (SELECT COUNT(*)
+			    FROM BGAB_GASCAF02$corp_cd$
+			    WHERE UNIF_TYPE_CD = 'COLOR'
+			      AND UNIF_PRN_CD = AF02.UNIF_CD) AS TYPE_DOWN_FLAG
+		FROM BGAB_GASCAF02$corp_cd$ AF02
+		WHERE UNIF_TYPE_CD = 'CLOTHES'
+		<isNotEmpty property="unif_sex_cd">
+		  AND UNIF_SEX_CD  IN (#unif_sex_cd#, '3')
+		</isNotEmpty>
+		ORDER BY UNIF_SEX_CD, TYPE_SORT ASC
+	</select>
+	
+	<select id="selectUniformColorListToItemInfo" parameterClass="bgabGascaf02Dto" resultClass="bgabGascaf02Dto">
+		/* uniform.xml :: selectUniformColorListToItemInfo */
+		SELECT UNIF_PRN_CD   AS COLOR_PRN_CD
+			 , UNIF_CD       AS COLOR_CD
+			 , UNIF_NM       AS COLOR_NM
+			 , UNIF_SORT     AS COLOR_SORT
+			 , UNIF_CYCLE_CD AS COLOR_CYCLE_CD
+			 , UNIF_TERM_CD  AS COLOR_TERM_CD
+			 , UNIF_SEX_CD   AS COLOR_SEX_CD
+			 , (SELECT COUNT(*)
+			    FROM BGAB_GASCAF02$corp_cd$
+			    WHERE UNIF_TYPE_CD = 'SIZE'
+			      AND UNIF_PRN_CD = AF02.UNIF_CD) AS COLOR_DOWN_FLAG
+		FROM BGAB_GASCAF02$corp_cd$ AF02
+		WHERE UNIF_TYPE_CD = 'COLOR'
+		  AND UNIF_PRN_CD  = #unif_prn_cd#
+		<isNotEmpty property="unif_sex_cd">
+		  AND UNIF_SEX_CD  = #unif_sex_cd#
+		</isNotEmpty>
+		ORDER BY TO_NUMBER(UNIF_SORT) ASC
+	</select>
+	
+	<select id="selectUniformSizeListToItemInfo" parameterClass="bgabGascaf02Dto" resultClass="bgabGascaf02Dto">
+		/* uniform.xml :: selectUniformSizeListToItemInfo */
+		SELECT UNIF_PRN_CD   AS SIZE_PRN_CD
+			 , UNIF_CD       AS SIZE_CD
+			 , UNIF_NM       AS SIZE_NM
+			 , UNIF_SORT     AS SIZE_SORT
+			 , UNIF_SEX_CD   AS SIZE_SEX_CD
+		FROM BGAB_GASCAF02$corp_cd$ AF02
+		WHERE UNIF_TYPE_CD = 'SIZE'
+		  AND UNIF_PRN_CD  = #unif_prn_cd#
+		<isNotEmpty property="unif_sex_cd">
+		  AND UNIF_SEX_CD  = #unif_sex_cd#
+		</isNotEmpty>
+		ORDER BY CAST(UNIF_SORT as DECIMAL) ASC
+	</select>
+	
+	<select id="selectUniformMaxSeqToItemInfo" parameterClass="bgabGascaf02Dto" resultClass="String">
+		/* uniform.xml :: selectUniformMaxSeqToItemInfo */
+		SELECT NVL(MAX(CAST(UNIF_CD as DECIMAL)), 0) + 1
+		FROM BGAB_GASCAF02$corp_cd$
+		WHERE UNIF_TYPE_CD = #unif_type_cd#
+	</select>
+	
+	<insert id="insertUniformListToItemInfo" parameterClass="bgabGascaf02Dto">
+		/* uniform.xml :: insertUniformListToItemInfo */
+		INSERT INTO BGAB_GASCAF02$corp_cd$ (
+			  UNIF_SEX_CD
+			, UNIF_TYPE_CD
+			, UNIF_PRN_CD
+			, UNIF_CD
+			, UNIF_NM
+			, UNIF_CYCLE_CD
+			, UNIF_SORT
+			, UNIF_TERM_CD
+			, INP_YMD
+			, IPE_EENO
+		) VALUES (
+			  #unif_sex_cd#
+			, #unif_type_cd#
+			, #unif_prn_cd#
+			, #unif_cd#
+			, #unif_nm#
+			, #unif_cycle_cd#
+			, #unif_sort#
+			, #unif_term_cd#
+			, SYSDATE
+			, #ipe_eeno#
+		)
+	</insert>
+	
+	<update id="updateUniformListToItemInfo" parameterClass="bgabGascaf02Dto">
+		/* uniform.xml :: updateUniformListToItemInfo */
+		UPDATE BGAB_GASCAF02$corp_cd$ SET
+			  UNIF_NM       = #unif_nm#
+			, UNIF_CYCLE_CD = #unif_cycle_cd#
+			, UNIF_SORT     = #unif_sort#
+			, UNIF_TERM_CD  = #unif_term_cd#
+			, UPDR_YMD      = SYSDATE
+			, UPDR_EENO     = #updr_eeno#
+		WHERE UNIF_SEX_CD  = #unif_sex_cd#
+		  AND UNIF_TYPE_CD = #unif_type_cd#
+		  AND UNIF_PRN_CD  = #unif_prn_cd#
+		  AND UNIF_CD      = #unif_cd#
+	</update>
+	
+	<update id="deleteUniformListToItemInfo" parameterClass="bgabGascaf02Dto">
+		/* uniform.xml :: deleteUniformListToItemInfo */
+		DELETE FROM BGAB_GASCAF02$corp_cd$
+		WHERE UNIF_SEX_CD  = #unif_sex_cd#
+		  AND UNIF_TYPE_CD = #unif_type_cd#
+		  AND UNIF_PRN_CD  = #unif_prn_cd#
+		  AND UNIF_CD      = #unif_cd#
+	</update>
+	
+	<select id="selectUniformCountToStockManagement" parameterClass="bgabGascaf03Dto" resultClass="String">
+		/* uniform.xml :: selectUniformCountToStockManagement */
+		SELECT COUNT(*)
+		FROM BGAB_GASCAF03$corp_cd$
+		WHERE 1=1
+		<isNotEmpty property="search_unif_sex_cd">
+		  AND UNIF_SEX_CD = #search_unif_sex_cd#
+		</isNotEmpty>
+		<isNotEmpty property="search_unif_type_cd">
+		  AND UNIF_TYPE_CD = #search_unif_type_cd#
+		</isNotEmpty>
+		<isNotEmpty property="search_unif_clr_cd">
+		  AND UNIF_CLR_CD = #search_unif_clr_cd#
+		</isNotEmpty>
+		<isNotEmpty property="search_unif_msm_cd">
+		  AND UNIF_MSM_CD = #search_unif_msm_cd#
+		</isNotEmpty>
+		<isNotEmpty property="search_year">
+		  AND SUBSTR(TO_CHAR( INP_YMD,'YYYYMMDD' ), 1, 4) = #search_year#
+		</isNotEmpty>
+		<isNotEmpty property="search_month">
+		  AND SUBSTR(TO_CHAR( INP_YMD,'YYYYMMDD' ), 5, 2) = #search_month#
+		</isNotEmpty>
+	</select>
+	
+	<select id="selectUniformListToStockManagement" parameterClass="bgabGascaf03Dto" resultClass="bgabGascaf03Dto">
+		/* uniform.xml :: selectUniformListToStockManagement */
+		SELECT UNIF_SEX_CD
+			 , UNIF_TYPE_CD
+			 , UNIF_CLR_CD
+			 , UNIF_MSM_CD
+			 , UNIF_SEQ
+			 , UNIF_TYPE_NM
+			 , UNIF_CLR_NM
+			 , UNIF_MSM_NM
+			 , UNIF_IN_COUNT
+			 , UNIF_OUT_COUNT
+			 , UNIF_TOTAL_COUNT
+			 , UNIF_REM
+			 , INP_YMD
+			 , UNIF_SEX_NM
+		FROM (
+			SELECT rownum rnum
+				 , UNIF_SEX_CD
+				 , UNIF_TYPE_CD
+				 , UNIF_CLR_CD
+				 , UNIF_MSM_CD
+				 , UNIF_SEQ
+				 , UNIF_TYPE_NM
+				 , UNIF_CLR_NM
+				 , UNIF_MSM_NM
+				 , UNIF_IN_COUNT
+				 , UNIF_OUT_COUNT
+				 , UNIF_TOTAL_COUNT
+				 , UNIF_REM
+				 , INP_YMD
+				 , UNIF_SEX_NM
+			FROM (
+				SELECT AF03.UNIF_SEX_CD
+					 , AF03.UNIF_TYPE_CD
+					 , AF03.UNIF_CLR_CD
+					 , AF03.UNIF_MSM_CD
+					 , AF03.UNIF_SEQ
+					 , CLOTHES.UNIF_NM   AS UNIF_TYPE_NM
+					 , COLOR.UNIF_NM     AS UNIF_CLR_NM
+					 , SIZ.UNIF_NM      AS UNIF_MSM_NM
+					 , AF03.UNIF_IN_COUNT
+					 , AF03.UNIF_OUT_COUNT
+					 , AF03.UNIF_TOTAL_COUNT
+					 , AF03.UNIF_REM
+					 , TO_CHAR( AF03.INP_YMD,'YYYY-MM-DD' ) AS INP_YMD
+					 , SEX_CD.XCOD_HNAME AS UNIF_SEX_NM
+				FROM BGAB_GASCAF03$corp_cd$ AF03
+				LEFT OUTER JOIN (
+					SELECT UNIF_CD
+						 , UNIF_NM
+					FROM BGAB_GASCAF02$corp_cd$
+					WHERE UNIF_TYPE_CD = 'CLOTHES'
+				) CLOTHES
+				 ON AF03.UNIF_TYPE_CD = CLOTHES.UNIF_CD
+				LEFT OUTER JOIN (
+					SELECT UNIF_CD
+						 , UNIF_NM
+					FROM BGAB_GASCAF02$corp_cd$
+					WHERE UNIF_TYPE_CD = 'COLOR'
+				) COLOR
+				 ON AF03.UNIF_CLR_CD = COLOR.UNIF_CD
+				LEFT OUTER JOIN (
+					SELECT UNIF_CD
+						 , UNIF_NM
+					FROM BGAB_GASCAF02$corp_cd$
+					WHERE UNIF_TYPE_CD = 'SIZE'
+				) SIZ
+				 ON AF03.UNIF_MSM_CD = SIZ.UNIF_CD
+				LEFT OUTER JOIN (
+					SELECT XCOD_CODE
+						 , XCOD_HNAME
+					FROM BGAB_GASCZ005$corp_cd$
+					WHERE XCOD_KND = 'XUF05'
+				) SEX_CD
+				 ON AF03.UNIF_SEX_CD = SEX_CD.XCOD_CODE
+				WHERE 1=1
+				<isNotEmpty property="search_unif_sex_cd">
+				  AND AF03.UNIF_SEX_CD = #search_unif_sex_cd#
+				</isNotEmpty>
+				<isNotEmpty property="search_unif_type_cd">
+				  AND AF03.UNIF_TYPE_CD = #search_unif_type_cd#
+				</isNotEmpty>
+				<isNotEmpty property="search_unif_clr_cd">
+				  AND AF03.UNIF_CLR_CD  = #search_unif_clr_cd#
+				</isNotEmpty>
+				<isNotEmpty property="search_unif_msm_cd">
+				  AND AF03.UNIF_MSM_CD  = #search_unif_msm_cd#
+				</isNotEmpty>
+				<isNotEmpty property="search_year">
+				  AND SUBSTR(TO_CHAR( AF03.INP_YMD,'YYYYMMDD' ), 1, 4) = #search_year#
+				</isNotEmpty>
+				<isNotEmpty property="search_month">
+				  AND SUBSTR(TO_CHAR( AF03.INP_YMD,'YYYYMMDD' ), 5, 2) = #search_month#
+				</isNotEmpty>
+				ORDER BY CAST(UNIF_TYPE_CD as DECIMAL) ASC, CAST(UNIF_CLR_CD as DECIMAL) ASC, CAST(UNIF_MSM_CD as DECIMAL) ASC, CAST(UNIF_SEQ as DECIMAL) DESC
+			) STOCK
+		) STOCK
+		WHERE RNUM BETWEEN #startRow# AND #endRow#
+	</select>
+	
+	<select id="selectUniformMaxSeqToStockManagement" parameterClass="bgabGascaf03Dto" resultClass="String">
+		/* uniform.xml :: selectUniformMaxSeqToStockManagement */
+		SELECT NVL(MAX(CAST(UNIF_SEQ as DECIMAL)), 0) + 1
+		FROM BGAB_GASCAF03$corp_cd$
+		WHERE UNIF_TYPE_CD = #unif_type_cd#
+		  AND UNIF_CLR_CD  = #unif_clr_cd#
+		  AND UNIF_MSM_CD  = #unif_msm_cd#
+	</select>
+	
+	<select id="selectUniformTotalCountToStockManagement" parameterClass="bgabGascaf03Dto" resultClass="String">
+		/* uniform.xml :: selectUniformTotalCountToStockManagement */
+		SELECT sum(CAST(NVL(UNIF_IN_COUNT,0) as DECIMAL))-sum(CAST(NVL(UNIF_OUT_COUNT,0) as DECIMAL)) UNIF_TOTAL_COUNT 
+		  FROM BGAB_GASCAF03$corp_cd$
+		 WHERE UNIF_TYPE_CD = #unif_type_cd#
+		   AND UNIF_CLR_CD  = #unif_clr_cd#
+  		   AND UNIF_MSM_CD  = #unif_msm_cd# 
+	</select>
+	
+	<insert id="insertUniformListToStockManagement" parameterClass="bgabGascaf03Dto">
+		/* uniform.xml :: insertUniformListToStockManagement */
+		INSERT INTO BGAB_GASCAF03$corp_cd$ (
+			  UNIF_SEX_CD
+			, UNIF_TYPE_CD
+			, UNIF_CLR_CD
+			, UNIF_MSM_CD
+			, UNIF_SEQ
+			, UNIF_IN_COUNT
+			, UNIF_OUT_COUNT
+			, UNIF_TOTAL_COUNT
+			, UNIF_REM
+			, INP_YMD
+			, IPE_EENO
+			, U_SEQ
+		) VALUES (
+			  #unif_sex_cd#
+			, #unif_type_cd#
+			, #unif_clr_cd#
+			, #unif_msm_cd#
+			, #unif_seq#
+			, #unif_in_count#
+			, #unif_out_count#
+			, #unif_total_count#
+			, #unif_rem#
+			, SYSDATE
+			, #ipe_eeno#
+			, (SELECT NVL(MAX(TO_NUMBER(U_SEQ)), 0) + 1 FROM BGAB_GASCAF03$corp_cd$)
+		)
+	</insert>
+	
+	<delete id="deleteUniformListToStockManagement" parameterClass="bgabGascaf03Dto">
+		/* uniform.xml :: deleteUniformListToStockManagement */
+		DELETE FROM BGAB_GASCAF03$corp_cd$
+		WHERE UNIF_SEX_CD = #unif_sex_cd#
+		  AND UNIF_TYPE_CD = #unif_type_cd#
+		  AND UNIF_CLR_CD  = #unif_clr_cd#
+		  AND UNIF_MSM_CD  = #unif_msm_cd#
+		  AND UNIF_SEQ     = #unif_seq#
+		  AND U_SEQ 	   = #u_seq#
+	</delete>
+	
+	<update id="updateUniformListToReject" parameterClass="bgabGascaf01Dto">
+   		/* uniform.xml :: updateUniformListToReject */
+   		UPDATE	BGAB_GASCAF01$corp_cd$
+		SET 	 UAPS1_CD  = #uaps1_cd#
+				,UPDR_EENO = #updr_eeno#
+				,UPDR_YMD  = SYSDATE
+				,SNB_RSON_SBC = #snb_rson_sbc#
+		WHERE	1 = 1
+		AND		EENO            = #eeno#
+		AND		UNIF_TYPE_CD    = #unif_type_cd#
+		AND		UNIF_CLR_CD     = #unif_clr_cd#
+		AND		UNIF_MSM_CD     = #unif_msm_cd#
+		AND		TRTM_YYMM       = #trtm_yymm#
+		AND		UNIF_PTT_SCN_CD = #unif_ptt_scn_cd#
+	</update>
+	
+	<update id="updateUniformConfirmListToRequest" parameterClass="bgabGascaf01Dto">
+   		/* uniform.xml :: updateUniformConfirmListToRequest */
+   		UPDATE	BGAB_GASCAF01$corp_cd$
+		SET 	 UNIF_TYPE_CD = #unif_type_cd#
+				,UNIF_CLR_CD  = #unif_clr_cd#
+				,UNIF_MSM_CD  = #unif_msm_cd#
+				,UNIF_PTT_QTY = #unif_ptt_qty#
+				,UPDR_EENO    = #updr_eeno#
+				,UPDR_YMD     = TO_CHAR( SYSDATE,'YYYYMMDD' )
+		WHERE	1 = 1
+		AND		EENO            = #eeno#
+		AND		UNIF_TYPE_CD    = #old_unif_type_cd#
+		AND		UNIF_CLR_CD     = #old_unif_clr_cd#
+		AND		UNIF_MSM_CD     = #old_unif_msm_cd#
+		AND		TRTM_YYMM       = #trtm_yymm#
+		AND		UNIF_PTT_SCN_CD = #unif_ptt_scn_cd#
+	</update>
+	
+	<select id="selectUniformRemainQty" parameterClass="bgabGascaf01Dto" resultClass="String">
+		/* uniform.xml :: selectUniformRemainQty */
+		SELECT NVL(F_UNIF_CLR_REMAIN_QTY(#eeno#, #unif_type_cd#, #unif_clr_cd#), '0')
+	</select>
+	
+	<select id="selectUniformClrQty" parameterClass="bgabGascaf01Dto" resultClass="String">
+		/* uniform.xml :: selectUniformClrQty */
+		SELECT A.CYCLE_QTY - B.PTT_QTY
+		FROM (
+			SELECT CAST(NVL(UNIF_CYCLE_CD, '0') as DECIMAL)  AS CYCLE_QTY
+			FROM BGAB_GASCAF02$corp_cd$
+			WHERE UNIF_TYPE_CD = 'COLOR'
+			  AND UNIF_PRN_CD  = #unif_type_cd#
+			  AND UNIF_CD      = #unif_clr_cd#
+		) A, (
+			SELECT NVL(SUM(CAST(NVL(UNIF_PTT_QTY, '0') as DECIMAL)), 0) AS PTT_QTY
+			FROM BGAB_GASCAF01$corp_cd$
+			WHERE EENO         = #eeno#
+			  AND UNIF_TYPE_CD = #unif_type_cd#
+			  AND UNIF_CLR_CD  = #unif_clr_cd#
+			  AND UAPS1_CD     != '2'
+			  AND ADMIN_YN     = 'N'
+		) B
+	</select>
+	
+	<select id="selectUniformQuantityChkUniformNm" parameterClass="bgabGascaf01Dto" resultClass="bgabGascaf01Dto">
+		/* uniform.xml :: selectUniformQuantityChkUniformNm */
+		SELECT UNIF_TYPE_NM
+			 , UNIF_CLR_NM
+			 , UNIF_CYCLE_QTY
+		FROM (
+			SELECT UNIF_NM AS UNIF_TYPE_NM
+			FROM BGAB_GASCAF02$corp_cd$
+			WHERE UNIF_TYPE_CD = 'CLOTHES'
+			  AND UNIF_CD      = #unif_type_cd#
+		) TYPE_NM
+		, (
+			SELECT UNIF_NM AS UNIF_CLR_NM
+				 , UNIF_CYCLE_CD AS UNIF_CYCLE_QTY
+			FROM BGAB_GASCAF02$corp_cd$
+			WHERE UNIF_TYPE_CD = 'COLOR'
+			  AND UNIF_CD      = #unif_clr_cd#
+			  AND UNIF_PRN_CD  = #unif_type_cd#
+		) CLR_NM
+	</select>
+	
+	<delete id="deleteUniformItemToDownCode" parameterClass="bgabGascaf02Dto">
+		/* uniform.xml :: deleteUniformItemToDownCode */
+		DELETE FROM BGAB_GASCAF02$corp_cd$
+		WHERE UNIF_TYPE_CD = #unif_type_cd#
+		  AND UNIF_PRN_CD  = #unif_prn_cd#
+	</delete>
+	
+	<delete id="deleteUniformItemToDownCodeSize" parameterClass="bgabGascaf02Dto">
+		/* uniform.xml :: deleteUniformItemToDownCodeSize */
+		DELETE FROM BGAB_GASCAF02$corp_cd$
+		WHERE UNIF_TYPE_CD = 'SIZE'
+		  AND UNIF_PRN_CD  IN (
+			SELECT UNIF_CD
+			FROM BGAB_GASCAF02$corp_cd$
+			WHERE UNIF_TYPE_CD = 'COLOR'
+			  AND UNIF_PRN_CD  = #unif_prn_cd#
+		)
+	</delete>
+	
+	<select id="selectUniformCountToStockManagementList" parameterClass="bgabGascaf03Dto" resultClass="String">
+		/* uniform.xml :: selectUniformCountToStockManagementList */
+		SELECT COUNT(*)
+		FROM (
+			SELECT rownum rnum
+				 , A.UNIF_SEX_CD
+				 , A.UNIF_TYPE_CD
+				 , A.UNIF_CLR_CD
+				 , A.UNIF_MSM_CD
+				 , A.UNIF_TYPE_NM
+				 , A.UNIF_CLR_NM
+				 , A.UNIF_MSM_NM
+				 , B.UNIF_TOTAL_COUNT
+				 , A.UNIF_SEX_NM
+			  FROM (SELECT AF02.UNIF_SEX_CD
+						 , SEX_CD.XCOD_HNAME AS UNIF_SEX_NM
+						 , UNIF_CD1 AS UNIF_TYPE_CD
+						 , UNIF_NM1 AS UNIF_TYPE_NM
+						 , UNIF_CD2 AS UNIF_CLR_CD
+						 , UNIF_NM2 AS UNIF_CLR_NM
+						 , UNIF_CD AS UNIF_MSM_CD
+						 , UNIF_NM AS UNIF_MSM_NM
+					  FROM BGAB_GASCAF02$corp_cd$ AF02
+					  JOIN (SELECT UNIF_CD AS UNIF_CD1
+								 , UNIF_NM AS UNIF_NM1
+							  FROM BGAB_GASCAF02$corp_cd$
+							 WHERE UNIF_TYPE_CD = 'CLOTHES'
+							) CLOTHES
+						ON CLOTHES.UNIF_CD1 = (SELECT UNIF_PRN_CD FROM BGAB_GASCAF02$corp_cd$ B WHERE B.UNIF_CD = AF02.UNIF_PRN_CD AND B.UNIF_TYPE_CD = 'COLOR')
+						  JOIN 
+						 (SELECT UNIF_CD  AS UNIF_CD2, 
+								UNIF_NM  AS UNIF_NM2
+						   FROM BGAB_GASCAF02$corp_cd$ 
+						  WHERE UNIF_TYPE_CD = 'COLOR' 
+						 ) COLOR 
+						 ON AF02.UNIF_PRN_CD = COLOR.UNIF_CD2 
+						  JOIN 
+						 (SELECT XCOD_CODE , 
+								XCOD_HNAME 
+						   FROM BGAB_GASCZ005$corp_cd$ 
+						  WHERE XCOD_KND = 'XUF05'
+						  AND LOCALE = #locale# 
+						 ) SEX_CD 
+						 ON AF02.UNIF_SEX_CD = SEX_CD.XCOD_CODE
+					 WHERE UNIF_TYPE_CD = 'SIZE'
+					 ) A
+					 LEFT OUTER JOIN (SELECT  AF03.UNIF_SEX_CD , 
+											 AF03.UNIF_TYPE_CD , 
+											 AF03.UNIF_CLR_CD , 
+											 AF03.UNIF_MSM_CD , 
+											 UNIF_IN_COUNT - UNIF_OUT_COUNT AS UNIF_TOTAL_COUNT
+				  						FROM (SELECT UNIF_SEX_CD, 
+													UNIF_TYPE_CD, 
+													UNIF_CLR_CD, 
+													UNIF_MSM_CD, 
+													sum(CAST(NVL(UNIF_IN_COUNT,0) as DECIMAL)) UNIF_IN_COUNT,
+													sum(CAST(NVL(UNIF_OUT_COUNT,0) as DECIMAL)) UNIF_OUT_COUNT 
+											   FROM BGAB_GASCAF03$corp_cd$ 
+											  GROUP BY UNIF_SEX_CD, 
+													UNIF_TYPE_CD, 
+													UNIF_CLR_CD, 
+													UNIF_MSM_CD 
+											 ) AF03 
+									) B
+						ON A.UNIF_SEX_CD = B.UNIF_SEX_CD 
+						 AND A.UNIF_TYPE_CD = B.UNIF_TYPE_CD 
+						 AND A.UNIF_CLR_CD = B.UNIF_CLR_CD 
+						 AND A.UNIF_MSM_CD = B.UNIF_MSM_CD 
+				WHERE 1=1
+				<isNotEmpty property="search_unif_sex_cd">
+				  AND A.UNIF_SEX_CD IN (#search_unif_sex_cd#, '3')
+				</isNotEmpty>
+				<isNotEmpty property="search_unif_type_cd">
+				  AND A.UNIF_TYPE_CD = #search_unif_type_cd#
+				</isNotEmpty>
+				<isNotEmpty property="search_unif_clr_cd">
+				  AND A.UNIF_CLR_CD  = #search_unif_clr_cd#
+				</isNotEmpty>
+				<isNotEmpty property="search_unif_msm_cd">
+				  AND A.UNIF_MSM_CD  = #search_unif_msm_cd#
+				</isNotEmpty>
+		) STOCK
+		WHERE UNIF_MSM_CD IS NOT NULL
+	</select>
+	
+	<select id="selectUniformListToStockManagementList" parameterClass="bgabGascaf03Dto" resultClass="bgabGascaf03Dto">
+		/* uniform.xml :: selectUniformListToStockManagementList */
+		SELECT UNIF_SEX_CD
+			 , UNIF_TYPE_CD
+			 , UNIF_CLR_CD
+			 , UNIF_MSM_CD
+			 , UNIF_TYPE_NM
+			 , UNIF_CLR_NM
+			 , UNIF_MSM_NM
+			 , NVL(UNIF_TOTAL_COUNT, 0) UNIF_TOTAL_COUNT
+			 , UNIF_SEX_NM
+		FROM (
+			SELECT ROWNUM RNUM
+				 , STOCK.*
+			  FROM (SELECT A.UNIF_SEX_CD
+						 , A.UNIF_TYPE_CD
+						 , A.UNIF_CLR_CD
+						 , A.UNIF_MSM_CD
+						 , A.UNIF_TYPE_NM
+						 , A.UNIF_CLR_NM
+						 , A.UNIF_MSM_NM
+						 , B.UNIF_TOTAL_COUNT
+						 , A.UNIF_SEX_NM
+					  FROM (SELECT AF02.UNIF_SEX_CD
+								 , SEX_CD.XCOD_HNAME AS UNIF_SEX_NM
+								 , UNIF_CD1 AS UNIF_TYPE_CD
+								 , UNIF_NM1 AS UNIF_TYPE_NM
+								 , UNIF_CD2 AS UNIF_CLR_CD
+								 , UNIF_NM2 AS UNIF_CLR_NM
+								 , UNIF_CD AS UNIF_MSM_CD
+								 , UNIF_NM AS UNIF_MSM_NM
+							  FROM BGAB_GASCAF02$corp_cd$ AF02
+							  JOIN (SELECT UNIF_CD AS UNIF_CD1
+										 , UNIF_NM AS UNIF_NM1
+									  FROM BGAB_GASCAF02$corp_cd$
+									 WHERE UNIF_TYPE_CD = 'CLOTHES'
+									) CLOTHES
+								ON CLOTHES.UNIF_CD1 = (SELECT UNIF_PRN_CD FROM BGAB_GASCAF02$corp_cd$ B WHERE B.UNIF_CD = AF02.UNIF_PRN_CD AND B.UNIF_TYPE_CD = 'COLOR')
+								  JOIN 
+								 (SELECT UNIF_CD  AS UNIF_CD2, 
+										UNIF_NM  AS UNIF_NM2
+								   FROM BGAB_GASCAF02$corp_cd$ 
+								  WHERE UNIF_TYPE_CD = 'COLOR' 
+								 ) COLOR 
+								 ON AF02.UNIF_PRN_CD = COLOR.UNIF_CD2 
+								  JOIN 
+								 (SELECT XCOD_CODE , 
+										XCOD_HNAME 
+								   FROM BGAB_GASCZ005$corp_cd$ 
+								  WHERE XCOD_KND = 'XUF05'
+								  AND LOCALE = #locale# 
+								 ) SEX_CD 
+								 ON AF02.UNIF_SEX_CD = SEX_CD.XCOD_CODE
+							 WHERE UNIF_TYPE_CD = 'SIZE'
+							 ) A
+							 LEFT OUTER JOIN (SELECT  AF03.UNIF_SEX_CD , 
+													 AF03.UNIF_TYPE_CD , 
+													 AF03.UNIF_CLR_CD , 
+													 AF03.UNIF_MSM_CD , 
+													 UNIF_IN_COUNT - UNIF_OUT_COUNT AS UNIF_TOTAL_COUNT
+						  						FROM (SELECT UNIF_SEX_CD, 
+															UNIF_TYPE_CD, 
+															UNIF_CLR_CD, 
+															UNIF_MSM_CD, 
+															sum(CAST(NVL(UNIF_IN_COUNT,0) as DECIMAL)) UNIF_IN_COUNT,
+															sum(CAST(NVL(UNIF_OUT_COUNT,0) as DECIMAL)) UNIF_OUT_COUNT 
+													   FROM BGAB_GASCAF03$corp_cd$ 
+													  GROUP BY UNIF_SEX_CD, 
+															UNIF_TYPE_CD, 
+															UNIF_CLR_CD, 
+															UNIF_MSM_CD 
+													 ) AF03 
+											) B
+								ON A.UNIF_SEX_CD = B.UNIF_SEX_CD 
+								 AND A.UNIF_TYPE_CD = B.UNIF_TYPE_CD 
+								 AND A.UNIF_CLR_CD = B.UNIF_CLR_CD 
+								 AND A.UNIF_MSM_CD = B.UNIF_MSM_CD 
+						WHERE 1=1
+						<isNotEmpty property="search_unif_sex_cd">
+						  AND A.UNIF_SEX_CD IN (#search_unif_sex_cd#, '3')
+						</isNotEmpty>
+						<isNotEmpty property="search_unif_type_cd">
+						  AND A.UNIF_TYPE_CD = #search_unif_type_cd#
+						</isNotEmpty>
+						<isNotEmpty property="search_unif_clr_cd">
+						  AND A.UNIF_CLR_CD  = #search_unif_clr_cd#
+						</isNotEmpty>
+						<isNotEmpty property="search_unif_msm_cd">
+						  AND A.UNIF_MSM_CD  = #search_unif_msm_cd#
+						</isNotEmpty>
+						ORDER BY UNIF_SEX_CD ASC, A.UNIF_TYPE_CD ASC, A.UNIF_CLR_CD ASC, A.UNIF_MSM_CD ASC
+				) STOCK
+			) Z
+			WHERE RNUM BETWEEN #startRow# AND #endRow#
+			AND UNIF_MSM_CD IS NOT NULL
+	</select>
+	
+	<select id="selectListToStockDetailIn" parameterClass="bgabGascaf03Dto" resultClass="bgabGascaf03Dto">
+		/* selectListToStockDetailIn */
+		SELECT TO_CHAR(INP_YMD, 'YYYY-MM-DD') AS IN_INP_YMD
+		     , UNIF_IN_COUNT AS IN_UNIF_IN_COUNT
+			 , UNIF_REM AS IN_UNIF_REM
+			 , UNIF_TYPE_CD AS IN_UNIF_TYPE_CD
+			 , UNIF_CLR_CD AS IN_UNIF_CLR_CD
+			 , UNIF_MSM_CD AS IN_UNIF_MSM_CD
+			 , UNIF_SEQ AS IN_UNIF_SEQ
+			 , UNIF_SEX_CD AS IN_UNIF_SEX_CD
+			 , UNIF_IN_COUNT AS HID_IN_UNIF_IN_COUNT
+			 , U_SEQ AS IN_U_SEQ
+		  FROM BGAB_GASCAF03$corp_cd$
+		 WHERE SUBSTR(TO_CHAR( INP_YMD, 'YYYYMMDD' ), 1, 4) = #search_year#
+		   AND SUBSTR(TO_CHAR( INP_YMD, 'YYYYMMDD' ), 5, 2) = #search_month#
+		   AND UNIF_SEX_CD = #search_unif_sex_cd#
+		   AND UNIF_TYPE_CD = #search_unif_type_cd#
+		   AND UNIF_CLR_CD = #search_unif_clr_cd#
+		   AND UNIF_MSM_CD = #search_unif_msm_cd#
+		   AND NVL(UNIF_OUT_COUNT, 0) = 0
+	</select>
+	
+	<select id="selectCountToStockDetailOut" parameterClass="bgabGascaf03Dto" resultClass="String">
+		/* selectCountToStockDetailOut */
+		SELECT COUNT(*)
+		  FROM BGAB_GASCAF03$corp_cd$ A
+		  LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ B
+		    ON SUBSTR(UNIF_REM,1,8) = B.XUSR_EMPNO
+		 WHERE SUBSTR(TO_CHAR( INP_YMD, 'YYYYMMDD' ), 1, 4) = #search_year#
+		   AND SUBSTR(TO_CHAR( INP_YMD, 'YYYYMMDD' ), 5, 2) = #search_month#
+		   AND UNIF_SEX_CD = #search_unif_sex_cd#
+		   AND UNIF_TYPE_CD = #search_unif_type_cd#
+		   AND UNIF_CLR_CD = #search_unif_clr_cd#
+		   AND UNIF_MSM_CD = #search_unif_msm_cd#
+		   AND NVL(UNIF_IN_COUNT, 0) = 0
+	</select>
+	
+	<select id="selectListToStockDetailOut" parameterClass="bgabGascaf03Dto" resultClass="bgabGascaf03Dto">
+		/* selectListToStockDetailOut */
+		SELECT INP_YMD
+		     , UNIF_OUT_COUNT
+			 , UNIF_TYPE_CD
+			 , UNIF_CLR_CD
+			 , UNIF_MSM_CD
+			 , UNIF_SEQ
+			 , UNIF_SEX_CD
+			 , UNIF_EENO
+			 , UNIF_STEP_NM
+			 , UNIF_DEPT_NM
+			 , UNIF_EENM
+			 , U_SEQ
+		FROM (
+			SELECT rownum rnum, Z.*
+			  FROM (
+					SELECT TO_CHAR(INP_YMD, 'YYYY-MM-DD') AS INP_YMD
+					     , UNIF_OUT_COUNT
+						 , UNIF_TYPE_CD
+						 , UNIF_CLR_CD
+						 , UNIF_MSM_CD
+						 , UNIF_SEQ
+						 , UNIF_SEX_CD
+						 , SUBSTR(UNIF_REM,1,8) AS UNIF_EENO
+						 , B.XUSR_STEP_NAME AS UNIF_STEP_NM
+						 , B.XUSR_DEPT_NAME AS UNIF_DEPT_NM
+						 , B.XUSR_NAME AS UNIF_EENM
+						 , U_SEQ
+					  FROM BGAB_GASCAF03$corp_cd$ A
+					  LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ B
+					    ON SUBSTR(UNIF_REM,1,8) = B.XUSR_EMPNO
+					 WHERE SUBSTR(TO_CHAR( INP_YMD, 'YYYYMMDD' ), 1, 4) = #search_year#
+					   AND SUBSTR(TO_CHAR( INP_YMD, 'YYYYMMDD' ), 5, 2) = #search_month#
+					   AND UNIF_SEX_CD = #search_unif_sex_cd#
+					   AND UNIF_TYPE_CD = #search_unif_type_cd#
+					   AND UNIF_CLR_CD = #search_unif_clr_cd#
+					   AND UNIF_MSM_CD = #search_unif_msm_cd#
+					   AND UNIF_IN_COUNT = 0
+					 ) Z
+					 ORDER BY INP_YMD DESC
+		   ) STOCK
+		WHERE RNUM BETWEEN #startRow# AND #endRow#
+	</select>
+	
+	<select id="selectGridStockDetailBasic" parameterClass="bgabGascaf03Dto" resultClass="bgabGascaf03Dto">
+		/* selectGridStockDetailBasic */
+		SELECT A.UNIF_TYPE_CD
+		     , A.UNIF_TYPE_NM
+		     , A.UNIF_CLR_CD
+		     , A.UNIF_CLR_NM
+		     , A.UNIF_MSM_CD
+		     , A.UNIF_MSM_NM
+		     , A.UNIF_SEX_CD
+		     , A.UNIF_SEX_NM
+		     , NVL(B.UNIF_TOTAL_COUNT, '0') UNIF_TOTAL_COUNT
+		FROM (
+		    SELECT CLOTHES.UNIF_TYPE_CD
+		         , CLOTHES.UNIF_TYPE_NM
+		         , COLOR.UNIF_CLR_CD
+		         , COLOR.UNIF_CLR_NM
+		         , MSM.UNIF_MSM_CD
+		         , MSM.UNIF_MSM_NM
+		         , CLOTHES.UNIF_SEX_CD
+		         , CLOTHES.UNIF_SEX_NM
+		    FROM (
+		        SELECT UNIF_CD     AS UNIF_TYPE_CD
+		             , UNIF_NM     AS UNIF_TYPE_NM
+		             , UNIF_SORT   AS UNIF_TYPE_SORT
+		             , UNIF_SEX_CD
+		             , XCOD_HNAME  AS UNIF_SEX_NM
+		        FROM BGAB_GASCAF02$corp_cd$ U_TYPE
+		        LEFT OUTER JOIN (
+		            SELECT XCOD_CODE
+		                 , XCOD_HNAME
+		            FROM BGAB_GASCZ005$corp_cd$
+		            WHERE XCOD_KND = 'XUF05'
+		              AND LOCALE   = #locale#
+		        ) S_CD
+		         ON U_TYPE.UNIF_SEX_CD = S_CD.XCOD_CODE
+		        WHERE UNIF_TYPE_CD = 'CLOTHES'
+		    ) CLOTHES
+		    LEFT OUTER JOIN (
+		        SELECT UNIF_PRN_CD AS UNIF_TYPE_CD
+		             , UNIF_CD     AS UNIF_CLR_CD
+		             , UNIF_NM     AS UNIF_CLR_NM
+		             , UNIF_SORT   AS UNIF_CLR_SORT
+		        FROM BGAB_GASCAF02$corp_cd$
+		        WHERE UNIF_TYPE_CD = 'COLOR'
+		    ) COLOR
+		     ON CLOTHES.UNIF_TYPE_CD = COLOR.UNIF_TYPE_CD
+		    LEFT OUTER JOIN (
+		        SELECT UNIF_PRN_CD AS UNIF_CLR_CD
+		             , UNIF_CD     AS UNIF_MSM_CD
+		             , UNIF_NM     AS UNIF_MSM_NM
+		             , UNIF_SORT   AS UNIF_MSM_SORT
+		        FROM BGAB_GASCAF02$corp_cd$
+		        WHERE UNIF_TYPE_CD = 'SIZE'
+		    ) MSM
+		     ON COLOR.UNIF_CLR_CD = MSM.UNIF_CLR_CD
+		) A
+		LEFT OUTER JOIN (
+		    SELECT AF03.UNIF_SEX_CD
+		         , AF03.UNIF_TYPE_CD
+		         , AF03.UNIF_CLR_CD
+		         , AF03.UNIF_MSM_CD
+		         , UNIF_IN_COUNT - UNIF_OUT_COUNT AS UNIF_TOTAL_COUNT
+		    FROM (
+		        SELECT UNIF_SEX_CD
+		             , UNIF_TYPE_CD
+		             , UNIF_CLR_CD
+		             , UNIF_MSM_CD
+		             , SUM(TO_NUMBER(NVL(UNIF_IN_COUNT ,0))) AS UNIF_IN_COUNT
+		             , SUM(TO_NUMBER(NVL(UNIF_OUT_COUNT,0))) AS UNIF_OUT_COUNT
+		        FROM BGAB_GASCAF03$corp_cd$
+		        GROUP BY UNIF_SEX_CD, UNIF_TYPE_CD, UNIF_CLR_CD, UNIF_MSM_CD
+		    ) AF03
+		) B
+		 ON A.UNIF_SEX_CD  = B.UNIF_SEX_CD
+		AND A.UNIF_TYPE_CD = B.UNIF_TYPE_CD
+		AND A.UNIF_CLR_CD  = B.UNIF_CLR_CD
+		AND A.UNIF_MSM_CD  = B.UNIF_MSM_CD
+		WHERE 1=1
+		<isNotEmpty property="search_unif_sex_cd">
+		  AND A.UNIF_SEX_CD = #search_unif_sex_cd#
+		</isNotEmpty>
+		<isNotEmpty property="search_unif_type_cd">
+		  AND A.UNIF_TYPE_CD = #search_unif_type_cd#
+		</isNotEmpty>
+		<isNotEmpty property="search_unif_clr_cd">
+		  AND A.UNIF_CLR_CD  = #search_unif_clr_cd#
+		</isNotEmpty>
+		<isNotEmpty property="search_unif_msm_cd">
+		  AND A.UNIF_MSM_CD  = #search_unif_msm_cd#
+		</isNotEmpty>
+	</select>
+	
+	<update id="updateUniformListToStockManagementList" parameterClass="bgabGascaf03Dto">
+		/* uniform.xml :: updateUniformListToStockManagementList */
+		UPDATE BGAB_GASCAF03$corp_cd$
+		   SET UNIF_IN_COUNT = #unif_in_count#
+			 , UNIF_TOTAL_COUNT = #unif_total_count#
+			 , UNIF_REM = #unif_rem#
+			 , UPDR_YMD = SYSDATE
+			 , UPDR_EENO = #updr_eeno#
+		 WHERE UNIF_SEX_CD = #unif_sex_cd#
+		   AND UNIF_TYPE_CD = #unif_type_cd#
+		   AND UNIF_CLR_CD = #unif_clr_cd#
+		   AND UNIF_MSM_CD = #unif_msm_cd#
+		   AND UNIF_SEQ = #unif_seq#
+		   AND U_SEQ = #u_seq#
+	</update>
+	
+	<insert id="insertUniformListToStockManagementList" parameterClass="bgabGascaf03Dto">
+		/* uniform.xml :: insertUniformListToStockManagementList */
+		INSERT INTO BGAB_GASCAF03$corp_cd$ (
+			  UNIF_SEX_CD
+			, UNIF_TYPE_CD
+			, UNIF_CLR_CD
+			, UNIF_MSM_CD
+			, UNIF_SEQ
+			, UNIF_IN_COUNT
+			, UNIF_OUT_COUNT
+			, UNIF_TOTAL_COUNT
+			, UNIF_REM
+			, INP_YMD
+			, IPE_EENO
+			, U_SEQ
+		) VALUES (
+			  #unif_sex_cd#
+			, #unif_type_cd#
+			, #unif_clr_cd#
+			, #unif_msm_cd#
+			, (select a.seq from (SELECT NVL(MAX(  CAST(UNIF_SEQ as DECIMAL)),0) + 1 as seq
+				 FROM BGAB_GASCAF03$corp_cd$
+			    WHERE UNIF_SEX_CD = #unif_sex_cd#
+				  AND UNIF_TYPE_CD = #unif_type_cd#
+				  AND UNIF_CLR_CD = #unif_clr_cd#
+				  AND UNIF_MSM_CD = #unif_msm_cd#)a)
+			, #unif_in_count#
+			, #unif_out_count#
+			, #unif_total_count#
+			, #unif_rem#
+			, SYSDATE
+			, #ipe_eeno#
+			, (SELECT NVL(MAX(TO_NUMBER(U_SEQ)), 0) + 1 FROM BGAB_GASCAF03$corp_cd$)
+		)
+	</insert>
+</sqlMap>

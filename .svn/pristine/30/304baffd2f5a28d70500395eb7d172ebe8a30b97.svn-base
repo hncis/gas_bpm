@@ -1,0 +1,64 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ page import="com.hncis.common.util.*"%>
+<%@ include file="/hncis/include/common_sub.html"%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>QUIZ EVENT</title>
+		<!-- <script type="text/javascript" src="./js/xbv01.js"></script>  -->
+		<style type="text/css">
+			.event_wrap h2{position:absolute; left:-9999px; width:0; height:0; font-size:0;}
+			.event_wrap .event_info{margin-left:89px; font-size:16px; color:#fff;}
+			.event_wrap{padding-top:182px; padding-bottom:50px !important; background:#67921d url(../../images/hncis_event/comment_bg.png) 0 0 no-repeat;}
+			.event_con{width:1096px; margin: 35px auto 0;}
+			.event_con .comment_header{width:1056px; height:144px; padding-left:40px; padding-top:26px; background: url(../../images/hncis_event/comment_header_bg.png) 0 0 no-repeat; font-size:18px;}
+			.event_con .comment_header span{display:inline-block; font-size:12px; vertical-align:middle;}
+			.event_con .comment_header .com_name{font-size:14px;}
+			.event_con .comment_header .div_line{width:1px; height:10px; margin:0 10px; background-color:#daba2a;}
+			.event_con .comment_header .com_date{font-family:hmcL, 'ModernH-EcoLight', Verdana, sans-serif;}
+			.event_con .comment_header .comment_input{margin-top:10px; overflow:hidden;}
+			.event_con .comment_header .comment_input textarea, .comment_header .comment_input input.comment_btn{float:left;}
+			.event_con .comment_header .comment_input textarea{width:880px; height:84px; padding:5px; border:1px solid #cbb550;}
+			.event_con .comment_header .comment_input input.comment_btn{width:124px; height:96px; border:none; background: url(../../images/hncis_event/comment_btn_bg.png) 0 0 no-repeat; font-size:18px; color:#fff; font-family:hmcM, 'ModernH-Medium', Verdana, sans-serif;}
+			.event_con .comment_con{width:100%; background: url(../../images/hncis_event/comment_box_bg.png) 0 0 repeat-y;}
+			.event_con .comment_con>li{margin:0 6px; padding:26px 34px 40px; border-top:1px solid #e5e5e5;}
+			.event_con .comment_con>li:first-child{padding:26px 34px 30px; border:none;}
+			.event_con .comment_con span{display:inline-block; font-size:12px; vertical-align:middle;}
+			.event_con .comment_con .com_name{font-size:14px;}
+			.event_con .comment_con .div_line{width:1px; height:10px; margin:0 10px; background-color:#d5d5d5;}
+			.event_con .comment_con .com_date{font-family:hmcL, 'ModernH-EcoLight', Verdana, sans-serif;}
+			.event_con .comment_con>li p{margin-top:15px; font-size:14px; font-family:hmcL, 'ModernH-EcoLight', Verdana, sans-serif;}
+			.event_con .paging_area{width:100%; height:51px; padding-top:9px; background: url(../../images/hncis_event/comment_paging_bg.png) 0 0 no-repeat; text-align:center;}
+			.event_con .paging a,
+			.event_con .paging strong { display:inline-block; width: 27px; height: 19px; padding-top: 6px; text-decoration:none; border:1px solid #d8d8d8; background-color:#fff; vertical-align: top; font-size:12px; color:#a0a0a0;}
+			.event_con .paging strong { width: 24px; height: 19px; padding-top: 4px; border:2px solid #cbb550; color: #70b1c9; background-color:#f9d633; color:#222; }
+			.event_con .paging a.prv_first { width: 28px; height: 27px; padding: 0px; border: none; background: url(../../images/hncis_event/prv_first_btn.png) 0px 0px no-repeat; font-size:0; color:#fff; }
+			.event_con .paging a.prv { width: 28px; height: 27px; padding: 0px; border: none; background: url(../../images/hncis_event/prv_btn.png) 0px 0px no-repeat; font-size:0; color:#fff;}
+			.event_con .paging a.next { width: 28px; height: 27px; padding: 0px; border: none; background: url(../../images/hncis_event/next_btn.png) 0px 0px no-repeat; font-size:0; color:#fff;}
+			.event_con .paging a.next_last { width: 28px; height: 27px; padding: 0px; border: none; background: url(../../images/hncis_event/next_last_btn.png) 0px 0px no-repeat; font-size:0; color:#fff;}
+		</style>
+		<script type="text/javascript" src='./js/comment_event.js'></script>
+	</head>
+	<body>
+		<div id="wrap">
+			<%@ include file="../include/hncis_header.html"%>
+	        <div id="contents_wrap" class="event_wrap">
+	            <h2>General affairs support center open celebration GASC Quiz Event</h2>
+	            <p class="event_info">Deixe seu comentário sobre o GASC e concorra a uma Brinde.</p>
+	            <div class="event_con">
+	            	<div class="comment_header">
+<!-- 	                	<span class="com_name"></span><span class="div_line"></span><span class="com_date"></span> -->
+	                    <div class="comment_input">
+	                    	<textarea id="comment_txt"></textarea>
+	                        <input type="button" class="comment_btn" value="Comment" onclick="doSave();"/>
+	                    </div>
+	                </div>
+	            </div>
+	      	</div>
+	      	<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+	    </div>
+	</body>
+</html>

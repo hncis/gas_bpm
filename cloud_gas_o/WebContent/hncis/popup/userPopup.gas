@@ -1,0 +1,188 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@page import="org.jsoup.safety.Whitelist"%>
+<%@page import="org.jsoup.Jsoup"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String popGubun = Jsoup.clean(StringUtil.changeHtmlToText(StringUtil.isNullToString(request.getParameter("popGubun"))), Whitelist.basic());
+%>
+
+<html>
+	<head>
+			<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+			<title><fmt:message key="sch_usr"/></title>
+			<script type="text/javascript">
+				var popGubun = "<%=popGubun%>"; 
+			</script>
+			<link rel="stylesheet" type="text/css" media="screen" href="../../script/css/pop_up.css" />
+	</head>
+	
+	<body>
+		<div class="pop_wrap">
+	    	<div class="pop_header">
+	        	<div class="pop_title">
+	            	<h1><fmt:message key="sch_usr"/></h1>
+	                <a href="javascript:selfClose();" class="pop_close"></a>
+	            </div>
+	        </div>
+	        <div class="pop_header_shadow"></div>
+	        <div class="pop_content">
+	        	<div class="div_box pop_con">
+	            	<form name="testForm" id="testForm">
+			        <div id="contents_wrap" class="any_page">
+			            <div id="contents">
+			            	<div class="btn_area"> 
+								<ul class="btns"> 
+									<li><a href="javascript:doSearch();"><fmt:message key="search"/><span></span></a></li>
+								</ul> 
+							</div> 
+			                <div class="search_area">
+			                	<table>
+			                        <colgroup>
+			                        	<col style="width:60px;" />
+			                            <col style="width:auto;" />
+			                        </colgroup>
+			                        <tbody>
+			                            <tr>
+											<th><fmt:message key="eenm"/></th>
+											<td>
+												<input id="key_user_name" type="text" style="width:200px" onkeyup="enterKey();">
+											</td>
+										</tr>
+			                        </tbody>
+			                    </table>
+			                </div>
+			                <div class="jq_tbl">
+				                <table id="htmlTable" class="scroll"></table>
+								<div id="htmlPager" class="scroll"></div>
+							</div>
+			                <%@ include file="../include/hncis_message.gas"%>
+			            </div>
+			            <div class="clear"></div>
+			        </div>
+			        </form>
+	                <div class="box_corner box_lt"></div>
+	                <div class="box_corner box_rt"></div>
+	                <div class="box_corner box_lb"></div>
+	                <div class="box_corner box_rb"></div>
+	            </div>
+	        </div>
+	    </div>
+	</body>
+</html>
+<script type="text/javascript">
+			
+	function fnSetDocumentReady(){
+		init();
+	}
+	
+	/**
+	 * process init() loading
+	 */
+	var params; 
+	var comboVal;
+	var lastsel;
+	var fnMerge;
+	var gridParam;
+	var gridName1 = "htmlTable";
+// 	var cn        = ["사번","이름", "부서명", "부서코드"];
+	var cn = [ '<fmt:message key="eeno"/>' // "사번"
+		          ,'<fmt:message key="eenm"/>' // "이름"
+		          ,'<fmt:message key="dept_nm"/>' // "부서명"
+		          ,'<fmt:message key="dept_code"/>' // "부서코드"
+		          ];
+	var datarow   = {eeNo:"",hName:"",dcdName:"",dcd:""};
+	var cm =
+	[
+		{name:"eeNo",		index:"eeNo"	, sortable:false,			formatter:"string",	width:100,	align:"left",	editable:false,	frozen:false},
+		{name:"hName",		index:"hName"	, sortable:false,			formatter:"string",	width:120,	align:"left",	editable:false,	frozen:false},
+		{name:"dcdName",	index:"dcdName"	, sortable:false,			formatter:"string",	width:120,	align:"left",	editable:false,	frozen:false},
+		{name:"dcd",		index:"dcd"		, sortable:false,			formatter:"string",	width:120,	align:"left",	editable:false,	frozen:false, hidden:true}
+	];
+	function init(){
+		//set grid parameter
+		
+		var params = {
+			};
+		
+		gridParam = {
+			viewEdit : [{
+				gridName     : gridName1,
+				url          : "/doSearchToEmpty.do",
+				colNames     : cn,
+				colModel     : cm,
+				height       : 230,
+				width		 : 380,
+				rowNum       : 10,
+				rownumbers   : true,
+				multiselect  : false,
+				cellEdit     : false,
+				fnMerge      : false,
+				pager		 : "htmlPager",
+				completeFc   : "addGridRow(10);",
+				paramJson    : params
+			}]
+		};
+		
+		//common jqGrid call...
+		commonJqGridInit(gridParam);
+		
+		jQuery("#"+gridName1).jqGrid("setGridParam",{
+			ondblClickRow : function(rowid, iRow, iCol, e){
+				if(getColValue("eeNo", rowid, gridName1) != ""){
+					if(popGubun == ""){
+						opener.userFindCallBack(getColValue("eeNo", rowid, gridName1));
+					}else{
+						var xusr_empno = getColValue("eeNo", rowid, gridName1);
+						var xusr_name = getColValue("hName", rowid, gridName1);
+						var xusr_dept_code = getColValue("dcd", rowid, gridName1);
+						var xusr_dept_name = getColValue("dcdName", rowid, gridName1);
+						var array = {
+							xusr_name : xusr_name,
+							xusr_empno : xusr_empno,
+							xusr_dept_code : xusr_dept_code,
+							xusr_dept_name : xusr_dept_name
+						};
+						opener.setInsaInfo(array);
+					}
+					selfClose();
+				}
+			}
+		}).trigger('reloadGrid');
+	}
+	
+	
+	function doSearch(){
+	//	if($("#key_user_name").val() == ""){
+	//		alert("이름을 입력해주세요.");
+	//		$("#key_user_name").focus();
+	//		return;
+	//	}
+		
+		var params = {
+			hName       : $("#key_user_name").val(),
+			corp_cd		: sess_corp_cd
+		};
+		
+		doCommonSearch("../../doSearchUserCode.do", util.jsonToString(params), "loadCallBack();", gridName1);
+	}
+	
+	/**
+	 * callback
+	 */
+	function loadCallBack(){
+		addGridRow();
+	}
+	
+	
+	function retrieve(gubn){
+		switch(gubn){
+			case "search" :
+				doSearch();
+				break;
+		}
+	}
+	
+	function afterClose(){
+		
+	}
+</script>	

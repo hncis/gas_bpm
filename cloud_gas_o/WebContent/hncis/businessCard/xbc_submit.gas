@@ -1,0 +1,289 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId = "XBC01";
+	String docId = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("docid")));
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>명함</title>
+		<style type="text/css">
+			#wrap.submit_page #contents_wrap,
+			#wrap.submit_page .any_page,
+			#wrap.submit_page #contents{width:100%}
+		</style>
+	</head>
+	<body>
+		<div id="wrap" class="submit_page">
+	    	<form name="frm" id="frm">
+				<input type="hidden" id="gubun" name="gubun">
+				<input type="hidden" id="nSource" name="nSource">
+				<input type="hidden" id="dvsn_c" name="dvsn_c">
+				<input type="hidden" id="dvsn_name" name="dvsn_name">
+				<input type="hidden" id="dvsn_kname" name="dvsn_kname">
+				<input type="hidden" id="dvsn_ename" name="dvsn_ename">
+				<input type="hidden" id="odu_regn_cd" name="odu_regn_cd">
+				<input type="hidden" id="ops_cd" name="ops_cd">
+				<input type="hidden" id="if_id" name="if_id" value="<%=docId %>">
+		        <div id="contents_wrap" class="any_page">
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,menuId
+							,""
+							,"1"
+							,"2"
+							,null
+							,"Y"
+							,request)
+						%>
+		                <div class="con_t_area mt0">
+		                	<h3><fmt:message key="basic_info"/></h3>
+		                </div>
+		                <div class="search_area">
+		                	<table>
+								<colgroup>
+		                        	<col style="width:110px;" />
+		                            <col style="width:158px;" />
+		                            <col style="width:73px;" />
+		                            <col style="width:158px;" />
+		                            <col style="width:80px;" />
+		                            <col style="width:158px;" />
+		                            <col style="width:73px;" />
+		                            <col style="width:158px;" />
+		                        </colgroup>
+								<tr>
+									<th><fmt:message key="eeno"/></th>
+									<td><input type="text" id="eeno" style="width:140px" onkeyup="setInsaInfo();cearInsa();" class="disabled" readOnly>
+										<input type="hidden" id="eeno_temp"></td>
+									<th><fmt:message key="eenm"/></th>
+									<td><input type="text" id="keyEenm" style="width:140px" class="disabled" readOnly></td>
+									<th><fmt:message key="position"/></th>
+									<td><input type="text" id="keyPosition" style="width:140px" class="disabled" readOnly></td>
+									<th><fmt:message key="dept_nm"/></th>
+									<td>
+										<input type="hidden" id="keyOpsCd" readOnly>
+										<input type="text" id="keyOpsNm" style="width:140px" class="disabled" readOnly>
+									</td>
+								</tr>
+								<tr>
+									<th><fmt:message key="req_ymd"/></th>
+									<td><input type="text" id="req_date" style="width:140px" class="disabled" readOnly></td>
+									<th><fmt:message key="doc_no"/></th>
+									<td><input type="text" id="doc_no" style="width:140px" class="disabled" readOnly></td>
+									<th><fmt:message key="pgs_st_nm"/></th>
+									<td>
+										<input type="hidden" id="pgs_st_cd" name="pgs_st_cd">
+										<input type="text" id="pgs_st_nm" name="pgs_st_nm" style="width:140px" class="disabled" readOnly>
+									</td>
+									<th><fmt:message key="tel_no"/></th>
+									<td><input type="text" id="keyTelNo" style="width:140px" class="disabled" readOnly></td>
+								</tr>
+							</table>
+		                </div>
+		                <div class="search_area">
+		                	<table>
+		                		<colgroup>
+		                        	<col style="width:120px;" />
+		                        	<col style="width:400px;" />
+		                        	<col style="width:90px;" />
+		                            <col style="width:auto;" />
+		                        </colgroup>
+								<tr>
+									<th><fmt:message key="req_rsn"/></th>
+									<td>
+										<select id="bcr_reasn" name="bcr_reasn" style="width:200px" disabled>
+											<option value=""><fmt:message key="select"/></option>
+										</select>
+									</td>
+									<th><fmt:message key="qty"/></th>
+									<td>
+										<select id="qty" name="qty" style="width: 200px" disabled>
+											<option value=""><fmt:message key="select"/></option>
+											<option value="50">50</option>
+											<option value="100">100</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<th><fmt:message key="eenm"/></th>
+									<td><input type="text" id="ee_nm" name="ee_nm" style="width: 200px" readOnly></td>
+									<th><fmt:message key="dept_nm"/></th>
+									<td><input type="text" id="ops_en_nm" name="ops_en_nm" style="width: 200px" readOnly></td>
+								</tr>
+								<tr>
+									<th><fmt:message key="position"/></th>
+									<td class="info_grade">
+										<select id="olv_cd" name="olv_cd" class="input_down" style="width: 150px" onChange="ctrlStep(this.form, this.value);" disabled></select>
+										<input type="text" id="olv_enm" name="olv_enm" style="width: 150px" readOnly>
+									</td>
+									<th><fmt:message key="email"/></th>
+									<td>
+										<input type="text" id="eml_adr" name="eml_adr" style="width: 450px" readOnly>
+									</td>
+								</tr>
+								<tr>
+									<th><fmt:message key="tel_no"/></th>
+									<td>
+										<input type="text" id="ofrm_tn" name="ofrm_tn" style="width: 200px" readOnly>
+									</td>
+									<th><fmt:message key="hp_no"/></th>
+									<td>
+										<input type="text" id="user_hp_no" name="user_hp_no" style="width: 200px" readOnly>
+									</td>
+								</tr>
+								<tr>
+									<th><fmt:message key="addr"/></th>
+									<td colspan="3">
+										<input type="text" id="pbz_en_adr" name="pbz_en_adr" style="width: 940px" readOnly>
+									</td>
+								</tr>
+							</table>
+		                </div>
+		            </div>
+		            <div class="clear"></div>
+		        </div>
+	        </form>
+	    </div>
+	</body>
+</html>
+
+<script type="text/javascript">
+	function fnSetDocumentReady(){
+		$(".sub_title").hide();
+		
+		setComboInfo();
+	}
+	
+	function setComboInfo(){
+		var url        = "doComboListToRequest.do";
+		var olv_knd    = "olv_cd:03:3:S;";
+		var card_knd   = "bc_type:02::S;";
+		var card_type  = "bc_knd:11::S;";
+		var card_prt   = "bc_prt:12::S;";
+		var req_disc   = "bcr_reasn:05::S;";
+		var paramValue = olv_knd + card_knd + card_type + card_prt + req_disc;
+		getCommonCode(paramValue, "N", "init();", url);
+	}
+	
+	function init(){
+		getCommonCode("qty:X3018:S;", "N", "doSearch('Y');");
+	}
+	
+	function doSearch(msgFlag){
+		var params = {
+			if_id    : $("#if_id").val(),
+			corp_cd	 : sess_corp_cd,
+			locale   : sess_locale
+		};
+		
+		var paramData = {
+			paramJson : util.jsonToString(params)
+		};
+		
+		doCommonAjax("doSearchToSubmit.do", paramData, "loadCallBack(jsonData.sendResult);");
+	}
+	
+	function loadCallBack(result, msgFlag){
+		loadJsonSet(result);
+			
+		fnSubmitInfoSettings($("#pgs_st_cd").val(), $("#if_id").val(), result.code, "snb_rson_sbc", "1");
+		
+		resizeIframePop("contents", "ifrm");
+		
+		setInsaInfo();
+	}
+	
+	var saveCode = "";
+	function setInsaInfo(){
+		if($("#eeno").val() != ""){
+			$("#nSource").val($("#eeno").val());
+			if(saveCode == $("#nSource").val()){ return; }
+			saveCode = $("#nSource").val();
+			
+			var keyData = { 
+					xusr_empno : $("#eeno").val(),
+					corp_cd		: sess_corp_cd
+			};
+			paramData = {
+				paramJson : util.jsonToString(keyData)
+			};
+			doCommonAjax("/doSearchToUserInfo.do", paramData, "insaCallBack(jsonData.sendResult)");
+		}
+	}
+	
+	function insaCallBack(result){
+		setBottomMsg(result.message, false);
+		$("#eeno").val(result.xusr_empno);
+		$("#keyEenm").val(result.xusr_name);
+		$("#keyOpsCd").val(result.xusr_dept_code);
+		$("#keyOpsNm").val(result.xusr_dept_name);
+		$("#odu_regn_cd").val(result.xusr_plac_work);
+		$("#keyTelNo").val(result.xusr_tel_no);
+		$("#keyPosition").val(result.xusr_step_name);
+		$("#h_email").val(result.xusr_mail_adr);
+	}
+	
+	/**
+	 * techical method
+	 */
+	function change_info(type){
+		document.getElementById("czk").style.display = "none"; 
+		document.getElementById("kor").style.display = "none"; 
+		document.getElementById("eng").style.display = "none"; 
+		
+		document.getElementById(type).style.display = "";
+		
+		document.getElementById("ttl_czk").style.background = "white";
+		document.getElementById("ttl_kor").style.background = "white";
+		document.getElementById("ttl_eng").style.background = "white";
+		
+		var tmp = eval("document.all.ttl_" + type);
+		tmp.style.background = "#B6C4EB";
+	}
+	
+	function ctrlStep(frm, code){
+		if(code == "") return;
+		
+		frm.olv_cd.value      = code;
+		frm.olv_kcd.value     = code;
+		frm.olv_ecd.value     = code;
+		
+		if(code != ""){
+			frm.olv_nm.value  = frm.olv_cd.options[frm.olv_cd.selectedIndex].text;
+			frm.olv_knm.value = frm.olv_kcd.options[frm.olv_kcd.selectedIndex].text;
+			frm.olv_enm.value = frm.olv_ecd.options[frm.olv_ecd.selectedIndex].text;
+		}else{
+			frm.olv_nm.value  = "";
+			frm.olv_knm.value = "";
+			frm.olv_enm.value = "";
+		}
+	}
+	
+	function ctrlAddr(frm, code){
+		if(code == "") return;
+		
+		frm.adr_knd.value       = code;
+		frm.adr_kr_knd.value    = code;
+		frm.adr_en_knd.value    = code;
+		
+		frm.bc_adr_knd.value    = code;
+		frm.bc_adr_kr_knd.value = code;
+		frm.bc_adr_en_knd.value = code;
+		
+		try{
+			frm.pbz_adr.value    = frm.bc_adr_knd.options[frm.bc_adr_knd.selectedIndex].text;
+			frm.pbz_kr_adr.value = frm.bc_adr_kr_knd.options[frm.bc_adr_kr_knd.selectedIndex].text;
+			frm.pbz_en_adr.value = frm.bc_adr_en_knd.options[frm.bc_adr_en_knd.selectedIndex].text;
+		}catch(e){
+			alertUI(e.message + " , " + e.name)
+			alertUI("Detailed address does not exist.");
+			frm.bc_adr_knd.value    = "";
+			frm.bc_adr_kr_knd.value = "";
+			frm.bc_adr_en_knd.value = "";
+			frm.pbz_adr.value       = "";
+			frm.pbz_kr_adr.value    = "";
+			frm.pbz_en_adr.value    = "";
+		}
+	}
+</script>

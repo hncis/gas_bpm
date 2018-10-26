@@ -1,0 +1,599 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common.gas" %>
+<%
+	String hid_doc_no = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_report_doc_no")));
+	String hid_eeno = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_report_eeno")));
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>BusinessTravel - List of Business Traveler</title>
+	</head>
+	<body>
+		<div id="wrap" style="overflow-x:hidden;overflow-y:auto;">
+			<div id="GASC">
+				<form id="mainForm" name="mainForm">
+					<input type="hidden" id="hid_doc_no" 	 	name="hid_doc_no"  		value="<%=hid_doc_no%>">
+					<input type="hidden" id="hid_eeno"	 		name="hid_eeno"  		value="<%=hid_eeno%>">
+					<div class='con_title'  style="padding-top:10px;"><h3><img src='../../images/sub_title/xbt01_report.jpg' alt=''/></h3></div>
+					<div id='contents'> 
+						<div class='sub_btn'> 
+							<ul> 
+							<li class='work_btn' onclick=selfClose();><strong>Close</strong></li>
+							</ul> 
+						</div> 
+					</div>
+					<table id="htmlTable" class="scroll"></table>
+					<div id="htmlPager" class="scroll" style="display:none"></div>  
+					<iframe id="msgFrame" src="<%=ctxPath %>/bottom.gas" style="padding-top:10px;width:975px;height:30px" border="0" frameborder="0" framespacing="0" hspace="0" vspace="10" scrolling="no" noresize></iframe>
+				</form>
+				<form id="fileForm" name="fileForm">
+					<input type="hidden" id="hid_doc_no" name="hid_doc_no" value="<%=hid_doc_no%>">
+					<input type="hidden" id="hid_eeno"  name="hid_eeno" value="<%=hid_eeno%>">
+					<input type="hidden" id="hid_seq"  name="hid_seq">
+				</form>
+				<form id="hideForm" name="hideForm" method="post">
+					<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+				</form>
+			</div>
+		</div>
+	</body>
+</html>
+
+<script type="text/javascript">
+	function fnSetDocumentReady(){
+		sess_auth = $("#work_auth").val();
+		setComboInfo();
+	}
+	
+	var params; 
+	var comboVal;
+	var comboVal1;
+	var lastsel;
+	var fnMerge;
+	var gridParam;
+	var gridName1 = "htmlTable";
+	var excelCn   = ["Apply Date", "ID no", "Name", "Grade"];
+	var datarow   = {doc_no:"",eeno:"",seq:"",prvs_scn_cd:"", prvs_dtl_cd:"", strt_ymd:"", fnh_ymd:"", stl_way_cd:"", curr_cd:"", apl_xr:"", prvs_amt:"", 
+						natv_curr_amt:"", evds_attc_fil_nm:"", rem_sbc:""};
+	
+	function init(){
+		
+		var cn        = ["DocNo.", "Eeno", "Seq", "Category", "Item", "From", "To", "Means of form", "Currency", "Conversion Rate", "Payment", "National Payment", "Receipt", "Remark"];
+		var cm =
+			[
+				{name:"doc_no",			index:"doc_no"	, sortable:false,			formatter:"string",		width:0,	align:"center",	editable:false,	frozen:true, 	hidden:true},
+				{name:"eeno",			index:"eeno"	, sortable:false,			formatter:"string",		width:0,	align:"center",	editable:false,	frozen:true, 	hidden:true},
+				{name:"seq",			index:"seq"		, sortable:false,			formatter:"string",		width:0,	align:"left",	editable:true,	frozen:false, 	hidden : true},
+				{name:'prvs_scn_cd',	index:'prvs_scn_cd', sortable:false,		formatter:"select",	width:150,	align:'center',	editable:true,	frozen:true,	edittype:'select', 
+					editoptions:{value:getComboValue('prvs_scn_cd'), dataInit: function(elem) {$(elem).width(130);},
+			        	dataEvents:[{type:'change', 
+							fn:function(e){
+			        		
+				        		var row = $(e.target).closest('tr.jqgrow');
+			                    var rowId = row.attr('id');
+				        		
+			                    setMiltiComboList(rowId,'prvs_dtl_cd');
+			        		}
+			        	},
+			        	{type:'focus', 
+							fn:function(e){
+								var row = $(e.target).closest('tr.jqgrow');
+			                    var rowId = row.attr('id');
+			                    setMiltiComboList(rowId,'prvs_dtl_cd');
+			        		}
+			        	}
+			        	]
+				        },
+				        editrules:{required:true}
+				},
+				{name:'prvs_dtl_cd',	index:'prvs_dtl_cd', sortable:false,		formatter: "select",	width:100,		align:'center',	editable:true,	frozen:true,
+					edittype:'select', 
+					editoptions:{value:getComboValueMulti('REPORT'), 
+						dataInit: function(elem) {
+									$(elem).width(90);
+						},
+						dataEvents:[{type:'focus', 
+							fn:function(e){
+								var row = $(e.target).closest('tr.jqgrow');
+			                    var rowId = row.attr('id');
+			                    setMiltiComboList(rowId,'prvs_dtl_cd');
+			        		}
+			        	}]
+						},
+				        editrules:{required:true}
+				},
+				{name:"strt_ymd",	index:"strt_ymd"	, sortable:false,	formatter:"string",		width:70,	align:"left",	editable:true,	frozen : false,
+					editoptions: {
+						readonly : true,
+			            dataInit: function(element) {
+			     		    $(element).datepicker({
+			     		    	dateFormat: 'dd/mm/yy',
+			     		    	onSelect: function(dataText, inst){
+			     		    	}
+					    	});
+			            }
+					}
+				},
+				{name:"fnh_ymd",	index:"fnh_ymd"	, sortable:false,	formatter:"string",		width:70,	align:"left",	editable:true,	frozen : false,
+					editoptions: {
+						readonly : true,
+			            dataInit: function(element) {
+			     		    $(element).datepicker({
+			     		    	dateFormat: 'dd/mm/yy',
+			     		    	onSelect: function(dataText, inst){
+			     		    	}
+					    	});
+			            }
+					}
+				},
+				{name:'stl_way_cd',	index:'stl_way_cd', sortable:false,		formatter: "select",	width:70,	align:'center',	editable:true,	edittype:'select', 
+					editoptions:{value:getComboValue('stl_way_cd'), dataInit: function(elem) {$(elem).width(55);}
+				        },
+				        editrules:{required:true}
+				},
+				{name:'curr_cd',	index:'curr_cd', sortable:false,		formatter: "select",	width:70,	align:'center',	editable:true,	edittype:'select', 
+					editoptions:{value:getComboValue('curr_cd'), dataInit: function(elem) {$(elem).width(50);}
+				        },
+				        editrules:{required:true}
+				},
+				{name:"apl_xr",		index:"apl_xr"		, sortable:false,	formatter:"string",		width:70,	align:"right",	editable:true,	frozen : false,
+					editoptions: {maxlength:"8", 
+			            dataInit: function(element) {
+			     		    $(element).keyup(function(){
+			     		    	if(!isNumeric(element.value)){
+			     		    		element.value = selectNum(element.value, ".");
+			     		    	}
+			     		    })
+			            }
+			        }
+				},
+				{name:"prvs_amt",		index:"prvs_amt"		, sortable:false,	formatter:"string",		width:70,	align:"right",	editable:true,	frozen : false,
+					editoptions: {maxlength:"10", 
+			            dataInit: function(element) {
+			     		    $(element).keyup(function(){
+			     		    	if(!isNumeric(element.value)){
+			     		    		element.value = selectNum(element.value);
+			     		    	}
+			     		    })
+			            }
+			        }
+				},
+				{name:"natv_curr_amt",		index:"natv_curr_amt"		, sortable:false,	formatter:"string",		width:70,	align:"right",	editable:true,	frozen : false,
+					editoptions: {maxlength:"10", 
+			            dataInit: function(element) {
+			     		    $(element).keyup(function(){
+			     		    	if(!isNumeric(element.value)){
+			     		    		element.value = selectNum(element.value);
+			     		    	}
+			     		    })
+			            }
+			        }
+				},
+				{name:"evds_attc_fil_nm",	index:"evds_attc_fil_nm", sortable:false,	formatter:"string",		width:90,	align:"center",	editable:false,	frozen : false},
+				{name:"rem_sbc",	index:"rem_sbc", sortable:false,	formatter:"string",		width:200,	align:"left",	editable:true,	frozen : false}
+			];
+		
+		var params = {
+				doc_no     : $("#hid_doc_no").val(),
+				eeno       : $("#hid_eeno").val()
+			};
+		
+		gridParam = {
+			viewEdit : [{
+				gridName     : gridName1,
+				url          : "doSearchBTToReport.do",
+				colNames     : cn,
+				colModel     : cm,
+				width        : "1000",
+				height       : "100%",
+				sortname     : "eeno",
+				sortorder    : "asc",
+				rownumbers   : false,
+				multiselect  : false,
+				cellEdit     : false,
+				fnMerge      : false,
+				completeFc   : "searchCallBack();",
+				selectCellFc : "setBTGridValue(rowid, iCol, cellcontent);",
+				paramJson    : params,
+				rowNum       : "20"
+			}]
+		};
+		
+		commonJqGridInit(gridParam);
+		setGridColumnOptions();
+	}
+	
+	function setComboInfo(){
+		var url        = "/getCommonCombo.do";
+		var paramValue = "key_pgs_st_cd:X0009:A;prvs_scn_cd:X0013;";
+		getCommonCode('prvs_scn_cd:X0013;stl_way_cd:X0015;curr_cd:X0016', 'Y', 'setMultiCombo();');
+	}
+	
+	function setMultiCombo(){
+		
+		var params = {
+				codknd	: 'X0014'
+			};
+	
+		doCommonAjax("doSearchBTToMultiComboByReport.do", params,"comboCallBack(jsonData.sendResult);");	
+	}
+	
+	function comboCallBack(jsonData){
+		comboVal1 = jsonData;
+		beforeInit();
+	}
+	
+	function beforeInit(){
+		if(!(sess_mstu == "M" || sess_auth > 4)){
+			$("#key_aply_eeno").val(sess_empno);
+			$("#key_ops_cd").val(sess_dept_code);
+			$("#key_ops_nm").val(sess_dept_name);
+			$("#key_ops_nm").attr("readonly", true);
+			$("#deptBtn").attr("disabled", true);
+		}
+		init();
+	}
+	
+	function retrieve(gubn){
+		switch(gubn){
+			case "search" :
+				doSearch();
+				break;
+			case "excel" :
+				doExcel();
+				break;
+		}
+	}
+	
+	function doSearch(msgFlag){
+		
+		var params = {
+			eeno       : $("#key_aply_eeno").val(),
+			ee_nm      : $("#key_ee_nm").val().toUpperCase(),
+			fromDate   : dateConversionKr($("#key_from_date").val()),
+			toDate     : dateConversionKr($("#key_to_date").val()),
+			ops_cd     : $("#key_ops_cd").val(),
+			pgs_st_cd  : $("#key_pgs_st_cd").val(),
+			doc_no     : $("#key_doc_no").val(),
+			ad_req_yn  : $("#key_req_yn").val()
+		};
+		
+		doCommonSearch("doSearchBTToList.do", util.jsonToString(params), "loadCallBack();", gridName1, msgFlag);
+	}
+	
+	function doExcel(){
+		var keyData = {
+			eeno       : $("#key_aply_eeno").val(),
+			ee_nm      : $("#key_ee_nm").val(),
+			fromDate   : dateConversionKr($("#key_from_date").val()),
+			toDate     : dateConversionKr($("#key_to_date").val()),
+			ops_nm     : $("#key_ops_nm").val(),
+			pgs_st_cd  : $("#key_pgs_st_cd").val(),
+			doc_no     : $("#key_doc_no").val()
+		};
+		
+		var params = [
+			{name : "fileName",		value : "excel" },
+			{name : "header",		value : util.jsonToArray(excelCn)},
+			{name : "headerName",	value : util.setColumnKey("#"+gridName1)},
+			{name : "fomatter",		value : util.setFormatter("#"+gridName1)},
+			{name : "paramJson",	value : util.jsonToString(keyData)},
+			{name : "firstUseYn",	value : "Y"}
+		];
+		
+		gridToExcel("#"+gridName1, "doExcelToList.excel", params);
+	}
+	
+	function loadCallBack(){
+		addGridRow();
+	}
+	
+	function setMiltiComboList(rowId,colNm){	
+		if(typeof(comboVal1) == 'undefined'){return;}
+		if(colNm == 'prvs_dtl_cd'){
+			var colValue = getColValue('prvs_scn_cd',rowId);
+			if(colValue == ''){
+				$("select#" + rowId +"_"+ colNm).html('<option role="option" value=""></option>');
+			}
+			else{
+				comboVal2="";
+				$.each(eval(comboVal1),function(targetNm,optionData){
+					$.each(eval(optionData),function(index,optionData){
+		    			if(targetNm=='REPORT'&&colValue == optionData.key){
+		    				comboVal2 += '<option role="option" value="' +                                                   
+				            optionData.value + '">' +                                                   
+							optionData.name + '</option>';
+		        		}
+					});
+				});
+				$("select#" + rowId +"_"+ colNm).html(comboVal2);
+			}
+		}
+		
+		setChangeImg();
+	};
+	
+	function getMiltiComboListVal(rowId,colNm){	
+		
+		var returnVal = "";
+		if(typeof(comboVal1) == 'undefined'){return returnVal;}
+		if(colNm == 'prvs_dtl_cd'){
+			var colValue = getColValue('prvs_scn_cd',rowId);
+			if(colValue == ''){
+				return returnVal;
+			}
+			else{
+				returnVal="";
+				$.each(eval(comboVal1),function(targetNm,optionData){
+					$.each(eval(optionData),function(index,optionData){
+		    			if(targetNm=='REPORT'&&colValue == optionData.key){
+		    				returnVal += '<option role="option" value="' +                                                   
+				            optionData.value + '">' +                                                   
+							optionData.name + '</option>';
+		        		}
+					});
+				});
+			}
+		}
+		return returnVal;
+	};
+	
+	function getComboValueMulti(comboName){
+	
+		var returnVal;
+		if(typeof(comboVal1) == 'undefined'){
+			returnVal = ":";
+		}
+		else{
+			var i = 0;
+			$.each(eval(comboVal1),function(targetNm,optionData){
+				if(targetNm == comboName){
+					$.each(eval(optionData),function(index,optionData){
+						if(i == 0){
+							returnVal = returnVal + optionData.value + ":" + optionData.name;
+						}else{
+							returnVal = returnVal + ";" + optionData.value + ":" + optionData.name;
+						}
+						i++;
+					});
+				}
+		      });
+			if(typeof(returnVal) == 'undefined'){
+				returnVal = '';
+			}
+			else{
+				returnVal = returnVal.replace("undefined", "");
+			}
+		}
+		return returnVal;
+	}
+	
+	function setBTGridValue(rowId, iCol, cellcontent){	
+		var colNm = jQuery('#'+gridName1).jqGrid('getGridParam', 'colModel')[iCol].index;
+		
+		if(colNm == 'prvs_scn_cd' || colNm == 'prvs_dtl_cd' ){
+			setMiltiComboList(rowId,colNm);
+		}
+	}
+	
+	function retrieve(gubn){
+		switch(gubn){
+			case "save" :
+				doSave();
+				break;
+			case "delete" :
+				doDelete();
+				break;
+		}
+	}
+	
+	function doSave(){
+		var params = [];
+		var reportInfoI = [];
+		var reportInfoU = [];
+		var msg = "";
+		
+		var selectRow = jQuery("#"+gridName1).jqGrid("getGridParam", "selarrrow");
+		
+		if(selectRow.length == 0){
+			alertUI("데이터를 선택하세요.");
+			return;
+		}else{
+			for(var i = 0; i < selectRow.length; i++){
+				rowId = selectRow[i];
+				if(rowId){
+					if(getColValue("prvs_dtl_cd", rowId) == ""){
+						alertUI(rowId + " line : Choice Item.");
+						return;
+					}
+					if(getColValue("strt_ymd", rowId) == ""){
+						alertUI(rowId + " line : Enter From Date.");
+						return;
+					}
+					if(getColValue("fnh_ymd", rowId) == ""){
+						alertUI(rowId + " line : Enter To Date.");
+						return;
+					}
+					
+					if(getColValue("doc_no", rowId, gridName1) == $("#hid_doc_no").val()){
+						data = {
+							doc_no			: getColValue("doc_no", rowId, gridName1),
+							eeno			: getColValue("eeno", rowId, gridName1),
+							seq				: getColValue("seq", rowId, gridName1),
+							prvs_scn_cd		: getColValue("prvs_scn_cd", rowId, gridName1),
+							prvs_dtl_cd		: getColValue("prvs_dtl_cd", rowId, gridName1),
+							strt_ymd		: dateConversionKr(trimChar(getColValue("strt_ymd", rowId, gridName1), "/")),
+							fnh_ymd			: dateConversionKr(trimChar(getColValue("fnh_ymd", rowId, gridName1), "/")),
+							stl_way_cd		: getColValue("stl_way_cd", rowId, gridName1),
+							curr_cd			: getColValue("curr_cd", rowId, gridName1),
+							apl_xr			: getColValue("apl_xr", rowId, gridName1),
+							prvs_amt		: getColValue("prvs_amt", rowId, gridName1),
+							natv_curr_amt	: getColValue("natv_curr_amt", rowId, gridName1),
+							rem_sbc			: getColValue("rem_sbc", rowId, gridName1),
+							ipe_eeno		: sess_empno,
+							updr_eeno		: sess_empno
+						};
+						reportInfoU.push(data);
+					}else{
+						data = {
+							doc_no			: $("#hid_doc_no").val(),
+							eeno			: $("#hid_eeno").val(),
+							seq				: getColValue("seq", rowId, gridName1),
+							prvs_scn_cd		: getColValue("prvs_scn_cd", rowId, gridName1),
+							prvs_dtl_cd		: getColValue("prvs_dtl_cd", rowId, gridName1),
+							strt_ymd		: dateConversionKr(trimChar(getColValue("strt_ymd", rowId, gridName1), "/")),
+							fnh_ymd			: dateConversionKr(trimChar(getColValue("fnh_ymd", rowId, gridName1), "/")),
+							stl_way_cd		: getColValue("stl_way_cd", rowId, gridName1),
+							curr_cd			: getColValue("curr_cd", rowId, gridName1),
+							apl_xr			: getColValue("apl_xr", rowId, gridName1),
+							prvs_amt		: getColValue("prvs_amt", rowId, gridName1),
+							natv_curr_amt	: getColValue("natv_curr_amt", rowId, gridName1),
+							rem_sbc			: getColValue("rem_sbc", rowId, gridName1),
+							ipe_eeno		: sess_empno,
+							updr_eeno		: sess_empno
+						};
+						reportInfoI.push(data);
+					}
+				}
+			}
+			
+			var schedulerInfo = {
+					doc_no			: $("#hid_doc_no").val(),
+					eeno			: $("#hid_eeno").val()
+				};
+			
+			if(msg != ""){
+				alertUI(msg);
+				return;
+			}
+			
+			confirmUI("저장 하시겠습니까?");
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								schedulerInfo 	: util.jsonToString(schedulerInfo),
+								reportInfoI		: util.jsonToList(reportInfoI),
+								reportInfoU		: util.jsonToList(reportInfoU)
+						};
+						doCommonAjax("doSaveBTToReport.do", paramData, "saveCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+	}
+	
+	function doDelete(){
+		var params = [];
+		var reportInfoD = [];
+		var msg = "";
+		
+		var selectRow = jQuery("#"+gridName1).jqGrid("getGridParam", "selarrrow");
+		
+		if(selectRow.length == 0){
+			alertUI("데이터를 선택하세요.");
+			return;
+		}else{
+			for(var i = 0; i < selectRow.length; i++){
+				rowId = selectRow[i];
+				if(rowId){				
+					if(getColValue("doc_no", rowId, gridName1) == $("#hid_doc_no").val()){
+						data = {
+							doc_no			: getColValue("doc_no", rowId, gridName1),
+							eeno			: getColValue("eeno", rowId, gridName1),
+							seq				: getColValue("seq", rowId, gridName1)
+						};
+						reportInfoD.push(data);
+					}
+				}
+			}
+			
+			confirmUI("삭제 하시겠습니까?");
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								reportInfoD		: util.jsonToList(reportInfoD)
+						};
+						doCommonAjax("doDeleteBTToReport.do", paramData, "deleteCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+	}
+	
+	function saveCallBack(result){
+		setBottomMsg(result.message, true);
+		doSearch();
+	}
+	
+	function deleteCallBack(result){
+		setBottomMsg(result.message, true);
+		doSearch();
+	}
+	
+	function doSearch(){
+		var params = {
+			doc_no     : $("#hid_doc_no").val(),
+			eeno       : $("#hid_eeno").val()
+		};
+		
+		doCommonSearch("doSearchBTToReport.do", util.jsonToString(params), "searchCallBack();", gridName1, "N");
+	}
+	
+	var maxSeq  = 0;
+	
+	function searchCallBack(){
+		addGridRow(20);
+		
+		var gridRow  = jQuery("#"+gridName1);
+		var ids      = gridRow.getDataIDs();
+		maxSeq  = 0;
+	
+		for(var i=0;i<ids.length;i++){
+			if(getColValue("seq", i+1, gridName1)!=""){
+				if(getColValue("seq", i+1, gridName1) > maxSeq){
+					maxSeq = getColValue("seq", i+1, gridName1);
+				}
+			}
+		}
+		
+		setChangeImg();
+	}
+	
+	function setChangeImg(){
+		var gridRow  = jQuery("#"+gridName1);
+		var ids      = gridRow.getDataIDs();
+	
+		for(var i=0;i<ids.length;i++){
+			if(getColValue("prvs_scn_cd", i+1, gridName1)!=""){
+				var imgSrc = "";			
+				if(getColValue("seq", i+1, gridName1)!=""){
+					if(getColValue("doc_no", i+1, gridName1)!=""){
+						imgSrc = "<img src='../../images/hncis_bttn/open-n.gif' onClick='doFileAttach("+getColValue("seq", i+1, gridName1)+");'/>";
+					}
+				}else{
+					maxSeq = parseInt(maxSeq) + 1;
+					jQuery("#"+gridName1).setCell(i+1, 'seq',  maxSeq);
+					//imgSrc = "<img src='../../images/new_bttn/upload_file-n.gif' onClick='doFileAttach("+maxSeq+");'/>";
+				}
+				gridRow.jqGrid("setRowData", i+1, {evds_attc_fil_nm:imgSrc});
+			}
+		}
+	}
+	
+	var win;
+	function doFileAttach(seq){
+		if(win != null){ win.close(); }
+		var url = "xbt01_file_app.gas", width = "400", height = "340";
+			
+		$("#hid_seq").val(seq);
+		
+		win = newPopWin("about:blank", width, height, "win_file");
+		document.fileForm.action = url;
+		document.fileForm.target = "win_file"; 
+		document.fileForm.method = "post"; 
+		document.fileForm.submit();
+	}
+</script>

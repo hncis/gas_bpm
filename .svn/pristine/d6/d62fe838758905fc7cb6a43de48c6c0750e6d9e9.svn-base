@@ -1,0 +1,234 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XFC04";
+	String hid_eeno  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_eeno")));
+	String hid_cond  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_cond")));
+	String yy = CurrentDateTime.getYear();
+	String mm = CurrentDateTime.getMonth();
+	String dd = CurrentDateTime.getDay();
+
+	String work_auth = CommonGasc.getScnAuth(sess_empno, menuId, request);
+	
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH", locale);
+	String strNew = JSPMessageSource.getMessage("BUTTON.NEW",locale);
+	
+	String strBtn = "";
+	//strBtn = strSch+"/search@"+strNew+"/new";
+	strBtn = strSch+"/search";
+	
+	String tempPath     = request.getServletPath().toString();
+	String stepHelpUrl  = StringUtil.getStepHelp(tempPath);
+%>
+<html>
+	<head>
+		<title>운행일지 - 조회</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	</head>
+	<body>
+		<div id="wrap">
+			<form name="mainForm" id="mainForm">
+				<input type="hidden" id="nSource" name="nSource">
+				<input type="hidden" id="hid_eeno" name="hid_eeno" value="<%=hid_eeno%>">
+				<input type="hidden" id="hid_cond" name="hid_cond" value="<%=hid_cond%>">
+				<input type="hidden" id="menu_id" name="menu_id" value="<%=menuId.toLowerCase()%>">
+				<input type=hidden id="work_auth" name="work_auth" value="<%=work_auth%>">
+				<input type="hidden" id="hid_page" name="hid_page">
+				<input type="hidden" id="help_url" name="help_url" value="<%=stepHelpUrl%>">
+				
+				<%@ include file="../include/hncis_header.gas"%>
+				<div id="contents_wrap">
+					<%@ include file="../include/hncis_left.gas"%>
+					<div id="contents">
+						<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,menuId
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+		                <div class="search_area">
+		                	<table>
+								<colgroup>
+									<col style="width:80px;" />
+		                            <col style="width:120px;" />
+									<col style="width:80px;" />
+		                            <col style="width:220px;" />
+		                            <col style="width:80px;" />
+		                            <col style="width:auto;" />
+		                        </colgroup>
+		                        <tbody>
+									<tr>
+										<th><fmt:message key="year"/></th>
+										<td>
+											<select id="key_req_year" name="key_req_year">
+												<option value="2014">2014</option>
+												<option value="2015">2015</option>
+												<option value="2016">2016</option>
+												<option value="2017">2017</option>
+												<option value="2018">2018</option>
+												<option value="2019">2019</option>
+											</select>
+										</td>
+										<th><fmt:message key="dept_nm"/></th>
+										<td><input type="text" id="key_dept_nm" name="key_dept_nm" style="width: 170px"></td>
+										<th><fmt:message key="eeno"/></th>
+										<td><input type="text" id="key_eeno" name="key_eeno" style="width: 170px"></td>
+									</tr>
+		                        </tbody>
+							</table>
+		                </div>
+		                <div id="div_layer"></div>
+		                <div class="jq_tbl">
+		                	<table id="htmlTable" class="scroll"></table>
+		                	<div id="htmlPager" class="scroll"></div>
+		                </div>
+	                	<%@ include file="../include/hncis_message.gas"%>
+	            	</div>
+	            	<div class="clear"></div>
+				</div>
+			</form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+		</div>
+	</body>
+</html>
+		<script type="text/javascript">
+		var curYY = '<%=yy%>';
+		</script>
+		<script type="text/javascript">
+		var lastsel;
+		var fnMerge;
+
+		function fnSetDocumentReady(){
+			initMenus();
+
+			$("#key_req_year").val(curYY);
+
+			init();
+
+		}
+
+		var gridParam;
+		var gridName = "htmlTable";
+		var datarow = {dept_nm:"", eeno:"", eeno_nm:"", gubun:"",tot:"", m1:"", m2:"", m3:"", m4:"", m5:"", m6:"", m7:"", m8:"", m9:"", m10:"", m11:"", m12:""};
+		function init(){
+// 			var cn = ["부서", "사번", "이름","구분", "전체", "1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"];
+			var cn = ['<fmt:message key="dept_nm"/>' // "부서"
+			          ,'<fmt:message key="eeno"/>' // "사번"
+			          ,'<fmt:message key="eenm"/>' // "이름"
+			          ,'<fmt:message key="type"/>' // "구분"
+			          ,'<fmt:message key="total"/>' // "전체"
+			          ,'<fmt:message key="jan"/>' // "1월"
+			          ,'<fmt:message key="feb"/>' // "2월"
+			          ,'<fmt:message key="mar"/>' // "3월"
+			          ,'<fmt:message key="apr"/>' // "4월"
+			          ,'<fmt:message key="may"/>' // "5월"
+			          ,'<fmt:message key="jun"/>' // "6월"
+			          ,'<fmt:message key="jul"/>' // "7월"
+			          ,'<fmt:message key="aug"/>' // "8월"
+			          ,'<fmt:message key="sep"/>' // "9월"
+			          ,'<fmt:message key="oct"/>' // "10월"
+			          ,'<fmt:message key="nov"/>' // "11월"
+			          ,'<fmt:message key="dec"/>' // "12월"
+		          ];
+			var cm = [{name:"dept_nm", index:"dept_nm", sortable:false, formatter:"string", width:80, align:"center", editable:false, frozen:false},
+			          {name:"eeno", index:"eeno", sortable:false, formatter:"string", width:60, align:"center", editable:false, frozen:false},
+		              {name:"eeno_nm", index:"eeno_nm", sortable:false, formatter:"string", width:80, align:"center", editable:false, frozen:false},
+			          {name:"gubun", index:"gubun", sortable:false, formatter:"string", width:40, align:"center", editable:false, frozen:false},
+			          {name:"tot", index:"tot", sortable:false, formatter:"string", width:60, align:"right", editable:false, frozen:false},
+			          {name:"m1", index:"m1", sortable:false, formatter:"string", width:50, align:"right", editable:false, frozen:false},
+			          {name:"m2", index:"m2", sortable:false, formatter:"string", width:50, align:"right", editable:false, frozen:false},
+			          {name:"m3", index:"m3", sortable:false, formatter:"string", width:50, align:"right", editable:false, frozen:false},
+			          {name:"m4", index:"m4", sortable:false, formatter:"string", width:50, align:"right", editable:false, frozen:false},
+			          {name:"m5", index:"m5", sortable:false, formatter:"string", width:50, align:"right", editable:false, frozen:false},
+			          {name:"m6", index:"m6", sortable:false, formatter:"string", width:50, align:"right", editable:false, frozen:false},
+			          {name:"m7", index:"m7", sortable:false, formatter:"string", width:50, align:"right", editable:false, frozen:false},
+			          {name:"m8", index:"m8", sortable:false, formatter:"string", width:50, align:"right", editable:false, frozen:false},
+			          {name:"m9", index:"m9", sortable:false, formatter:"string", width:50, align:"right", editable:false, frozen:false},
+			          {name:"m10", index:"m10", sortable:false, formatter:"string", width:50, align:"right", editable:false, frozen:false},
+			          {name:"m11", index:"m11", sortable:false, formatter:"string", width:50, align:"right", editable:false, frozen:false},
+			          {name:"m12", index:"m12", sortable:false, formatter:"string", width:50, align:"right", editable:false, frozen:false}
+					  ];
+
+			gridParam = {
+				viewEdit : [{
+					gridName     : gridName,
+					url          : "doSearchXfc04InfoList.do",
+					colNames     : cn,
+					colModel     : cm,
+					height       : "100%",
+					paramJson    : fnParamJson(),
+					rowNum		 : 15,
+					rownumbers   : true,
+					multiselect  : false,
+					cellEdit     : false,
+					fnMerge      : false,
+					page		 : $("#hid_page").val(),
+					pager		 : "htmlPager",
+					completeFc   : "loadCallBack();"
+				}]
+			};
+
+			commonJqGridInit(gridParam);
+		}
+
+		function retrieve(btnFlag){
+			switch(btnFlag){
+			   case "search" :
+				   	doSearch();
+					break;
+			   case "new" :
+				   doNew();
+				   break;
+			}
+		}
+
+		function fnParamJson(){
+			var paramVo = {
+				req_year	: $("#key_req_year").val(),
+				eeno 		: $("#key_eeno").val(),
+				dept_nm		: $("#key_dept_nm").val(),
+				corp_cd		: sess_corp_cd
+			};
+			return paramVo;
+		}
+
+		function doNew(){
+			var form = $("<form/>");
+		    form.attr("method" , "post");
+		    form.attr("id"     , "submitForm").attr("name", "submitForm");
+		    form.attr("action" , "xfc01.gas");
+		    var token = $("<input type='hidden' id='hid_csrfToken' name='hid_csrfToken'/>").val($("#csrfToken").val());
+		    form.append(token);
+		    $("body").append(form);
+		    form.submit();
+		    form.remove();
+		}
+
+		function doSearch(){
+			doCommonSearch("doSearchXfc04InfoList.do", util.jsonToString(fnParamJson()), "loadCallBack();", gridName, "N");
+		}
+
+		function loadCallBack(){
+			setMerge();
+			addGridRow();
+			$("#hid_page").val($("#page_htmlPager").val());
+		}
+
+		function setMerge(){
+		    groupTable($("#"+gridName+" tr:has(td)"), 1, 3);
+//		    $("#"+gridName+" .deleted").remove();
+		    $("#"+gridName+" .deleted").hide();
+		}
+		
+		function pageStepHelpPopup(){
+			if(popup != null ){
+				popup.close();
+			}
+			
+			popup = popUpWindow3($("#help_url").val());
+		}
+		</script>

@@ -1,0 +1,283 @@
+<%@page import="org.jsoup.safety.Whitelist"%>
+<%@page import="org.jsoup.Jsoup"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common.gas" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%
+String user_name   = Jsoup.clean( StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("user_name"))), Whitelist.basic()); 
+String user_id     = Jsoup.clean(StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("user_id"))), Whitelist.basic());
+String car_type_nm = Jsoup.clean(StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("car_type_nm"))), Whitelist.basic());
+String car_rgst_no = Jsoup.clean(StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("car_rgst_no"))), Whitelist.basic());
+String car_vin     = Jsoup.clean(StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("car_vin"))), Whitelist.basic());
+String car_rnt_dte = Jsoup.clean(StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("car_rnt_dte"))), Whitelist.basic());
+String car_rtn_dte = Jsoup.clean(StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("car_rtn_dte"))), Whitelist.basic());
+%>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Company Car Print</title>
+<!-- <link rel="shortcut icon" href="favicon.ico" /> -->
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Cache-Control" content="no-cache" />
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+<meta http-equiv="Imagetoolbar" content="no" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<script type="text/javascript" src="/script/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="/script/js/jquery-ui-1.10.2.custom.min.js"></script>
+<script type="text/javascript" src="/script/js/front.js"></script>
+<!--// css start -->
+<script type="text/javascript" src="./js/print_popup.js"></script>
+<script type="text/javascript">
+</script>
+</head>
+
+<body>
+<div class="btn"><a href="javascript:;" onclick="doPrint('printArea');"><img src="<%=ctxPath %>/images/btn/sb_01_17.gif" alt="PRINT" /></a></div>
+<div id="printArea">
+<div class="printPopupSec popupIn">
+	<!-- <div class="btn"><a href="javascript:;" onclick="window.print();return false;"><img src="/images/btn/sb_01_17.gif" alt="PRINT" /></a></div> -->
+
+	<div class="topSec2">
+		<h3>Preberací protokol</h3>
+	</div>
+
+	<div class="formSec2">
+		<table>
+			<colgroup>
+				<col width="200" />
+				<col width="*" />
+			</colgroup>
+			<tbody>
+				<tr>
+					<th><strong>Vlastník vozidla:</strong></th>
+					<td></td>
+				</tr>
+				<tr>
+					<th><strong>Obchodné Meno:</strong></th>
+					<td><strong>Kia Motors Slovakia s.r.o.,</strong></td>
+				</tr>
+				<tr>
+					<th>sídlo:</th>
+					<td>Sv. Jána Nepomuckého 1282/1, 013 01 Teplička nad Váhom, SR</td>
+				</tr>
+				<tr>
+					<th>IČO:</th>
+					<td>35 876 832,</td>
+				</tr>
+				<tr>
+					<th>Údaje o zápise:</th>
+					<td>Obchodný register Okresného súdu Žilina, oddiel Sro, vložka č. 15074/L</td>
+				</tr>
+				<tr>
+					<th>Zastúpený :</th>
+					<td>Rastislav Bugáň, asistent manažér Oddelenia Všeobecných záležitostí</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>(ďalej len <strong>„Vlastník vozidla“</strong>)<strong>a</strong></p>
+		<p><strong>a</strong></p>
+
+		<table>
+			<colgroup>
+				<col width="200" />
+				<col width="*" />
+			</colgroup>
+			<tbody>
+				<tr>
+					<th><strong>Dočasný užívateľ:</strong></th>
+					<td><input type="text" class="txt1" style="width: 350px;" /></td>
+				</tr>
+				<tr>
+					<th><strong>Meno a priezvisko:</strong></th>
+					<td><input type="text" class="txt1" style="width: 350px;" value="<%=user_name%>" /></td>
+				</tr>
+				<tr>
+					<th>ID:</th>
+					<td><input type="text" class="txt1" style="width: 350px;" value="<%=user_id%>" /></td>
+				</tr>
+				<tr>
+					<th>ČOP:</th>
+					<td><input type="text" class="txt1" style="width: 350px;" /></td>
+				</tr>
+				<tr>
+					<th>Číslo vodičského preukazu:</th>
+					<td><input type="text" class="txt1" style="width: 350px;" /></td>
+				</tr>
+				<tr>
+					<th>Bydlisko:</th>
+					<td><input type="text" class="txt1" style="width: 350px;" /></td>
+				</tr>
+				<tr>
+					<th>Číslo telefónu:</th>
+					<td><input type="text" class="txt1" style="width: 350px;" /></td>
+				</tr>
+			</tbody>
+		</table>
+
+		<table>
+			<colgroup>
+				<col width="200" />
+				<col width="*" />
+			</colgroup>
+			<tbody>
+				<tr>
+					<th><strong>Testovacie vozidlo:</strong></th>
+					<td></td>
+				</tr>
+				<tr>
+					<th>Typ vozidla:</th>
+					<td><input type="text" class="txt1" style="width: 350px;" value="<%=car_type_nm %>"/></td>
+				</tr>
+				<tr>
+					<th>VIN číslo:</th>
+					<td><input type="text" class="txt1" style="width: 350px;" value="<%=car_vin %>"/></td>
+				</tr>
+				<tr>
+					<th>EČV vozidla:</th>
+					<td><input type="text" class="txt1" style="width: 350px;" value="<%=car_rgst_no%>"/></td>
+				</tr>
+			</tbody>
+		</table>
+		<br /><br />
+
+		<p><strong>A:Odovzdanie Testovacieho vozidla Vlastníkom vozidla Dočasnému užívateľovi :</strong></p>
+		<table>
+			<colgroup>
+				<col width="300" />
+				<col width="*" />
+			</colgroup>
+			<tbody>
+				<tr>
+					<th>Stav tachometra (km):</th>
+					<td>-</td>
+				</tr>
+				<tr>
+					<th>Stav paliva v nádrži (litrov):</th>
+					<td>Rezerva</td>
+				</tr>
+				<tr>
+					<th>Autorádio (kód autorádia):</th>
+					<td>áno</td>
+				</tr>
+				<tr>
+					<th>Počet kľúčov:</th>
+					<td>1ks</td>
+				</tr>
+				<tr>
+					<th>Príručka na používanie:</th>
+					<td>áno</td>
+				</tr>
+
+				<tr>
+					<th>Povinná výbava vozidla</th>
+					<td>áno</td>
+				</tr>
+
+				<tr>
+					<th>Doklad o zaplatení havarijného a povinného<br />zmluvného poistenia:</th>
+					<td>áno</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<p class="inpU">Iné : <span>&nbsp;</span></p>
+	</div><%--end <div class="printPopupSec popupIn"> --%>
+
+	<div class="txtSec2">
+		<p><strong>V Tepličke nad Váhom,  <em class="pt_2">Hand over date</em></strong></p>
+		<table class="btm">
+			<colgroup>
+				<col width="50%" span="2" />
+			</colgroup>
+			<thead>
+				<tr>
+					<td><p>Vlastník vozidla:</p></td>
+					<td><p>Dočasný užívateľ</p></td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><p><img src="<%=ctxPath %>/images/skin/img_print_01.gif" alt="" /></p></td>
+					<td><p>&nbsp;</p></td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr>
+					<td><p>Daniel Popovič</p></td>
+					<td><p>Meno a priezvisko</p></td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+
+	<div class="formSec2">
+		<br /><br /><p><strong>B:Vrátenie Testovacieho vozidla Dočasným užívateľom Vlastníkovi vozidla:</strong></p>
+		<table>
+			<colgroup>
+				<col width="300" />
+				<col width="*" />
+			</colgroup>
+			<tbody>
+				<tr>
+					<th>Stav tachometra (km):</th>
+					<td>-</td>
+				</tr>
+				<tr>
+					<th>Stav paliva v nádrži (litrov):</th>
+					<td>rererva</td>
+				</tr>
+				<tr>
+					<th>Autorádio (kód autorádia):</th>
+					<td>áno</td>
+				</tr>
+				<tr>
+					<th>Počet kľúčov:</th>
+					<td>1ks</td>
+				</tr>
+				<tr>
+					<th>Príručka na používanie:</th>
+					<td>áno</td>
+				</tr>
+				<tr>
+					<th>Povinná výbava vozidla</th>
+					<td>áno</td>
+				</tr>
+				<tr>
+					<th>Doklad o zaplatení havarijného a povinného<br />zmluvného poistenia:</th>
+					<td>áno</td>
+				</tr>
+			</tbody>
+		</table>
+		<p class="inpU">Iné : <span>&nbsp;</span></p>
+	</div>
+
+	<div class="txtSec2">
+		<p><strong>V Tepličke nad Váhom,  <em class="pt_2">Hand over date</em></strong></p>
+		<table class="btm">
+			<colgroup>
+				<col width="50%" span="2" />
+			</colgroup>
+			<thead>
+				<tr>
+					<td><p>Vlastník vozidla:</p></td>
+					<td><p>Dočasný užívateľ</p></td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><p><img src="<%=ctxPath %>/images/skin/img_print_01.gif" alt="" /></p></td>
+					<td><p>&nbsp;</p></td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr>
+					<td><p>Daniel Popovič</p></td>
+					<td><p>Meno a priezvisko</p></td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+</div><%--end <div id="printArea"> --%>
+</div>
+</body>
+</html>

@@ -1,0 +1,845 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="gift">
+
+	<select id="selectGfToLrgCombo" parameterClass="bgabGascgf03Dto" resultClass="bgabGascgf03Dto">
+		/* gift.xml :: selectGfListToMrgInfo */
+		SELECT 	LRG_CD
+				,LRG_NM
+		FROM BGAB_GASCGF03$corp_cd$
+		WHERE USE_YN = 'Y'
+		ORDER BY LRG_SORT ASC
+	</select>
+	<select id="selectGfToMrgCombo" parameterClass="bgabGascgf04Dto" resultClass="bgabGascgf04Dto">
+		/* gift.xml :: selectGfListToMrgInfo */
+		SELECT 	LRG_CD
+				,MRG_CD
+				,MRG_NM
+		FROM BGAB_GASCGF04$corp_cd$
+		WHERE LRG_CD = #lrg_cd#
+		AND USE_YN = 'Y'
+		ORDER BY MRG_SORT ASC
+	</select>
+
+	<select id="selectGfToGiftList" parameterClass="bgabGascgf01Dto" resultClass="bgabGascgf01Dto">
+		/* gift.xml :: selectGfToGiftList */
+		SELECT K.*
+		FROM (
+			SELECT @ROWNUM := @ROWNUM + 1 AS RNUM
+				 , T.*
+			  FROM (SELECT GF01.ITEM_SEQ
+						 , GF01.LRG_CD
+						 , GF01.MRG_CD
+						 , GF01.ITEM_TTL
+						 , GF01.ITEM_QTY
+						 , GF01.ITEM_CONT
+						 , GF01.INP_YMD
+						 , GF01.IPE_EENO
+						 , GF01.MDFY_YMD
+						 , GF01.UPDR_EENO
+						 , GF03.LRG_NM
+						 , GF04.MRG_NM
+						 , GF03.LRG_SORT
+						 , GF04.MRG_SORT
+						 , (SELECT MAX(OGC_FIL_NM) FROM BGAB_GASCZ011$corp_cd$ WHERE DOC_NO = GF01.FILE_INFO) AS FILE_INFO
+					  FROM BGAB_GASCGF01$corp_cd$ GF01
+					  LEFT OUTER JOIN BGAB_GASCGF03$corp_cd$ GF03
+					    ON GF01.LRG_CD = GF03.LRG_CD
+					  LEFT OUTER JOIN BGAB_GASCGF04$corp_cd$ GF04
+					    ON GF01.LRG_CD = GF04.LRG_CD
+					   AND GF01.MRG_CD = GF04.MRG_CD
+					 WHERE GF01.USE_YN = 'Y'
+					 <isNotEmpty property="lrg_cd">
+					 AND GF01.LRG_CD = #lrg_cd#
+					 </isNotEmpty>
+					 <isNotEmpty property="mrg_cd">
+					 AND GF01.MRG_CD = #mrg_cd#
+					 </isNotEmpty>
+					 ORDER BY GF03.LRG_SORT
+					 	    , GF04.MRG_SORT
+			) T,
+			(SELECT @ROWNUM := 0) R
+		)K
+		WHERE K.RNUM BETWEEN #startRow# AND #endRow#
+	</select>
+	
+	<select id="selectGfToGiftCount" parameterClass="bgabGascgf01Dto" resultClass="java.lang.String">
+		/* gift.xml :: selectGfToGiftCount */
+		SELECT COUNT(*)
+		  FROM BGAB_GASCGF01$corp_cd$ GF01
+		 WHERE GF01.USE_YN = 'Y'
+		 <isNotEmpty property="lrg_cd">
+		 AND GF01.LRG_CD = #lrg_cd#
+		 </isNotEmpty>
+		 <isNotEmpty property="mrg_cd">
+		 AND GF01.MRG_CD = #mrg_cd#
+		 </isNotEmpty>
+	</select>
+
+	<select id="selectGfToGiftExtrQty" parameterClass="bgabGascgf02Dto" resultClass="java.lang.String">
+		/* gift.xml :: selectGfToGiftExtrQty */
+		SELECT	GF01.ITEM_QTY AS CNT
+		FROM BGAB_GASCGF01$corp_cd$ GF01
+ 		WHERE ITEM_SEQ =  #item_seq#
+	</select>
+	<insert id="insertGfToGiftRequest" parameterClass="bgabGascgf02Dto">
+		/* gift.xml :: insertGfToGiftRequest */
+		MERGE INTO BGAB_GASCGF02$corp_cd$(
+        	   DOC_NO
+			 , EENO
+			 , ITEM_SEQ
+			 , REQ_YMD
+			 , RCV_USER_NM
+			 , RCV_CONTACT
+			 , RCV_YMD
+			 , RCV_ZIP_CODE
+			 , RCV_ADDR
+			 , RCV_ADDR2
+			 , REMARK
+			 , INP_YMD
+			 , IPE_EENO
+			 , MDFY_YMD
+			 , UPDR_EENO
+			 , PGS_ST_CD
+      	)VALUES(
+      		   #doc_no#
+			 , #eeno#
+			 , #item_seq#
+			 , DATE_FORMAT(SYSDATE(), '%Y%m%d')
+			 , #rcv_user_nm#
+			 , #rcv_contact#
+			 , #rcv_ymd#
+			 , #rcv_zip_code#
+			 , #rcv_addr#
+			 , #rcv_addr2#
+			 , #remark#
+			 , SYSDATE()
+			 , #ipe_eeno#
+			 , SYSDATE()
+			 , #ipe_eeno#
+			 , #pgs_st_cd#
+		)
+		ON DUPLICATE KEY
+		UPDATE RCV_USER_NM  = #rcv_user_nm#
+			 , RCV_CONTACT  = #rcv_contact#
+			 , RCV_YMD      = #rcv_ymd#
+			 , RCV_ZIP_CODE = #rcv_zip_code#
+			 , RCV_ADDR     = #rcv_addr#
+			 , RCV_ADDR2    = #rcv_addr2#
+			 , UPDR_EENO    = #updr_eeno#
+			 , MDFY_YMD     = DATE_FORMAT(SYSDATE(),'%Y%m%d' )
+	</insert>
+
+	<update id="approveCancelGFToRequest" parameterClass="bgabGascgf02Dto">
+		/* approveCancelGFToRequest */
+		update BGAB_GASCGF02$corp_cd$
+		set	    pgs_st_cd	= #pgs_st_cd#
+			   ,mdfy_ymd	= DATE_FORMAT(SYSDATE(), '%Y%m%d')
+			   ,updr_eeno	= #updr_eeno#
+		where doc_no = #doc_no#
+	</update>
+
+	<update id="confirmGFToRequest" parameterClass="bgabGascgf02Dto">
+		/* confirmGFToRequest */
+		update BGAB_GASCGF02$corp_cd$
+		set	    pgs_st_cd	= #pgs_st_cd#
+			   ,mdfy_ymd	= DATE_FORMAT(SYSDATE(), '%Y%m%d')
+			   ,updr_eeno	= #updr_eeno#
+			   ,acpc_eeno	= #updr_eeno#
+			   ,acpc_ymd	= SYSDATE()
+		where doc_no = #doc_no#
+	</update>
+
+	<update id="rejectGFToRequest" parameterClass="bgabGascgf02Dto">
+		/* rejectGFToRequest */
+   		UPDATE	BGAB_GASCGF02$corp_cd$
+		SET 	PGS_ST_CD  = #pgs_st_cd#
+				,IF_ID     = ''
+				,RPTS_EENO = ''
+				,RPTS_YMD  = ''
+				,RDCS_EENO = ''
+				,RDCS_YMD  = ''
+				,ACPC_EENO = ''
+				,ACPC_YMD  = ''
+				,SNB_RSON_SBC = #snb_rson_sbc#
+				,UPDR_EENO = #updr_eeno#
+				,MDFY_YMD  = DATE_FORMAT(SYSDATE(),'%Y%m%d')
+		WHERE	1 = 1
+		AND		DOC_NO = #doc_no#
+	</update>
+
+	<update id="updateGfToGiftRequestQty" parameterClass="bgabGascgf02Dto">
+		/* gift.xml :: updateGfToGiftRequestQty */
+		UPDATE BGAB_GASCGF01$corp_cd$
+		SET	 ITEM_QTY = ITEM_QTY -1
+		WHERE ITEM_SEQ =  #item_seq#
+	</update>
+
+	<update id="updateGfToGiftRequestCancelQty" parameterClass="bgabGascgf02Dto">
+		/* gift.xml :: updateGfToGiftRequestCancelQty */
+		UPDATE BGAB_GASCGF01$corp_cd$
+		SET	 ITEM_QTY = ITEM_QTY + 1
+		WHERE ITEM_SEQ =  #item_seq#
+	</update>
+
+
+	<select id="selectCountGfToReqList" parameterClass="bgabGascgf02Dto" resultClass="java.lang.String">
+	/*selectCountGfToReqList*/
+		SELECT COUNT(*) TOT_CNT
+		FROM BGAB_GASCGF02$corp_cd$ GF02
+		LEFT OUTER JOIN BGAB_GASCGF01$corp_cd$ GF01
+		ON GF02.ITEM_SEQ = GF01.ITEM_SEQ
+		LEFT OUTER JOIN BGAB_GASCGF03$corp_cd$ GF03
+		ON GF01.LRG_CD = GF03.LRG_CD
+		LEFT OUTER JOIN BGAB_GASCGF04$corp_cd$ GF04
+		ON GF01.LRG_CD = GF04.LRG_CD
+		AND GF01.MRG_CD = GF04.MRG_CD
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON GF02.EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		<isNotEmpty property="search_ops_cd">
+		  AND Z002.XUSR_DEPT_CODE = #search_ops_cd#
+		</isNotEmpty>
+		<isNotEmpty property="search_eeno" prepend="and">
+			GF02.EENO = #search_eeno#
+		</isNotEmpty>
+		AND GF02.REQ_YMD BETWEEN #fr_ymd# and #to_ymd#
+		<isNotEmpty property="search_eenm" prepend="and">
+			Z002.XUSR_NAME like CONCAT('%', #search_eenm#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="search_pgs_st_cd" prepend="and">
+			GF02.PGS_ST_CD = #search_pgs_st_cd#
+		</isNotEmpty>
+	</select>
+	<select id="selectGfToReqList" parameterClass="bgabGascgf02Dto" resultClass="bgabGascgf02Dto">
+	/*selectGfToReqList*/
+		SELECT *
+		  FROM (
+	  		SELECT @ROWNUM := @ROWNUM + 1 AS RNUM
+	  			 , k.*
+			  FROM (
+				SELECT GF02.DOC_NO
+					 , GF02.ITEM_SEQ
+					 , DATE_FORMAT( CAST(REQ_YMD AS DATE), '%Y-%m-%d') AS REQ_YMD
+                	 , CONCAT(GF03.LRG_NM, ' > ', GF04.MRG_NM) AS ITEM_CTGRY
+					 , GF01.ITEM_TTL
+					 , GF02.EENO
+					 , GF02.PGS_ST_CD
+					 , Z002.XUSR_NAME AS EENM
+					 , Z002.XUSR_DEPT_NAME AS DEPT_NM
+					 , PGS.XCOD_HNAME AS PGS_ST_NM
+				  FROM BGAB_GASCGF02$corp_cd$ GF02
+				  LEFT OUTER JOIN BGAB_GASCGF01$corp_cd$ GF01
+				    ON GF02.ITEM_SEQ = GF01.ITEM_SEQ
+				  LEFT OUTER JOIN BGAB_GASCGF03$corp_cd$ GF03
+			        ON GF01.LRG_CD = GF03.LRG_CD
+				  LEFT OUTER JOIN BGAB_GASCGF04$corp_cd$ GF04
+				    ON GF01.LRG_CD = GF04.LRG_CD
+				   AND GF01.MRG_CD = GF04.MRG_CD
+				  LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+				    ON GF02.EENO = Z002.XUSR_EMPNO
+				  LEFT OUTER JOIN BGAB_GASCZ005$corp_cd$ PGS
+				    ON PGS.XCOD_KND = 'XGF01'
+				   AND PGS.XCOD_CODE = GF02.PGS_ST_CD
+				   AND PGS.LOCALE = #locale#
+				 WHERE GF02.REQ_YMD BETWEEN #fr_ymd# and #to_ymd#
+				 <isNotEmpty property="search_ops_cd" prepend="and">
+				   Z002.XUSR_DEPT_CODE = #search_ops_cd#
+				 </isNotEmpty>
+				 <isNotEmpty property="search_eeno" prepend="and">
+				   GF02.EENO = #search_eeno#
+				 </isNotEmpty>
+				 <isNotEmpty property="search_eenm" prepend="and">
+				 	Z002.XUSR_NAME LIKE CONCAT('%', #search_eenm#, '%')
+				 </isNotEmpty>
+				 <isNotEmpty property="search_pgs_st_cd" prepend="and">
+				 	GF02.PGS_ST_CD = #search_pgs_st_cd#
+				 </isNotEmpty>
+				 ORDER BY GF02.REQ_YMD DESC
+			) K,
+			(SELECT @ROWNUM := 0) R
+		) J
+		WHERE J.RNUM BETWEEN #startRow# AND #endRow#
+	</select>
+
+	<delete id="deleteGfToRequestCancel" parameterClass="bgabGascgf02Dto">
+		/* gift.xml :: deleteGfToRequestCancel */
+		DELETE FROM BGAB_GASCGF02$corp_cd$
+		 WHERE DOC_NO = #doc_no#
+	</delete>
+
+	<update id="updateGfToStatus" parameterClass="bgabGascgf02Dto">
+		/* gift.xml :: updateGfToStatus */
+		UPDATE BGAB_GASCGF02$corp_cd$
+		   SET PGS_ST_CD = #pgs_st_cd#
+			 , UPDR_EENO = #updr_eeno#
+			 , MDFY_YMD  = SYSDATE()
+		 WHERE DOC_NO = #doc_no#
+	</update>
+
+	 <insert id="insertGfToLrgList" parameterClass="bgabGascgf03Dto">
+		/* gift.xml :: insertGfToLrgList */
+		INSERT INTO BGAB_GASCGF03$corp_cd$ (
+		  	  LRG_CD
+			, LRG_NM
+			, LRG_SORT
+			, USE_YN
+			, INP_YMD
+			, IPE_EENO
+			, MDFY_YMD
+			, UPDR_EENO
+		) VALUES (
+			  #lrg_cd#
+			, #lrg_nm#
+			, #lrg_sort#
+			, #use_yn#
+			, SYSDATE()
+			, #ipe_eeno#
+			, SYSDATE()
+			, #ipe_eeno#
+		)
+	</insert>
+
+	<update id="updateGfToLrgList" parameterClass="bgabGascgf03Dto">
+		/* gift.xml :: updateGfToLrgList */
+		UPDATE BGAB_GASCGF03$corp_cd$
+		   SET LRG_CD    = #lrg_cd#
+			 , LRG_NM 	 = #lrg_nm#
+			 , LRG_SORT  = #lrg_sort#
+			 , USE_YN    = #use_yn#
+			 , MDFY_YMD  = SYSDATE()
+			 , UPDR_EENO = #updr_eeno#
+		 WHERE lrg_cd = #lrg_cd_h#
+	</update>
+
+	<select id="selectGfListToLrgInfo" parameterClass="bgabGascgf03Dto" resultClass="bgabGascgf03Dto">
+		/* gift.xml :: selectGfListToLrgInfo */
+		SELECT LRG_CD
+			 , LRG_NM
+			 , LRG_SORT
+			 , USE_YN
+			 , INP_YMD
+			 , IPE_EENO
+			 , MDFY_YMD
+			 , UPDR_EENO
+			 , LRG_CD AS LRG_CD_H
+		  FROM BGAB_GASCGF03$corp_cd$
+		 ORDER BY LRG_SORT ASC
+	</select>
+
+	<insert id="insertGfToMrgList" parameterClass="bgabGascgf04Dto">
+		/* gift.xml :: insertGfToMrgList */
+		INSERT INTO BGAB_GASCGF04$corp_cd$ (
+		       LRG_CD
+		     , MRG_CD
+		     , MRG_NM
+		     , MRG_SORT
+		     , USE_YN
+		     , INP_YMD
+		     , IPE_EENO
+		     , MDFY_YMD
+		     , UPDR_EENO
+		) VALUES (
+			   #lrg_cd#
+			 , #mrg_cd#
+			 , #mrg_nm#
+			 , #mrg_sort#
+			 , #use_yn#
+			 , SYSDATE()
+			 , #ipe_eeno#
+			 , SYSDATE()
+			 , #ipe_eeno#
+		)
+	</insert>
+
+	<update id="updateGfToMrgList" parameterClass="bgabGascgf04Dto">
+		/* gift.xml :: updateGfToLrgList */
+		UPDATE BGAB_GASCGF04$corp_cd$
+		   SET MRG_CD    = #mrg_cd#
+			 , MRG_NM 	= #mrg_nm#
+			 , MRG_SORT  = #mrg_sort#
+			 , USE_YN    = #use_yn#
+			 , MDFY_YMD  = SYSDATE()
+			 , UPDR_EENO = #updr_eeno#
+		 WHERE LRG_CD = #lrg_cd_h#
+		   AND MRG_CD = #mrg_cd_h#
+	</update>
+
+	<select id="selectGfListToMrgInfo" parameterClass="bgabGascgf04Dto" resultClass="bgabGascgf04Dto">
+		/* gift.xml :: selectGfListToMrgInfo */
+		SELECT 	LRG_CD
+				,MRG_CD
+				,MRG_NM
+				,MRG_SORT
+				,USE_YN
+				,INP_YMD
+				,IPE_EENO
+				,MDFY_YMD
+				,UPDR_EENO
+				,LRG_CD AS MRG_LRG_CD_H
+				,MRG_CD AS MRG_CD_H
+		FROM BGAB_GASCGF04$corp_cd$
+		WHERE LRG_CD = #lrg_cd#
+		ORDER BY MRG_SORT ASC
+	</select>
+	<delete id="deleteGfToLrgList" parameterClass="bgabGascgf03Dto">
+		/* gift.xml :: deleteGfToLrgList */
+		DELETE FROM BGAB_GASCGF03$corp_cd$
+		 WHERE lrg_cd = #lrg_cd_h#
+	</delete>
+	
+	<delete id="deleteGfToMrgDtlList" parameterClass="bgabGascgf03Dto">
+		/* gift.xml :: deleteGfToMrgDtlList */
+		DELETE FROM BGAB_GASCGF04$corp_cd$
+		 WHERE lrg_cd = #lrg_cd_h#
+	</delete>
+	
+	<delete id="deleteGfToMrgList" parameterClass="bgabGascgf04Dto">
+		/* gift.xml :: deleteGfToMrgList */
+		DELETE FROM BGAB_GASCGF04$corp_cd$
+		WHERE lrg_cd = #lrg_cd_h#
+		AND   mrg_cd = #mrg_cd_h#
+	</delete>
+
+	<select id="selectCountGfToGiftMgmtList" parameterClass="bgabGascgf01Dto" resultClass="java.lang.String">
+		/*selectCountGfToGiftMgmtList*/
+		SELECT COUNT(*) TOT_CNT
+		  FROM BGAB_GASCGF01$corp_cd$ GF01
+		  LEFT OUTER JOIN BGAB_GASCGF03$corp_cd$ GF03
+		    ON GF01.LRG_CD = GF03.LRG_CD
+		  LEFT OUTER JOIN BGAB_GASCGF04$corp_cd$ GF04
+		    ON GF01.LRG_CD = GF04.LRG_CD
+		   AND GF01.MRG_CD = GF04.MRG_CD
+		 WHERE 1 = 1
+		 <isNotEmpty property="lrg_cd" prepend="and">
+		 GF01.LRG_CD = #lrg_cd#
+		 </isNotEmpty>
+		 <isNotEmpty property="mrg_cd" prepend="and">
+		 GF01.MRG_CD = #mrg_cd#
+		 </isNotEmpty>
+	</select>
+	
+	<select id="selectGfToGiftMgmtList" parameterClass="bgabGascgf01Dto" resultClass="bgabGascgf01Dto">
+	/*selectGfToGiftMgmtList*/
+		SELECT * 
+		  FROM (
+	  		SELECT @ROWNUM := @ROWNUM + 1 AS RNUM
+	  			 , k.*
+			FROM (
+				SELECT GF01.ITEM_SEQ
+					 , GF01.LRG_CD
+					 , GF01.MRG_CD
+					 , GF01.ITEM_TTL
+					 , GF01.ITEM_QTY
+					 , GF01.ITEM_CONT
+					 , GF01.FILE_INFO
+					 , GF01.USE_YN
+					 , CASE WHEN GF01.USE_YN = 'Y'
+					 	    THEN N'사용'
+					        ELSE N'미사용'
+					    END USE_YN_NM
+					 , GF01.INP_YMD
+					 , GF01.IPE_EENO
+					 , GF01.MDFY_YMD
+					 , GF01.UPDR_EENO
+					 , CONCAT(GF03.LRG_NM, ' > ', GF04.MRG_NM) AS ITEM_CTGRY
+				  FROM BGAB_GASCGF01$corp_cd$ GF01
+				  LEFT OUTER JOIN BGAB_GASCGF03$corp_cd$ GF03
+				    ON GF01.LRG_CD = GF03.LRG_CD
+				  LEFT OUTER JOIN BGAB_GASCGF04$corp_cd$ GF04
+				    ON GF01.LRG_CD = GF04.LRG_CD
+				   AND GF01.MRG_CD = GF04.MRG_CD
+				 WHERE 1 = 1
+				 <isNotEmpty property="lrg_cd" prepend="and">
+				 GF01.LRG_CD = #lrg_cd#
+				 </isNotEmpty>
+				 <isNotEmpty property="mrg_cd" prepend="and">
+				 GF01.MRG_CD = #mrg_cd#
+				 </isNotEmpty>
+				 <isNotEmpty property="use_yn" prepend="and">
+				 GF01.USE_YN = #use_yn#
+				 </isNotEmpty>
+				 ORDER BY GF01.LRG_CD
+					    , GF01.MRG_CD
+					    , GF01.ITEM_TTL
+			) K,
+			(SELECT @ROWNUM := 0) R
+		) J
+		WHERE J.RNUM BETWEEN #startRow# AND #endRow#
+	</select>
+
+	<insert id="insertGfToGiftInfo" parameterClass="bgabGascgf01Dto">
+		/*insertGfToGiftInfo*/
+		INSERT INTO BGAB_GASCGF01$corp_cd$ (
+        	   ITEM_SEQ
+			 , LRG_CD
+			 , MRG_CD
+			 , ITEM_TTL
+			 , ITEM_QTY
+			 , ITEM_CONT
+			 , FILE_INFO
+			 , USE_YN
+			 , INP_YMD
+			 , IPE_EENO
+			 , MDFY_YMD
+			 , UPDR_EENO
+      	) VALUES (
+      		   #item_seq#
+			 , #lrg_cd#
+			 , #mrg_cd#
+			 , #item_ttl#
+			 , 1
+			 , #item_cont#
+			 , #file_info#
+			 , #use_yn#
+			 , DATE_FORMAT(SYSDATE(), '%Y%m%d')
+			 , #ipe_eeno#
+			 , DATE_FORMAT(SYSDATE(), '%Y%m%d')
+			 , #updr_eeno#
+		)
+		ON DUPLICATE KEY
+		UPDATE LRG_CD    = #lrg_cd# 
+			 , MRG_CD    = #mrg_cd#
+			 , ITEM_TTL  = #item_ttl#
+			 , ITEM_QTY  = #item_qty#
+			 , ITEM_CONT = IFNULL(#item_cont#,'0')
+			 , USE_YN    = #use_yn#
+			 , UPDR_EENO = #updr_eeno#
+			 , MDFY_YMD  = DATE_FORMAT(SYSDATE(), '%Y%m%d')
+	</insert>
+	<update id="deleteGfToGiftInfo" parameterClass="bgabGascgf01Dto">
+		/*deleteGfToGiftInfo*/
+		DELETE FROM BGAB_GASCGF01$corp_cd$
+		 WHERE ITEM_SEQ = #item_seq#
+	</update>
+
+	<select id="selectInfoGfToGiftInfo" parameterClass="bgabGascgf01Dto" resultClass="bgabGascgf01Dto">
+		/* gift.xml :: selectInfoGfToGiftInfo */
+		SELECT GF01.ITEM_SEQ
+			 , GF01.LRG_CD
+			 , GF01.MRG_CD
+			 , GF01.ITEM_TTL
+			 , GF01.ITEM_QTY
+			 , GF01.ITEM_CONT
+			 , GF01.FILE_INFO
+			 , GF01.USE_YN
+			 , CASE WHEN GF01.USE_YN = 'Y'
+			 	   THEN N'사용'
+			        ELSE N'미사용'
+			    END USE_YN_NM
+			 , CONCAT(GF03.LRG_NM, ' > ', GF04.MRG_NM) AS ITEM_CTGRY
+			 , (SELECT MAX(OGC_FIL_NM) FROM BGAB_GASCZ011$corp_cd$ WHERE DOC_NO = GF01.FILE_INFO) AS FILE_NM
+			 , (SELECT MAX(FIL_NM) FROM BGAB_GASCZ011$corp_cd$ WHERE DOC_NO = GF01.FILE_INFO) AS ORG_FILE_NM
+		  FROM BGAB_GASCGF01$corp_cd$ GF01
+		  LEFT OUTER JOIN BGAB_GASCGF03$corp_cd$ GF03
+		    ON GF01.LRG_CD = GF03.LRG_CD
+		  LEFT OUTER JOIN BGAB_GASCGF04$corp_cd$ GF04
+		    ON GF01.LRG_CD = GF04.LRG_CD
+		   AND GF01.MRG_CD = GF04.MRG_CD
+		 WHERE GF01.ITEM_SEQ = #item_seq#
+	</select>
+
+	<select id="selectInfoGfToGiftInfoByIfId" parameterClass="bgabGascgf01Dto" resultClass="bgabGascgf01Dto">
+		/* gift.xml :: selectInfoGfToGiftInfoByIfId */
+		SELECT GF01.ITEM_SEQ
+			 , GF01.LRG_CD
+			 , GF01.MRG_CD
+			 , GF01.ITEM_TTL
+			 , GF01.ITEM_QTY
+			 , GF01.ITEM_CONT
+			 , GF01.FILE_INFO
+			 , GF01.USE_YN
+			 , CASE WHEN GF01.USE_YN = 'Y'
+			 	   THEN N'사용'
+			        ELSE N'미사용'
+			    END USE_YN_NM
+			 ,  CONCAT(GF03.LRG_NM, ' > ', GF04.MRG_NM) AS ITEM_CTGRY
+			 , (SELECT MAX(OGC_FIL_NM) FROM BGAB_GASCZ011$corp_cd$ WHERE DOC_NO = GF01.FILE_INFO) AS FILE_NM
+			 , (SELECT MAX(FIL_NM) FROM BGAB_GASCZ011$corp_cd$ WHERE DOC_NO = GF01.FILE_INFO) AS ORG_FILE_NM
+		  FROM BGAB_GASCGF01$corp_cd$ GF01
+		  LEFT OUTER JOIN BGAB_GASCGF03$corp_cd$ GF03
+		    ON GF01.LRG_CD = GF03.LRG_CD
+		  LEFT OUTER JOIN BGAB_GASCGF04$corp_cd$ GF04
+		    ON GF01.LRG_CD = GF04.LRG_CD
+		   AND GF01.MRG_CD = GF04.MRG_CD
+		 WHERE GF01.ITEM_SEQ = (SELECT ITEM_SEQ FROM BGAB_GASCGF02$corp_cd$ WHERE IF_ID = #if_id#)
+	</select>
+
+
+	<select id="selectInfoGfToGiftRequstInfo" parameterClass="bgabGascgf02Dto" resultClass="bgabGascgf02Dto">
+		/* gift.xml :: selectInfoGfToGiftRequstInfo */
+		SELECT   GF02.DOC_NO
+		       , GF02.EENO
+		       , GF02.PGS_ST_CD
+		       , GF02.REQ_YMD
+		       , GF02.RCV_USER_NM
+		       , GF02.RCV_CONTACT
+		       , GF02.RCV_YMD
+		       , GF02.RCV_ZIP_CODE
+		       , GF02.RCV_ADDR
+		       , GF02.RCV_ADDR2
+		       , GF02.REMARK
+		       , GF01.ITEM_SEQ
+			   , GF01.LRG_CD
+			   , GF01.MRG_CD
+			   , GF01.ITEM_TTL
+			   , GF01.ITEM_QTY
+			   , GF01.ITEM_CONT
+			   , GF01.FILE_INFO
+			   , CONCAT(GF03.LRG_NM, ' > ', GF04.MRG_NM) AS ITEM_CTGRY
+			   , (SELECT MAX(OGC_FIL_NM) FROM BGAB_GASCZ011$corp_cd$ WHERE DOC_NO = GF01.FILE_INFO) AS FILE_NM
+			   , (SELECT MAX(FIL_NM) FROM BGAB_GASCZ011$corp_cd$ WHERE DOC_NO = GF01.FILE_INFO) AS ORG_FILE_NM
+			   , GF02.SNB_RSON_SBC
+			   , USR.XUSR_NAME      AS EENM
+			   , USR.XUSR_STEP_NAME AS POS_NM
+			   , USR.XUSR_DEPT_NAME AS OPS_NM
+			   , PGS.XCOD_HNAME     AS PGS_ST_NM
+			   , USR.XUSR_TEL_NO    AS TEL_NO
+			   , GF02.IF_ID
+		  FROM   BGAB_GASCGF02$corp_cd$ GF02
+		  LEFT   OUTER JOIN BGAB_GASCGF01$corp_cd$ GF01
+		    ON   GF02.ITEM_SEQ = GF01.ITEM_SEQ
+		  LEFT   OUTER JOIN BGAB_GASCGF03$corp_cd$ GF03
+		    ON   GF01.LRG_CD = GF03.LRG_CD
+		  LEFT   OUTER JOIN BGAB_GASCGF04$corp_cd$ GF04
+		    ON   GF01.LRG_CD = GF04.LRG_CD
+    	   AND   GF01.MRG_CD = GF04.MRG_CD
+    	  LEFT   OUTER JOIN BGAB_GASCZ002$corp_cd$ USR
+		    ON   GF02.EENO = USR.XUSR_EMPNO
+		  LEFT   OUTER JOIN BGAB_GASCZ005$corp_cd$ PGS
+		    ON   PGS.XCOD_KND  = 'XGF01'
+		   AND   PGS.LOCALE    = #locale#
+		   AND   PGS.XCOD_CODE = GF02.PGS_ST_CD
+		 <isNotEmpty property="doc_no">
+		 WHERE   GF02.DOC_NO = #doc_no#
+		 </isNotEmpty>
+		 <isEmpty property="doc_no">
+		 WHERE   GF02.IF_ID = #if_id#
+		 </isEmpty>
+	</select>
+
+	<insert id="insertGfToFile" parameterClass="BgabGascZ011Dto">
+		/* insertGfToFile */
+		INSERT INTO BGAB_GASCZ011$corp_cd$ (
+			   DOC_NO
+			 , EENO
+			 , SEQ
+			 , AFFR_SCN_CD
+			 , OGC_FIL_NM
+			 , FIL_NM
+			 , FIL_MGN_QTY
+			 , INP_YMD
+			 , IPE_EENO
+		)VALUES(
+			   #doc_no#
+			 , #eeno#
+			 , #seq#
+			 , #affr_scn_cd#
+			 , #ogc_fil_nm#
+			 , #fil_nm#
+			 , #fil_mgn_qty#
+			 , DATE_FORMAT(SYSDATE(), '%Y%m%d')
+			 , #ipe_eeno#
+		)
+	</insert>
+
+	<select id="selectGfToFile" resultClass="BgabGascZ011Dto" parameterClass="BgabGascZ011Dto">
+		/* selectGfToFile */
+		SELECT DOC_NO
+			 , EENO
+			 , SEQ
+			 , AFFR_SCN_CD
+			 , FIL_NM
+			 , OGC_FIL_NM
+			 , FIL_MGN_QTY
+			 , INP_YMD
+			 , IPE_EENO
+		  FROM BGAB_GASCZ011$corp_cd$
+		 WHERE DOC_NO = #doc_no#
+		   AND EENO = #eeno#
+		   AND SEQ = #seq#
+		   AND AFFR_SCN_CD = #affr_scn_cd#
+		   <isNotEmpty property="ogc_fil_nm" prepend="and">
+		   OGC_FIL_NM = #ogc_fil_nm#
+		   </isNotEmpty>
+		ORDER BY FIL_NM
+	</select>
+
+	<delete id="deleteGfToFile" parameterClass="BgabGascZ011Dto">
+		/* deleteGfToFile */
+		DELETE FROM BGAB_GASCZ011$corp_cd$
+		 WHERE DOC_NO = #doc_no#
+		   AND EENO = #eeno#
+		   AND SEQ = #seq#
+		   AND AFFR_SCN_CD = #affr_scn_cd#
+		   AND OGC_FIL_NM = #ogc_fil_nm#
+	</delete>
+
+	<insert id="insertGfToExcelTemp" parameterClass="bgabGascgfExcelTempDto">
+		/* gift.xml :: insertGfToExcelTemp */
+		INSERT INTO BGAB_GASCGF_EXCEL_TEMP$corp_cd$(
+			  LRG_CD
+			, LRG_NM
+			, LRG_SORT
+			, MRG_CD
+			, MRG_NM
+			, MRG_SORT
+		) VALUES (
+			  #lrg_cd#
+			, #lrg_nm#
+			, #lrg_sort#
+			, #mrg_cd#
+			, #mrg_nm#
+			, #mrg_sort#
+		)
+	</insert>
+
+	<select id="selectGfToExcelTempMrgChk" resultClass="String">
+		/* gift.xml :: selectGfToExcelTempMrgChk */
+		SELECT COUNT(CNT)
+		FROM (
+			SELECT COUNT(MRG_CD) CNT
+			  FROM BGAB_GASCGF_EXCEL_TEMP$corp_cd$
+			 GROUP BY LRG_CD, MRG_CD
+		) A
+		WHERE CNT <![CDATA[>]]> 1
+	</select>
+
+	<select id="selectGfToMrgChk" resultClass="String">
+		/* gift.xml :: selectGfToMrgChk */
+		SELECT COUNT(GF04.MRG_CD)
+		FROM BGAB_GASCGF04$corp_cd$ GF04
+		JOIN (
+			SELECT LRG_CD, MRG_CD
+			  FROM BGAB_GASCGF_EXCEL_TEMP$corp_cd$
+			 GROUP BY LRG_CD, MRG_CD
+		) TMP
+		 ON GF04.LRG_CD = TMP.LRG_CD
+		AND GF04.MRG_CD = TMP.MRG_CD
+	</select>
+
+	<select id="selectGfToLrgList" parameterClass="bgabGascgfExcelTempDto" resultClass="bgabGascgfExcelTempDto">
+		/* gift.xml :: selectGfToLrgList */
+		SELECT LRG_CD
+			 , MAX(LRG_NM)   AS LRG_NM
+			 , MAX(LRG_SORT) AS LRG_SORT
+			 , 'Y'           AS USE_YN
+			 , #eeno#        AS IPE_EENO
+			 , #eeno#        AS UPDR_EENO
+		FROM BGAB_GASCGF_EXCEL_TEMP$corp_cd$
+		GROUP BY LRG_CD
+	</select>
+
+	<select id="selectGfToLrgChk" parameterClass="bgabGascgfExcelTempDto" resultClass="String">
+		/* gift.xml :: selectGfToLrgChk */
+		SELECT COUNT(*)
+		FROM BGAB_GASCGF03$corp_cd$
+		WHERE LRG_CD = #lrg_cd#
+	</select>
+
+	<insert id="insertGfLrgToExcelTemp" parameterClass="bgabGascgfExcelTempDto">
+		/* gift.xml :: insertGfLrgToExcelTemp */
+		INSERT INTO BGAB_GASCGF03$corp_cd$(
+			  LRG_CD
+			, LRG_NM
+			, LRG_SORT
+			, USE_YN
+			, IPE_EENO
+			, INP_YMD
+			, UPDR_EENO
+			, MDFY_YMD
+		) VALUES (
+			  #lrg_cd#
+			, #lrg_nm#
+			, #lrg_sort#
+			, #use_yn#
+			, #ipe_eeno#
+			, SYSDATE()
+			, #updr_eeno#
+			, SYSDATE()
+		)
+	</insert>
+
+	<insert id="insertGfMrgToExcelTemp" parameterClass="bgabGascgfExcelTempDto">
+		/* gift.xml :: insertGfMrgToExcelTemp */
+		INSERT INTO BGAB_GASCGF04$corp_cd$
+		SELECT LRG_CD
+			 , MRG_CD
+			 , MAX(MRG_NM)   AS MRG_NM
+			 , MAX(MRG_SORT) AS MRG_SORT
+			 , 'Y'
+			 , SYSDATE()
+			 , #eeno#
+			 , SYSDATE()
+			 , #eeno#
+		FROM BGAB_GASCGF_EXCEL_TEMP$corp_cd$
+		GROUP BY LRG_CD, MRG_CD
+	</insert>
+
+	<delete id="deleteGfToExcelTemp">
+		/* gift.xml :: deleteGfToExcelTemp */
+		DELETE FROM BGAB_GASCGF_EXCEL_TEMP$corp_cd$
+	</delete>
+
+	<select id="selectXgf08Info" parameterClass="bgabGascgf05Dto" resultClass="bgabGascgf05Dto">
+		/* gift.xml :: selectXgf08Info */
+		SELECT   A.FROM_YMD
+		       , A.TO_YMD
+       		   , A.USE_YN
+		       , A.IPE_EENO
+			   , A.INP_YMD
+			   , A.UPDR_EENO
+			   , A.MDFY_YMD
+		  FROM   BGAB_GASCGF05$corp_cd$ A
+	</select>
+
+	<insert id="insertXgf08Info" parameterClass="bgabGascgf05Dto">
+		/* gift.xml :: insertXgf08Info */
+		INSERT INTO BGAB_GASCGF05$corp_cd$(
+			  FROM_YMD
+			, TO_YMD
+			, USE_YN
+			, IPE_EENO
+			, INP_YMD
+			, UPDR_EENO
+			, MDFY_YMD
+		) VALUES (
+			  #from_ymd#
+			, #to_ymd#
+			, #use_yn#
+			, #ipe_eeno#
+			, SYSDATE()
+			, #updr_eeno#
+			, SYSDATE()
+		)
+	</insert>
+
+	<update id="updateXgf08Info" parameterClass="bgabGascgf05Dto">
+		/* gift.xml :: updateXgf08Info */
+		UPDATE   BGAB_GASCGF05$corp_cd$
+		   SET   FROM_YMD  = #from_ymd#
+		       , TO_YMD    = #to_ymd#
+		       , USE_YN    = #use_yn#
+		       , UPDR_EENO = #updr_eeno#
+			   , MDFY_YMD  = SYSDATE()
+	</update>
+	<select id="getChkRequestYmd" parameterClass="bgabGascgf02Dto" resultClass="int">
+		/* gift.xml :: getChkRequestYmd */
+		SELECT COUNT(1)
+		  FROM BGAB_GASCGF05$corp_cd$
+		 WHERE DATE_FORMAT(SYSDATE(),'%Y%m%d') BETWEEN FROM_YMD AND TO_YMD
+	</select>
+	<select id="getChkRequestPossible" parameterClass="bgabGascgf02Dto" resultClass="int">
+		/* gift.xml :: getChkRequestPossible */
+		SELECT COUNT(*)
+		  FROM BGAB_GASCGF02$corp_cd$ A
+		 INNER JOIN BGAB_GASCGF05$corp_cd$ B
+		    ON A.REQ_YMD BETWEEN B.FROM_YMD AND B.TO_YMD
+		 WHERE A.EENO = #eeno#
+		   AND A.PGS_ST_CD != 'C'
+	</select>
+</sqlMap>

@@ -1,0 +1,337 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ page import="com.hncis.common.util.*"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId = "XPO01";
+	String M_DOC_NO 		= StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_doc_no")).trim());
+	String hid_csrfToken  	= StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_csrfToken")));
+	String hid_cond 	  	= StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_cond")));
+	String hid_view_nm    	= StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_view_nm")));
+	String temp_doc_no 		= StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_doc_no")).trim());
+	
+	if(StringUtil.isEmpty(M_DOC_NO)){
+		temp_doc_no = StringUtil.getDocNo();
+	}
+	
+	String strBtn = "";
+	strBtn = "new/new@저장/save@삭제/delete@request/request@request Cancel/requestCancel@confirm/confirm@reject/reject";
+	if(!"".equals(M_DOC_NO)){
+		strBtn += "@back/back";
+	}
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>REQUEST</title>
+		<script type="text/javascript" src="./js/xpo01.js"></script> 
+	</head>
+	<body>
+		<div id="wrap">
+		<form name="frm" id="frm">
+			<input type="hidden" id="initYn" value="N">
+			<input type=hidden id="pgs_st_cd">
+			<input type=hidden id="ipe_eeno">
+			<input type=hidden id="if_id">
+			<input type=hidden id="M_DOC_NO" value="<%=M_DOC_NO%>">
+			<input type="hidden" id="hid_cond" name="hid_cond" value="<%=hid_cond%>">
+			<input type="hidden" id="hid_view_nm" name="hid_view_nm" value="<%=hid_view_nm%>">
+			<input type=hidden id="temp_doc_no" value="<%=temp_doc_no%>">
+			<%@ include file="../include/hncis_header.gas"%>
+	        <div id="contents_wrap">
+	        	<%@ include file="../include/hncis_left.gas"%>
+	            <div id="contents">
+					<%=CommonGasc.getTitleAndButtonNew(
+						sess_empno
+						,"XPO01"
+						,strBtn
+						,"0"
+						,"0"
+						,null
+						,request)
+					%>
+					<div class="con_t_area">
+	                	<h3>기본정보</h3>
+	                </div>
+					<div class="search_area">
+						<table>
+							<colgroup>
+								<col style="width:85px">
+								<col style="width:160px">
+								<col style="width:80px">
+								<col style="width:160px">
+								<col style="width:80px">
+								<col style="width:160px">
+								<col style="width:80px">
+								<col style="width:160px">
+							</colgroup>
+							<tr>
+								<th>사번</th>           
+								<td> 
+									<input type="text" id="req_eeno" name="req_eeno" style="width:145px;ime-mode:disabled;" onkeyup="cearInsa();setInsaInfo();" value="<%=sess_empno %>" class="disabled inputOnlyNumber" readOnly>
+								</td>
+								<th>이름</th>
+								<td>
+									<input type="text" id="eeno_nm" name="eeno_nm" style="width:145px;" class="disabled" readonly/>
+								</td>
+								<th>직급</th> 
+								<td>  
+									<input type="text" id="pos_nm" name="pos_nm" style="width:145px;" class="disabled" readonly/>
+								</td>
+								<th>Dept.</td>    
+								<td> 
+									<input type="text" id="dept_nm" name="dept_nm" style="width:145px;" class="disabled" readonly/>
+								</td>
+							</tr>
+							<tr>
+								<th>신청일자</th>
+								<td>
+									<input type="text" id="ptt_ymd" name="ptt_ymd" style="width:145px;" class="disabled" readonly/>
+								</td>
+								<th>문서번호</th>
+								<td>
+									<input type="text" id="doc_no" name="doc_no" style="width:145px;" class="disabled" readonly/>
+								</td>
+								<th>연락처</th>
+								<td>
+									<input type="text" id="tel_no" name="tel_no" style="width:145px;" class="disabled" readonly/>
+								</td>
+								<th>진행상태</th>
+								<td> 
+									<input type="text" id="pgs_st_nm" name="pgs_st_cd_nm" style="width:145px;" class="disabled" readonly/>
+								</td>
+							</tr>
+							<tr>
+								<th>반려사유</th> 
+								<td colspan="7">
+									<input type="text" id="snb_rson_sbc" name="snb_rson_sbc" style="width:872px" class="disabled" readonly/>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div class="con_t_area">
+	                	<h3>Post office Infomation</h3>
+	                </div>
+					
+					<div class="vehicle_tbl">
+						<table>
+							<colgroup>
+							  <col style="width:140px;" />
+							  <col style="width:370px;" />
+							  <col style="width:140px;" />
+							  <col style="width:370px;" />
+							</colgroup>
+							<tr>
+								<th>Tracking No.</th> 
+								<td colspan="3">
+									<input type="text" id="po_trk_no" name="po_trk_no" style="width:757px;" readonly/>
+									<ul class="btns fr">
+				                        <li><a href="javascript:doFileAttach();">파일첨부<span></span></a></li>
+				                    </ul>
+								</td>
+							</tr>
+							<tr>
+								<th>Service Description</th> 
+								<td>
+									<select id="po_serv_desc" name="po_serv_desc" style="width:350px">
+									</select>
+								</td>
+								<th>Number of Objects</th>
+								<td>
+									<input type="text" id="po_numb_obj" name="po_numb_obj"style="width:350px;ime-mode:disabled;" onkeypress="return onlyNum2()"/>
+								</td>
+							</tr>
+							<tr>
+								<th>Additional Services</th> 
+								<td>
+									<select id="po_addt_serv" name="po_addt_serv" style="width:350px" onchange="changeAddtComb();">
+									</select>
+								</td>
+								<th id="as_type_nm"></th> 
+								<td>
+									<input type="text" id="po_cont_decl" name="po_cont_decl" style="width:350px"/>
+								</td>
+							</tr>
+							<tr>
+								<th>유형</th> 
+								<td colspan="3">
+									<select id="po_type" name="po_type" style="width:350px" onchange="changeTypeComb();">
+									</select> 
+								</td>
+							</tr>
+							<tr id="divType1">
+								<th>Object Size</th> 
+								<td colspan="3">
+									<input type="text" id="po_obj_size" name="po_obj_size" style="width:350px"/>
+								</td>
+							</tr>
+							<tr id="divType2">
+								<th>Package or Box</th> 
+								<td colspan="3">
+									<table style="border: hidden;">
+										<colgroup>
+										  <col style="width:100px;" />
+										  <col style="width:190px;" />
+										  <col style="width:100px;" />
+										  <col style="width:190px;" />
+										  <col style="width:100px;" />
+										  <col style="width:auto;" />
+										</colgroup> 
+										<tr>
+											<th>Length(cm)</th> 
+											<td>
+												<input type="text" id="po_pb_len" name="po_pb_len" style="width:165px;"/>
+											</td>
+											<th>Width(cm)</th> 
+											<td>
+												<input type="text" id="po_pb_wdth" name="po_pb_wdth" style="width:165px;"/>
+											</td>
+											<th>Height(cm)</th> 
+											<td>
+												<input type="text" id="po_pb_hght" name="po_pb_hght" style="width:165px;"/> 
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr id="divType3">
+								<th>Roll or Cylinder</th> 
+								<td colspan="3">
+									<table style="border: hidden;">
+										<colgroup>
+										  <col style="width:100px;" />
+										  <col style="width:190px;" />
+										  <col style="width:100px;" />
+										  <col style="width:auto;" />
+										</colgroup> 
+										<tr>
+											<th>Diameter(cm)</th> 
+											<td>
+												<input type="text" id="po_rc_dmtr" name="po_rc_dmtr" style="width:165px;"/>
+											</td>
+											<th>Length(cm)</th> 
+											<td>
+												<input type="text" id="po_rc_len" name="po_rc_len" style="width:165px;"/>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<th>Company Name</th> 
+								<td colspan="3">
+									<input type="text" id="po_comp_nm" name="po_comp_nm" style="width:867px"/>
+								</td>
+							</tr>
+							<tr>
+								<th>Email</th> 
+								<td>
+									<input type="text" id="po_email" name="po_email" style="width:350px"/>
+								</td>
+								<th>Phone</th>
+								<td>
+									<input type="text" id="po_phone" name="po_phone" style="width:350px"/>
+								</td>
+							</tr>
+							<tr>
+								<th>Address</th> 
+								<td>
+									<input type="text" id="po_addr" name="po_addr" style="width:350px"/>
+								</td>
+								<th>Number</th>
+								<td>
+									<input type="text" id="po_numb" name="po_numb" style="width:350px"/>
+								</td>
+							</tr>
+							<tr>
+								<th>Complement</th> 
+								<td colspan="3">
+									<input type="text" id="po_cmplt" name="po_cmplt" style="width:867px"/> 
+								</td>
+							</tr>
+							<tr>
+								<th>Neighborhood</th> 
+								<td>
+									<input type="text" id="po_nghb" name="po_nghb" style="width:350px"/>
+								</td>
+								<th>City</th>
+								<td>
+									<input type="text" id="po_city" name="po_city" style="width:350px"/>
+								</td>
+							</tr>
+							<tr>
+								<th>State</th> 
+								<td>
+									<input type="text" id="po_state" name="po_state" style="width:350px"/>
+								</td>
+								<th>Zip Code</th>
+								<td>
+									<input type="text" id="po_zip_cd" name="po_zip_cd" style="width:350px"/>
+								</td>
+							</tr>
+							<tr>
+								<th>Details</th> 
+								<td colspan="3">
+									<table style="border: hidden;">
+										<colgroup>
+										  <col style="width:140px;" />
+										  <col style="width:300px;" />
+										  <col style="width:140px;" />
+										  <col style="width:auto;" />
+										</colgroup>
+										<tr>
+											<th>Object Description</th> 
+											<td colspan="3">
+												<input type="text" id="po_obj_desc" name="po_obj_desc" style="width:720px;"/>
+											</td>
+										</tr>
+										<tr>
+											<th>Invoice</th> 
+											<td colspan="3">
+												<input type="text" id="po_invc" name="po_invc" style="width:720px;"/>
+											</td>
+										</tr>
+										<tr>
+											<th>Driver Indication</th> 
+											<td colspan="3">
+												<input type="text" id="po_drvr_indc" name="po_drvr_indc" style="width:720px;"/>
+											</td>
+										</tr>
+										<tr>
+											<th>AIT Nº</th> 
+											<td>
+												<input type="text" id="po_ait" name="po_ait" style="width:280px;"/>
+											</td>
+											<th>Period Indication</th> 
+											<td>
+												<input type="text" id="po_prd_indc" name="po_prd_indc" style="width:280px;"/>
+											</td> 
+										</tr>
+									</table>
+								</td>
+								<tr>
+									<th>Remarks</th> 
+									<td colspan="3">
+										<textarea id="remark" name="remark" rows="3" style="width:98%;border:1px solid #e2e2e2; margin-top: 2px; margin-bottom: 2px;"></textarea>
+									</td>
+								</tr>
+							</tr>
+						</table>
+					</div>
+					
+					<%@ include file="../include/hncis_message.gas"%>
+				</div>
+			</div>
+		</form>
+		<form id="hideForm" name="hideForm" method="post">
+			<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+		</form>
+		<form id="fileForm" name="fileForm">
+			<input type="hidden" id="file_doc_no" name="file_doc_no">
+			<input type="hidden" id="hid_use_yn"  name="hid_use_yn">
+			<input type="hidden" id="file_status"  name="file_status">
+			<input type="hidden" id="file_eeno" name="file_eeno">
+			<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+		</form>
+	</div>
+</html>

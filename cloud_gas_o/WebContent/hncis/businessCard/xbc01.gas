@@ -1,0 +1,1130 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId = "XBC01";
+	String hid_req_date = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_req_date")));
+	String hid_eeno     = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_eeno")));
+	String hid_csrfToken  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_csrfToken")));
+	String hid_cond 	  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_cond")));
+	String hid_view_nm    = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_view_nm")));
+	String hid_doc_no    = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_doc_no")));
+	String hid_type    = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_type")));
+
+	String strNew = JSPMessageSource.getMessage("BUTTON.NEW",locale);
+	String strSav = JSPMessageSource.getMessage("BUTTON.SAVE", locale);
+	String strDel = JSPMessageSource.getMessage("BUTTON.DELETE", locale);
+	String strReq = JSPMessageSource.getMessage("BUTTON.REQUEST", locale);
+	String strRqc = JSPMessageSource.getMessage("BUTTON.REQUESTCANCEL", locale);
+	String strCfm = JSPMessageSource.getMessage("BUTTON.CONFIRM", locale);
+	String strCfc = JSPMessageSource.getMessage("BUTTON.CONFIRMCANCEL", locale);
+	String strPrn = JSPMessageSource.getMessage("BUTTON.PRINT", locale);
+	String strBck = JSPMessageSource.getMessage("BUTTON.BACK", locale);
+
+	String strBtn = "";
+	strBtn = strNew+"/new@"+strSav+"/save@"+strSav+"/edit@"+strDel+"/delete@"+strReq+"/request@"+strRqc+"/requestCancel@"+strCfm+"/confirm@"+strCfc+"/reject";
+	if(!"".equals(hid_eeno)){
+		strBtn += "@"+strBck+"/back";
+	}
+
+	String approveStepLevel = CommonGasc.getApproveStepLevel(menuId, request);
+
+	String tempPath     = request.getServletPath().toString();
+	String stepHelpUrl  = StringUtil.getStepHelp(tempPath);
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>명함</title>
+	</head>
+	<body>
+		<div id="wrap">
+		<form name="frm" id="frm">
+			<input type="hidden" id="gubun" name="gubun">
+			<input type="hidden" id="nSource" name="nSource">
+			<input type="hidden" id="sses_eeno" name="sses_eeno" value="<%=sess_empno%>">
+			<input type="hidden" id="sses_eenm" name="sses_eenm" value="<%=sess_name%>">
+			<input type="hidden" id="hid_doc_no" name="hid_doc_no" value="<%=hid_doc_no%>">
+			<input type="hidden" id="hid_type" name="hid_type" value="<%=hid_type%>">
+			<input type="hidden" id="dvsn_c" name="dvsn_c">
+			<input type="hidden" id="dvsn_name" name="dvsn_name">
+			<input type="hidden" id="dvsn_kname" name="dvsn_kname">
+			<input type="hidden" id="dvsn_ename" name="dvsn_ename">
+			<input type="hidden" id="odu_regn_cd" name="odu_regn_cd">
+			<input type="hidden" id="ops_cd" name="ops_cd">
+			<input type="hidden" id="hid_req_date" name="hid_req_date" value="<%=hid_req_date%>">
+			<input type="hidden" id="hid_eeno" name="hid_eeno" value="<%=hid_eeno%>">
+			<input type="hidden" id="hid_cond" name="hid_cond" value="<%=hid_cond%>">
+			<input type="hidden" id="hid_view_nm" name="hid_view_nm" value="<%=hid_view_nm%>">
+			<input type="hidden" id="req_yn" name="req_yn">
+			<input type="hidden" id="if_id" name="if_id">
+			<input type="hidden" id="h_email" name="h_email">
+			<input type="hidden" id="po_no" name="po_no">
+			<input type="hidden" id="work_plac" name="work_plac">
+			<input type="hidden" id="approveStepLevel" value="<%=approveStepLevel%>">
+			<input type="hidden" id="help_url" name="help_url" value="<%=stepHelpUrl%>">
+			<input type="hidden" id="ipe_eeno" name="ipe_eeno">
+
+			<%@ include file="../include/hncis_header.gas"%>
+			<div id="contents_wrap">
+				<%@ include file="../include/hncis_left.gas"%>
+				<div id="contents">
+					<%=CommonGasc.getTitleAndButtonNew(sess_empno
+						,menuId
+						,strBtn
+						,""
+						,""
+						,null
+						,"Y"
+						,request)
+					%>
+					<div class="con_t_area mt10">
+	                	<h3><fmt:message key="basic_info"/></h3>
+	                </div>
+					<div class="search_area">
+						<table>
+							<colgroup>
+	                        	<col style="width:110px;" />
+	                            <col style="width:158px;" />
+	                            <col style="width:73px;" />
+	                            <col style="width:158px;" />
+	                            <col style="width:80px;" />
+	                            <col style="width:158px;" />
+	                            <col style="width:73px;" />
+	                            <col style="width:158px;" />
+	                        </colgroup>
+							<tr>
+								<th><fmt:message key="eeno"/></th>
+								<td><input type="text" id="eeno" style="width:140px" onkeyup="setInsaInfo('N');cearInsa();">
+									<input type="hidden" id="eeno_temp"></td>
+								<th><fmt:message key="eenm"/></th>
+								<td><input type="text" id="keyEenm" style="width:140px" class="disabled" readOnly></td>
+								<th><fmt:message key="position"/></th>
+								<td><input type="text" id="keyPosition" style="width:140px" class="disabled" readOnly></td>
+								<th><fmt:message key="dept_nm"/></th>
+								<td>
+									<input type="hidden" id="keyOpsCd" readOnly>
+									<input type="text" id="keyOpsNm" style="width:140px" class="disabled" readOnly>
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="req_ymd"/></th>
+								<td><input type="text" id="req_date" style="width:140px" class="disabled" readOnly></td>
+								<th><fmt:message key="doc_no"/></th>
+								<td><input type="text" id="doc_no" style="width:140px" class="disabled" readOnly></td>
+								<th><fmt:message key="pgs_st_nm"/></th>
+								<td>
+									<input type="hidden" id="pgs_st_cd" name="pgs_st_cd">
+									<input type="text" id="pgs_st_nm" name="pgs_st_nm" style="width:140px" class="disabled" readOnly>
+								</td>
+								<th><fmt:message key="tel_no"/></th>
+								<td><input type="text" id="keyTelNo" style="width:140px" class="disabled" readOnly></td>
+							</tr>
+							<tr>
+								<th class="div_nameF"><fmt:message key="rtn_rsn"/></th>
+								<td class="inputF" colspan="7">
+									<input type="text" id="snb_rson_sbc" name="snb_rson_sbc" style="width:843px" class="disabled">
+								</td>
+							</tr>
+						</table>
+					</div>
+
+					<div class="con_t_area">
+	                	<h3><fmt:message key="req_info"/></h3>
+	                </div>
+	                <div class="search_area">
+	                	<table>
+	                		<colgroup>
+	                			<col style="width:120px;"/>
+	                            <col style="width:auto;" />
+	                            <col style="width:120px;" />
+	                            <col style="width:auto;" />
+	                		</colgroup>
+	                		<tr>
+								<th><fmt:message key="req_rsn"/></th>
+								<td>
+									<select id="bcr_reasn" name="bcr_reasn" style="width:150px" class="req-data">
+										<option value=""><fmt:message key="select"/></option>
+									</select>
+								</td>
+								<th><fmt:message key="qty"/></th>
+								<td>
+									<select id="qty" name="qty" style="width:80px" class="req-data">
+										<option value=""><fmt:message key="select"/></option>
+										<option value="50">50</option>
+										<option value="100">100</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="eenm"/></th>
+								<td>
+									<input type="text" id="ee_en_nm" name="ee_en_nm" style="width:200px" maxlength="100" class="req-data"/>
+								</td>
+								<th><fmt:message key="dept_nm"/></th>
+								<td>
+									<input type="text" id="ops_en_nm" name="ops_en_nm" style="width:200px"/>
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="position"/></th>
+								<td>
+									<select id="olv_ecd" name="olv_ecd" class="input_down req-data" style="width:150px" onChange="ctrlStep(this.form, this.value);">
+									</select>
+									<input type="text" id="olv_enm" name="olv_enm" readOnly style="width:150px" class="req-data"/>
+								</td>
+								<th><fmt:message key="email"/></th>
+								<td>
+									<input type="text" id="eml_adr" name="eml_adr" style="width:300px"  maxlength="50" class="req-data" />
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="pn_no"/></th>
+								<td>
+									<input type="text" id="ofrm_tn" name="ofrm_tn" style="width:200px" maxlength="20"/>
+								</td>
+								<th><fmt:message key="hp_no"/></th>
+								<td>
+									<input type="text" type="text" id="user_hp_no" name="user_hp_no" style="width:200px"  maxlength="20" class="inputOnlyPhoneNumber"/>
+								</td>
+							</tr>
+<!-- 							<tr> -->
+<!-- 								<th>Nextel ID</th> -->
+<!-- 								<td colspan="3"> -->
+<!-- 									<input type="text" id="wireless_id" name="wireless_id" style="width:200px" maxlength="10"> -->
+<!-- 								</td> -->
+<!-- 							</tr> -->
+							<tr>
+								<th><fmt:message key="addr"/></th>
+								<td colspan="3">
+<!-- 									<input type="text" id="pbz_en_adr" name="pbz_en_adr" style="width:100%" value="Avenida Hyundai, 777, Agua Santa CEP: 13413 900, Piracicaba - SP" maxlength="256"> -->
+									<input type="text" id="pbz_en_adr" name="pbz_en_adr" style="width:100%" maxlength="256" class="req-data"/>
+								</td>
+							</tr>
+						</table>
+	                </div>
+					<%@ include file="../include/hncis_message.gas"%>
+				</div>
+				<div class="clear"></div>
+			</div>
+		</form>
+		<form id="hideForm" name="hideForm" method="post">
+			<input type="hidden" id="hid_csrfToken"	name="hid_csrfToken">
+		</form>
+		</div>
+		<img id="loading_progress_img" src="<%=ctxPath %>/images/common/progress_bar.gif" width="362" height="131" style="display:none" />
+	</body>
+</html>
+		<script type="text/javascript">
+		var flag = "true";
+		var userInfo;
+
+		function fnSetDocumentReady(){
+			initMenus('750');
+
+			$(".inputOnlyPhoneNumber").numeric("-");
+
+			if($("#hid_eeno").val() != ""){
+				$("#eeno").val($("#hid_eeno").val());
+				$("#eeno_temp").val($("#hid_eeno").val());
+				$("#req_date").val($("#hid_req_date").val());
+			}else{
+				$("#eeno").val($("#sses_eeno").val());
+				$("#req_yn").val("Y");
+			}
+
+			if($("#hid_doc_no").val() != ""){
+				$("#doc_no").val($("#hid_doc_no").val());
+			}
+
+// 			$(".inputOnlyNumber").numeric();
+
+			$(document).on("blur","#user_hp_no", function(e){
+				if(this.value != ""){
+					this.value = formatphoneNumber(this.value);
+				}
+			});
+
+			//frm.pbz_en_adr.value = "서울시 송파구 가락동 337-68 삼원B/D 3F";
+
+//			if(sess_plac_work == "1"){
+//				frm.pbz_en_adr.value = "Av. Hyundai, 777, Agua Santa CEP: 13413 900, Piracicaba - SP";
+//			}else if(sess_plac_work == "2"){
+//				frm.pbz_en_adr.value = "Av. das Nações Unidas, 14.171, 21º andar, Torre Crystal, Vila Gertrudes CEP: 04794-000 - São Paulo – SP";
+//			}else{
+//				frm.pbz_en_adr.value = "Av. Engenheiro Eusebio Stevaux, 1180 – Jurubatuba CEP: 04696-000 - Sao Paulo, SP";
+//			}
+
+			sess_auth = $("#work_auth").val();
+			setInsaInfo("Y");
+		}
+
+		var saveCode = "";
+		function cearInsa(){
+			if($("#eeno").val() == ""){
+				saveCode = "";
+				$("#nSource").val("");
+				$("#eeno").val("");
+				$("#keyEenm").val("");
+				$("#keyOpsCd").val("");
+				$("#keyOpsNm").val("");
+			}
+		}
+
+		function setInsaInfo(gubn){
+			if(gubn == "N"){
+				$("#eeno_temp").val(" ");
+			}
+			if($("#eeno").val() != ""){
+				var keyData = {
+						xusr_empno : $("#eeno").val(),
+						corp_cd	     : sess_corp_cd
+						};
+				paramData = {
+					paramJson : util.jsonToString(keyData)
+				};
+				doCommonAjax("/doSearchToUserInfo.do", paramData, "insaCallBack(jsonData.sendResult)");
+			}
+		}
+
+		function insaCallBack(result){
+			setBottomMsg(result.message, false);
+			userInfo = result;
+			$("#ee_en_nm").val("");
+			$("#ops_en_nm").val("");
+			$("#olv_ecd").val("");
+			$("#eml_adr").val("");
+			$("#ofrm_tn").val("");
+			$("#user_hp_no").val("");
+			$("#olv_enm").val( $("#olv_ecd option:selected").text());
+			$("#work_plac").val("");
+
+
+//			$("#eeno").val(result.xusr_empno);
+			$("#keyEenm").val(result.xusr_name);
+			$("#keyOpsCd").val(result.xusr_dept_code);
+			$("#keyOpsNm").val(result.xusr_dept_name);
+			$("#odu_regn_cd").val(result.xusr_plac_work);
+			$("#keyTelNo").val(result.xusr_tel_no);
+//			$("#user_hp_no").val(result.xusr_tel_no);
+			$("#keyPosition").val(result.xusr_step_name);
+			$("#h_email").val(result.xusr_mail_adr);
+			$("#work_plac").val(result.xusr_plac_work);
+
+			//frm.pbz_en_adr.value = "서울시 송파구 가락동 337-68 삼원B/D 3F";
+
+//			if(result.xusr_plac_work == "1"){
+//				frm.pbz_en_adr.value = "Av. Hyundai, 777, Agua Santa CEP: 13413 900, Piracicaba - SP";
+//			}else if(result.xusr_plac_work == "2"){
+//				frm.pbz_en_adr.value = "Av. das Nações Unidas, 14.171, 21º andar, Torre Crystal, Vila Gertrudes CEP: 04794-000 - São Paulo – SP";
+//			}else{
+//				frm.pbz_en_adr.value = "Av. Engenheiro Eusebio Stevaux, 1180 – Jurubatuba CEP: 04696-000 - Sao Paulo, SP";
+//			}
+
+			setComboInfo();
+		}
+
+		function setComboInfo(){
+			var url        = "doComboListToRequest.do";
+			var adr_knd = "";
+			var olv_knd    = "olv_ecd:03:3:S;";
+			var req_disc   = "bcr_reasn:05::S;";
+			var paramValue = adr_knd + olv_knd  + req_disc;
+			getCommonCode(paramValue, "N", "init();", url);
+		}
+
+		/**
+		 * process init() loading
+		 */
+		function init(){
+			initAfterMenus();
+
+			getCommonCode("qty:X3018:S;", "N", "doSearch('N');");
+		}
+
+		function retrieve(gubun){
+			switch(gubun){
+				case "search" :
+					doSearch("Y");
+					break;
+				case "save" :
+				case "edit" :
+				case "delete" :
+					if(!processValidation(gubun))return;
+					doCudAction(gubun);
+					break;
+				case "request" :
+				case "requestCancel" :
+					if(!processValidation(gubun))return;
+					doApprove(gubun);
+					break;
+				case "confirm" :
+					if(!processValidation(gubun))return;
+					doConfirm();
+					break;
+				case "reject" :
+					if(!processValidation(gubun))return;
+					doReject();
+					break;
+				case "back" :
+				    doBack();
+				    break;
+				case "new" :
+					doNew();
+					break;
+				case "print" :
+					doPrint();
+					break;
+			}
+		}
+
+		function doSearch(msgFlag){
+			if($("#eeno").val() == ""){
+				alertUI('<fmt:message key="MSG.INP.0010"/>');
+				$("#eeno").focus();
+				return;
+			}
+			
+			var req_date_temp = "";
+
+			if($.trim($("#eeno_temp").val()) == "" || $("#eeno_temp").val() != $("#eeno").val()){
+				req_date_temp = "";
+			}else{
+				req_date_temp = $("#req_date").val();
+			}
+
+			var params = {
+				key_eeno     : $("#eeno").val(),
+				key_req_date : req_date_temp,
+				doc_no 		 : $("#doc_no").val(),
+				key_code	 : "",
+				corp_cd	     : sess_corp_cd,
+				locale		 : sess_locale,
+				key_mode	 : $("#hid_type").val()
+			};
+
+			var paramData = {
+				paramJson : util.jsonToString(params)
+			};
+
+			msgFlag = typeof(msgFlag) == "undefined" ? "Y" : msgFlag;
+			doCommonAjax("doSearchToRequest.do", paramData, "loadCallBack(jsonData.sendResult, '"+msgFlag+"');");
+		}
+
+		/**
+		 * callback
+		 */
+		function loadCallBack(result, msgFlag){
+			var frm = document.frm;
+
+			loadJsonSet(result);
+			
+			if(msgFlag == "Y") setBottomMsg(result.message, false);
+
+			if($("#doc_no").val() != ""){
+				document.getElementById("save").style.display = "none";
+				document.getElementById("edit").style.display = "";
+			}else{
+				$("#req_date").val("");
+				$("#pgs_st_cd").val("");
+				$("#pgs_st_nm").val("");
+				$("#doc_no").val("");
+				$("#hid_doc_no").val("");
+
+				document.getElementById("save").style.display = "";
+				document.getElementById("edit").style.display = "none";
+			}
+
+			ctrlStep(document.frm, result.olv_cd);
+
+//			frm.pbz_en_adr.value = "서울시 송파구 가락동 337-68 삼원B/D 3F";
+			frm.pbz_en_adr.value = userInfo.xusr_addr;//하드코딩 된 주소를 인사데이터로 대체(2016.11.18) 
+
+			$("#eeno_temp").val($("#eeno").val());
+
+			if(!(sess_mstu == "M" || sess_auth == 5)){
+				readOnlyStyle("eeno", 1);
+				readOnlyStyle("ee_en_nm", 1);
+				readOnlyStyle("ops_en_nm", 1);
+				readOnlyStyle("olv_ecd", 1);
+				readOnlyStyle("eml_adr", 1);
+				readOnlyStyle("ofrm_tn", 1);
+				readOnlyStyle("pbz_en_adr", 1);
+			}
+
+			if($("#req_date").val() == ""){
+				
+				$("#ee_en_nm").val(userInfo.xusr_name);
+				$("#ops_en_nm").val(userInfo.xusr_dept_name);
+				$("#olv_ecd").val(userInfo.xusr_step_code);
+				$("#eml_adr").val($("#h_email").val().toLowerCase());
+				$("#ofrm_tn").val($("#keyTelNo").val());
+//				$("#user_hp_no").val(userInfo.xusr_tel_no);
+				$("#olv_enm").val( $("#olv_ecd option:selected").text());
+			}else{
+				$("#eml_adr").val($("#eml_adr").val().toLowerCase());
+			}
+
+			fnSubmitInfoSettings($("#pgs_st_cd").val(), $("#if_id").val(), result.code, "snb_rson_sbc", $("#approveStepLevel").val());
+
+			flag = "false";
+
+			$("#user_hp_no").trigger("blur");
+			
+			fnChkApplyReqsObjects();
+		}
+
+		function ctrlStep(frm, code){
+			if(code == "") return;
+			frm.olv_ecd.value     = code;
+
+			if(code != ""){
+				if(frm.olv_ecd.value != ''){
+					frm.olv_enm.value = frm.olv_ecd.options[frm.olv_ecd.selectedIndex].text;
+				}
+			}else{
+				frm.olv_enm.value = "";
+			}
+		}
+
+		function doCudAction(gubun) {
+			var bsicInfo = "";
+			var url = "", callBack = "";
+			if(gubun == "save"){
+				url = "doInsertBCToRequest.do";
+				callBack = "insertCallBack(jsonData.sendResult);";
+			}else if(gubun == "edit"){
+				if(sess_mstu != "M" && sess_auth != 5 && $("#pgs_st_cd").val() !== "0"){
+					alertUI('<fmt:message key="MSG.STAT.0017"/>');
+					return;
+				}
+				url = "doModifyBCToRequest.do";
+				callBack = "modifyCallBack(jsonData.sendResult);";
+			}else if(gubun == "delete"){
+				if(sess_mstu != "M" && sess_auth != 5 && $("#pgs_st_cd").val() !== "0"){
+					alertUI('<fmt:message key="MSG.STAT.0016"/>');
+					return;
+				}
+				url = "doDeleteBCToRequest.do";
+				callBack = "deleteCallBack(jsonData.sendResult);";
+			}
+
+			var d= new Date();
+			var m = d.getMonth() +1;
+			var day = d.getDate();
+			if(m < 10){ m = "0" + m; }
+			if(day < 10){ day = "0" + day; }
+			var app_dt = d.getFullYear() + "-" + m + "-" + day;
+			if($("#req_date").val() != ""){
+				app_dt = $("#req_date").val();
+			}
+
+
+			if(gubun == "edit" || gubun == "save"){
+				bsicInfo = {
+					odu_regn_cd  : $("#odu_regn_cd").val(),
+					eeno         : $("#eeno").val(),
+					ee_nm        : changeToUni($("#keyEenm").val()),
+					ops_cd       : $("#keyOpsCd").val(),
+					req_date     : app_dt,
+					pgs_st_cd    : "0",
+					bc_type      : '01',
+					bcr_reasn    : $("#bcr_reasn").val(),
+					qty          : $("#qty").val(),
+					snb_rson_sbc : changeToUni($("#snb_rson_sbc").val()),
+					olv_cd       : $("#olv_ecd").val(),
+					olv_nm       : $("#olv_enm").val(),
+					ofrm_tn      : $("#ofrm_tn").val(),
+					user_hp_no   : $("#user_hp_no").val(),
+//					fax_tn       : $("#fax_tn").val(),
+					eml_adr      : $("#eml_adr").val(),
+//					wireless_id		: $("#wireless_id").val(),
+					ee_en_nm     : changeToUni($("#ee_en_nm").val()),
+					olv_enm      : $("#olv_enm").val(),
+					ops_en_nm    : $("#ops_en_nm").val(),
+					pbz_en_adr   : changeToUni($("#pbz_en_adr").val()),
+					doc_no		 : $("#doc_no").val(),
+					ipe_eeno     : $("#sses_eeno").val(),
+					updr_eeno    : $("#sses_eeno").val(),
+					corp_cd	     : sess_corp_cd,
+					locale		  : sess_locale
+				};
+
+				if(!validation(gubun))return;
+			}else{
+				bsicInfo = {
+					key_eeno     : $("#eeno").val(),
+					doc_no		 : $("#doc_no").val(),
+					key_req_date : $("#req_date").val(),
+					corp_cd	     : sess_corp_cd,
+					locale		  : sess_locale
+				};
+			}
+
+			var confirmStr = '';
+			if(gubun == 'save'){
+				confirmStr = '<fmt:message key="MSG.CNF.0004"/>';
+			} else if(gubun == 'edit'){
+				confirmStr = '<fmt:message key="MSG.CNF.0004"/>';
+			} else if(gubun == 'delete'){
+				confirmStr = '<fmt:message key="MSG.CNF.0002"/>';
+			}
+
+			confirmUI(confirmStr);
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								bsicInfo : util.jsonToString(bsicInfo)
+						};
+						doCommonAjax(url, paramData, callBack);
+					}
+				});
+			});
+		}
+
+		function doApprove(gubun){
+			var url = "", callBack = "", pgs_st_cd = "";
+			if(gubun == "request"){
+				url = "doApproveBCToRequest.do";
+				callBack = "approveCallBack('"+gubun+"', jsonData.sendResult);";
+				pgs_st_cd = "A";
+			}else if(gubun == "requestCancel"){
+				url = "doApproveCancelBCToRequest.do";
+				callBack = "approveCallBack('"+gubun+"', jsonData.sendResult);";
+			}
+
+			var bsicInfo;
+			if(gubun == "request"){
+				bsicInfo = {
+					key_mode      : gubun,
+					key_eeno      : $("#eeno").val(),
+					key_req_date  : $("#req_date").val(),
+					key_pgs_st_cd : pgs_st_cd,
+					doc_no		  : $("#doc_no").val(),
+					qty			  : $("#qty").val(),
+					updr_eeno     : sess_empno,
+					corp_cd	   	  : sess_corp_cd,
+					locale		  : sess_locale
+				};
+			}else{
+				bsicInfo = {
+					if_id     : $("#if_id").val(),
+					doc_no	  : $("#doc_no").val(),
+					po_no	  : $("#po_no").val(),
+					updr_eeno : sess_empno,
+					corp_cd	  : sess_corp_cd,
+					locale	  : sess_locale,
+					key_eeno     : $("#eeno").val(),
+					key_req_date : $("#req_date").val(),
+				};
+			}
+
+			var confirmStr = '';
+			if(gubun == 'request'){
+				confirmStr = '<fmt:message key="MSG.CNF.0005"/>';
+			} else if(gubun == 'requestCancel'){
+				confirmStr = '<fmt:message key="MSG.CNF.0006"/>';
+			}
+
+			fnStartLoading();
+
+
+			confirmUI(confirmStr);
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								bsicInfo : util.jsonToString(bsicInfo)
+						};
+						doCommonAjax(url, paramData, callBack);
+					}
+				});
+			});
+		}
+
+		function doConfirm(){
+			var bsicInfo = {
+				key_mode      : "confirm",
+				key_eeno      : $("#eeno").val(),
+				key_req_date  : $("#req_date").val(),
+				key_pgs_st_cd : "3",
+				doc_no		  : $("#doc_no").val(),
+				updr_eeno     : sess_empno,
+				corp_cd	   	  : sess_corp_cd
+			};
+
+			fnStartLoading();
+
+			confirmUI('<fmt:message key="MSG.CNF.0007"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								bsicInfo : util.jsonToString(bsicInfo)
+						};
+						doCommonAjax("doConfirm1BCToRequest.do", paramData, "confirm1CallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function doReject(){
+
+			if($("#snb_rson_sbc").val() == ""){
+				alertUI('<fmt:message key="MSG.INP.0011"/>');
+				$("#snb_rson_sbc").focus();
+				return;
+			}
+
+
+			fnStartLoading();
+
+			var keyData = {
+				doc_no			 : $("#doc_no").val(),
+				eeno			 : $("#eeno").val(),
+				key_eeno		 : $("#eeno").val(),
+				pgs_st_cd		 : '2',
+				snb_rson_sbc  	 : changeToUni($("#snb_rson_sbc").val()),
+				updr_eeno		 : sess_empno,
+				corp_cd	   		 : sess_corp_cd
+			};
+
+			confirmUI('<fmt:message key="MSG.CNF.0010"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								bsicInfo : util.jsonToString(keyData)
+						};
+						doCommonAjax("doRejectBCToRequest.do", paramData, "confirmCancelCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function doConfirm2(){
+
+			var bsicInfo = {
+				key_mode      : "confirm2",
+				key_eeno      : $("#eeno").val(),
+				key_req_date  : $("#req_date").val(),
+				key_pgs_st_cd : "5",
+				updr_eeno     : sess_empno,
+				corp_cd	   	  : sess_corp_cd
+			};
+
+			confirmUI('<fmt:message key="MSG.CNF.0007"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								bsicInfo : util.jsonToString(bsicInfo)
+						};
+						doCommonAjax("doConfirm2BCToRequest.do", paramData, "confirm2CallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function insertCallBack(result){
+
+			$("#req_yn").val("N");
+			$("#req_date").val(getCurrentToDate("CZ"));
+			$("#hid_req_date").val($("#req_date").val());
+			$("#doc_no").val(result.code);
+//			$("#eeno_temp").val($("#sses_eeno").val());
+
+			setBottomMsg(result.message, true);
+			doSearch("N");
+		}
+
+		function modifyCallBack(result){
+			setBottomMsg(result.message, true);
+			doSearch("N");
+		}
+
+		function deleteCallBack(result){
+			setBottomMsg(result.message, true);
+
+			$("#req_date").val("");
+			$("#pgs_st_cd").val("");
+			$("#pgs_st_nm").val("");
+
+			$("#hid_req_date").val("");
+			$("#eeno_temp").val("");
+			$("#req_yn").val("Y");
+
+			if($("#apprLev1").val() != ""){
+				document.all.SUBMIT_TITLE[0].innerText = " ";
+				document.all.SUBMIT_DATA[0].innerText = " ";
+				document.all.SUBMIT_TITLE[1].innerText = " ";
+				document.all.SUBMIT_DATA[1].innerText = " ";
+				document.getElementById("save").style.display = "";
+				document.getElementById("edit").style.display = "none";
+			}
+			
+			doSearch("N");
+		}
+
+		function approveCallBack(gubun, result){
+			fnEndLoading();
+			setBottomMsg(result.message, true);
+			$("#pgs_st_cd").val(result.code);
+			$("#if_id").val(result.code1);
+			doSearch("N");
+		}
+
+		function confirm1CallBack(result){
+			fnEndLoading();
+			setBottomMsg(result.message, true);
+			$("#pgs_st_cd").val(result.code);
+			doSearch("N");
+		}
+
+		function confirmCancelCallBack(result){
+			fnEndLoading();
+			setBottomMsg(result.message, true);
+			$("#pgs_st_cd").val(result.code);
+			doSearch("N");
+		}
+
+		function confirm2CallBack(result){
+			setBottomMsg(result.message, true);
+			$("#pgs_st_cd").val(result.code);
+			doSearch("N");
+		}
+
+		function clearForm(){
+
+		}
+
+		/**
+		 * techical method
+		 */
+		function change_info(type){
+			document.getElementById("czk").style.display = "none";
+			document.getElementById("kor").style.display = "none";
+			document.getElementById("eng").style.display = "none";
+
+			document.getElementById(type).style.display = "";
+
+			document.getElementById("ttl_czk").style.background = "white";
+			document.getElementById("ttl_kor").style.background = "white";
+			document.getElementById("ttl_eng").style.background = "white";
+
+			var tmp = eval("document.all.ttl_" + type);
+			tmp.style.background = "#B6C4EB";
+		}
+
+		function ctrlAddr(frm, code){
+			if(code == "") return;
+			try{
+				frm.pbz_en_adr.value = "서울시 송파구 가락동 337-68 삼원B/D 3F";
+//				if(sess_plac_work == "1"){
+//					frm.pbz_en_adr.value = "Av. Hyundai, 777, Agua Santa CEP: 13413 900, Piracicaba - SP";
+//				}else if(sess_plac_work == "2"){
+//					frm.pbz_en_adr.value = "Av. das Nações Unidas, 14.171, 21º andar, Torre Crystal, Vila Gertrudes CEP: 04794-000 - São Paulo – SP";
+//				}else{
+//					frm.pbz_en_adr.value = "Av. Engenheiro Eusebio Stevaux, 1180 – Jurubatuba CEP: 04696-000 - Sao Paulo, SP";
+//				}
+			}catch(e){
+				alertUI(e.message + " , " + e.name);
+				alertUI('<fmt:message key="MSG.INP.0004"/>');
+				frm.pbz_en_adr.value    = "";
+			}
+		}
+
+		function validation(gubun){
+
+			if($("#eeno").val().length < 7 || $("#keyEenm").val() == ""){
+				alertUI('<fmt:message key="MSG.INP.0010"/>');
+				$("#eeno").focus();
+				return false;
+			}
+			if($("#bcr_reasn").val() == ""){
+				alertUI('<fmt:message key="MSG.SEL.0014"/>');
+				$("#bcr_reasn").focus();
+				return false;
+			}
+
+			if($("#qty").val() == ""){
+				alertUI('<fmt:message key="MSG.SEL.0001"/>');
+				$("#qty").focus();
+				return false;
+			}
+			if($("#olv_enm").val() == ""){
+				alertUI('<fmt:message key="MSG.INP.0001"/>');
+				$("#olv_ecd").focus();
+				return false;
+			}
+//			if($("#ofrm_tn").val() == ""){
+//				alertUI("전화번호를 입력하세요.");
+//				$("#ofrm_tn").focus();
+//				return false;
+//			}
+//			if($("#user_hp_no").val() == ""){
+//				alertUI("휴대전화를 입력하세요.");
+//				$("#user_hp_no").focus();
+//				return false;
+//			}
+
+			if($("#eml_adr").val() == ""){
+				alertUI('<fmt:message key="MSG.INP.0002"/>');
+				$("#eml_adr").focus();
+				return false;
+			}
+
+			if($("#pbz_en_adr").val() == ""){
+				alertUI('<fmt:message key="MSG.INP.0003"/>');
+				$("#pbz_en_adr").focus();
+				return false;
+			}
+
+//			if($("#wireless_id").val() == ""){
+//				alertUI("Please enter Nextel ID!");
+//				$("#wireless_id").focus();
+//				return false;
+//			}
+
+			return true;
+		}
+
+		function processValidation(gubun){
+			var pgs_st_cd = $("#pgs_st_cd").val();
+			var flag      = false;
+
+			var isAdmin = sess_mstu == "M" || sess_auth >= 5;
+			var isWriter = $("#ipe_eeno").val() == sess_empno;
+
+			if(pgs_st_cd == '' && gubun != 'save'){
+				alertUI('<fmt:message key="MSG.STAT.0047"/>');
+				return false;
+			}
+
+			if(gubun == "save"){						//저장
+				if(isAdmin){
+					if(pgs_st_cd == '3'){
+						alertUI('<fmt:message key="MSG.STAT.0002"/>');	//저장할 수 없는 상태입니다.
+					} else {
+						flag = true;
+					}
+				} else {
+					if(pgs_st_cd == ''){
+						flag = true;
+					} else if(pgs_st_cd == '0'){
+						if(isWriter){
+							flag = true;
+						} else {
+							alertUI('<fmt:message key="MSG.STAT.0039"/>');	//신청자만이 요청할 수 있습니다.
+						}
+					} else if(pgs_st_cd == '3'){
+						alertUI('<fmt:message key="MSG.STAT.0002"/>');	//저장할 수 없는 상태입니다.
+					} else {
+						alertUI('<fmt:message key="MSG.STAT.0002"/>');	//저장할 수 없는 상태입니다.
+					}
+				}
+			}else if(gubun == "edit"){						//저장
+				if(isAdmin){
+					if(pgs_st_cd == '3'){
+						alertUI('<fmt:message key="MSG.STAT.0002"/>');	//저장할 수 없는 상태입니다.
+					} else {
+						flag = true;
+					}
+				} else {
+					if(pgs_st_cd == '0'){
+						if(isWriter){
+							flag = true;
+						} else {
+							alertUI('<fmt:message key="MSG.STAT.0039"/>');	//신청자만이 요청할 수 있습니다.
+						}
+					} else if(pgs_st_cd == '3'){
+						alertUI('<fmt:message key="MSG.STAT.0002"/>');	//저장할 수 없는 상태입니다.
+					} else {
+						alertUI('<fmt:message key="MSG.STAT.0002"/>');	//저장할 수 없는 상태입니다.
+					}
+				}
+			} else if(gubun == "delete"){				//삭제
+				if(isAdmin){
+					if(pgs_st_cd == '3'){
+						alertUI('<fmt:message key="MSG.STAT.0003"/>');	//삭제할 수 없는 상태입니다.
+					} else {
+						flag = true;
+					}
+				} else {
+					if(pgs_st_cd == '0'){
+						if(isWriter){
+							flag = true;
+						} else {
+							alertUI('<fmt:message key="MSG.STAT.0039"/>');	//신청자만이 요청할 수 있습니다.
+						}
+					} else if(pgs_st_cd == '3'){
+						alertUI('<fmt:message key="MSG.STAT.0003"/>');	//삭제할 수 없는 상태입니다.
+					} else {
+						alertUI('<fmt:message key="MSG.STAT.0003"/>');		//삭제할 수 없는 상태입니다.
+					}
+
+				}
+			} else if(gubun == "request"){				//신청
+				if(pgs_st_cd == '0'){
+					if(isAdmin){
+						flag = true;
+					} else {
+						if(isWriter){
+							flag = true;
+						} else {
+							alertUI('<fmt:message key="MSG.STAT.0039"/>');	//신청자만이 요청할 수 있습니다.
+						}
+					}
+				} else {
+					alertUI('<fmt:message key="MSG.STAT.0005"/>');		//신청할 수 없는 상태입니다.
+				}
+			} else if(gubun == "requestCancel"){		//신청취소
+				if( $("#apprLev1").val() == "" ){
+					if(pgs_st_cd == 'Z'){
+						flag = true;
+					}else{
+						alertUI('<fmt:message key="MSG.STAT.0006"/>');
+					}
+				}else{
+					if(pgs_st_cd == 'A'){
+						if(isAdmin){
+							flag = true;
+						} else {
+							if(isWriter){
+								flag = true;
+							} else {
+								alertUI('<fmt:message key="MSG.STAT.0039"/>');	//신청자만이 요청할 수 있습니다.
+							}
+						}
+					} else {
+						alertUI('<fmt:message key="MSG.STAT.0006"/>');		//신청취소할 수 없는 상태입니다.
+					}
+				}
+			} else if(gubun == "confirm"){				//확정
+				if(pgs_st_cd == 'Z'){
+					if(isAdmin){
+						flag = true;
+					} else {
+						alertUI('<fmt:message key="MSG.STAT.0038"/>');	//권한이 없습니다.
+					}
+				} else {
+					alertUI('<fmt:message key="MSG.STAT.0009"/>');		//확정할 수 없는 상태입니다.
+				}
+			} else if(gubun == "reject"){				//반려
+				if(pgs_st_cd == 'Z'){
+					if(isAdmin){
+						flag = true;
+					} else {
+						alertUI('<fmt:message key="MSG.STAT.0038"/>');	//권한이 없습니다.
+					}
+				} else {
+					alertUI('<fmt:message key="MSG.STAT.0011"/>');		//반려할 수 없는 상태입니다.
+				}
+			} else if(gubun == "print"){				//인쇄
+				if(isAdmin){
+					flag = true;
+				} else {
+					if(isWriter){
+						flag = true;
+					} else {
+						alertUI('<fmt:message key="MSG.STAT.0038"/>');		//권한이 없습니다.
+					}
+				}
+			}
+
+// 			if((sess_mstu == "M" || sess_auth == 5) && (gubun == "edit" || gubun == "delete")){
+// 				flag  = true;
+// 			}else if(gubun == "save" || gubun == "delete"){
+// 				flag  = true;
+// 			}else if(pgs_st_cd == ""){
+// 				if(gubun == "save"){
+// 					flag  = true;
+// 				}else{
+// 					alertUI('<fmt:message key="MSG.STAT.0029"/>');
+// 				}
+// 			}else if($("#eeno_temp").val() != $("#eeno_temp").val()){
+// 				alertUI('<fmt:message key="MSG.VAL.0007"/>');
+// 			}else if(pgs_st_cd == "0"){
+// 				if(gubun == "confirmCancel"){
+// 					alertUI('<fmt:message key="MSG.STAT.0023"/>');
+// 					flag = false;
+// 				}else if(gubun == "confirm"){
+// 					alertUI('<fmt:message key="MSG.STAT.0022"/>');
+// 					flag = false;
+// 				}else if(gubun == "requestCancel"){
+// 					alertUI('<fmt:message key="MSG.STAT.0019"/>');
+// 					flag = false;
+// 				}else{
+// 					flag = true;
+// 				}
+// 			}else if(pgs_st_cd == "A"){
+// 				if(gubun == "requestCancel"){
+// 					flag = true;
+// 				}else{
+// 					alertUI('<fmt:message key="MSG.STAT.0031"/>');
+// 					flag = false;
+// 				}
+// 			}else if(pgs_st_cd == "3"){
+// 				if(gubun != "confirmCancel"){
+// 					alertUI('<fmt:message key="MSG.STAT.0026"/>');
+// 					flag = false;
+// 				}else{
+// 					flag = true;
+// 				}
+// 			}else if(pgs_st_cd == "7"){
+// 				if(gubun == "confirmCancel"){
+// 					flag = true;
+// 				}else{
+// 					alertUI('<fmt:message key="MSG.STAT.0036"/>');
+// 					flag = false;
+// 				}
+// 			}else if(pgs_st_cd == "Z"){
+// 				if(gubun == "confirm" || gubun == "requestCancel"){
+// 					flag  = true;
+// 				}else{
+// 					alertUI('<fmt:message key="MSG.STAT.0034"/>');
+// 					flag = false;
+// 				}
+// 			}
+
+			return flag;
+		}
+
+		function doBack(){
+		    var form = $("<form/>");
+		    form.attr("method" , "post");
+		    form.attr("id"     , "submitForm").attr("name", "submitForm");
+		    form.attr("action" , $("#hid_view_nm").val() + ".gas");
+		    var inp1 = $("<input type='hidden' id='hid_cond' name='hid_cond'/>").val($("#hid_cond").val());
+		    var token = $("<input type='hidden' id='hid_csrfToken' name='hid_csrfToken'/>").val($("#csrfToken").val());
+		    form.append(inp1, token);
+		    $("body").append(form);
+		    form.submit();
+		    form.remove();
+		}
+
+		function doNew(){
+			displaySubmitClear(document);
+			$("#eeno").val($("#sses_eeno").val());
+			$("#eeno_temp").val("");
+			$("#req_yn").val("Y");
+			setInsaInfo("Y");
+//			setFormClear();
+		}
+
+		function setFormClear(){
+
+		}
+
+		function doPrint(){
+		    $.printPreview.loadPrintPreview();
+		}
+
+		function pageStepHelpPopup(){
+			if(popup != null ){
+				popup.close();
+			}
+
+			popup = popUpWindow3($("#help_url").val());
+		}
+		</script>

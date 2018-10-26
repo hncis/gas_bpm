@@ -1,0 +1,111 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XTM01";
+	String hid_doc_no = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_doc_no")));
+	String hid_eeno = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_eeno")));
+	String hid_view_nm = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_view_nm")));
+	String hid_cond = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_cond")));
+	
+	String strBtn = "";
+	strBtn = "search/search@추가/addrow@저장/save@삭제/delete@email Send/emailSend@done/done@done Cancel/doneCancel@payment/payment";
+	if(!"".equals(hid_doc_no)){
+		strBtn += "@back/back";
+	}
+	String yy = CurrentDateTime.getDate().substring(0, 4);
+	String mm = CurrentDateTime.getDate().substring(4, 6);
+	String dd = CurrentDateTime.getDate().substring(6, 8);
+	String yymmdd = yy + "/" + mm + "/" + dd;
+%>
+<html>
+	<head>
+		<title>GeneralService - Request</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<script type="text/javascript" src="./js/xtm01.js"></script>
+	</head>
+	<body>
+		<div id="wrap">
+			<form name="mainForm" id="mainForm">
+				<input type="hidden" id="nSource" name="nSource">
+				<input type="hidden" id="hid_doc_no" name="hid_doc_no" value="<%=hid_doc_no%>">
+				<input type="hidden" id="hid_eeno" name="hid_eeno" value="<%=hid_eeno%>">
+				<input type="hidden" id="temp_doc_no" name="temp_doc_no" value="<%=hid_eeno%>">
+				<input type="hidden" id="hid_view_nm" name="hid_view_nm" value="<%=hid_view_nm%>">
+				<input type="hidden" id="hid_cond" name="hid_cond" value="<%=hid_cond%>">
+				<%@ include file="../include/hncis_header.gas"%>
+				<div id="contents_wrap">
+					<%@ include file="../include/hncis_left.gas"%>
+					<div id="contents">
+						<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,menuId
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+		                <div class="con_t_area mt10">
+		                	<h3>기본정보</h3>
+		                </div>
+		                <div class="search_area">
+		                	<table>
+		                        <colgroup>
+		                        	<col width="90px" />
+		                        	<col width="100px" />
+		                        	<col width="40px" />
+		                        	<col width="80px" />
+		                        	<col width="50px" />
+		                        	<col width="110px" />
+		                        	<col width="50px" />
+		                        	<col width="110px" />
+		                        	<col width="50px" />
+		                        	<col width="110px" />
+		                        	<col width="50px" />
+		                        	<col width="*" />
+		                        </colgroup>
+		                        <tbody>
+		                            <tr>
+										<th class="div_name">Number Plate</th>
+										<td class="inputT">
+											<input type="text" id="key_car_no" name="key_car_no" style="width:90px;" onkeyup="this.value.toUpperCase()">
+										</td>
+										<th class="div_nameF">ID</th>
+										<td class="inputF">
+											<input type="text" id="key_eeno" name="key_eeno" style="width:70px; ime-mode:disabled;" onkeyup="clearInsa();setInsaInfo();">
+										</td>
+										<th class="div_name">Name</th>
+										<td class="inputS">
+											<input type="text" id="key_eenm" name="key_eenm" style="width:100px;">
+										</td>
+										<th class="div_name">Region</th>
+										<td class="inputS">
+											<select id="key_region_cd" name="key_region_cd" style="min-width:100px"></select>
+										</td>
+										<th class="div_nameF">AIT</th>
+										<td class="inputF">
+											<input type="text" id="key_tic_aet" name="key_tic_no" style="width:100px;">
+										</td>
+										<th class="div_name">Status</th>
+										<td class="inputT">
+											<select id="key_pgs_st_cd" name="key_pgs_st_cd" style="min-width:100px"></select>
+										</td>
+									</tr>
+		                        </tbody>
+		                    </table>
+		                </div>
+		                <div class="jq_tbl">
+		                	<table id="htmlTable" class="scroll"></table>
+		                	<div id="htmlPager" class="scroll"></div>
+		                </div>
+	                	<%@ include file="../include/hncis_message.gas"%>
+	            	</div>
+	            	<div class="clear"></div>
+				</div>
+			</form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>	
+		</div>
+		<img id="loading_progress_img" src="<%=ctxPath %>/images/common/progress_bar.gif" width="362" height="131" style="display:none" />	
+	</body>
+</html>

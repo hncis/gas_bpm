@@ -1,0 +1,33 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>총무지원센터</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<style type="text/css">
+			.error404 { margin-top: 50px;background: #f7f7f7 url('/images/sub/error_icon.png') 50% 50px no-repeat;border: 1px solid #e4e4e4;width: 99%;text-align: center; }
+			.error404 p { margin-top: 248px;color: #000;font-size: 40px;font-family: Arial, Verdana, sans-serif; }
+			.error404 a.error_mail { display: block;margin-top: 20px;margin-bottom: 50px;font-size: 18px;font-family: Arial, Verdana, sans-serif;color: #5788c9; }
+			.error404 a.error_mail:visited { color: #5788c9; }
+		</style>
+	</head>
+	
+	<body>
+		<div id="wrap">
+			<div id="GASC">
+				<form action="" id="">
+					<div id="container_wrap">
+						<div id="container">
+							<div class="error404">
+								<p>페이지를 찾을 수 없습니다.</p>
+								<a href="mailto:juni@hncis.co.kr" class="error_mail">juni@hncis.co.kr</a>
+							</div>
+							<div id="footer" align="center">COPYRIGHT HUMANN-CIS COMPANY ALL RIGHT RESERVED.</div>
+						</div>
+					</div>
+					<div class="clear"></div>
+				</form>
+			</div>
+		</div>
+	</body>
+</html>

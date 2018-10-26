@@ -1,0 +1,192 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="com.hncis.common.util.*"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String docId = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("docid")));
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>운행일지</title>
+	</head>
+	<body>
+		<div id="wrap" class="submit_page">
+	    	<form name="frm" id="frm">
+				<input type="hidden" id="if_id" name="if_id" value="<%=docId %>">
+		        <div id="contents_wrap" class="any_page">
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(
+							sess_empno
+							,"XVL01"
+							,""
+							,""
+							,""
+							,null
+							,"Y"
+							,request)
+						%>
+						<div id="basic">
+			                <div class="con_t_area">
+			                	<h3><fmt:message key="basic_info"/></h3>
+			                </div>
+			                <div class="search_area">
+			                	<table>
+			                        <colgroup>
+			                        	<col style="width:110px;" />
+			                        	<col style="width:170px;" />
+			                        	<col style="width:60px;" />
+			                        	<col style="width:170px;" />
+			                        	<col style="width:60px;" />
+			                        	<col style="width:170px;" />
+			                        	<col style="width:60px;" />
+			                            <col style="width:auto;" />
+			                        </colgroup>
+			                        <tbody>
+			                            <tr>
+											<th><fmt:message key="eeno"/></th>
+											<td>
+												<input type="text" id="eeno" name="eeno" style="width:155px;ime-mode:disabled;" class="disabled" readOnly>
+											</td>
+											<th><fmt:message key="eenm"/></th>
+											<td>
+												<input type="text" id="eeno_nm" name="eeno_nm" style="width:155px;" class="disabled" readOnly/>
+											</td>
+											<th><fmt:message key="position"/></th>
+											<td>
+												<input type="text" id="pos_nm" name="pos_nm" style="width:155px;" class="disabled" readOnly/>
+											</td>
+											<th><fmt:message key="dept_nm"/></th>
+											<td>
+												<input type="text" id="dept_nm" name="dept_nm" style="width:155px;" class="disabled" readOnly/>
+											</td>
+										</tr>
+										<tr>
+											<th><fmt:message key="req_ymd"/></th>
+											<td>
+												<input type="text" id="reg_ymd" name="reg_ymd" style="width:155px;" class="disabled" readOnly/>
+											</td>
+											<th><fmt:message key="doc_no"/></th>
+											<td>
+												<input type="text" id="doc_no" name="doc_no" style="width:155px;" class="disabled" readOnly/>
+											</td>
+											<th>진행상태</th>
+											<td>
+												<input type="hidden" id="pgs_st_cd"/>
+												<input type="text" id="pgs_st_nm" name="pgs_st_nm" style="width:155px;" class="disabled" readOnly/>
+											</td>
+											<th><fmt:message key="tel_no"/></th>
+											<td>
+												<input type="text" id="tel_no" name="tel_no" style="width:155px;" class="disabled" readOnly/>
+											</td>
+										</tr>
+			                        </tbody>
+			                    </table>
+			                </div>
+			                <div class="con_t_area">
+			                	<h3><fmt:message key="run_info"/></h3>
+			                </div>
+			                <div class="vehicle_tbl">
+								<table>
+								<colgroup>
+								  <col style="width:105px;" />
+								  <col style="width:420px;" />
+								  <col style="width:105px;" />
+								  <col style="width:auto;" />
+								</colgroup>
+									<tr>
+										<th><fmt:message key="car_no"/></th>
+										<td>
+											<input type="text" id="car_no" name="car_no" style="width:80px;" class="disabled" readonly />
+											<input type="text" id="vehl_cd" name="vehl_cd" style="width:180px;" class="disabled" readonly />
+											<input type="text" id="car_type_cd" name="car_type_cd" style="width:100px;" class="disabled" readonly />
+										</td>
+										<th><fmt:message key="acc_dist"/></th>
+										<td>
+											<input type="text" id="trvg_dist" name="trvg_dist" style="ime-mode:disabled;width:86px;" class="disabled" readOnly/>
+										</td>
+									</tr>
+									<tr>
+										<th><fmt:message key="term"/></th>
+										<td colspan="3">
+											<input type="text" id="strt_ymd" name="strt_ymd" style="width:100px;" readonly class="disabled" readOnly/>
+											<input type="text" id="strt_tim" name="strt_tim" style="width:70px; ime-mode:disabled" maxLength="4" class="disabled" readOnly/>&nbsp;&nbsp;~&nbsp;
+											<input type="text" id="fnh_ymd" name="fnh_ymd" style="width:100px;" readonly class="disabled" readOnly/>
+											<input type="text" id="fnh_tim" name="fnh_tim" style="width:70px; ime-mode:disabled" maxLength="4" class="disabled" readOnly/>
+										</td>
+									</tr>
+									<tr>
+										<th><fmt:message key="dept"/></th>
+										<td>
+											<input type="text" id="start_loc" name="start_loc" style="" class="disabled" readOnly/>
+										</td>
+										<th><fmt:message key="dept_acc_dist"/></th>
+										<td>
+											<input type="text" id="strt_trvg_dist" name="strt_trvg_dist" style="width:60px;ime-mode:disabled;text-align:right;" class="disabled" maxlength="7" readOnly/> KM
+										</td>
+									</tr>
+									<tr>
+										<th><fmt:message key="pass_loc"/></th>
+										<td colspan="3">
+											<input type="text" id="pass_loc" name="pass_loc" class="disabled" readOnly/>
+										</td>
+									</tr>
+									<tr>
+										<th><fmt:message key="dest"/></th>
+										<td>
+											<input type="text" id="fnh_loc" name="fnh_loc" style="" class="disabled" readOnly/>
+										</td>
+										<th><fmt:message key="dest_acc_dist"/></th>
+										<td>
+											<input type="text" id="fnh_trvg_dist" name="fnh_trvg_dist" style="width:60px;ime-mode:disabled;text-align:right;"  class="disabled" readOnly maxlength="7" /> KM
+										</td>
+									</tr>
+									<tr>
+										<th><fmt:message key="run_purp"/></th>
+										<td colspan="3">
+											<input type="text" id="purpose" name="purpose" style="" maxlength="100" class="disabled" readOnly/>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+		                <%@ include file="../include/hncis_message.gas"%>
+		            </div>
+		            <div class="clear"></div>
+		        </div>
+	        </form>
+	    </div>
+	</body>
+</html>
+		<script type="text/javascript">
+		function fnSetDocumentReady(){
+			init();
+		}
+
+		function init(){
+			doSearch();
+		}
+
+		function doSearch(msgFlag){
+			var keyData = {
+				if_id	: $('#if_id').val(),
+				corp_cd	: sess_corp_cd,
+				locale	: sess_locale
+			};
+			paramData = {
+					paramJson      	: util.jsonToString(keyData)
+			};
+			doCommonAjax("doSelectXvl01InfoByIfId.do", paramData, "doSearchCallBack(jsonData.sendResult);");
+		}
+
+		/**
+		 * callback
+		 */
+		function doSearchCallBack(result,msgFlag){
+			loadJsonSet(result);
+			
+			setBottomMsg(result.message, false);
+			
+			fnSubmitInfoSettings($("#pgs_st_cd").val(), $("#if_id").val(), result.code, "snb_rson_sbc", "1");
+		}
+
+		</script>

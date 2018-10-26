@@ -1,0 +1,155 @@
+<%@ page contentType="text/html; charset=UTF-8"%>
+<%@ page import="com.hncis.common.message.HncisMessageSource"%>
+<%@ page import="java.util.Locale" %>
+<%@ page import="java.util.Arrays" %>
+<%@ page import="java.util.Comparator" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:choose>
+	<c:when test="${param.reqLocale ne null and param.reqLocale ne ''}">
+		<c:set var="reqLocale" value="${param.reqLocale}"/>
+	</c:when>
+	<c:otherwise>
+		<c:set var="reqLocale" value="${reqLocale}"/>
+	</c:otherwise>
+</c:choose>
+<fmt:setLocale value="${reqLocale}"/>
+<fmt:setBundle basename="com.hncis.common.message.messages"/>
+<%
+	String ctxPath = request.getContextPath();
+	Locale[] locales = Locale.getAvailableLocales();
+
+	String corpCd = request.getParameter("corp_cd");
+	String corpNm = request.getParameter("corp_nm");
+	String venCd = request.getParameter("ven_cd");
+	String reqUserNm = request.getParameter("req_user_nm");
+	String reqContact = request.getParameter("req_contact");
+	String reqEmail = request.getParameter("req_email");
+	String useCnt = request.getParameter("use_cnt");
+	String payAmt = request.getParameter("spn_pay_amt");
+%>
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<title><fmt:message key="signup"/></title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv="pragma" content="no-cache">
+		<meta http-equiv="expires" content="-1">
+		<link rel="stylesheet" href="<%=ctxPath%>/script/css/hncis_login.css" />
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery.blockUI.js"></script>
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/jsonUtil.js"></script>
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/common.js"></script>
+		<style>
+			.info {display: none;}
+			.pos3_1 {position: absolute; top: 113px; left: 138px; z-index:1;}
+			.pos3_2 {position: absolute; top: 153px; left: 138px; z-index:2;}
+			.pos3_2 span {color: red; font-weight: bold;}
+			.pos3_3 {position: absolute; top: 333px; left: 140px; z-index:3;}
+		</style>
+	</head>
+	<body>
+		<div align="center">
+			<img src="/images/pop_up/pay1.png" id="payImg" width="auto" height="auto" usemap="#001" border="0">
+			<map name="001">
+				<area shape="rect" coords="377,88,457,112" href="javascript:processing('2');" style="background-color:red"/>
+				<area shape="rect" coords="15,597,475,641" href="javascript:processing('3');" style="background-color:red"/>
+			</map>
+		</div>
+		<div class="info pos3_1">
+			<span>클라우드 총무시스템 사용권</span>
+		</div>
+		<div class="info pos3_2">
+			<span><%=payAmt%></span>
+		</div>
+		<div class="info pos3_3">
+			<span><%=reqEmail%></span>
+		</div>
+		<div id="alert_pop" style="display:none">
+			<div class="msgBox">
+				<div class="msgBoxIn">
+				    <!--<strong><fmt:message key="msg_cont"/></strong>
+				    <hr> -->
+				    <ul>
+				        <li id="alert_msg" style="height:auto"><fmt:message key="msg_cont"/></li>
+				        <li>
+							<div class="btn_area">
+	                           <a href="#" id="pop_cls" class="white_btn22"><span><fmt:message key="close"/></span></a>
+	                       	</div>
+						</li>
+				    </ul>
+				    <!--<div class="boxRound01"><img src="../../images/msgbox/layer_pop_topLeft.gif" alt="" /></div>
+				    <div class="boxRound02"><img src="../../images/msgbox/layer_pop_topRight.gif" alt="" /></div>
+				    <div class="boxRound03"><img src="../../images/msgbox/layer_pop_bottomLeft.gif" alt="" /></div>
+				    <div class="boxRound04"><img src="../../images/msgbox/layer_pop_bottomRight.gif" alt="" /></div>-->
+				</div>
+			</div>
+		</div>
+		<div id="confirm_pop" style="display:none">
+			<div class="msgBox">
+				<div class="msgBoxIn">
+				    <!--<strong><fmt:message key="msg_cont"/></strong>
+				    <hr> -->
+				    <ul>
+				        <li id="confirm_msg" style="height:auto"><fmt:message key="msg_cont"/></li>
+				        <li>
+							<div class="btn_area">
+	                           <a href="#" id="pop_yes" class="white_btn22"><span><fmt:message key="conf"/></span></a>
+	                           <a href="#" id="pop_no" class="white_btn22 ml10"><span><fmt:message key="cncl"/></span></a>
+	                       	</div>
+						</li>
+				    </ul>
+				    <!--<div class="boxRound01"><img src="../../images/msgbox/layer_pop_topLeft.gif" alt="" /></div>
+				    <div class="boxRound02"><img src="../../images/msgbox/layer_pop_topRight.gif" alt="" /></div>
+				    <div class="boxRound03"><img src="../../images/msgbox/layer_pop_bottomLeft.gif" alt="" /></div>
+				    <div class="boxRound04"><img src="../../images/msgbox/layer_pop_bottomRight.gif" alt="" /></div>-->
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
+
+<script language="JavaScript">
+	var ctxPath = "<%=ctxPath%>";
+	var procFlag = "A";
+	function fnSetDocumentReady(){}
+	$(document).ready(function() {
+	});
+	
+	function processing(type) {
+		if (type == "2") {
+			if (procFlag == "B") {
+				type = "1";
+				procFlag = "A";
+			} else {
+				procFlag = "B";
+			}
+		} else if (type == "3") {
+			if (procFlag == "B") {
+				procFlag = "C";
+				$(".info").show();
+			} else if (procFlag == "C") {
+				//$(".info").hide();
+				//$("#payImg").attr("src", "/images/pop_up/ordering.gif");
+				//setTimeout("finish()", "5000");
+				return;
+			} else {
+				alertUI("전체동의를 선택 하세요");
+				return;
+			}
+		}
+		
+		$("#payImg").attr("src", "/images/pop_up/pay"+type+".png");
+	}
+	
+	function finish() {
+		if (window.opener && !window.opener.closed) {
+			//window.opener.location = "/lic_buy_end.gas";
+			window.opener.test();
+			window.close();
+		}
+	}
+	
+</script>

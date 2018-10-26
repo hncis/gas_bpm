@@ -1,0 +1,800 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="EntranceMeal"> 
+   
+   
+   <!-- Request Page -->
+   <select id="selectInfoEmToRequest" parameterClass="bgabGascEm01Dto" resultClass="bgabGascEm01Dto">
+   	/*selectInfoEmToRequest*/
+   	SELECT	DOC_NO
+   			,A.EENO
+   			,B.XUSR_NAME AS EENO_NM
+   			,B.XUSR_STEP_NAME AS POS_NM
+			,B.XUSR_DEPT_NAME AS DEPT_NM
+			,B.XUSR_TEL_NO    AS TEL_NO
+   			,DBO.CONVERT_DATE(A.PTT_YMD) AS PTT_YMD
+   			,A.VSIT_PURP_CD
+   			,A.VSIT_PURP_DTL_SBC
+   			,A.BUDG_NO
+   			,A.SNB_RSON_SBC
+   			,A.IF_ID
+   			,A.PGS_ST_CD
+   			,C.XCOD_HNAME AS PGS_ST_CD_D
+   			,A.RDCS_EENO 
+   			,A.RDCS_YMD
+   			,A.ACPC_EENO
+   			,A.ACPC_YMD
+   			,A.RPTS_EENO
+   			,A.RPTS_YMD
+   			,A.DEPT_CD
+   			,A.INP_YMD
+   			,A.IPE_EENO
+   			,A.MDFY_YMD
+   			,A.UPDR_EENO
+   	FROM	BGAB_GASCEM01 A
+   	LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ B
+	ON A.EENO = B.XUSR_EMPNO
+	LEFT OUTER JOIN 
+	(
+		SELECT * FROM BGAB_GASCZ005$corp_cd$ WHERE XCOD_KND='X0007'
+	) C
+	ON A.PGS_ST_CD = C.XCOD_CODE
+   	WHERE DOC_NO = #doc_no#
+   </select>
+   
+   <select id="selectListEmToRequest" parameterClass="bgabGascEm01Dto" resultClass="bgabGascEm02Dto">
+		/*selectListEmToRequest*/
+		SELECT	DOC_NO
+				,VSTR_SEQ
+				,VSTR_ID
+				,VSTR_NM
+				,DBO.CONVERT_DATE(STRT_YMD) AS STRT_YMD
+				,STRT_TIME
+				,DBO.CONVERT_DATE(FNH_YMD) AS FNH_YMD
+				,CCPC_TN
+				,TCLG_SUP_CD
+				,FMEAL_YN
+				,NTBK_EON_YN
+				,NTBK_EON_SBC
+				,REM_SBC
+				,INP_YMD
+				,IPE_EENO
+				,MDFY_YMD
+				,UPDR_EENO
+				,VSTR_CMPY_NM 
+		FROM	BGAB_GASCEM02
+		WHERE	DOC_NO = #doc_no#
+   </select>
+   
+   <update id="insertEmToRequestBasic" parameterClass="bgabGascEm01Dto">
+     /*insertEmToRequestBasic*/
+     MERGE INTO BGAB_GASCEM01 A
+		USING (SELECT #doc_no# AS DOC_NO) B
+		ON (A.DOC_NO = B.DOC_NO)
+		WHEN MATCHED THEN
+		UPDATE SET 
+		    VSIT_PURP_CD     	= #vsit_purp_cd#,     	
+		    VSIT_PURP_DTL_SBC 	= #vsit_purp_dtl_sbc#,
+		    BUDG_NO 			= #budg_no#,
+			UPDR_EENO        	= #updr_eeno#,  
+			MDFY_YMD 			= CONVERT(NVARCHAR, getdate() ,112) 
+		WHEN NOT MATCHED THEN
+		INSERT (
+			DOC_NO,
+			EENO,
+			PTT_YMD,
+			VSIT_PURP_CD,
+			VSIT_PURP_DTL_SBC,
+			BUDG_NO,
+			SNB_RSON_SBC,		
+			IF_ID,		
+			PGS_ST_CD,
+			DEPT_CD,    	
+			INP_YMD,   	
+			IPE_EENO,   	
+			MDFY_YMD,   	
+			UPDR_EENO        	
+		) VALUES (
+			#doc_no#,
+			#eeno#,
+			#ptt_ymd#,
+			#vsit_purp_cd#,
+			#vsit_purp_dtl_sbc#,
+			#budg_no#,
+			#snb_rson_sbc#,		
+			#if_id#,		
+			#pgs_st_cd#,
+			#dept_cd#,     
+			CONVERT(NVARCHAR, getdate() ,112),    
+			#ipe_eeno#,  
+			CONVERT(NVARCHAR, getdate() ,112),   
+			#updr_eeno# 
+		);
+   </update>
+   
+    <update id="insertEmToRequestVisit" parameterClass="bgabGascEm02Dto">
+     /*insertEmToRequestVisit*/
+     MERGE INTO BGAB_GASCEM02 A
+		USING (SELECT #doc_no# AS DOC_NO, #vstr_seq# AS VSTR_SEQ) B
+		ON (A.DOC_NO = B.DOC_NO AND A.VSTR_SEQ = B.VSTR_SEQ)
+		WHEN MATCHED THEN
+		UPDATE SET 
+		    VSTR_ID     	= #vstr_id#,     	
+		    VSTR_NM 		= #vstr_nm#,
+		    STRT_YMD 		= #strt_ymd#,   
+		    STRT_TIME       = #strt_time#,
+			FNH_YMD     	= #fnh_ymd#,  
+			CCPC_TN     	= #ccpc_tn#,  
+			TCLG_SUP_CD    	= #tclg_sup_cd#,  
+			FMEAL_YN    	= #fmeal_yn#,
+			NTBK_EON_YN		= #ntbk_eon_yn#,
+			NTBK_EON_SBC	= #ntbk_eon_sbc#,
+			REM_SBC     	= #rem_sbc#,  
+			UPDR_EENO    	= #updr_eeno#,  
+			MDFY_YMD 		= CONVERT(NVARCHAR, getdate() ,112),
+			VSTR_CMPY_NM    = #vstr_cmpy_nm# 
+		WHEN NOT MATCHED THEN
+		INSERT (
+			DOC_NO,
+			VSTR_SEQ,
+			VSTR_ID,
+			VSTR_NM,
+			STRT_YMD,
+			STRT_TIME,
+			FNH_YMD,		
+			CCPC_TN,		
+			TCLG_SUP_CD,		
+			FMEAL_YN,
+			NTBK_EON_YN, 
+			NTBK_EON_SBC,
+			REM_SBC,   	
+			INP_YMD,   	
+			IPE_EENO,   	
+			MDFY_YMD,   	
+			UPDR_EENO,
+			VSTR_CMPY_NM           	
+		) VALUES (
+			#doc_no#,
+			(SELECT NVL(MAX(vstr_seq),0 )+1 AS VSTR_SEQ FROM BGAB_GASCEM02 WHERE DOC_NO = #doc_no#),
+			#vstr_id#,
+			#vstr_nm#,
+			#strt_ymd#,
+			#strt_time#,
+			#fnh_ymd#,		
+			#ccpc_tn#,		
+			#tclg_sup_cd#,		
+			#fmeal_yn#,
+			#ntbk_eon_yn#,
+			#ntbk_eon_sbc#,
+			#rem_sbc#,     
+			CONVERT(NVARCHAR, getdate() ,112),    
+			#ipe_eeno#,  
+			CONVERT(NVARCHAR, getdate() ,112),   
+			#updr_eeno#,
+			#vstr_cmpy_nm# 
+		);
+   </update>
+   <delete id="deleteVisitorsEmToRequest" parameterClass="bgabGascEm02Dto">
+  	 	/*deleteVisitorsEmToRequest*/
+   		DELETE	BGAB_GASCEM02
+   		WHERE	DOC_NO = #doc_no#
+   		AND		VSTR_SEQ = #vstr_seq#
+   </delete>
+   <delete id="deleteEmToRequest" parameterClass="bgabGascEm01Dto">
+   		/*deleteEmToRequest*/
+   		DELETE	BGAB_GASCEM01
+   		WHERE	DOC_NO = #doc_no#
+   </delete>
+    <select id="selectCountEmToRequestVisitors" parameterClass="bgabGascEm01Dto" resultClass="String">
+		/*selectCountEmToRequestVisitors*/
+		SELECT 	COUNT(*)  tot_cnt
+		FROM	BGAB_GASCEM02
+		WHERE	DOC_NO = #doc_no#
+	</select>
+   <delete id="deleteEmToRequestVisitors" parameterClass="bgabGascEm01Dto">
+   		DELETE	BGAB_GASCEM02
+   		WHERE	DOC_NO = #doc_no#
+   </delete>
+   <update id="updateInfoEmToConfirm" parameterClass="bgabGascEm01Dto">
+   		UPDATE	BGAB_GASCEM01
+		set		PGS_ST_CD = 'Z',
+				ACPC_EENO = #acpc_eeno#,
+				ACPC_YMD = CONVERT(NVARCHAR, getdate() ,112)
+		WHERE	1 = 1
+		AND		DOC_NO = #doc_no#
+   		
+   </update>
+    <update id="updateInfoEmToConfirmcancel" parameterClass="bgabGascEm01Dto">
+   		UPDATE	BGAB_GASCEM01
+		SET 	PGS_ST_CD  = #pgs_st_cd#
+				,IF_ID     = ''
+				,RPTS_EENO = ''
+				,RPTS_YMD  = ''
+				,RDCS_EENO = ''
+				,RDCS_YMD  = ''
+				,ACPC_EENO = ''
+				,ACPC_YMD  = ''
+				,SNB_RSON_SBC = #snb_rson_sbc#
+				,UPDR_EENO = #updr_eeno#
+				,MDFY_YMD  = CONVERT(NVARCHAR, getdate() ,112)
+		WHERE	1 = 1
+		AND		DOC_NO = #doc_no#
+   		
+   </update>
+   <update id="updateInfoEmToApproval" parameterClass="bgabGascEm01Dto">
+   		UPDATE	BGAB_GASCEM01
+		SET		PGS_ST_CD = #pgs_st_cd#,
+				IF_ID = #if_id#,
+				RPTS_EENO = #rpts_eeno#,
+				RPTS_YMD = CONVERT(NVARCHAR, getdate() ,112),
+				SNB_RSON_SBC = ''
+		WHERE	1 = 1
+		AND		DOC_NO = #doc_no#
+   		
+   </update>
+   <select id="selectApprovalInfoByEm" parameterClass="bgabGascEm01Dto" resultClass="String">
+		/*selectApprovalInfoByEm*/
+		SELECT
+		CASE 
+		  WHEN (f.xusr_name = '' OR f.xusr_name IS null)
+		    THEN ' '
+		  ELSE
+		    'P.I.C' 
+		END
+         + '@' + NVL(f.xusr_name,'')
+		 + '@' + NVL(f.xusr_step_name,'')
+		 + '@' + CASE WHEN (a.acpc_ymd IS NULL OR a.acpc_ymd = '') THEN ' ' 
+		         ELSE  DBO.CONVERT_DATE(a.acpc_ymd) END
+		 + '|'
+		 + CASE 
+		     WHEN b.xusr_cnfm_auth = '2'
+			   THEN
+			     CASE 
+				   WHEN (b.xusr_name = '' OR b.xusr_name IS null)
+				     THEN ' '
+				   ELSE
+				     CASE
+					   WHEN g.xorg_rsps_crank = '24' THEN 'H.O.T'       
+					   ELSE 'Planner'
+					 END
+				 END
+			 ELSE
+			    CASE 
+				  WHEN (b.xusr_name = '' OR b.xusr_name IS null) THEN ' '
+				  ELSE 'Planner'
+			    END 
+		   END
+		 + '@' + NVL(b.xusr_name,'')
+		 + '@' + NVL(b.xusr_step_name,'')
+		 + '@' + CASE WHEN (a.rpts_ymd IS NULL OR a.rpts_ymd = '') THEN ' ' 
+		 		 ELSE DBO.CONVERT_DATE(a.rpts_ymd) END
+		 + '|' 
+		 + CASE 
+		     WHEN d.xusr_cnfm_auth = '2'
+			   THEN
+			     CASE 
+				   WHEN (d.xusr_name = '' OR d.xusr_name IS NULL)
+				     THEN ' '
+				   ELSE
+				     CASE 
+					   WHEN h.xorg_rsps_crank = '24' THEN 'H.O.T' 
+					   ELSE 'Planner' 
+					 END 
+				 END 
+		     ELSE
+			   CASE WHEN (d.xusr_name = '' OR d.xusr_name IS NULL) THEN ' '
+			   ELSE 'Staff'
+			   END 
+		   END 
+		 + '@' + NVL(d.xusr_name, '')
+		 + '@' + NVL(d.xusr_step_name, '')
+		 + '@' + CASE WHEN (a.rdcs_ymd IS NULL OR a.rdcs_ymd = '') THEN ' ' 
+		         ELSE DBO.CONVERT_DATE(a.rdcs_ymd) END  
+		FROM	BGAB_GASCEM01 a
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ b
+		ON a.ipe_eeno       = b.xusr_empno
+		LEFT OUTER JOIN BGAB_GASCZ009$corp_cd$ bb
+		ON a.if_id = bb.if_id 
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ d
+		ON bb.rdcs_eeno      = d.xusr_empno
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ f
+		ON a.acpc_eeno      = f.xusr_empno
+		LEFT OUTER JOIN BGAB_GASCZ003$corp_cd$ g
+		ON b.xusr_dept_code = g.xorg_orga_c 
+		LEFT OUTER JOIN BGAB_GASCZ003$corp_cd$ h
+		ON d.xusr_dept_code = h.xorg_orga_c
+		LEFT OUTER JOIN BGAB_GASCZ003$corp_cd$ i 
+		ON f.xusr_dept_code = i.xorg_orga_c 
+		WHERE a.if_id          = #if_id#
+	</select>
+   
+    <select id="selectInfoEmToRequestForApprove" parameterClass="bgabGascEm01Dto" resultClass="bgabGascEm01Dto">
+   	/*selectInfoEmToRequestForApprove*/
+   	SELECT	DOC_NO
+   			,A.EENO
+   			,B.XUSR_NAME AS EENO_NM
+   			,B.XUSR_STEP_NAME AS POS_NM
+			,B.XUSR_DEPT_NAME AS DEPT_NM
+			,B.XUSR_TEL_NO AS TEL_NO
+   			,DBO.CONVERT_DATE(A.PTT_YMD) AS PTT_YMD
+   			,A.VSIT_PURP_CD
+   			,A.VSIT_PURP_DTL_SBC
+   			,A.BUDG_NO
+   			,A.SNB_RSON_SBC
+   			,A.IF_ID
+   			,A.PGS_ST_CD
+   			,C.XCOD_HNAME AS PGS_ST_CD_D
+   			,A.RDCS_EENO 
+   			,A.RDCS_YMD
+   			,A.ACPC_EENO
+   			,A.ACPC_YMD
+   			,A.RPTS_EENO
+   			,A.RPTS_YMD
+   			,A.DEPT_CD
+   			,A.INP_YMD
+   			,A.IPE_EENO
+   			,A.MDFY_YMD
+   			,A.UPDR_EENO
+   	FROM	BGAB_GASCEM01 A
+   	LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ B
+	ON A.EENO = B.XUSR_EMPNO
+	LEFT OUTER JOIN 
+	(
+		SELECT * FROM BGAB_GASCZ005$corp_cd$ WHERE XCOD_KND='X0007'
+	) C
+	ON A.PGS_ST_CD = C.XCOD_CODE
+   	WHERE IF_ID = #if_id#
+   </select>
+   
+   <select id="selectListEmToRequestForApprove" parameterClass="bgabGascEm01Dto" resultClass="bgabGascEm02Dto">
+		/*selectListEmToRequestForApprove*/
+		SELECT	DOC_NO
+				,VSTR_SEQ
+				,VSTR_ID
+				,VSTR_NM
+				,VSTR_CMPY_NM
+				,DBO.CONVERT_DATE(STRT_YMD) AS STRT_YMD
+				,STRT_TIME
+				,DBO.CONVERT_DATE(FNH_YMD) AS FNH_YMD
+				,CCPC_TN
+				,TCLG_SUP_CD
+				,FMEAL_YN
+				,NTBK_EON_YN
+				,REM_SBC
+				,INP_YMD
+				,IPE_EENO
+				,MDFY_YMD
+				,UPDR_EENO 
+		FROM	BGAB_GASCEM02
+		WHERE	DOC_NO = #doc_no#
+   </select>
+   
+   <!-- List Page -->
+   <select id="selectCountEmToList" parameterClass="bgabGascEm01Dto" resultClass="String">
+		/*selectCountEmToList*/
+		SELECT 	COUNT(*) AS tot_cnt
+		FROM 	BGAB_GASCEM02 A
+		INNER JOIN BGAB_GASCEM01 B
+		ON A.DOC_NO=B.DOC_NO
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ C
+		ON B.EENO=C.XUSR_EMPNO
+		WHERE A.DOC_NO IN (SELECT DISTINCT DOC_NO FROM BGAB_GASCEM02 WHERE (STRT_YMD BETWEEN #from_ymd# and #to_ymd# 
+																					OR FNH_YMD BETWEEN #from_ymd# and #to_ymd#
+																					OR #from_ymd# BETWEEN STRT_YMD and FNH_YMD
+																					OR #to_ymd# BETWEEN STRT_YMD and FNH_YMD))
+		<isNotEmpty property="eeno" prepend="and">
+			B.EENO = #eeno#
+		</isNotEmpty>
+		<isNotEmpty property="dept_cd" prepend="and">
+			C.XUSR_DEPT_CODE = #dept_cd#
+		</isNotEmpty>
+		<isNotEmpty property="vstr_nm" prepend="and">
+			A.DOC_NO IN (SELECT DISTINCT DOC_NO FROM BGAB_GASCEM02 WHERE VSTR_NM LIKE '%' + #vstr_nm# + '%')
+		</isNotEmpty>
+		<isNotEmpty property="pgs_st_cd" prepend="and">
+			B.PGS_ST_CD = #pgs_st_cd#
+		</isNotEmpty>
+	</select>
+	<select id="selectListEmToList" parameterClass="bgabGascEm01Dto" resultClass="bgabGascEm01Dto">
+		/*selectListEmToList*/
+		SELECT *
+		FROM
+		(
+			SELECT 	ROW_NUMBER() OVER(ORDER BY XX.DEPT_CD ASC, XX.EENO ASC, XX.DOC_NO ASC) AS rnum
+					,XX.EENO
+				 	,XX.EENO_NM
+					,XX.DEPT_CD
+					,XX.DEPT_NM
+					,XX.VSTR_NM
+					,DBO.CONVERT_DATE(XX.STRT_YMD) AS STRT_YMD
+					,XX.STRT_TIME
+					,DBO.CONVERT_DATE(XX.FNH_YMD) AS FNH_YMD
+					,XX.FMEAL_YN
+					,CASE 
+					  WHEN XX.FMEAL_YN = '1'
+					    THEN 'Y'
+					  ELSE 'N'
+					END FMEAL_YN_EX
+					,XX.NTBK_EON_YN
+					,CASE 
+					  WHEN XX.NTBK_EON_YN = '1'
+					    THEN 'Y'
+					  ELSE 'N'
+					END NTBK_EON_YN_EX
+					,XX.PGS_ST_CD
+					,XX.PGS_ST_CD_D
+					,XX.DOC_NO
+					,XX.VSTR_ID
+					,XX.VSTR_CMPY_NM
+			FROM
+			(	
+				SELECT 	B.EENO AS EENO
+						,C.XUSR_NAME AS EENO_NM
+						,C.XUSR_DEPT_CODE AS DEPT_CD
+						,C.XUSR_DEPT_NAME AS DEPT_NM
+						,A.VSTR_NM AS VSTR_NM
+						,A.STRT_YMD AS STRT_YMD
+						,A.FNH_YMD AS FNH_YMD
+						,A.FMEAL_YN AS FMEAL_YN
+						,A.NTBK_EON_YN AS NTBK_EON_YN
+						,A.NTBK_EON_SBC AS NTBK_EON_SBC
+						,B.PGS_ST_CD AS PGS_ST_CD
+						,D.XCOD_HNAME AS PGS_ST_CD_D
+						,A.DOC_NO AS DOC_NO
+						,A.VSTR_ID AS VSTR_ID
+						,A.VSTR_CMPY_NM AS VSTR_CMPY_NM
+						,A.STRT_TIME
+				FROM BGAB_GASCEM02 A
+				INNER JOIN BGAB_GASCEM01 B
+				ON A.DOC_NO=B.DOC_NO
+				LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ C
+				ON B.EENO=C.XUSR_EMPNO
+				LEFT OUTER JOIN 
+				(
+					SELECT * FROM BGAB_GASCZ005$corp_cd$ WHERE XCOD_KND = 'X0007'
+				) D
+				ON B.PGS_ST_CD = D.XCOD_CODE
+				WHERE A.DOC_NO IN (SELECT DISTINCT DOC_NO FROM BGAB_GASCEM02 WHERE (STRT_YMD BETWEEN #from_ymd# and #to_ymd# 
+																					OR FNH_YMD BETWEEN #from_ymd# and #to_ymd#
+																					OR #from_ymd# BETWEEN STRT_YMD and FNH_YMD
+																					OR #to_ymd# BETWEEN STRT_YMD and FNH_YMD))
+				<isNotEmpty property="eeno" prepend="and">
+					B.EENO = #eeno#
+				</isNotEmpty>
+				<isNotEmpty property="dept_cd" prepend="and">
+					C.XUSR_DEPT_CODE = #dept_cd#
+				</isNotEmpty>
+				<isNotEmpty property="vstr_nm" prepend="and">
+					A.DOC_NO IN (SELECT DISTINCT DOC_NO FROM BGAB_GASCEM02 WHERE VSTR_NM LIKE '%' + #vstr_nm# + '%')
+				</isNotEmpty>
+				<isNotEmpty property="pgs_st_cd" prepend="and">
+					B.PGS_ST_CD = #pgs_st_cd#
+				</isNotEmpty>
+		     )XX
+		)XXX
+		WHERE rnum BETWEEN #startRow# AND #endRow#
+	</select>
+	
+	<!-- Meal List Page -->
+   	<select id="selectCountEmToListForMeal" parameterClass="bgabGascEm01Dto" resultClass="String">
+		/*selectCountEmToListForMeal*/
+		SELECT COUNT(*) AS tot_cnt
+		FROM
+		(
+			SELECT  X.EENO
+					,X.EENM
+					,X.DEPT_NM
+					,X.PTT_YMD
+					,X.VSIT_PURP_CD
+					,X.BUDG_NO
+					,CONVERT(NVARCHAR,X.MEAL_REQ_CNT)+'/'+CONVERT(NVARCHAR,X.VSTR_CNT) AS MEAL_REQ_CNT
+			FROM
+			(
+				SELECT A.EENO
+						,A.DEPT_CD AS DEPT_CD
+						,B.XUSR_NAME AS EENM
+						,B.XUSR_DEPT_NAME AS DEPT_NM
+						,A.PTT_YMD AS PTT_YMD
+						,A.VSIT_PURP_CD AS VSIT_PURP_CD
+						,A.BUDG_NO AS BUDG_NO
+						,A.PGS_ST_CD
+						,(SELECT COUNT(*) FROM BGAB_GASCEM02 WHERE DOC_NO= A.DOC_NO AND FMEAL_YN='1') AS MEAL_REQ_CNT
+						,(SELECT COUNT(*) FROM BGAB_GASCEM02 WHERE DOC_NO= A.DOC_NO) AS VSTR_CNT
+				FROM BGAB_GASCEM01 A
+				LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ B
+				ON A.EENO = B.XUSR_EMPNO
+			)X
+			WHERE	X.PTT_YMD BETWEEN #from_ymd# and #to_ymd#
+	      <isNotEmpty property="eeno" prepend="and">
+	      	X.EENO = #eeno#
+	      </isNotEmpty>
+	      <isNotEmpty property="dept_cd" prepend="and">
+	      	X.DEPT_CD = #dept_cd#
+	      </isNotEmpty>
+	      <isNotEmpty property="pgs_st_cd" prepend="and">
+	      	X.PGS_ST_CD = #pgs_st_cd#
+	      </isNotEmpty>
+		)XX
+	</select>
+	<select id="selectListEmToListForMeal" parameterClass="bgabGascEm01Dto" resultClass="bgabGascEm01Dto">
+		/*selectListEmToListForMeal*/
+		SELECT *
+		FROM
+		(
+			SELECT 	ROW_NUMBER() OVER(ORDER BY XX.PTT_YMD ASC, XX.DEPT_NM ASC) AS rnum
+					,XX.DOC_NO
+				 	,XX.EENO
+					,XX.EENM
+					,XX.DEPT_NM
+					,DBO.CONVERT_DATE(XX.PTT_YMD) AS PTT_YMD
+					,XX.VSIT_PURP_CD
+					,XX.BUDG_NO
+					,XX.PGS_ST_CD
+					,XX.MEAL_REQ_CNT AS MEAL_REQ_CNT
+			FROM
+			(	
+				SELECT  X.DOC_NO
+						,X.EENO
+						,X.EENM
+						,X.DEPT_NM
+						,X.PTT_YMD
+						,X.VSIT_PURP_CD
+						,X.BUDG_NO
+						,X.PGS_ST_CD
+						,CONVERT(NVARCHAR,X.MEAL_REQ_CNT)+'/'+CONVERT(NVARCHAR,X.VSTR_CNT) AS MEAL_REQ_CNT
+				FROM
+				(
+					SELECT 	A.DOC_NO
+							,A.EENO
+							,A.DEPT_CD AS DEPT_CD
+							,B.XUSR_NAME AS EENM
+							,B.XUSR_DEPT_NAME AS DEPT_NM
+							,A.PTT_YMD AS PTT_YMD
+							,A.VSIT_PURP_CD AS VSIT_PURP_CD
+							,A.BUDG_NO AS BUDG_NO
+							,A.PGS_ST_CD
+							,(SELECT COUNT(*) FROM BGAB_GASCEM02 WHERE DOC_NO= A.DOC_NO AND FMEAL_YN='1') AS MEAL_REQ_CNT
+							,(SELECT COUNT(*) FROM BGAB_GASCEM02 WHERE DOC_NO= A.DOC_NO) AS VSTR_CNT
+					FROM BGAB_GASCEM01 A
+					LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ B
+					ON A.EENO = B.XUSR_EMPNO
+				)X
+				WHERE X.PTT_YMD BETWEEN #from_ymd# and #to_ymd#
+				<isNotEmpty property="eeno" prepend="and">
+					X.EENO = #eeno#
+				</isNotEmpty>
+				<isNotEmpty property="dept_cd" prepend="and">
+					X.DEPT_CD = #dept_cd#
+				</isNotEmpty>
+				<isNotEmpty property="pgs_st_cd" prepend="and">
+					X.PGS_ST_CD = #pgs_st_cd#
+				</isNotEmpty>
+		     )XX
+		)XXX
+		WHERE rnum BETWEEN #startRow# AND #endRow#
+	</select>
+	
+	<!-- Entrance List Page -->
+	<select id="selectCountEmToListForEntrance" parameterClass="bgabGascEm01Dto" resultClass="String">
+		/*selectCountEmToListForEntrance*/
+		SELECT COUNT(*) AS tot_cnt
+		FROM
+		(
+			SELECT  X.EENO
+					,X.EENM
+					,X.DEPT_NM
+					,X.PTT_YMD
+					,X.VSIT_PURP_CD
+					,X.BUDG_NO
+					,CONVERT(NVARCHAR,X.MEAL_REQ_CNT)+'/'+CONVERT(NVARCHAR,X.VSTR_CNT) AS MEAL_REQ_CNT
+			FROM
+			(
+				SELECT A.EENO
+						,A.DEPT_CD AS DEPT_CD
+						,B.XUSR_NAME AS EENM
+						,B.XUSR_DEPT_NAME AS DEPT_NM
+						,A.PTT_YMD AS PTT_YMD
+						,A.VSIT_PURP_CD AS VSIT_PURP_CD
+						,A.BUDG_NO AS BUDG_NO
+						,A.PGS_ST_CD
+						,(SELECT COUNT(*) FROM BGAB_GASCEM02 WHERE DOC_NO= A.DOC_NO AND FMEAL_YN='1') AS MEAL_REQ_CNT
+						,(SELECT COUNT(*) FROM BGAB_GASCEM02 WHERE DOC_NO= A.DOC_NO) AS VSTR_CNT
+				FROM BGAB_GASCEM01 A
+				LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ B
+				ON A.EENO = B.XUSR_EMPNO
+			)X
+			WHERE	X.PTT_YMD BETWEEN #from_ymd# and #to_ymd#
+	      <isNotEmpty property="eeno" prepend="and">
+	      	X.EENO = #eeno#
+	      </isNotEmpty>
+	      <isNotEmpty property="dept_cd" prepend="and">
+	      	X.DEPT_CD = #dept_cd#
+	      </isNotEmpty>
+	      <isNotEmpty property="pgs_st_cd" prepend="and">
+	      	X.PGS_ST_CD = #pgs_st_cd#
+	      </isNotEmpty>
+		)XX
+	</select>
+	<select id="selectListEmToListForEntrance" parameterClass="bgabGascEm01Dto" resultClass="bgabGascEm01Dto">
+		/*selectListEmToListForEntrance*/
+		SELECT *
+		FROM
+		(
+			SELECT 	ROW_NUMBER() OVER(ORDER BY XX.PTT_YMD ASC, XX.DEPT_NM ASC) AS rnum
+					,XX.DOC_NO
+				 	,XX.EENO
+					,XX.EENM
+					,XX.DEPT_NM
+					,DBO.CONVERT_DATE(XX.PTT_YMD) AS PTT_YMD
+					,XX.VSIT_PURP_CD
+					,XX.BUDG_NO
+					,XX.PGS_ST_CD
+					,XX.MEAL_REQ_CNT AS MEAL_REQ_CNT
+			FROM
+			(	
+				SELECT  X.DOC_NO
+						,X.EENO
+						,X.EENM
+						,X.DEPT_NM
+						,X.PTT_YMD
+						,X.VSIT_PURP_CD
+						,X.BUDG_NO
+						,X.PGS_ST_CD
+						,CONVERT(NVARCHAR,X.MEAL_REQ_CNT)+'/'+CONVERT(NVARCHAR,X.VSTR_CNT) AS MEAL_REQ_CNT
+				FROM
+				(
+					SELECT 	A.DOC_NO
+							,A.EENO
+							,A.DEPT_CD AS DEPT_CD
+							,B.XUSR_NAME AS EENM
+							,B.XUSR_DEPT_NAME AS DEPT_NM
+							,A.PTT_YMD AS PTT_YMD
+							,A.VSIT_PURP_CD AS VSIT_PURP_CD
+							,A.BUDG_NO AS BUDG_NO
+							,A.PGS_ST_CD
+							,(SELECT COUNT(*) FROM BGAB_GASCEM02 WHERE DOC_NO= A.DOC_NO AND FMEAL_YN='1') AS MEAL_REQ_CNT
+							,(SELECT COUNT(*) FROM BGAB_GASCEM02 WHERE DOC_NO= A.DOC_NO) AS VSTR_CNT
+					FROM BGAB_GASCEM01 A
+					LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ B
+					ON A.EENO = B.XUSR_EMPNO
+				)X
+				WHERE	X.PTT_YMD BETWEEN #from_ymd# and #to_ymd#
+				<isNotEmpty property="eeno" prepend="and">
+					X.EENO = #eeno#
+				</isNotEmpty>
+				<isNotEmpty property="dept_cd" prepend="and">
+					X.DEPT_CD = #dept_cd#
+				</isNotEmpty>
+				<isNotEmpty property="pgs_st_cd" prepend="and">
+					X.PGS_ST_CD = #pgs_st_cd#
+				</isNotEmpty>
+		     )XX
+		)XXX
+		WHERE rnum BETWEEN #startRow# AND #endRow#
+	</select>
+	
+	<!-- List Page for worker -->
+   <select id="selectCountEmToListForWorker" parameterClass="bgabGascEm01Dto" resultClass="String">
+		/*selectCountEmToListForWorker*/
+		SELECT 	COUNT(*) AS tot_cnt
+		FROM 	BGAB_GASCEM02 A
+		INNER JOIN BGAB_GASCEM01 B
+		ON A.DOC_NO=B.DOC_NO
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ C
+		ON B.EENO=C.XUSR_EMPNO
+		WHERE A.DOC_NO IN (SELECT DISTINCT DOC_NO FROM BGAB_GASCEM02 WHERE (STRT_YMD BETWEEN #from_ymd# and #to_ymd# 
+																					OR FNH_YMD BETWEEN #from_ymd# and #to_ymd#
+																					OR #from_ymd# BETWEEN STRT_YMD and FNH_YMD
+																					OR #to_ymd# BETWEEN STRT_YMD and FNH_YMD))
+		<isNotEmpty property="eeno_nm" prepend="and">
+			C.XUSR_NAME LIKE '%' + #eeno_nm# + '%'
+		</isNotEmpty>
+		<isNotEmpty property="dept_nm" prepend="and">
+			C.XUSR_DEPT_NAME LIKE '%' + #dept_nm# + '%'
+		</isNotEmpty>
+		<isNotEmpty property="vstr_id" prepend="and">
+			A.DOC_NO IN (SELECT DISTINCT DOC_NO FROM BGAB_GASCEM02 WHERE VSTR_ID LIKE '%' + #vstr_id# + '%')
+		</isNotEmpty>
+		<isNotEmpty property="vstr_cmpy_nm" prepend="and">
+			A.DOC_NO IN (SELECT DISTINCT DOC_NO FROM BGAB_GASCEM02 WHERE VSTR_CMPY_NM LIKE '%' + #vstr_cmpy_nm# + '%')
+		</isNotEmpty>
+		<isNotEmpty property="vstr_nm" prepend="and">
+			A.DOC_NO IN (SELECT DISTINCT DOC_NO FROM BGAB_GASCEM02 WHERE VSTR_NM LIKE '%' + #vstr_nm# + '%')
+		</isNotEmpty>
+		<isNotEmpty property="pgs_st_cd" prepend="and">
+			B.PGS_ST_CD = #pgs_st_cd#
+		</isNotEmpty>
+	</select>
+	<select id="selectListEmToListForWorker" parameterClass="bgabGascEm01Dto" resultClass="bgabGascEm01Dto">
+		/*selectListEmToListForWorker*/
+		SELECT *
+		FROM
+		(
+			SELECT 	ROW_NUMBER() OVER(ORDER BY XX.DEPT_CD ASC, XX.EENO ASC, XX.DOC_NO ASC) AS rnum
+					,XX.EENO
+				 	,XX.EENO_NM
+					,XX.DEPT_CD
+					,XX.DEPT_NM
+					,XX.VSTR_NM
+					,DBO.CONVERT_DATE(XX.STRT_YMD) AS STRT_YMD
+					,STRT_TIME
+					,DBO.CONVERT_DATE(XX.FNH_YMD) AS FNH_YMD
+					,XX.FMEAL_YN
+					,CASE 
+					  WHEN XX.FMEAL_YN = '1'
+					    THEN 'Y'
+					  ELSE 'N'
+					END FMEAL_YN_EX
+					,XX.NTBK_EON_YN
+					,CASE 
+					  WHEN XX.NTBK_EON_YN = '1'
+					    THEN 'Y'
+					  ELSE 'N'
+					END NTBK_EON_YN_EX
+					,XX.PGS_ST_CD
+					,XX.PGS_ST_CD_D
+					,XX.DOC_NO
+					,XX.VSTR_ID
+					,XX.VSTR_CMPY_NM
+			FROM
+			(	
+				SELECT 	B.EENO AS EENO
+						,C.XUSR_NAME AS EENO_NM
+						,C.XUSR_DEPT_CODE AS DEPT_CD
+						,C.XUSR_DEPT_NAME AS DEPT_NM
+						,A.VSTR_NM AS VSTR_NM
+						,A.STRT_YMD AS STRT_YMD
+						,A.FNH_YMD AS FNH_YMD
+						,A.FMEAL_YN AS FMEAL_YN
+						,A.NTBK_EON_YN AS NTBK_EON_YN
+						,B.PGS_ST_CD AS PGS_ST_CD
+						,D.XCOD_HNAME AS PGS_ST_CD_D
+						,A.DOC_NO AS DOC_NO
+						,A.VSTR_ID AS VSTR_ID
+						,A.VSTR_CMPY_NM AS VSTR_CMPY_NM
+						,STRT_TIME
+						,CASE
+							WHEN NVL(A.REM_SBC, '') = '' THEN 'N'
+							ELSE 'Y'
+						 END AS REM_FLAG
+				FROM BGAB_GASCEM02 A
+				INNER JOIN BGAB_GASCEM01 B
+				ON A.DOC_NO=B.DOC_NO
+				LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ C
+				ON B.EENO=C.XUSR_EMPNO
+				LEFT OUTER JOIN 
+				(
+					SELECT * FROM BGAB_GASCZ005$corp_cd$ WHERE XCOD_KND = 'X0007'
+				) D
+				ON B.PGS_ST_CD = D.XCOD_CODE
+				WHERE A.DOC_NO IN (SELECT DISTINCT DOC_NO FROM BGAB_GASCEM02 WHERE (STRT_YMD BETWEEN #from_ymd# and #to_ymd# 
+																					OR FNH_YMD BETWEEN #from_ymd# and #to_ymd#
+																					OR #from_ymd# BETWEEN STRT_YMD and FNH_YMD
+																					OR #to_ymd# BETWEEN STRT_YMD and FNH_YMD))
+				<isNotEmpty property="eeno_nm" prepend="and">
+					C.XUSR_NAME LIKE '%' + #eeno_nm# + '%'
+				</isNotEmpty>
+				<isNotEmpty property="dept_nm" prepend="and">
+					C.XUSR_DEPT_NAME LIKE '%' + #dept_nm# + '%'
+				</isNotEmpty>
+				<isNotEmpty property="vstr_id" prepend="and">
+					A.DOC_NO IN (SELECT DISTINCT DOC_NO FROM BGAB_GASCEM02 WHERE VSTR_ID LIKE '%' + #vstr_id# + '%')
+				</isNotEmpty>
+				<isNotEmpty property="vstr_cmpy_nm" prepend="and">
+					A.DOC_NO IN (SELECT DISTINCT DOC_NO FROM BGAB_GASCEM02 WHERE VSTR_CMPY_NM LIKE '%' + #vstr_cmpy_nm# + '%')
+				</isNotEmpty>
+				<isNotEmpty property="vstr_nm" prepend="and">
+					A.DOC_NO IN (SELECT DISTINCT DOC_NO FROM BGAB_GASCEM02 WHERE VSTR_NM LIKE '%' + #vstr_nm# + '%')
+				</isNotEmpty>
+				<isNotEmpty property="pgs_st_cd" prepend="and">
+					B.PGS_ST_CD = #pgs_st_cd#
+				</isNotEmpty>
+		     )XX
+		)XXX
+		WHERE rnum BETWEEN #startRow# AND #endRow#
+	</select>
+</sqlMap>

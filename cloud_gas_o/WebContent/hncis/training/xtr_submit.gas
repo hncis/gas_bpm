@@ -1,0 +1,175 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String docId = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("docid")));
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>교육신청</title>
+		<style type="text/css">
+			#wrap.submit_page #contents_wrap,
+			#wrap.submit_page .any_page,
+			#wrap.submit_page #contents{width:100%}
+		</style>
+	</head>
+	<body>
+		<div id="wrap" class="submit_page">
+		<form name="frm" id="frm">
+			<input type="hidden" id="if_id" name="if_id" value="<%=docId %>">
+
+			<div id="contents_wrap" class="any_page">
+				<div id="contents">
+					<%=CommonGasc.getTitleAndButtonNew(sess_empno
+						,"XTX01"
+						,""
+						,null
+						,null
+						,null
+						,"Y"
+						,request)
+					%>
+					<div class="con_t_area mt10">
+	                	<h3><fmt:message key="basic_info"/></h3>
+	                </div>
+					<div class="search_area">
+						<table>
+							<colgroup>
+	                        	<col style="width:110px;" />
+	                            <col style="width:158px;" />
+	                            <col style="width:73px;" />
+	                            <col style="width:158px;" />
+	                            <col style="width:80px;" />
+	                            <col style="width:158px;" />
+	                            <col style="width:73px;" />
+	                            <col style="width:158px;" />
+	                        </colgroup>
+							<tr>
+								<th><fmt:message key="eeno"/></th>
+								<td><input type="text" id="eeno" style="width:140px" class="disabled" readonly>
+									<input type="hidden" id="eeno_temp"></td>
+								<th><fmt:message key="eenm"/></th>
+								<td><input type="text" id="keyEenm" style="width:140px" class="disabled" readOnly></td>
+								<th><fmt:message key="position"/></th>
+								<td><input type="text" id="keyPosition" style="width:140px" class="disabled" readOnly></td>
+								<th><fmt:message key="dept_nm"/></th>
+								<td>
+									<input type="hidden" id="keyOpsCd" readOnly>
+									<input type="text" id="keyOpsNm" style="width:140px" class="disabled" readOnly>
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="req_ymd"/></th>
+								<td><input type="text" id="req_date" style="width:140px" class="disabled" readOnly></td>
+								<th><fmt:message key="doc_no"/></th>
+								<td><input type="text" id="doc_no" style="width:140px" class="disabled" readOnly></td>
+								<th><fmt:message key="pgs_st_nm"/></th>
+								<td>
+									<input type="hidden" id="pgs_st_cd" name="pgs_st_cd">
+									<input type="text" id="pgs_st_nm" name="pgs_st_nm" style="width:140px" class="disabled" readOnly>
+								</td>
+								<th><fmt:message key="tel_no"/></th>
+								<td><input type="text" id="keyTelNo" style="width:140px" class="disabled" readOnly></td>
+							</tr>
+						</table>
+					</div>
+
+					<div class="con_t_area">
+	                	<h3><fmt:message key="req_info"/></h3>
+	                </div>
+	                <div class="search_area">
+	                	<table>
+	                		<colgroup>
+	                			<col style="width:78px;"/>
+	                            <col style="width:350px;" />
+	                            <col style="width:78px;" />
+	                            <col style="width:100px;" />
+	                            <col style="width:auto;" />
+	                		</colgroup>
+	                		<tr>
+								<th><fmt:message key="proc"/></th>
+								<td colspan="4">
+									<input type="text" id="title" class="disabled" readOnly/>
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="schedule"/></th>
+								<td>
+									<input type="text" id="from_ymd" name="strt_ymd" style="width:100px;" class="disabled" readOnly/>~
+									<input type="text" id="to_ymd" name="fnh_ymd" style="width:100px;" class="disabled" readOnly/>
+								</td>
+								<th><fmt:message key="comp_shr"/></th>
+								<td>
+									<input type="text" id="amount" name="amount" class="disabled" readOnly/>
+								</td>
+								<td>
+									<fmt:message key="won"/>
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="place"/></th>
+								<td colspan="4">
+									<input type="text" id="place" name="place"  class="disabled" readOnly/>
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="dcpt"/></th>
+								<td colspan="4">
+									<textarea id="description" name="description" class="sub_textarea disabled" rows="8" cols="0" readOnly></textarea>
+								</td>
+							</tr>
+						</table>
+	                </div>
+				</div>
+				<div class="clear"></div>
+			</div>
+		</form>
+		</div>
+		
+	</body>
+<script type="text/javascript">
+	function fnSetDocumentReady(){
+		$(".sub_title").hide();
+	
+		doSearch();
+	}
+	
+	function doSearch(){
+		var params = {
+			if_id 		: $("#if_id").val(),
+			corp_cd		: sess_corp_cd,
+			locale		: sess_locale
+		};
+
+		var paramData = {
+			paramJson : util.jsonToString(params)
+		};
+		
+		doCommonAjax("doSelectInfoTRToRequestByIfId.do", paramData, "loadCallBack(jsonData.sendResult);");
+	}
+	
+	function loadCallBack(result){
+		$("#eeno").val(result.eeno);
+		$("#keyEenm").val(result.eenm);
+		$("#keyPosition").val(result.position);
+		$("#keyOpsNm").val(result.ops_nm);
+		$("#req_date").val(result.req_date);
+		$("#doc_no").val(result.doc_no);
+		$("#pgs_st_cd").val(result.pgs_st_cd);
+		$("#pgs_st_nm").val(result.pgs_st_nm);
+		$("#keyTelNo").val(result.ph_no);
+		$("#title").val(result.title);
+		$("#from_ymd").val(result.from_ymd);
+		$("#to_ymd").val(result.to_ymd);
+		$("#amount").val(result.amount);
+		$("#place").val(result.place);
+		$("#description").val(result.description);
+
+		numberFormat(document.frm.amount,"out");
+		
+		fnSubmitInfoSettings($("#pgs_st_cd").val(), $("#if_id").val(), result.code, "snb_rson_sbc", "1");
+		
+		resizeIframePop("contents", "ifrm");
+	}
+</script>
+</html>

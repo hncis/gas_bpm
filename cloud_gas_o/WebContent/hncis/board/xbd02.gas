@@ -1,0 +1,501 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String hid_bod_indx = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_bod_indx")));
+	String hid_gubun    = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_gubun")));
+	String hid_csrfToken    = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_csrfToken")));
+	String yy           = CurrentDateTime.getYear();
+	String mm           = CurrentDateTime.getMonth();
+	String dd           = CurrentDateTime.getDay();
+	String fromDay      = yy + "-" + mm + "-" + dd;
+	String toDay        = yy + "-" + mm + "-" + dd;
+	
+	String gubun        = StringUtil.isNullToString((String)request.getAttribute("gubun"));
+	String msg          = StringUtil.isNullToString((String)request.getAttribute("message"));
+	
+	String strSav = JSPMessageSource.getMessage("BUTTON.SAVE", locale);
+	String strDel = JSPMessageSource.getMessage("BUTTON.DELETE", locale);
+	String strLst = JSPMessageSource.getMessage("BUTTON.LIST", locale);
+	
+	String strBtn       = "";
+	if(gubun.equals("edit")){
+		hid_bod_indx = StringUtil.isNullToString((String)request.getAttribute("bod_indx"));
+		//strBtn = "저장/edit@삭제/delete@목록/list";
+		strBtn = strSav+"/edit@"+strDel+"/delete@"+strLst+"/list";
+	}else if(hid_gubun.equals("edit")){
+		//strBtn = "저장/edit@목록/list";
+		strBtn = strSav+"/edit@"+strLst+"/list";
+	}else{
+		//strBtn = "저장/write@목록/list";
+		strBtn = strSav+"/write@"+strLst+"/list";
+	}
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title><fmt:message key="board"/></title>
+		<link rel="stylesheet" type="text/css" media="screen" href="../../script/css/pop_up.css" />
+		<!-- Daum Editor -->
+        <script type="text/javascript" src="<%=ctxPath%>/daumeditor/js/editor_creator.js"></script>   
+        <script type="text/javascript" src="<%=ctxPath%>/daumeditor/js/editor_loader.js?environment=production"></script>
+        <link type="text/css" rel="stylesheet" href="<%=ctxPath%>/daumeditor/css/editor.css" charset="utf-8"/>
+	</head>
+	<body>
+		<div class="pop_wrap">
+	    	<div class="pop_header">
+	        	<div class="pop_title">
+	            	<h1><fmt:message key="bd_wt_ppr"/></h1>
+	                <a href="javascript:selfClose();" class="pop_close"></a>
+	            </div>
+	        </div>
+	        <div class="pop_header_shadow"></div>
+	        <div class="pop_content">
+	        	<div class="div_box pop_con">
+	            	<form name="testForm" id="testForm" method="post" enctype="multipart/form-data">
+					<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+					<input type="hidden" id="key_bod_indx"  name="key_bod_indx" value="<%=hid_bod_indx %>">
+					<input type="hidden" id="bod_sano"  name="bod_sano" value="<%=sess_empno %>">
+					<input type="hidden" id="bod_sanm"  name="bod_sanm" value="<%=sess_name %>">
+					<input type="hidden" id="gubun"  name="gubun" value="<%=gubun %>">
+					<input type="hidden" id="msg"  name="msg" value="<%=msg %>">
+					<!-- N(Notice), Q(Qna) -->
+					<input type="hidden" id="bod_type"  name="bod_type" value="N">
+					<input type="hidden" id="bsicInfo"  name="bsicInfo">
+					<input type="hidden" id="old_bod_fname"  name="old_bod_fname">
+					<input type="hidden" id="bod_content"  name="bod_content">
+			        <div id="contents_wrap" class="any_page">
+			            <div id="contents">
+			            	<%=CommonGasc.getButtonOnly(sess_empno
+		            			,"XBD02"
+								,strBtn
+			                    ,request)
+			               %>
+			                <div class="pop_tbl">
+			                	<table>
+			                        <colgroup>
+			                        	<col style="width:120px;" />
+			                        	<col style="width:370px;" />
+			                            <col style="width:120px;" />
+			                            <col style="width:auto;" />
+			                        </colgroup>
+			                        <tbody>
+			                            <tr>
+											<th><fmt:message key="type"/></th>
+											<td colspan="3">
+												<select id="bod_jgbn" name="bod_jgbn" style="width:150px" onChange="setComboName(this.form, this)"></select>
+												<input type="hidden" id="bod_jgbnnm" name="bod_jgbnnm">
+											</td>
+										</tr>
+										<tr>
+											<th scope="row"><fmt:message key="reg_ymd"/></th>
+											<td>
+												<input type="text" id="bod_fdat" name="bod_fdat" style="width:70px" value="<%=fromDay %>" onPropertyChange="tab_next(this.form, this)" maxlength="10" readOnly>
+												<input type="hidden" id="bod_ftim" name="bod_ftim" style="width:50px;ime-mode:disabled" onkeypress="return onlyNum2()" onblur="timeFormat(this, 'out');" onfocus="timeFormat(this, 'in')" onkeypress="return onlyNum2()" onkeyup="tab_next(this.form,this);" maxlength="4" value="0000"> ~ 
+												<input type="text" id="bod_tdat" name="bod_tdat" style="width:70px" value="<%=toDay %>" onPropertyChange="tab_next(this.form, this)" maxlength="10" readOnly>
+												<input type="hidden" id="bod_ttim" name="bod_ttim" style="width:50px;ime-mode:disabled" onkeypress="return onlyNum2()" onblur="timeFormat(this, 'out');" onfocus="timeFormat(this, 'in')" onkeypress="return onlyNum2()" onkeyup="tab_next(this.form,this);" maxLength="4" value="0000">
+											</td>
+											<th scope="row"><fmt:message key="pop_use_yn"/></th>
+											<td id="bod_popyn_nm" class="usePop">
+											  <select id="bod_popyn" name="bod_popyn" style="width:120px">
+												<option value=""><fmt:message key="select"/></option>
+												<option value="Y"><fmt:message key="use_y"/></option>
+												<option value="N" selected><fmt:message key="use_n"/></option>
+											  </select>
+										     </td>
+										</tr>
+										<tr>
+											<th scope="row"><fmt:message key="title"/></th>
+											<td colspan="3">
+												<input type="text" id="bod_title" name="bod_title" style="width:100%">
+											</td>
+										</tr>
+										<tr>
+										<th scope="row"><fmt:message key="contents"/></th>
+											<td colspan="3" style="height:346px; padding-top: 2px">
+												<!-- <textarea id="bod_content" name="bod_content" rows="22" cols="0" style="width:100%">
+												</textarea> -->
+												<div name="tx_editor_div_1" id="tx_editor_div_1"></div>
+											</td>
+										</tr>
+			                        </tbody>
+			                    </table>
+			                </div>
+			                <div class="jq_tbl">
+				                <table id="htmlTable" class="scroll"></table>
+								<div id="htmlPager" class="scroll"></div>
+							</div>
+			                <%@ include file="../include/hncis_message.gas"%>
+			            </div>
+			            <div class="clear"></div>
+			        </div>
+			        </form>
+					<form id="hideForm" name="hideForm">
+						<input type="hidden" id="hid_csrfToken" name="hid_csrfToken" value="<%=hid_csrfToken%>">
+					</form>
+	                <div class="box_corner box_lt"></div>
+	                <div class="box_corner box_rt"></div>
+	                <div class="box_corner box_lb"></div>
+	                <div class="box_corner box_rb"></div>
+	            </div>
+	            <div id="div_layer"></div> 
+	        </div>
+	    </div>
+	    <%@ include file="/daumeditor/pages/template/simple.gas"%> 
+		<%-- <div id="wrap">
+			<div id="GASC">
+				<form name="testForm" id="testForm" method="post" enctype="multipart/form-data">
+					<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+					<input type="hidden" id="key_bod_indx"  name="key_bod_indx" value="<%=hid_bod_indx %>">
+					<input type="hidden" id="bod_sano"  name="bod_sano" value="<%=sess_empno %>">
+					<input type="hidden" id="bod_sanm"  name="bod_sanm" value="<%=sess_name %>">
+					<input type="hidden" id="gubun"  name="gubun" value="<%=gubun %>">
+					<input type="hidden" id="msg"  name="msg" value="<%=msg %>">
+					<!-- N(Notice), Q(Qna) -->
+					<input type="hidden" id="bod_type"  name="bod_type" value="N">
+					<input type="hidden" id="bsicInfo"  name="bsicInfo">
+					<input type="hidden" id="old_bod_fname"  name="old_bod_fname">
+					
+					<div id="container_wrap_pop" style="padding-left:15px;padding-top:13px">
+						<div id="container_pop">
+							<%=CommonGasc.getTitleAndButtonNew(sess_empno
+								,"XBD02"
+								,strBtn
+								,null
+								,null
+								,"Y"
+								,request)
+							%>
+							<div id="notice">
+								<table>
+									<tr>
+										<th scope="row" class="nTitle">Job</th>
+										<td colspan="3">
+											<select id="bod_jgbn" name="bod_jgbn" style="width:150px" onChange="setComboName(this.form, this)">
+												<option value="">전체</option>
+												<option value="EM">Entrance&Meal</option>
+												<option value="BT">BusinessTravel</option>
+												<option value="BV">BusinessVehicles</option>
+												<option value="PS">Pick-upService</option>
+												<option value="SM">SystemManagement</option>
+											</select>
+											<input type="hidden" id="bod_jgbnnm" name="bod_jgbnnm">
+										</td>
+									</tr>
+									<tr>
+										<th scope="row" class="nTitle">Post date</th>
+										<td>
+										  <input type="text" id="bod_fdat" name="bod_fdat" style="width:70px" value="<%=fromDay %>" onPropertyChange="tab_next(this.form, this)" maxlength="10" readOnly>
+														<input type="hidden" id="bod_ftim" name="bod_ftim" style="width:50px;ime-mode:disabled" onkeypress="return onlyNum2()" onblur="timeFormat(this, 'out');" onfocus="timeFormat(this, 'in')" onkeypress="return onlyNum2()" onkeyup="tab_next(this.form,this);" maxlength="4" value="0000"> ~ 
+														<input type="text" id="bod_tdat" name="bod_tdat" style="width:70px" value="<%=toDay %>" onPropertyChange="tab_next(this.form, this)" maxlength="10" readOnly>
+														<input type="hidden" id="bod_ttim" name="bod_ttim" style="width:50px;ime-mode:disabled" onkeypress="return onlyNum2()" onblur="timeFormat(this, 'out');" onfocus="timeFormat(this, 'in')" onkeypress="return onlyNum2()" onkeyup="tab_next(this.form,this);" maxLength="4" value="0000">
+										</td>
+										<th scope="row" class="nTitle">Use popup</th>
+										<td id="bod_popyn_nm" class="usePop">
+										  <select id="bod_popyn" name="bod_popyn" style="width:120px">
+											<option value="">선택</option>
+											<option value="Y">Use</option>
+											<option value="N" selected>Not use</option>
+										  </select>
+									     </td>
+									</tr>
+									<tr>
+										<th scope="row" class="nTitle">Title</th>
+										<td colspan="3">
+											<input type="text" id="bod_title" name="bod_title" style="width:98%">
+										</td>
+									</tr>
+									<tr>
+									<th scope="row" class="nTitle">Contents</th>
+										<td colspan="3">
+											<textarea id="bod_content" name="bod_content" rows="20" cols="0" style="width:98%">
+											</textarea>
+										</td>
+									</tr>
+									<!-- 
+									<tr>
+										<td class="nTitle">Upload File</td>
+										<td colspan="3">
+											<div id="div_bod_fname" style="width:300px"></div>
+											<input type="file" id="bod_fname" name="bod_fname" style="width:70%">
+											<input type="hidden" id="bod_fsize"  name="bod_fsize">
+										</td>
+									</tr>
+									 -->
+								</table>
+							</div>
+							<iframe id="msgFrame" src="<%=ctxPath %>/bottom.gas" style="padding-top:10px;width:100%; height:30px;" border="0" frameborder="0" framespacing="0" hspace="0" vspace="10" scrolling="no" noresize></iframe>
+						</div>
+					</div>
+				</form>
+				<form id="hideForm" name="hideForm">
+					<input type="hidden" id="hid_csrfToken" name="hid_csrfToken"  value="<%=hid_csrfToken %>">
+				</form>
+			</div>
+		</div> --%>
+	</body>
+</html>
+		<script type="text/javascript">
+		var config1;
+		function fnSetDocumentReady(){
+			$("#bod_content").val("");
+			sess_auth = $("#work_auth").val();
+			
+			initCombo();
+		}
+
+		function initCombo(){
+			getCommonCode("bod_jgbn::A;", "N", "init()", "doSearchToJobCombo.do");		//목적
+		}
+
+		function init(){
+			if($("#msg").val() != ""){
+				setBottomMsg($("#msg").val(), true);
+			}
+			
+			$("#bod_fdat").datepicker({ dateFormat: "yy-mm-dd" });
+			$("#bod_tdat").datepicker({ dateFormat: "yy-mm-dd" });
+			
+			if($("#hid_csrfToken").val() == ""){
+				$("#hid_csrfToken").val($("#csrfToken").val());
+			}
+			
+			//에디터 세팅
+			edtTag = $('#edit_div').html();
+		    $('#edit_div').empty();
+		    
+		    setEditformInfo();
+		    
+		    EditorJSLoader.ready(function (Editor) {
+		        new Editor(config1);
+		        Editor.getCanvas().observeJob(Trex.Ev.__IFRAME_LOAD_COMPLETE, function() {
+		            Editor.modify({
+		            	
+		            });    
+		        });
+		    });
+			
+			
+			if($("#key_bod_indx").val() == ""){
+			}else{
+				doSearch();
+			}
+		}
+
+		function setEditformInfo(){
+			
+		    $("#tx_editor_div_1").empty();
+		    $("#tx_editor_div_1").append(edtTag.replace(/_0/g,"_1"));
+		    $("#tx_canvas_wysiwyg_1").attr("style", "height: 288px !important;");
+		    config1 = initEditForm('1', 'Y'); 
+		    
+		}
+
+		//사진 업로드 이미지 오픈
+		var p_initId;
+		var initFlag = "Y";
+		function popImgEdit(initId){
+
+		    p_initId = initId;
+		    if(initFlag == "Y"){
+		        $("#txx_image"+initId).attr("id", "tx_layer_image"+initId);
+		        initFlag = "N";
+		    }
+		    
+		    $("#layer_pic").remove();
+		    var picDiv = $("<div/>");
+		    picDiv.attr("id", "layer_pic");
+		    picDiv.addClass("pic_div div_border");
+		    $("#div_layer").append(picDiv.load(ctxPath+"/daumeditor/fileAttach.gas"));
+		}
+
+
+		function retrieve(gubun){
+			switch(gubun){
+				case "write" : 
+					doCudAction("write");
+					break;
+				case "edit" : 
+					doCudAction("edit");
+					break;
+				case "delete" : 
+					doCudAction("delete");
+					break;
+				case "list" : 
+					doList();
+					break;
+			}
+		}
+
+		function doSearch(msgFlag){
+			var params = {
+				key_bod_indx : $("#key_bod_indx").val(),
+				corp_cd		 : sess_corp_cd
+			};
+			
+			var paramData = {
+				paramJson : util.jsonToString(params)
+			};
+			
+			doCommonAjax("doSearchDetailBDToNotice.do", paramData, "loadCallBack(jsonData.sendResult);");
+		}
+
+		function setComboName(frm, obj){
+			frm.bod_jgbnnm.value = frm.bod_jgbn.options[frm.bod_jgbn.selectedIndex].text;
+		}
+
+		function doCudAction(gubn){
+			var bsicInfo = "";
+			var url = "", callBack = "";
+			var token = $("#csrfToken").val();
+			if(token == ""){
+				token = document.hideForm.hid_csrfToken.value;
+			}
+			
+			if(gubn == "write"){
+				url = "doWriteBDToNotice.do";
+				callBack = "writeCallBack(jsonData.sendResult);";
+			}else if(gubn == "edit"){
+				url = "doModifyBDToNotice.do";
+				callBack = "modifyCallBack(jsonData.sendResult);";
+			}else if(gubn == "delete"){
+				url = "doDeleteBDToNotice.do";
+				callBack = "deleteCallBack(jsonData.sendResult);";
+			}
+			
+			if(gubn == "write" || gubn == "edit"){
+				
+				Editor.switchEditor("_1");
+			    $('#bod_content').val(encodeURIComponent(Editor.getContent()));
+				
+				bsicInfo = {
+					bod_indx    : gubn == "write" ? "" : $("#key_bod_indx").val(),
+					bod_sano    : $("#bod_sano").val(),
+					bod_sanm    : $("#bod_sanm").val(),
+					bod_type    : $("#bod_type").val(),
+					bod_jgbn    : $("#bod_jgbn").val() == "" ? "ALL" : $("#bod_jgbn").val(),
+					bod_jgbnnm  : $("#bod_jgbnnm").val() == "" ? "<fmt:message key="total"/>" : $("#bod_jgbnnm").val(),
+					bod_fdat    : selectNum($("#bod_fdat").val()),
+					bod_ftim    : trimChar($("#bod_ftim").val(), ":"),
+					bod_tdat    : selectNum($("#bod_tdat").val()),
+					bod_ttim    : trimChar($("#bod_ttim").val(), ":"),
+					bod_popyn   : $("#bod_popyn").val(),
+					bod_title   : overLineHtml(changeToUni($("#bod_title").val())),
+					bod_content : htmlEncode($("#bod_content").val()),
+					//bod_fname   : $("#bod_fname").val(),
+					//old_bod_fname : $("#old_bod_fname").val(),
+					//bod_fsize   : $("#bod_fsize").val(),
+					ipe_eeno    : $("#bod_sano").val(),
+					updr_eeno   : $("#bod_sano").val(),
+					csrfToken	: $("#hid_csrfToken").val(),
+					corp_cd		: sess_corp_cd
+				};
+				if(!validation()) return;
+			}else{
+				bsicInfo = {
+					bod_indx    : $("#key_bod_indx").val(),
+					corp_cd		: sess_corp_cd
+				};
+			}
+			
+			confirmUI('<fmt:message key="MSG.CNF.0004"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var frm = document.testForm;
+						frm.hid_csrfToken.value = $("#hid_csrfToken").val();
+						frm.bsicInfo.value = util.jsonToString(bsicInfo);
+						frm.method = "post";
+						frm.gubun.value = gubn;
+						frm.action = url;
+						frm.submit();
+					}
+				});
+			});
+		}
+
+		function doList(){
+			var hfrm = document.hideForm;
+			var token = $("#csrfToken").val();
+			if(token == ""){
+				token = document.hideForm.hid_csrfToken.value;
+			}
+			hfrm.hid_csrfToken.value = token;
+			hfrm.method = "post";
+			hfrm.action = "xbd01.gas";
+			hfrm.submit();
+		}
+
+
+		/**
+		 * callBack
+		 */
+		function loadCallBack(result){
+			setBottomMsg(result.message, false);
+			loadJsonSet(result);
+			if($("#key_bod_indx").val != ""){
+//				if(typeof(document.getElementById("div_bod_fname") != "undefined")){
+//					document.getElementById("div_bod_fname").innerText = result.bod_fname;
+//				}
+			}
+			
+			Editor.switchEditor("_1");
+		    Editor.modify({
+		        content: decodeURIComponent(result.bod_content)
+		    });
+		}
+
+		function writeCallBack(result){
+			setBottomMsg(result.message, true);
+			$("#key_bod_indx").val(result.code);
+			doSearch("N");
+		}
+
+		function modifyCallBack(result){
+			setBottomMsg(result.message, true);
+			doSearch("N");
+		}
+
+		function deleteCallBack(result){
+			setBottomMsg(result.message, true);
+			doSearch("N");
+		}
+
+		function validation(){
+			if($("#bod_fdat").val() == ""){
+				alertUI("Please enter from date!");
+				$("#bod_fdat").focus();
+				return false;
+			}
+			if($("#bod_ftim").val() == ""){
+				alertUI("Please enter from time!");
+				$("#bod_ftim").focus();
+				return false;
+			}
+			if($("#bod_tdat").val() == ""){
+				alertUI("Please enter to date!");
+				$("#bod_tdat").focus();
+				return false;
+			}
+			if($("#bod_ttim").val() == ""){
+				alertUI("Please enter to time!");
+				$("#bod_ttim").focus();
+				return false;
+			}
+			if($("#bod_popyn").val() == ""){
+				alertUI("Please select popup use!");
+				$("#bod_popyn").focus();
+				return false;
+			}
+			if($("#bod_title").val() == ""){
+				alertUI("Please enter title!");
+				$("#bod_title").focus();
+				return false;
+			}
+			if($("#bod_content").val() == ""){
+				alertUI("Please enter content!");
+				$("#bod_content").focus();
+				return false;
+			}
+			return true;
+		}
+		</script>

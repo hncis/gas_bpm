@@ -1,0 +1,684 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XPD04";
+
+	String tempPath     = request.getServletPath().toString();
+	String stepHelpUrl  = StringUtil.getStepHelp(tempPath);
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>LIST</title>
+	</head>
+	<body>
+		<div id="wrap">
+	    	<form name="frm" id="frm">
+	    		<input type="hidden" id="help_url" name="help_url" value="<%=stepHelpUrl%>">
+
+		    	<%@ include file="../include/hncis_header.gas"%>
+		        <div id="contents_wrap">
+		        	<%@ include file="../include/hncis_left.gas"%>
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,"XPD04"
+							,""
+							,null
+							,null
+							,null
+							,request)
+						%>
+		                <div style="float:left; width:500px; height:500px">
+			                <h3 style="width:300px;padding-left:9px; background: url(../../images/hncis_common/con_t_point.png) left center no-repeat; font-size:16px; color:#000;"><fmt:message key="lrg_cd"/></h3>
+			                <div class="con_t_area mt10" style="width:480px; height:30px">
+			                	<div class="btn_area mt0">
+				                    <ul class="btns fr ml20">
+				                        <li><a href="javascript:fnGridRowAdd('htmlTable1');"><fmt:message key="BUTTON.ADD"/><span></span></a></li>
+				                        <li><a href="javascript:retrieve('lrg_save');"><fmt:message key="BUTTON.SAVE"/><span></span></a></li>
+				                        <li><a href="javascript:retrieve('lrg_delete');"><fmt:message key="BUTTON.DELETE"/><span></span></a></li>
+				                        <li><a href="javascript:fnExcelUpload();"><fmt:message key="BUTTON.EXCEL_UPLOAD"/><span></span></a></li>
+										<li><a href="javascript:doTemplateFileDown();"><fmt:message key="temp"/><span></span></a></li>
+				                    </ul>
+				                </div>
+			                </div>
+			                <table id="htmlTable1" class="scroll"></table>
+							<div id="htmlPager1" class="scroll"></div>
+						</div>
+
+						<div style="float:left; width:450px; height:500px">
+			                <h3 style="width:300px;padding-left:9px; background: url(../../images/hncis_common/con_t_point.png) left center no-repeat; font-size:16px; color:#000;"><fmt:message key="mdl_cd"/></h3>
+							<div class="con_t_area mt10" style="width:400px; height:30px">
+			                	<div class="btn_area mt0">
+				                    <ul class="btns fr ml20">
+				                        <li><a href="javascript:fnGridRowAdd('htmlTable2');"><fmt:message key="BUTTON.ADD"/><span></span></a></li>
+				                        <li><a href="javascript:retrieve('mrg_save');"><fmt:message key="BUTTON.SAVE"/><span></span></a></li>
+				                        <li><a href="javascript:retrieve('mrg_delete');"><fmt:message key="BUTTON.DELETE"/><span></span></a></li>
+				                    </ul>
+				                </div>
+			                </div>
+			                <table id="htmlTable2" class="scroll"></table>
+							<div id="htmlPager2" class="scroll"></div>
+						</div>
+
+		            <div class="clear"></div>
+		        </div>
+		        <div id="conf_pop" style="display:none">
+			  		<div class="msgBox">
+						<div class="msgBoxIn">
+						    <!--<strong>알림 메세지</strong>
+						    <hr>-->
+						    <ul>
+						        <li id="conf_msg" style="height:auto">test</li>
+						        <li>
+									<div class="btn_area">
+			                            <a href="#" id="btn_resv" class="white_btn22"><span>예약</span></a>
+			                            <a href="#" id="btn_resv_cancel" class="white_btn22"><span>취소</span></a>
+			                        </div>
+								</li>
+						    </ul>
+						    <!--<div class="boxRound01"><img src="../../images/msgbox/layer_pop_topLeft.gif" alt="" /></div>
+						    <div class="boxRound02"><img src="../../images/msgbox/layer_pop_topRight.gif" alt="" /></div>
+						    <div class="boxRound03"><img src="../../images/msgbox/layer_pop_bottomLeft.gif" alt="" /></div>
+						    <div class="boxRound04"><img src="../../images/msgbox/layer_pop_bottomRight.gif" alt="" /></div>-->
+						</div>
+			  		</div>
+				</div>
+				<div id="alert_pop" style="display:none">
+					<div class="msgBox">
+						<div class="msgBoxIn">
+						    <!--<strong><fmt:message key="msg_cont"/></strong>
+						    <hr> -->
+						    <ul>
+						        <li id="alert_msg" style="height:auto"><fmt:message key="msg_cont"/></li>
+						        <li>
+									<div class="btn_area">
+			                           <a href="#" id="pop_cls" class="white_btn22"><span><fmt:message key="close"/></span></a>
+			                       	</div>
+								</li>
+						    </ul>
+						    <!--<div class="boxRound01"><img src="../../images/msgbox/layer_pop_topLeft.gif" alt="" /></div>
+						    <div class="boxRound02"><img src="../../images/msgbox/layer_pop_topRight.gif" alt="" /></div>
+						    <div class="boxRound03"><img src="../../images/msgbox/layer_pop_bottomLeft.gif" alt="" /></div>
+						    <div class="boxRound04"><img src="../../images/msgbox/layer_pop_bottomRight.gif" alt="" /></div>-->
+						</div>
+					</div>
+				</div>
+				<div id="confirm_pop" style="display:none">
+					<div class="msgBox">
+						<div class="msgBoxIn">
+						    <!--<strong><fmt:message key="msg_cont"/></strong>
+						    <hr> -->
+						    <ul>
+						        <li id="confirm_msg" style="height:auto"><fmt:message key="msg_cont"/></li>
+						        <li>
+									<div class="btn_area">
+			                           <a href="#" id="pop_yes" class="white_btn22"><span><fmt:message key="conf"/></span></a>
+			                           <a href="#" id="pop_no" class="white_btn22"><span><fmt:message key="cncl"/></span></a>
+			                       	</div>
+								</li>
+						    </ul>
+						    <!--<div class="boxRound01"><img src="../../images/msgbox/layer_pop_topLeft.gif" alt="" /></div>
+						    <div class="boxRound02"><img src="../../images/msgbox/layer_pop_topRight.gif" alt="" /></div>
+						    <div class="boxRound03"><img src="../../images/msgbox/layer_pop_bottomLeft.gif" alt="" /></div>
+						    <div class="boxRound04"><img src="../../images/msgbox/layer_pop_bottomRight.gif" alt="" /></div>-->
+						</div>
+					</div>
+				</div>
+	        </form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken"	name="hid_csrfToken">
+				<input type="hidden" id="UPLOAD_TYPE"   name="UPLOAD_TYPE">
+			</form>
+			<form id="fileForm" name="fileForm" method="post">
+				<input type="hidden" id="fileInfo" name="fileInfo">
+			</form>
+	    </div>
+	</body>
+</html>
+		<script type="text/javascript">
+		var gridName1 = "htmlTable1";
+		var gridName2 = "htmlTable2";
+
+		var datarow1 = {lrg_cd_h:"",lrg_cd:"",lrg_nm:"",lrg_sort:"",use_yn:""};
+		var datarow2 = {mrg_lrg_cd_h:"",mrg_cd_h:"",mrg_cd:"",mrg_nm:"",mrg_sort:"",use_yn:""};
+
+		var gridParam_lrg, gridParam_mrg;
+		var prnClothesIdx = "";
+		var prnColorIdx   = "";
+		var previSRow2, previSRow3;
+
+		function fnSetDocumentReady(){
+			//도움말 버튼 생성
+			createBtn("BK");
+
+			initMenus();
+			$('#BK').slideDown('fast');
+
+			init();
+		}
+
+		function init(){
+			// 대분류
+// 			cn_lrg = [ '', '코드', '이름', '정렬', '사용여부'],
+			var cn_lrg = [ '' // ""
+				          ,'<fmt:message key="code"/>' // "코드"
+				          ,'<fmt:message key="eenm"/>' // "이름"
+				          ,'<fmt:message key="sort"/>' // "정렬"
+				          ,'<fmt:message key="use_yn"/>' // "사용여부"
+		          ];
+			cm_lrg = [
+			    {name:'lrg_cd_h'   , index:'lrg_cd_h'   , formatter:'string', width:70, align:'left'  , editable:true, sortable:false, hidden:true},
+			    {name:'lrg_cd'   , index:'lrg_cd'   , formatter:'string', width:70, align:'left'  , editable:true, sortable:false},
+			    {name:'lrg_nm'   , index:'lrg_nm'   , formatter:'string', width:240, align:'left'  , editable:true, sortable:false},
+				{name:'lrg_sort'     , index:'lrg_sort'     , formatter:'string', width:60 , align:'right' , editable:true, sortable:false,
+					editoptions:{
+						maxlength:"4",
+						dataEvents:[{type:'keyup',
+							fn:function(e){
+								if(!isNumeric($(e.target).val())){
+									$(e.target).val(selectNum($(e.target).val()));
+								}
+							}
+						}]
+					}
+				},
+				{name:'use_yn',index:'use_yn',width:60,align:'center',editable:true,sortable:false,
+					edittype:'select', formatter: "select",editoptions:{value:"Y:Y;N:N"}}
+			];
+
+			//중분류
+// 			cn_mrg = ['', '', '코드', '이름', '정렬', '사용여부'],
+			var cn_mrg = [ '' // ""
+						  ,'' // ""
+				          ,'<fmt:message key="code"/>' // "코드"
+				          ,'<fmt:message key="eenm"/>' // "이름"
+				          ,'<fmt:message key="sort"/>' // "정렬"
+				          ,'<fmt:message key="use_yn"/>' // "사용여부"
+        	 ];
+			cm_mrg = [
+			    {name:'mrg_lrg_cd_h'   , index:'mrg_lrg_cd_h'   , formatter:'string', width:70, align:'left'  , editable:true, sortable:false, hidden:true},
+			    {name:'mrg_cd_h'   		, index:'mrg_cd_h'   , formatter:'string', width:70, align:'left'  , editable:true, sortable:false, hidden:true},
+				{name:'mrg_cd'   		, index:'mrg_cd'   , formatter:'string', width:70, align:'left'  , editable:true, sortable:false},
+			    {name:'mrg_nm'   		, index:'mrg_nm'   , formatter:'string', width:160, align:'left'  , editable:true, sortable:false},
+				{name:'mrg_sort'     , index:'mrg_sort'     , formatter:'string', width:60 , align:'right' , editable:true, sortable:false,
+					editoptions:{
+						maxlength:"4",
+						dataEvents:[{type:'keyup',
+							fn:function(e){
+								if(!isNumeric($(e.target).val())){
+									$(e.target).val(selectNum($(e.target).val()));
+								}
+							}
+						}]
+					}
+				},
+				{name:'use_yn',index:'use_yn',width:60,align:'center',editable:true,sortable:false,
+					edittype:'select', formatter: "select",editoptions:{value:"Y:Y;N:N"}}
+			];
+
+			gridParam_lrg = {
+				viewEdit : [{
+					gridName      : gridName1,
+					url           : "/doSearchToEmpty.do",
+					colNames      : cn_lrg,
+					colModel      : cm_lrg,
+					width         : '100%',
+					height        : '100%',
+					sortname      : "type_cd",
+					sortorder     : "asc",
+					rownumbers    : false,
+					multiselect   : true,
+					rowNum		  : "300",
+					cellEdit      : true,
+					fnMerge       : false,
+					selectCellFc  : "doMrgSearch('N');",
+					completeFc	  : "fnGridInitCallBack('"+gridName1+"');"
+				}]
+			};
+
+			gridParam_mrg = {
+				viewEdit : [{
+					gridName      : gridName2,
+					url           : "/doSearchToEmpty.do",
+					colNames      : cn_mrg,
+					colModel      : cm_mrg,
+					width         : '100%',
+					height        : '100%',
+					sortname      : "color_cd",
+					sortorder     : "asc",
+					rownumbers    : false,
+					multiselect   : true,
+					cellEdit      : true,
+					fnMerge       : false,
+					completeFc	  : "fnGridInitCallBack('"+gridName2+"');"
+				}]
+			};
+
+			commonJqGridInit(gridParam_lrg);
+		}
+
+		function fnGridInitCallBack(initGrid){
+			switch(initGrid){
+			case "htmlTable1" :
+				addGridRow(15, initGrid, 'datarow1');
+				commonJqGridInit(gridParam_mrg);
+				break;
+			case "htmlTable2" :
+				addGridRow(15, initGrid, 'datarow2');
+				doLrgSearch("N");
+				break;
+			}
+		}
+
+		function retrieve(btnFlag){
+			var f = document.frm;
+			switch(btnFlag){
+			    case "lrg_search" :
+				    doLrgSearch();
+					break;
+			    case "mrg_search" :
+			    	doMrgSearch();
+					break;
+			    case "lrg_save" :
+				    doLrgSave();
+					break;
+			    case "mrg_save" :
+			    	doMrgSave();
+					break;
+			    case "lrg_delete" :
+				    doLrgDelete();
+					break;
+			    case "mrg_delete" :
+			    	doMrgDelete();
+					break;
+			}
+		}
+
+		function doLrgSearch(msgFlag){
+			var params = {
+					lrg_cd : 'A',
+					corp_cd	: sess_corp_cd
+			};
+
+			doCommonSearch("doSearchPdListToLrgInfo.do", util.jsonToString(params), "doSearchPdListToLrgInfoCallBack();", gridName1, msgFlag);
+		}
+		function doSearchPdListToLrgInfoCallBack(){
+			var tmpTypeSearch = $("#"+gridName1).getDataIDs().length;
+
+			previSRow1 = tmpTypeSearch == 0 ? "" : "1";
+
+			addGridRow(15, gridName1, 'datarow1');
+			if(prnClothesIdx == ""){
+				if(getColValue("lrg_cd_h", 1, gridName1) != ""){
+					//$("#"+gridName1).jqGrid("setSelection", 1);
+					jQuery("#"+gridName1).setRowData (1,false,{background:'#B2EBF4'});
+					previSRow1 = 1;
+				}
+			}else{
+				//$("#"+gridName1).jqGrid("setSelection", prnClothesIdx);
+			}
+
+			doMrgSearch("N");
+		}
+
+		var tmpLrgCd;
+		function doMrgSearch(msgFlag){
+			tmpLrgCd = getColValue("lrg_cd_h", previSRow1, gridName1);
+
+			var params = {
+				lrg_cd : tmpLrgCd,
+				corp_cd	: sess_corp_cd
+			};
+
+			prnColorIdx = previSRow2;
+
+			doCommonSearch("doSearchPdListToMrgInfo.do", util.jsonToString(params), "doSearchPdListToMrgInfoCallBack();", gridName2, msgFlag);
+		}
+
+
+		function doSearchPdListToMrgInfoCallBack(){
+			addGridRow(15, gridName2, 'datarow2');
+		}
+
+		function doSizeSearchCallBack(){
+			addGridRow(8, gridName3, 'datarow3');
+		}
+
+		function fnGridRowAdd(targetGrid){
+			var gridRowId = $("#"+targetGrid).getDataIDs().length;
+			switch(targetGrid){
+			case "htmlTable1" :
+				jQuery("#"+targetGrid).jqGrid("addRowData", gridRowId+1, datarow1);
+				break;
+			case "htmlTable2" :
+				jQuery("#"+targetGrid).jqGrid("addRowData", gridRowId+1, datarow2);
+				break;
+			}
+		}
+
+		function doLrgSave(){
+			var iParams = [];
+			var uParams = [];
+			var iData;
+			var uData;
+
+			var selectRow = $("#"+gridName1).jqGrid("getGridParam", "selarrrow");
+
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+
+			for(var i=0; i<selectRow.length; i++){
+				if(selectRow[i]){
+					if($.trim(getColValue("lrg_cd_h", selectRow[i], gridName1)) == ""){
+						if(!fnValidationChk(selectRow[i], "lrg", "I")){ return; }
+						iData = {
+							lrg_cd  	  : getColValue("lrg_cd"      , selectRow[i], gridName1),
+							lrg_nm        : getColValue("lrg_nm"      , selectRow[i], gridName1),
+							lrg_sort 	  : getColValue("lrg_sort", selectRow[i], gridName1),
+							use_yn     	  : getColValue("use_yn"    , selectRow[i], gridName1),
+							ipe_eeno      : sess_empno,
+							corp_cd		  : sess_corp_cd
+						};
+
+						iParams.push(iData);
+					}else{
+						if(!fnValidationChk(selectRow[i], "lrg", "U")){ return; }
+						uData = {
+								lrg_cd  	  : getColValue("lrg_cd"      , selectRow[i], gridName1),
+								lrg_nm        : getColValue("lrg_nm"      , selectRow[i], gridName1),
+								lrg_sort 	  : getColValue("lrg_sort", selectRow[i], gridName1),
+								use_yn     	  : getColValue("use_yn"    , selectRow[i], gridName1),
+								lrg_cd_h  	  : getColValue("lrg_cd_h"      , selectRow[i], gridName1),
+								updr_eeno     : sess_empno,
+								corp_cd		  : sess_corp_cd
+						};
+
+						uParams.push(uData);
+					}
+				}
+			}
+
+			if(iParams.length == 0 && uParams.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+
+			confirmUI('<fmt:message key="MSG.CNF.0004"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var params = {
+								iParams : util.jsonToList(iParams),
+								uParams : util.jsonToList(uParams),
+						};
+						doCommonAjax("doSavePdToLrgList.do", params, "doSavePdToLrgListCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+		function doSavePdToLrgListCallBack(result){
+			setBottomMsg(result.message, true);
+			doLrgSearch("N");
+		}
+
+		function doMrgSave(){
+			var iParams = [];
+			var uParams = [];
+			var iData;
+			var uData;
+
+			var selectRow = $("#"+gridName2).jqGrid("getGridParam", "selarrrow");
+
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+
+			for(var i=0; i<selectRow.length; i++){
+				if(selectRow[i]){
+					if($.trim(getColValue("mrg_lrg_cd_h", selectRow[i], gridName2)) == ""){
+						if(!fnValidationChk(selectRow[i], "mrg", "I")){ return; }
+						iData = {
+							lrg_cd  	  : tmpLrgCd,
+							mrg_cd  	  : getColValue("mrg_cd"      	, selectRow[i], gridName2),
+							mrg_nm        : getColValue("mrg_nm"      	, selectRow[i], gridName2),
+							mrg_sort 	  : getColValue("mrg_sort"		, selectRow[i], gridName2),
+							use_yn     	  : getColValue("use_yn"    	, selectRow[i], gridName2),
+							ipe_eeno      : sess_empno,
+							corp_cd		  : sess_corp_cd
+						};
+
+						iParams.push(iData);
+					}else{
+						if(!fnValidationChk(selectRow[i], "mrg", "U")){ return; }
+						uData = {
+								mrg_cd  	  : getColValue("mrg_cd"      	, selectRow[i], gridName2),
+								mrg_nm        : getColValue("mrg_nm"      	, selectRow[i], gridName2),
+								mrg_sort 	  : getColValue("mrg_sort"		, selectRow[i], gridName2),
+								use_yn     	  : getColValue("use_yn"    	, selectRow[i], gridName2),
+								lrg_cd_h  	  : getColValue("mrg_lrg_cd_h"  , selectRow[i], gridName2),
+								mrg_cd_h  	  : getColValue("mrg_cd_h"      , selectRow[i], gridName2),
+								updr_eeno     : sess_empno,
+								corp_cd		  : sess_corp_cd
+						};
+
+						uParams.push(uData);
+					}
+				}
+			}
+
+			if(iParams.length == 0 && uParams.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+
+			confirmUI('<fmt:message key="MSG.CNF.0004"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var params = {
+								iParams : util.jsonToList(iParams),
+								uParams : util.jsonToList(uParams),
+						};
+						doCommonAjax("doSavePdToMrgList.do", params, "doSavePdToMrgListCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+		function doSavePdToMrgListCallBack(result){
+			setBottomMsg(result.message, true);
+			doMrgSearch("N");
+		}
+
+
+		function doLrgDelete(tgName){
+			var dParams = [];
+			var dData;
+
+			var selectRow = $("#"+gridName1).jqGrid("getGridParam", "selarrrow");
+
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+
+			for(var i=0; i<selectRow.length; i++){
+				if(selectRow[i]){
+					if(!fnValidationChk(selectRow[i], "lrg", "D")){ return; }
+					dData = {
+						lrg_cd_h       : getColValue("lrg_cd_h", selectRow[i], gridName1),
+						corp_cd		   : sess_corp_cd
+					};
+
+					dParams.push(dData);
+				}
+			}
+
+			if(dParams.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+
+			confirmUI('<fmt:message key="MSG.CNF.0002"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var params = {
+								dParams : util.jsonToList(dParams)
+						};
+						doCommonAjax("doDeletePdToLrgList.do", params, "doDeletePdToLrgListCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function doDeletePdToLrgListCallBack(result){
+			setBottomMsg(result.message, true);
+			doLrgSearch("N");
+		}
+
+		function doMrgDelete(tgName){
+			var dParams = [];
+			var dData;
+
+			var selectRow = $("#"+gridName2).jqGrid("getGridParam", "selarrrow");
+
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+
+
+			for(var i=0; i<selectRow.length; i++){
+				if(selectRow[i]){
+					if(!fnValidationChk(selectRow[i], "mrg", "D")){ return; }
+					dData = {
+							lrg_cd_h       : getColValue("mrg_lrg_cd_h", selectRow[i], gridName2),
+							mrg_cd_h       : getColValue("mrg_cd_h", selectRow[i], gridName2),
+							corp_cd		   : sess_corp_cd
+					};
+
+					dParams.push(dData);
+				}
+			}
+
+			if(dParams.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+
+			confirmUI('<fmt:message key="MSG.CNF.0002"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var params = {
+								dParams : util.jsonToList(dParams)
+						};
+						doCommonAjax("doDeletePdToMrgList.do", params, "doDeletePdToMrgListCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function doDeletePdToMrgListCallBack(result){
+			setBottomMsg(result.message, true);
+			doMrgSearch("N");
+		}
+
+
+
+		function fnValidationChk(rowId, type, mode){
+			switch(mode){
+			case "I" :
+			case "U" :
+				switch(type){
+				case "lrg" :
+					if(getColValue("lrg_cd", rowId, gridName1) == ""){
+						alertUI('<fmt:message key="lrg_cd"/>' +' ' + rowId + '<fmt:message key="MSG.ROW.0001"/>');
+						return false;
+					}
+					if(getColValue("lrg_nm", rowId, gridName1) == ""){
+						alertUI('<fmt:message key="lrg_cd"/>' +' ' + rowId + '<fmt:message key="MSG.ROW.0002"/>');
+						return false;
+					}
+					if(getColValue("lrg_sort", rowId, gridName1) == ""){
+						alertUI('<fmt:message key="lrg_cd"/>' +' ' + rowId + '<fmt:message key="MSG.ROW.0003"/>');
+						return false;
+					}
+					break;
+				case "mrg" :
+					if(getColValue("mrg_cd", rowId, gridName1) == ""){
+						alertUI('<fmt:message key="mdl_cd"/>' + ' ' + rowId + '<fmt:message key="MSG.ROW.0001"/>');
+						return false;
+					}
+					if(getColValue("mrg_nm", rowId, gridName1) == ""){
+						alertUI('<fmt:message key="mdl_cd"/>' + ' ' + rowId + '<fmt:message key="MSG.ROW.0002"/>');
+						return false;
+					}
+					if(getColValue("mrg_sort", rowId, gridName1) == ""){
+						alertUI('<fmt:message key="mdl_cd"/>' + ' ' + rowId + '<fmt:message key="MSG.ROW.0003"/>');
+						return false;
+					}
+					break;
+				}
+				break;
+			case "D" :
+				switch(type){
+				case "lrg" :
+					if(getColValue("lrg_cd_h", rowId, gridName2) == ""){
+						alertUI('<fmt:message key="lrg_cd"/>' + ' ' + rowId + '<fmt:message key="MSG.ROW.0057"/>');
+						return false;
+					}
+
+					break;
+				case "mrg" :
+					if(getColValue("mrg_lrg_cd_h", rowId, gridName2) == ""){
+						alertUI('<fmt:message key="mdl_cd"/>' + ' ' + rowId + '<fmt:message key="MSG.ROW.0057"/>');
+						return false;
+					}
+					break;
+				}
+				break;
+			}
+
+			return true;
+		}
+
+		var win;
+		function fnExcelUpload(){
+			if(win != null){ win.close(); }
+			var url = "../popup/pop_excelUpload.gas", width = "460", height = "200";
+
+			win = newPopWin("about:blank", width, height, "win_excel");
+			document.hideForm.hid_csrfToken.value = $("#csrfToken").val();
+			document.hideForm.UPLOAD_TYPE.value = "XBK01";
+			document.hideForm.action = url;
+			document.hideForm.target = "win_excel";
+			document.hideForm.method = "post";
+			document.hideForm.submit();
+		}
+
+		function pageStepHelpPopup(){
+			if(popup != null ){
+				popup.close();
+			}
+
+			popup = popUpWindow3($("#help_url").val());
+		}
+		
+		function doTemplateFileDown(){
+			var locale = sess_locale;
+			var fileInfo = {
+				ogc_fil_nm   	: "product_template.xlsx",
+				fil_nm			: "product_template.xlsx",
+				locale			: locale
+			};
+			
+			var frm = document.fileForm;
+			frm.fileInfo.value = util.jsonToString(fileInfo);
+			frm.action = "/hncis/system/doTemplateFileDown.do";
+			frm.submit();
+		}
+		</script>

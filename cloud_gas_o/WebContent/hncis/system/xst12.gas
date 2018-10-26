@@ -1,0 +1,212 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XST12";
+	String imgName = CommonGasc.getSelectBackgroundImage(SessionInfo.getSess_corp_cd(request));
+	
+	String strSav = JSPMessageSource.getMessage("BUTTON.SAVE",locale);
+	
+	String strBtn = "";
+	strBtn = strSav+"/save";
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Background Management</title>
+	</head>
+	<body>
+		<div id="wrap">
+	    	<form name="testForm" id="testForm">
+				<input type="hidden" id="imgName" name="imgName" value="<%=imgName%>">
+		    	<%@ include file="../include/hncis_header.gas"%>
+		        <div id="contents_wrap">
+		        	<%@ include file="../include/hncis_left.gas"%>
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,"XST12"
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+		                <div class="search_area pt30 pb30" style="text-align: center;">
+		                	<table style="width:1000px; margin:0 auto;">
+								<colgroup>
+		                        	<col style="width:200px;" />
+		                            <col style="width:200px;" />
+		                            <col style="width:200px;" />
+		                            <col style="width:200px;" />
+		                            <col style="width:200px;" />
+		                        </colgroup>
+								<tr>
+									<td>
+										<img src="<%=ctxPath%>/images/main/main_visual01.png" alt="" style="width:190px;cursor:pointer;" onclick="viweImg('main_visual01.png');"/>
+									</td>
+									<td>
+										<img src="<%=ctxPath%>/images/main/main_visual02.png" alt="" style="width:190px;cursor:pointer;" onclick="viweImg('main_visual02.png');"/>
+									</td>
+									<td>
+										<img src="<%=ctxPath%>/images/main/main_visual03.png" alt="" style="width:190px;cursor:pointer;" onclick="viweImg('main_visual03.png');"/>
+									</td>
+									<td>
+										<img src="<%=ctxPath%>/images/main/main_visual04.png" alt="" style="width:190px;cursor:pointer;" onclick="viweImg('main_visual04.png');"/>
+									</td>
+									<td>
+										<img src="<%=ctxPath%>/images/main/main_visual05.png" alt="" style="width:190px;cursor:pointer;" onclick="viweImg('main_visual05.png');"/>
+									</td>
+								</tr>
+								<tr>
+									<td align="center">
+										<input type="radio" name="bg_img" id="bg_img" value="main_img01" class="n_t">
+									</td>
+									<td align="center">
+										<input type="radio" name="bg_img" id="bg_img" value="main_img02" class="n_t">
+									</td>
+									<td  align="center">
+										<input type="radio" name="bg_img" id="bg_img" value="main_img03" class="n_t">
+									</td>
+									<td  align="center">
+										<input type="radio" name="bg_img" id="bg_img" value="main_img04" class="n_t">
+									</td>
+									<td  align="center">
+										<input type="radio" name="bg_img" id="bg_img" value="main_img05" class="n_t">
+									</td>
+								</tr>
+							</table>
+		                </div>
+		                <div class="jq_tbl">
+			                <table id="htmlTable" class="scroll"></table>
+							<div id="htmlPager" class="scroll"></div>
+						</div>
+		                <%@ include file="../include/hncis_message.gas"%>
+		            </div>
+		            <div class="clear"></div>
+		        </div>
+	        </form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+	    </div>
+		<%-- <div id="wrap">
+			<div id="GASC">
+				<form name="testForm" id="testForm">
+				<input type="hidden" id="imgName" name="imgName" value="<%=imgName%>">
+					<%@ include file="../include/leftMenuSys.gas"%>
+					<div id="container_wrap">
+						<div id="container">
+							<%=CommonGasc.getTitleAndButtonNew(sess_empno
+								,"XST12"
+								,"save/save"
+								,null
+								,null
+								,null
+								,request)
+							%>
+							<div style="width:936px; border:7px solid #eeeeee; background-color:#f7f7f7;">
+								<table style="table-layout: fixed; margin-top:20px; margin-bottom:20px" align="center">
+									<tr>
+										<td style="width:220px;padding-left:20px">
+											<img src="<%=ctxPath%>/images/main/main_img01.jpg" alt="" style="width:200px;cursor:hand;" onclick="viweImg('main_img01.jpg');"/>
+										</td>
+										<td style="width:220px;">
+											<img src="<%=ctxPath%>/images/main/main_img02.jpg" alt="" style="width:200px;cursor:hand;" onclick="viweImg('main_img02.jpg');"/>
+										</td>
+										<td style="width:220px;">
+											<img src="<%=ctxPath%>/images/main/main_img03.jpg" alt="" style="width:200px;cursor:hand;" onclick="viweImg('main_img03.jpg');"/>
+										</td>
+										<td style="width:220px;">
+											<img src="<%=ctxPath%>/images/main/main_img04.jpg" alt="" style="width:200px;cursor:hand;" onclick="viweImg('main_img04.jpg');"/>
+										</td>
+									</tr>
+									<tr>
+										<td align="center">
+											<input type="radio" name="bg_img" id="bg_img" value="main_img01.jpg" class="n_t">
+										</td>
+										<td  align="center">
+											<input type="radio" name="bg_img" id="bg_img" value="main_img02.jpg" class="n_t">
+										</td>
+										<td  align="center">
+											<input type="radio" name="bg_img" id="bg_img" value="main_img03.jpg" class="n_t">
+										</td>
+										<td  align="center">
+											<input type="radio" name="bg_img" id="bg_img" value="main_img04.jpg" class="n_t">
+										</td>
+									</tr>
+								</table>
+							</div>
+							<table id="htmlTable" class="scroll"></table>
+							<div id="htmlPager" class="scroll"></div>
+							<iframe id="msgFrame" src="<%=ctxPath %>/bottom.gas" style="padding-top:10px; width:100%; height:30px;" border="0" frameborder="0" framespacing="0" hspace="0" vspace="10" scrolling="no" noresize></iframe>
+						</div>
+					</div>
+				</form>
+				<form id="hideForm" name="hideForm" method="post">
+					<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+				</form>				
+			</div>
+		</div> --%>
+	</body>
+</html>
+<script type="text/javascript">
+	function fnSetDocumentReady(){
+		initMenus();
+		$('#ST').slideDown('fast');
+		init();
+	}
+	
+	function init(){
+		var f = document.testForm ;
+		
+		for(var i=0; i<f.bg_img.length; i++){
+			if(f.bg_img[i].value == f.imgName.value){
+				f.bg_img[i].checked = true;
+			}
+		}
+	}
+	
+	function retrieve(btnFlag){
+		switch(btnFlag){
+		   case "save" :
+			    doSave();
+				break;
+		}
+	}
+	
+	function doSave(){
+		var f = document.testForm ;
+		
+		var img_name = "";
+		for(var i=0; i<f.bg_img.length; i++){
+			if(f.bg_img[i].checked == true){
+				img_name = f.bg_img[i].value;
+			}
+		}
+		if(img_name == ""){
+			img_name = "main_img01.jpg";
+		}
+		var keyData = {
+				xcod_knd 			: 'X0012',
+				xcod_hname			: img_name,
+				xcod_updt_empno		: sess_empno,
+				corp_cd	  			: sess_corp_cd
+			};
+		
+		confirmUI("저장 하시겠습니까?");
+		$("#pop_yes").click(function(){
+			$.unblockUI({
+				onUnblock: function(){
+					var paramData = {
+							paramJson      	: util.jsonToString(keyData)
+						};
+					doCommonAjax("doInsertToBackgroundImage.do", paramData, "setBottomMsg(jsonData.sendResult.message, true);");
+				}
+			});
+		});
+	}
+	
+	function viweImg(imageNm){
+		var param = "?imageNm="+imageNm+"&hid_csrfToken="+$("#csrfToken").val();
+		newPopWin(ctxPath+"/hncis/system/xst12_preview.gas"+param, "342", "433", "pop_img");
+	}
+</script>

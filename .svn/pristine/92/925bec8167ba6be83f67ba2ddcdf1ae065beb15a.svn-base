@@ -1,0 +1,286 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XST16";
+
+	String strSav = JSPMessageSource.getMessage("BUTTON.SAVE",locale);
+	String strDel = JSPMessageSource.getMessage("BUTTON.DELETE", locale);
+	
+	String strBtn = "";
+	strBtn = strSav+"/save@"+strDel+"/delete";
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>BusinessTravel - code Management</title>
+	</head>
+	<body>
+		<div id="wrap">
+	    	<form name="testForm" id="testForm">
+		    	<%@ include file="../include/hncis_header.gas"%>
+		        <div id="contents_wrap">
+		        	<%@ include file="../include/hncis_left.gas"%>
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,"XST16"
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+		                <div class="jq_tbl">
+			                <table id="htmlTable" class="scroll"></table>
+							<div id="htmlPager" class="scroll"></div>
+						</div>
+		                <%@ include file="../include/hncis_message.gas"%>
+		            </div>
+		            <div class="clear"></div>
+		        </div>
+	        </form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+	    </div>
+	</body>
+</html>
+		<script type="text/javascript">
+		var comboVal1;
+
+		function fnSetDocumentReady(){
+			initMenus();
+			$('#ST').slideDown('fast');
+
+			getCommonCode("approve_type:X3011:Z;approve_level:X0023:Z;", "Y", "init();");
+		}
+
+		function getKeyCombo(levelDatas){
+			comboVal1 = levelDatas;
+			var codeStr_temp = "approve_type:Z:";
+			getCommonCode(codeStr_temp, "Y", "init();", "/getMenuComboList.do");
+		}
+
+		/**
+		 * process init() loading
+		 */
+		var params;
+		var fnMerge;
+		var gridParam;
+		var gridName = "htmlTable";
+		var datarow  = {old_app_type:"", app_type:"", app_level:"", rem_sbc:"", use_yn:""};
+		function init(){
+// 			var cn = ["", "결재 타입", "결재 레벨","사용여부" , "비고"];
+			var cn = [ '' // ""
+			          ,'<fmt:message key="approval_type"/>' // "결재 타입"
+			          ,'<fmt:message key="approval_lv"/>' // "결재 레벨"
+			          ,'<fmt:message key="use_yn"/>' // "사용여부"
+			          ,'<fmt:message key="rem_sbc"/>' // "비고"
+		          ];
+			var cm = [
+		        {name:"old_app_type", index:"old_app_type"	, sortable:false, formatter:"string", width:"0"  , align:"center", editable:false, hidden : true},
+		        {name:"app_type"	, index:"app_type"		, sortable:false, formatter:"select", width:"200", align:"center", editable:false,
+		        	edittype:"select",
+		        	editoptions:{value:getComboValue('approve_type')}
+		        },
+		        {name:"app_level"	, index:"app_level"		, sortable:false, formatter:"select", width:"120", align:"center", editable:true,
+		        	edittype:"select",
+		        	editoptions:{value:getComboValue('approve_level')}
+		        },
+//		        {name:"app_level"	, index:"app_level"		, sortable:false, formatter:"string", width:"120", align:"center", editable:true,
+//		        },
+		        {name:"use_yn"	, index:"use_yn"		, sortable:false, formatter:"select", width:"120", align:"center", editable:true,
+		        	edittype:"select",
+		        	editoptions:{value:"Y:<fmt:message key="use_y"/>;N:<fmt:message key="use_n"/>"}
+		        },
+		        {name:"rem_sbc"		, index:"rem_sbc"		, sortable:false, formatter:"string", width:"520", align:"left", editable:true,
+		        	editoptions:{maxlength:"100"}
+			    }
+			];
+			params = {
+					corp_cd		: sess_corp_cd,
+					locale	  	: $("#lo").val()
+			};
+			//set grid parameter
+			gridParam = {
+				viewEdit : [{
+					gridName     : gridName,
+					url          : "doSearchGridToApproveLevelManagement.do",
+					colNames     : cn,
+					colModel     : cm,
+					height       : "100%",
+					rownumbers   : true,
+					multiselect  : true,
+					cellEdit     : true,
+					fnMerge      : false,
+					pager		 : "htmlPager",
+					paramJson    : params,
+					completeFc   : "addGridRow();initAfterMenus();"
+				}]
+			};
+
+			//common jqGrid call...
+			commonJqGridInit(gridParam);
+		}
+
+		function retrieve(gubn){
+			switch(gubn){
+				case "search" :
+					doSearch();
+					break;
+				case "save" :
+					doInsert();
+					break;
+				case "edit" :
+					doModify();
+					break;
+				case "delete" :
+					doDelete();
+					break;
+			}
+		}
+
+		function doSearch(msgFlag){
+			
+			var params = {
+					corp_cd		   : sess_corp_cd,
+					locale	  	   : $("#lo").val()
+				};
+			
+			doCommonSearch("doSearchGridToApproveLevelManagement.do", util.jsonToString(params), "addGridRow();initAfterMenus();", gridName, msgFlag);
+		}
+
+		function doInsert(){
+			var paramsI = [];
+			var paramsU = [];
+			var selectRow = jQuery("#"+gridName).jqGrid("getGridParam", "selarrrow");
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}else{
+				for(var i = 0; i < selectRow.length; i++){
+					var rowId = selectRow[i];
+					if(rowId){
+						if(getColValue("app_type" , rowId, gridName) == ""){
+							alertUI(rowId + ' <fmt:message key="MSG.ROW.0038"/>');
+							return;
+						}else if(getColValue("app_level" , rowId, gridName) == ""){
+							alertUI(rowId + ' <fmt:message key="MSG.ROW.0039"/>');
+							return;
+						}
+
+						if($.trim(getColValue("old_app_type", rowId, gridName)) != ""){
+							list ={
+								app_type  : getColValue("old_app_type", rowId, gridName),
+								app_level : getColValue("app_level"   , rowId, gridName),
+								rem_sbc   : getColValue("rem_sbc"     , rowId, gridName),
+								use_yn    : getColValue("use_yn"     , rowId, gridName),
+								ipe_eeno  : sess_empno,
+								updr_eeno : sess_empno,
+								corp_cd	  : sess_corp_cd,
+								locale	  : $("#lo").val()
+							};
+							paramsU.push(list);
+						}else{
+							list ={
+								app_type  : getColValue("app_type" , rowId, gridName),
+								app_level : getColValue("app_level", rowId, gridName),
+								rem_sbc   : getColValue("rem_sbc"  , rowId, gridName),
+								use_yn    : getColValue("use_yn"     , rowId, gridName),
+								ipe_eeno  : sess_empno,
+								updr_eeno : sess_empno,
+								corp_cd	  : sess_corp_cd,
+								locale	  : $("#lo").val()
+							};
+							paramsI.push(list);
+						}
+					}
+				}
+			}
+			confirmUI('<fmt:message key="MSG.CNF.0004"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								iParams : util.jsonToList(paramsI),
+								uParams	: util.jsonToList(paramsU)
+							};
+						doCommonAjax("doSaveToApproveLevelManagement.do", paramData, "doSaveCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function doDelete(){
+			var params = [];
+			var selectRow = jQuery("#"+gridName).jqGrid("getGridParam", "selarrrow");
+
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}else{
+				for(var i = 0; i < selectRow.length; i++){
+					var rowId = selectRow[i];
+					if(rowId){
+						if($.trim(getColValue("old_app_type", rowId, gridName)) == ""){
+							alertUI(rowId + ' <fmt:message key="MSG.ROW.0056"/>');
+							return;
+						}
+						list ={
+							app_type : getColValue("old_app_type", rowId, gridName),
+							corp_cd	 : sess_corp_cd,
+							locale	 : $("#lo").val()
+						};
+						params.push(list);
+					}
+				}
+			}
+
+			confirmUI('<fmt:message key="MSG.CNF.0002"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								dParams : util.jsonToList(params)
+							};
+							doCommonAjax("doDeleteToApproveLevelManagement.do", paramData, "doSaveCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		/**
+		 * addRow $.IDs.length + 1
+		 * datarow colModel keyName:"", ....
+		 */
+		function addRow(){
+			var gridRowId = jQuery("#"+gridName).getDataIDs().length;
+			for(var i = 1; i <= 10 - gridRowId ; i++){
+				jQuery("#"+gridName).jqGrid("addRowData", gridRowId+i, datarow);
+			}
+		}
+
+		function doSaveCallBack(result){
+			setBottomMsg(result.message, true);
+			doSearch("N");
+		}
+
+		function getTypeComboValue(comboName){
+			var returnVal = "";
+			var i = 0;
+
+			$.each(eval(comboVal1),function(targetNm,optionData){
+
+				if(targetNm == comboName){
+					$.each(eval(optionData),function(index,optionData){
+						if(i == 0){
+							returnVal = returnVal + optionData.value + ":" + optionData.name;
+						}else{
+							returnVal = returnVal + ";" + optionData.value + ":" + optionData.name;
+						}
+						i++;
+					});
+				}
+		      });
+			return returnVal;
+		}
+		</script>

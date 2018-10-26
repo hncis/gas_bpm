@@ -1,0 +1,409 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId = "XTR03";
+	String hid_cond  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_cond")));
+
+	String yy = CurrentDateTime.getYear();
+	String mm = CurrentDateTime.getMonth();
+	String dd = CurrentDateTime.getDay();
+	String fdate = CurrentDateTime.getDate(CurrentDateTime.getDate(),-14);
+	String fyy = fdate.substring(0,4);
+	String fmm = fdate.substring(4,6);
+	String fdd = fdate.substring(6,8);
+	
+	String fromDay = fyy + "-" + fmm + "-" + fdd;
+	String toDay   = yy + "-" + mm + "-" + dd;
+	
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH", locale);
+	String strExl = JSPMessageSource.getMessage("BUTTON.EXCEL",locale);
+
+	String strBtn = "";
+	strBtn = strSch+"/search@"+strExl+"/excel";
+	
+	String tempPath     = request.getServletPath().toString();
+	String stepHelpUrl  = StringUtil.getStepHelp(tempPath);
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>BusinessCard</title>
+	</head>
+	<body>
+		<div id="wrap">
+		<form name="frm" id="frm">
+			<input type="hidden" id="menu_id" name="menu_id" value="<%=menuId.toLowerCase() %>">
+			<input type="hidden" id="hid_cond" name="hid_cond" value="<%=hid_cond %>">
+			<input type="hidden" id="hid_page" name="hid_page">
+			<input type="hidden" id="help_url" name="help_url" value="<%=stepHelpUrl%>">
+			
+			<%@ include file="../include/hncis_header.gas"%>
+			<div id="contents_wrap">
+				<%@ include file="../include/hncis_left.gas"%>
+				<div id="contents">
+					<%=CommonGasc.getTitleAndButtonNew(sess_empno
+						,"XBC02"
+						,strBtn
+						,null
+						,null
+						,null
+						,request)
+					%>
+					<div class="search_area">
+						<table>
+							<colgroup>
+								<col style="width:80px;" />
+	                            <col style="width:280px;" />
+	                            <col style="width:80px;" />
+	                            <col style="width:210px;" />
+	                            <col style="width:80px;" />
+	                            <col style="width:auto;" />
+							</colgroup>
+							<tr>
+								<th><fmt:message key="dept_nm"/></th>
+								<td>
+									<input type="text" name="key_ops_cd" id="key_ops_cd" style="ime-mode:disabled;width:60px" onkeyup="deptSearch();">
+									<input id="key_ops_nm" type="text" style="width:145px" class="disabled" readonly>
+									<img id="deptBtn" name="img_ignm_pop" src="<%=ctxPath %>/images/hncis_common/find-f.png" style="cursor:hand;filter:alpha(opacity=100)" class='button' onMouseOver="na_change_img_src('img_ignm_pop','document', '<%=ctxPath %>/images/hncis_common/find-n.png');" onMouseOut="na_restore_img_src('img_ignm_pop');" onclick="deptFind()" align="absmiddle">
+								</td>
+								<th><fmt:message key="eeno"/></th>
+								<td><input id="key_eeno" type="text" style="width:150px"></td>
+								<th><fmt:message key="eenm"/></th>
+								<td>
+									<input id="key_eenm" type="text" style="width:150px">
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="req_ymd"/></th>
+								<td>
+									<input type="text" id="key_from_date" name="key_from_date" style="width:80px" value="<%=fromDay%>" readonly> ~
+									<input type="text" id="key_to_date" name="key_to_date" style="width:80px" value="<%=toDay %>" readonly>
+								</td>
+								<th><fmt:message key="pgs_st_nm"/></th>
+								<td>
+									<select id="key_pgs_st_cd" style="width:150px">
+										<option value=""><fmt:message key="total"/></option>
+									</select>
+								</td>
+								<th><fmt:message key="edu_proc"/></th>
+								<td>
+									<input id="key_title" type="text" style="width:150px">
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div class="jq_tbl">
+		                <table id="htmlTable" class="scroll"></table>
+		                <div id="htmlPager" class="scroll"></div>
+		            </div>
+                	<%@ include file="../include/hncis_message.gas"%>
+					<iframe name="list1" width="0" height="0" frameborder="0" border="0" framespacing="0" scrolling="no"></iframe>
+				</div>
+			</div>
+		</form>
+		</div>
+	</body>
+</html>
+		<script type="text/javascript">
+		function fnSetDocumentReady(){
+			initMenus();
+
+			sess_auth = $("#work_auth").val();
+
+			$(".inputOnlyNumber").numeric();
+
+			setComboInfo();
+		}
+
+		function setComboInfo(){
+			var pgs_st_cd  = "key_pgs_st_cd:TR02:A;";
+			var paramValue = pgs_st_cd;
+			
+			getCommonCode(paramValue, "N", "setCondition();");
+		}
+
+		function setCondition(){
+			if($("#hid_cond").val() != ""){
+				var hidCond = $("#hid_cond").val().split("|");
+				if(hidCond[0] != "") $("#key_eeno").val(hidCond[0]);
+				if(hidCond[1] != "") $("#key_ops_cd").val(hidCond[1]);
+				if(hidCond[2] != "") $("#key_ops_nm").val(hidCond[2]);
+				if(hidCond[3] != "") $("#key_from_date").val(hidCond[3]);
+				if(hidCond[4] != "") $("#key_to_date").val(hidCond[4]);
+				if(hidCond[5] != "") $("#key_pgs_st_cd").val(hidCond[5]);
+				if(hidCond[6] != "") $("#hid_page").val(hidCond[6]);
+			}else{
+				$("#key_pgs_st_cd").val("Z");
+			}
+
+			setInsaInfo();
+		}
+
+		function setInsaInfo(){
+			if($("#work_auth").val() !=5 && sess_mstu != "M"){
+				$("#key_eeno").val(sess_empno);
+				var keyData = { 
+						xusr_empno : sess_empno,
+						corp_cd	   : sess_corp_cd
+				};
+				paramData = {
+					paramJson : util.jsonToString(keyData)
+				};
+				doCommonAjax("/doSearchToUserInfo.do", paramData, "insaCallBack(jsonData.sendResult);");
+			}
+			else{
+				init();
+			}
+		}
+
+		function insaCallBack(result){
+			$("#key_ops_cd").val(result.xusr_dept_code);
+			$("#key_ops_nm").val(result.xusr_dept_name);
+
+			init();
+		}
+
+		/**
+		 * process init() loading
+		 */
+		var fnMerge;
+		var gridParam;
+		var gridName1 = "htmlTable";
+//		var excelCn = ["신청일자", "진행상태코드", "진행상태", "부서코드", "부서", "사번", "이름", "직급", "교육 일정", "회사부담금", "교육 과정", "문서번호"];
+		var excelCn = ['<fmt:message key="req_ymd"/>' // "신청일자"
+				          ,'<fmt:message key="pgs_st_nm"/>' // "진행상태"
+				          ,'<fmt:message key="dept_nm"/>' // "부서"
+				          ,'<fmt:message key="eeno"/>' // "사번"
+				          ,'<fmt:message key="eenm"/>' // "이름"
+				          ,'<fmt:message key="edu_schedule"/>' // "교육 일정"
+				          ,'<fmt:message key="edu_proc"/>' // "교육과정"
+				          ,'<fmt:message key="comp_shr"/>' // "회사부담금"
+						];
+
+// 		var excelCn = ["Req Date", "ID No", "Name", "Department Code", "Department Name",
+//         "Status", "Discription", "Qty", "Tel", "Mobile Phone", "Fax", "Email", "Address","Remark"];
+		var excelCm = ['req_date','pgs_st_nm','ops_nm','eeno','eenm','schedule','title','amount'];
+		var excelFm = ['string','string','string','string','string','string','string','string'];
+
+
+// 		var cn = ["신청일자", "Status_code", "진행상태", "Dept_Code", "부서", "사번", "이름", "position", "교육 일정", "회사부담금", "교육 과정", "Doc_No"];
+		var cn = ['<fmt:message key="req_ymd"/>' // "신청일자"
+		          ,'status_code' // "Status_code"
+		          ,'<fmt:message key="pgs_st_nm"/>' // "진행상태"
+		          ,'dpet_code' // "Dept_code"
+		          ,'<fmt:message key="dept_nm"/>' // "부서"
+		          ,'<fmt:message key="eeno"/>' // "사번"
+		          ,'<fmt:message key="eenm"/>' // "이름"
+		          ,'position' // "position"
+		          ,'<fmt:message key="edu_schedule"/>' // "교육 일정"
+		          ,'<fmt:message key="edu_proc"/>' // "교육과정"
+		          ,'<fmt:message key="comp_shr"/>' // "회사부담금"
+		          ,'doc_no' // "doc_no"
+		          ];
+		var datarow = {req_date:"", pgs_st_cd:"", pgs_st_nm:"", ops_cd:"", ops_nm:"", eeno:"", eenm:"", position:"", schedule:"", amount:"", title:"",doc_no:""};
+		var cm =
+		[
+			{name:"req_date",		index:"req_date"	, sortable:false,		formatter:"string",		width:80,	align:"center",	editable:false,	frozen : false},
+			{name:"pgs_st_cd",		index:"pgs_st_cd"	, sortable:false,		formatter:"string",		width:0,	align:"left",	editable:false,	frozen : false,	hidden: true},
+			{name:"pgs_st_nm",		index:"pgs_st_nm"	, sortable:false,		formatter:"string",		width:60,	align:"center",	editable:false,	frozen : false},
+			{name:"ops_cd",			index:"ops_cd"		, sortable:false,		formatter:"string",		width:0,	align:"left",	editable:false,	frozen : false,	hidden: true},
+			{name:"ops_nm",			index:"ops_nm"		, sortable:false,		formatter:"string",		width:100,	align:"center",	editable:false,	frozen : false},
+			{name:"eeno",			index:"eeno"		, sortable:false,		formatter:"string",		width:80,	align:"center",	editable:false,	frozen : false},
+			{name:"eenm",			index:"eenm"		, sortable:false,		formatter:"string",		width:85,	align:"center",	editable:false,	frozen : false},
+			{name:"position",		index:"position"	, sortable:false,		formatter:"string",		width:0,	align:"left",	editable:false,	frozen : false, hidden: true},
+			{name:"schedule",		index:"schedule"	, sortable:false,		formatter:"string",		width:160,	align:"center",	editable:false,	frozen : false},
+			{name:"title",			index:"title"		, sortable:false,		formatter:"string",		width:300,	align:"left",	editable:false,	frozen : false},
+			{name:"amount",			index:"amount"		, sortable:false,		formatter:"string",		width:100,	align:"right",	editable:false,	frozen : false, formatter: 'currency', formatoptions: {
+			    thousandsSeparator:",",
+			    defaultValue:"",
+			    decimalPlaces:0
+			  },},
+			{name:"doc_no",			index:"doc_no"		, sortable:false,		formatter:"string",		width:0,	align:"left",	editable:false,	frozen : false, hidden: true}
+			
+		];
+
+
+		function init(){
+			var params = {
+					eeno       : $("#key_eeno").val(),
+					eenm       : $("#key_eenm").val(),
+					ops_cd     : $("#key_ops_cd").val(),
+					from_date  : selectNum($("#key_from_date").val()),
+					to_date    : selectNum($("#key_to_date").val()),
+					pgs_st_cd  : $("#key_pgs_st_cd").val(),
+					corp_cd	   : sess_corp_cd,
+					locale	   : $("#lo").val()
+			};
+
+			//set grid parameter
+			gridParam = {
+				viewEdit : [{
+					gridName     : gridName1,
+					url          : "doSelectListTRToAccept.do",
+					colNames     : cn,
+					colModel     : cm,
+					height       : "100%",
+					sortname     : "applyDate",
+					sortorder    : "desc",
+					rownumbers   : true,
+					multiselect  : false,
+					cellEdit     : false,
+					fnMerge      : false,
+					pager		 : "htmlPager",
+					page		 : $("#hid_page").val(),
+					paramJson    : params,
+					completeFc   : "addGridRow();initAfterMenus();loadCallBack();",
+					dblClickRowFc : "celldbClickAction(rowId,iRow,iCol,e);"
+				}]
+			};
+
+			//core jqGrid call...
+			commonJqGridInit(gridParam);
+
+			//method overliding
+			jQuery("#"+gridName1).jqGrid("setFrozenColumns");
+			jQuery("#"+gridName1).jqGrid("navGrid","#htmlPager",{edit:false,add:false,del:false,search:false,refresh:false});
+
+			$("#key_from_date").datepicker({ dateFormat: "yy-mm-dd" });
+			$("#key_to_date").datepicker({ dateFormat: "yy-mm-dd" });
+
+		}
+
+		function celldbClickAction(rowId,iRow,iCol,e){
+			if(iCol > 2){
+				if(getColValue("doc_no",rowId, gridName1) != ""){
+		            var form = $("<form/>");
+		            form.attr("method" , "post");
+		            form.attr("id"     , "hideForm");
+		            form.attr("action" , "xtr01.gas");
+		            var inp1 = $("<input type='hidden' id='hid_doc_no' name='hid_doc_no'/>").val(getColValue("doc_no",rowId, gridName1));
+		            var inp2 = $("<input type='hidden' id='hid_eeno' name='hid_eeno'/>").val(getColValue("eeno",rowId, gridName1));
+		            var inp3 = $("<input type='hidden' id='hid_view_nm' name='hid_view_nm'/>").val($("#menu_id").val());
+		            var cond = "";
+		            cond += $("#key_eeno").val();
+		            cond += "|" + $("#key_ops_cd").val();
+		            cond += "|" + $("#key_ops_nm").val();
+		            cond += "|" + $("#key_from_date").val();
+		            cond += "|" + $("#key_to_date").val();
+		            cond += "|" + $("#key_pgs_st_cd").val();
+		            cond += "|" + $("#page_htmlPager").val();
+
+		            var inp4 = $("<input type='hidden' id='hid_cond' name='hid_cond'/>").val(cond);
+		            var inp5 = $("<input type='hidden' id='hid_page' name='hid_page'/>").val($("#hid_page").val());
+		            var token = $("<input type='hidden' id='hid_csrfToken' name='hid_csrfToken'/>").val($("#csrfToken").val());
+		            form.append(inp1, inp2, inp3, inp4, inp5, token);
+		            $("body").append(form);
+		            form.submit();
+		            form.remove();
+				}
+			}
+		}
+
+		function retrieve(gubn){
+			switch(gubn){
+				case "search" :
+					doSearch();
+					break;
+				case "excel" :
+				    doExcel();
+					break;
+			}
+		}
+
+		function doSearch(msgFlag){
+			var params = {
+				pgs_st_cd  : $("#key_pgs_st_cd").val(),
+				eeno       : $("#key_eeno").val(),
+				eenm       : $("#key_eenm").val(),
+				ops_cd     : $("#key_ops_cd").val(),
+				from_date  : selectNum($("#key_from_date").val()),
+				to_date    : selectNum($("#key_to_date").val()),
+				title	   : $("#key_title").val(),
+				corp_cd	   : sess_corp_cd,
+				locale	   : $("#lo").val()
+			};
+
+			doCommonSearch("doSelectListTRToAccept.do", util.jsonToString(params), "loadCallBack();", gridName1, msgFlag);
+		}
+
+		/**
+		 * callback
+		 */
+		function loadCallBack(){
+			if(fnMerge !== ""){
+				eval(fnMerge);
+			}
+			$("#hid_page").val($("#page_htmlPager").val());
+			addGridRow();
+		}
+
+		function deleteCallBack(result){
+			setBottomMsg(result.message, true);
+			doSearch("N");
+		}
+
+		function deptFind(){
+			var param = "?dcd=key_ops_cd&dcdNm=key_ops_nm&csrfToken="+$("#csrfToken").val();
+			newPopWin(ctxPath+"/hncis/popup/deptPopup.gas"+param, "440", "510", "pop_dept");
+		}
+
+		function deptSearch(){
+			if($("#key_ops_cd").val() != ""){
+				var keyData = { 
+						xorg_orga_c : $("#key_ops_cd").val(),
+						corp_cd		: sess_corp_cd
+				};
+				paramData = {
+					paramJson : util.jsonToString(keyData)
+				};
+				doCommonAjax("/doSearchToDeptInfo.do", paramData, "deptCallBack(jsonData.sendResult)");
+			}else{
+				$("#key_ops_nm").val("")
+			}
+		}
+
+		function deptCallBack(result){
+			$("#key_ops_nm").val(result.xorg_orga_e);
+		}
+
+		function pageStepHelpPopup(){
+			if(popup != null ){
+				popup.close();
+			}
+			
+			popup = popUpWindow3($("#help_url").val());
+		}
+		
+		function doExcel(){
+			var keyData = {
+					pgs_st_cd  : $("#key_pgs_st_cd").val(),
+					eeno       : $("#key_eeno").val(),
+					eenm       : $("#key_eenm").val(),
+					ops_cd     : $("#key_ops_cd").val(),
+					from_date  : selectNum($("#key_from_date").val()),
+					to_date    : selectNum($("#key_to_date").val()),
+					title	   : $("#key_title").val(),
+					corp_cd	   : sess_corp_cd,
+					locale	   : $("#lo").val()				
+			};
+
+			var params = [
+				{name : "fileName",		value : "Training_service_confirm" },
+				{name : "header",		value : util.jsonToArray(excelCn)},
+				{name : "headerName",	value : util.jsonToArray(excelCm)},
+				{name : "fomatter",		value : util.jsonToArray(excelFm)},
+				{name : "paramJson",	value : util.jsonToString(keyData)},
+				{name : "firstUseYn",	value : "Y"}
+			];
+
+			gridToExcel("#"+gridName1, "doExcelTrainingList.excel", params);
+		}
+
+		function pageStepHelpPopup(){
+			if(popup != null ){
+				popup.close();
+			}
+
+			popup = popUpWindow3($("#help_url").val());
+		}
+		</script>

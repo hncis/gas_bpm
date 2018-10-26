@@ -1,0 +1,437 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XBT05";
+
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH", locale);
+	String strSav = JSPMessageSource.getMessage("BUTTON.SAVE", locale);
+	String strDel = JSPMessageSource.getMessage("BUTTON.DELETE", locale);
+	String strAdd = JSPMessageSource.getMessage("BUTTON.ADD", locale);
+	
+	String strBtn = "";
+	strBtn = strSch+"/search@"+strSav+"/save@"+strDel+"/delete@"+strAdd+"/addrow";
+	
+	String tempPath     = request.getServletPath().toString();
+	String stepHelpUrl  = StringUtil.getStepHelp(tempPath);
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>BusinessTravel - Country Group Management</title>
+	</head>
+	<body>
+		<div id="wrap">
+    	<form name="testForm" id="testForm">
+    		<input type="hidden" id="help_url" name="help_url" value="<%=stepHelpUrl%>">
+    		
+	    	<%@ include file="../include/hncis_header.gas"%>
+	        <div id="contents_wrap">
+	        	<%@ include file="../include/hncis_left.gas"%>
+	            <div id="contents">
+	            	<%=CommonGasc.getTitleAndButtonNew(sess_empno
+						,"XBT05"
+						//,"조회/search@저장/save@삭제/delete@추가/addrow"
+						,strBtn
+						,null
+						,null
+						,null
+						,request)
+					%>
+	                <div class="search_area">
+	                	<table>
+	                        <colgroup>
+	                        	<col style="width:100px;" />
+	                            <col style="width:auto;" />
+	                        </colgroup>
+	                        <tbody>
+	                            <tr>
+									<th width="100px"><fmt:message key="cont"/></th>
+									<td>
+										<select id="nat_g_scn_cd" name="nat_g_scn_cd" style="width:105px" onChange="javascript:doSearch();">
+										</select>
+									</td>
+								</tr>
+	                        </tbody>
+	                    </table>
+	                </div>
+	                <div class="jq_tbl">
+		                <table id="htmlTable" class="scroll"></table>
+						<div id="htmlPager" class="scroll"></div>
+					</div>
+	                <%@ include file="../include/hncis_message.gas"%>
+	            </div>
+	            <div class="clear"></div>
+	        </div>
+        </form>
+		<form id="hideForm" name="hideForm" method="post">
+			<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+		</form>
+	    </div>
+		<%-- <div id="wrap">
+			<div id="GASC">
+				<form name="testForm" id="testForm">
+					<%@ include file="../include/leftMenu.gas"%>
+					<div id="container_wrap">
+						<div id="container">
+							<%=CommonGasc.getTitleAndButtonNew(sess_empno
+								,"XBT05"
+								,"search/search@저장/save@삭제/delete"
+								,null
+								,null
+								,null
+								,request)
+							%>
+							<div id="basic_info">
+								<table>
+									<tr>
+										<td width="100px">Country Group</td>
+										<td>
+											<select id="nat_g_scn_cd" name="nat_g_scn_cd" style="width:105px" onChange="javascript:doSearch();">
+											</select>
+										</td>
+									</tr>
+								</table>
+							</div>
+							<table id="htmlTable" class="scroll"></table>
+							<div id="htmlPager" class="scroll"></div>
+							<iframe id="msgFrame" src="<%=ctxPath %>/bottom.gas" style="padding-top:10px; width:100%; height:30px;" border="0" frameborder="0" framespacing="0" hspace="0" vspace="10" scrolling="no" noresize></iframe>
+						</div>
+					</div>
+				</form>
+				<form id="hideForm" name="hideForm" method="post">
+					<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+				</form>
+			</div>
+		</div> --%>
+	</body>
+</html>
+		<script type="text/javascript">
+		function fnSetDocumentReady(){
+			initMenus();
+			$('#BT').slideDown('fast');
+			setComboInfo();
+		}
+
+		function setComboInfo(){
+			var url        = "doComboListToRequest.do";
+			var paramValue    = "nat_g_scn_cd:X0017:A;";
+			getCommonCode(paramValue, "N", "setComboInfoGrid();", url);
+		}
+
+		function setComboInfoGrid(){
+			var url        = "/getCommonComboByTask.do";
+			getCommonCode('prvs_scn_cd:X0019;nat_g_scn_cd:X0017', 'Y', 'init();', url);
+		}
+
+		var params;
+		var fnMerge;
+		var gridParam;
+		var gridName = "htmlTable";
+		var datarow  = {prvs_scn_cd_old:"", nat_g_scn_cd_old:"", nat_g_scn_cd:"", prvs_scn_cd:"", poa_g1_amt:"", poa_g6_amt:"", poa_g2_amt:"", poa_g3_amt:"", poa_g4_amt:""};
+		function init(){
+			var params = {
+					corp_cd	   : sess_corp_cd
+				};
+			gridParam = {
+				viewEdit : [{
+					gridName     : gridName,
+					url          : "doSearchExpenseManagement.do",
+// 					colNames     : ["", "", "대륙", "비용유형", "디렉터", "코디네이터", "일반/간부", "매니저", "Others"],
+					colNames     : [ '' // ""
+						          , '' // ""
+					              ,'<fmt:message key="cont"/>' // "대륙"
+						          ,'<fmt:message key="cost_type"/>' // "비용유형"
+						          ,'<fmt:message key="drct"/>' // "디렉터"
+						          ,'<fmt:message key="cdnt"/>' // "코디네이터"
+						          ,'<fmt:message key="gnrl_mgmt"/>' // "일반/간부"
+						          ,'<fmt:message key="mngr"/>' // "매니저"
+						          ,'<fmt:message key="others"/>' // "Others"
+			        ],
+					colModel     : [{name:"prvs_scn_cd_old",	index:"prvs_scn_cd_old"	, sortable:false,		formatter:"string",	width:"0",		align:"center",	editable:false,	frozen:false, hidden : true},
+					                {name:"nat_g_scn_cd_old",	index:"nat_g_scn_cd_old"	, sortable:false,		formatter:"string",	width:"0",		align:"center",	editable:false,	frozen:false, hidden : true},
+					                {name:'nat_g_scn_cd',		index:'nat_g_scn_cd'		, sortable:false,		formatter: "select",	width:173,	align:'center',	editable:true,	edittype:'select', 
+					    				editoptions:{value:getComboValue('nat_g_scn_cd'), dataInit: function(elem) {$(elem).width(140);}
+					    			        },
+					    			        editrules:{required:true}
+					    			},
+					    			{name:'prvs_scn_cd',		index:'prvs_scn_cd'		, sortable:false,		formatter: "select",	width:172,	align:'center',	editable:true,	edittype:'select', 
+					    				editoptions:{value:getComboValue('prvs_scn_cd'), dataInit: function(elem) {$(elem).width(150);}
+					    			        },
+					    			        editrules:{required:true}
+					    			},
+					            	{name:"poa_g1_amt"		, index:"poa_g1_amt"		, formatter: 'currency', formatoptions: {
+									    thousandsSeparator:",",
+									    decimalPlaces:0,
+									    defaultValue:""
+									  },		width:120,	align:"right",	editable:true,	frozen : false,
+										editoptions: {maxlength:"10",
+								            dataInit: function(element) {
+								     		    $(element).keyup(function(){
+								     		    	if(!isNumeric(element.value)){
+								     		    		element.value = selectNum(element.value, ",");
+								     		    	}
+								     		    });
+								            }
+								        }
+									},
+									{name:"poa_g6_amt"		, index:"poa_g6_amt"		, formatter: 'currency', formatoptions: {
+									    thousandsSeparator:",",
+									    decimalPlaces:0,
+									    defaultValue:""
+									  },		width:120,	align:"right",	editable:true,	frozen : false,
+										editoptions: {maxlength:"10",
+								            dataInit: function(element) {
+								     		    $(element).keyup(function(){
+								     		    	if(!isNumeric(element.value)){
+								     		    		element.value = selectNum(element.value, ",");
+								     		    	}
+								     		    });
+								            }
+								        }
+									},
+									{name:"poa_g2_amt"		, index:"poa_g2_amt"		, formatter: 'currency', formatoptions: {
+									    thousandsSeparator:",",
+									    decimalPlaces:0,
+									    defaultValue:""
+									  },		width:120,	align:"right",	editable:true,	frozen : false,
+										editoptions: {maxlength:"10",
+								            dataInit: function(element) {
+								     		    $(element).keyup(function(){
+								     		    	if(!isNumeric(element.value)){
+								     		    		element.value = selectNum(element.value, ",");
+								     		    	}
+								     		    });
+								            }
+								        }
+									},
+									{name:"poa_g3_amt"		, index:"poa_g3_amt"		, formatter: 'currency', formatoptions: {
+									    thousandsSeparator:",",
+									    decimalPlaces:0,
+									    defaultValue:""
+									  },		width:120,	align:"right",	editable:true,	frozen : false,
+										editoptions: {maxlength:"10",
+								            dataInit: function(element) {
+								     		    $(element).keyup(function(){
+								     		    	if(!isNumeric(element.value)){
+								     		    		element.value = selectNum(element.value, ",");
+								     		    	}
+								     		    });
+								            }
+								        }
+									},
+									{name:"poa_g4_amt"		, index:"poa_g4_amt"		, formatter: 'currency', formatoptions: {
+									    thousandsSeparator:",",
+									    decimalPlaces:0,
+									    defaultValue:""
+									  },		width:120,	align:"right",	editable:true,	frozen : false,
+										editoptions: {maxlength:"10",
+								            dataInit: function(element) {
+								     		    $(element).keyup(function(){
+								     		    	if(!isNumeric(element.value)){
+								     		    		element.value = selectNum(element.value, ",");
+								     		    	}
+								     		    });
+								            }
+								        }
+									}
+						],
+					height       : "100%",
+					rownumbers   : true,
+					multiselect  : true,
+					cellEdit     : true,
+					fnMerge      : false,
+					pager		 : "htmlPager",
+					completeFc   : "addGridRow();initAfterMenus();",
+					dblClickRowFc : "celldbClickAction(rowId,iRow,iCol,e);",
+					paramJson    : params
+				}]
+			};
+			
+			commonJqGridInit(gridParam);
+			jQuery("#"+gridName).jqGrid("navGrid","#htmlPager",{edit:false,add:false,del:false,search:false,refresh:false});
+			setGridColumnOptions(gridName);
+		}
+
+		function retrieve(gubn){
+			switch(gubn){
+				case "search" :
+					doSearch();
+					break;
+				case "save" :
+					doSave();
+					break;
+				case "delete" :
+					doDelete();
+					break;
+				case "addrow" :
+					fnAddRow();
+					break;
+			}
+		}
+
+		function doSearch(msgFlag){
+			
+			var params = {
+				nat_g_scn_cd 	: 	$("#nat_g_scn_cd").val(),
+				corp_cd			: sess_corp_cd
+			};
+			
+			doCommonSearch("doSearchExpenseManagement.do", util.jsonToString(params), "loadCallBack();initAfterMenus();", gridName, msgFlag);
+		}
+
+		function doSave(){
+			var paramsI = [];	
+			var paramsU = [];
+			var selectRow = jQuery("#"+gridName).jqGrid("getGridParam", "selarrrow");
+			
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}else{
+				for(var i = 0; i < selectRow.length; i++){
+					var rowId = selectRow[i];
+					if(rowId){
+						if(getColValue("nat_g_scn_cd" , rowId, gridName) == ""){
+							alertUI(rowId + '<fmt:message key="MSG.ROW.0013"/>');
+							return;
+						}else if(getColValue("prvs_scn_cd" , rowId, gridName) == ""){
+							alertUI(rowId + '<fmt:message key="MSG.ROW.0014"/>');
+							return;
+						}else if(getColValue("poa_g1_amt" , rowId, gridName) == ""){
+							alertUI(rowId + '<fmt:message key="MSG.ROW.0015"/>');
+							return;
+						}else if(getColValue("poa_g2_amt" , rowId, gridName) == ""){
+							alertUI(rowId + '<fmt:message key="MSG.ROW.0016"/>');
+							return;
+						}else if(getColValue("poa_g3_amt" , rowId, gridName) == ""){
+							alertUI(rowId + '<fmt:message key="MSG.ROW.0090"/>');
+							return;
+						}else if(getColValue("poa_g4_amt" , rowId, gridName) == ""){
+							alertUI(rowId + '<fmt:message key="MSG.ROW.0017"/>');
+							return;
+						}
+						
+						if(getColValue("nat_g_scn_cd_old", rowId, gridName) != ""){
+							list ={
+								nat_g_scn_cd   		: getColValue("nat_g_scn_cd" , rowId, gridName),
+								nat_g_scn_cd_old	: getColValue("nat_g_scn_cd_old" , rowId, gridName),
+								prvs_scn_cd   		: getColValue("prvs_scn_cd" , rowId, gridName),
+								prvs_scn_cd_old   	: getColValue("prvs_scn_cd_old" , rowId, gridName),
+								poa_g1_amt   		: selectNum(getColValue("poa_g1_amt" , rowId, gridName)),
+								poa_g2_amt   		: selectNum(getColValue("poa_g2_amt" , rowId, gridName)),
+								poa_g3_amt   		: selectNum(getColValue("poa_g3_amt" , rowId, gridName)),
+								poa_g4_amt   		: selectNum(getColValue("poa_g4_amt" , rowId, gridName)),
+								poa_g6_amt   		: selectNum(getColValue("poa_g6_amt" , rowId, gridName)),
+								updr_eeno   	: sess_empno,
+								corp_cd				: sess_corp_cd
+							};
+							paramsU.push(list);
+						}else{
+							list ={
+								nat_g_scn_cd   		: getColValue("nat_g_scn_cd" , rowId, gridName),
+								prvs_scn_cd   		: getColValue("prvs_scn_cd" , rowId, gridName),
+								poa_g1_amt   		: getColValue("poa_g1_amt" , rowId, gridName),
+								poa_g2_amt   		: getColValue("poa_g2_amt" , rowId, gridName),
+								poa_g3_amt   		: getColValue("poa_g3_amt" , rowId, gridName),
+								poa_g4_amt   		: getColValue("poa_g4_amt" , rowId, gridName),
+								poa_g6_amt   		: getColValue("poa_g6_amt" , rowId, gridName),
+								ipe_eeno    		: sess_empno,
+								updr_eeno   		: sess_empno,
+								corp_cd				: sess_corp_cd
+							};
+							paramsI.push(list);
+						}
+					}
+				}
+			}
+			
+			confirmUI('<fmt:message key="MSG.CNF.0004"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramsI : util.jsonToList(paramsI),
+								paramsU	: util.jsonToList(paramsU)
+						};
+						doCommonAjax("doSaveExpenseManagement.do", paramData, "saveCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function saveCallBack(result){
+			setBottomMsg(result.message, true);
+			doSearch("N");
+		}
+
+		function doDelete(){
+			var params = [];
+			var selectRow = jQuery("#"+gridName).jqGrid("getGridParam", "selarrrow");
+			
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}else{
+				for(var i = 0; i < selectRow.length; i++){
+					var rowId = selectRow[i];
+					if(rowId){
+						if(getColValue("prvs_scn_cd_old", rowId, gridName) == ""){
+							alertUI(rowId + '<fmt:message key="MSG.ROW.0055"/>');
+							return;
+						}
+						
+						list ={
+							nat_g_scn_cd   		: getColValue("nat_g_scn_cd_old" , rowId, gridName),
+							prvs_scn_cd   		: getColValue("prvs_scn_cd_old" , rowId, gridName),
+							corp_cd				: sess_corp_cd
+						};
+						params.push(list);
+					}
+				}
+			}
+			
+			confirmUI('<fmt:message key="MSG.CNF.0002"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramJson : util.jsonToList(params)
+						};
+						doCommonAjax("doDeleteExpenseManagement.do", paramData, "deleteCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function deleteCallBack(result){
+			setBottomMsg(result.message, true);
+			doSearch("N");
+		}
+
+		function addRow(){
+			var gridRowId = jQuery("#"+gridName).getDataIDs().length;
+			for(var i = 1; i <= 10 - gridRowId ; i++){
+				jQuery("#"+gridName).jqGrid("addRowData", gridRowId+i, datarow);
+			}
+		}
+
+		function loadCallBack(){
+			addGridRow();
+		}
+		function celldbClickAction(rowId,iRow,iCol,e){
+			
+		}
+
+		function fnAddRow(){
+			var gridRowId = $("#"+gridName).getDataIDs().length;
+			jQuery("#"+gridName).jqGrid("addRowData", gridRowId+1, datarow);
+		}
+		
+		function pageStepHelpPopup(){
+			if(popup != null ){
+				popup.close();
+			}
+			
+			popup = popUpWindow3($("#help_url").val());
+		}
+		</script>

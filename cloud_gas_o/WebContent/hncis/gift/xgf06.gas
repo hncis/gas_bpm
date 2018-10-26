@@ -1,0 +1,503 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId = "XGF05";
+	String item_seq  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("item_seq")));
+	String hid_cond  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_cond")));
+	String temp_item_seq 	= StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("temp_item_seq")).trim());
+
+	String yy = CurrentDateTime.getYear();
+	String mm = CurrentDateTime.getMonth();
+	String dd = CurrentDateTime.getDay();
+
+	String currYmd   = yy + "-" + mm + "-" + dd;
+
+	String newYn = "N";
+
+	if(StringUtil.isEmpty(item_seq)){
+		temp_item_seq = StringUtil.getDocNo();
+		newYn = "Y";
+	}
+	
+	String strSav = JSPMessageSource.getMessage("BUTTON.SAVE", locale);
+	String strDel = JSPMessageSource.getMessage("BUTTON.DELETE",locale);
+	String strLst = JSPMessageSource.getMessage("BUTTON.LIST",locale);
+	
+	String strBtn = "";
+	strBtn = strSav+"/save@"+strDel+"/delete@"+strLst+"/list";
+	
+	String tempPath     = request.getServletPath().toString();
+	String stepHelpUrl  = StringUtil.getStepHelp(tempPath);
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>휴먼엔시스</title>
+		<!-- Daum Editor -->
+        <script type="text/javascript" src="<%=ctxPath%>/daumeditor/js/editor_creator.js"></script>
+        <script type="text/javascript" src="<%=ctxPath%>/daumeditor/js/editor_loader.js?environment=production"></script>
+        <link type="text/css" rel="stylesheet" href="<%=ctxPath%>/daumeditor/css/editor.css" charset="utf-8"/>
+	</head>
+	<body>
+		<div id="wrap">
+		<form name="frm" id="frm">
+			<input type="hidden" id="menu_id" name="menu_id" value="<%=menuId.toLowerCase() %>">
+			<input type="hidden" id="hid_cond" name="hid_cond" value="<%=hid_cond %>">
+			<input type="hidden" id="hid_page" name="hid_page">
+			<input type="hidden" id="item_seq" name="item_seq" value="<%=item_seq %>">
+			<input type="hidden" id="item_cont" name="item_cont">
+			<input type="hidden" id="temp_item_seq" name="temp_item_seq" value="<%=temp_item_seq %>">
+			<input type="hidden" id="file_nm" name="file_nm">
+			<input type="hidden" id="newYn" name="newYn" value="<%=newYn %>">
+			<input type="hidden" id="help_url" name="help_url" value="<%=stepHelpUrl%>">
+			
+			<%@ include file="../include/hncis_header.gas"%>
+			<div id="contents_wrap">
+				<%@ include file="../include/hncis_left.gas"%>
+				<div id="contents">
+					<%=CommonGasc.getTitleAndButtonNew(sess_empno
+						,"XGF05"
+						//,"저장/save@삭제/delete@목록/list"
+						,strBtn
+						,null
+						,null
+						,null
+						,request)
+					%>
+
+					<div class="vehicle_tbl">
+						<table>
+							<colgroup>
+							  <col style="width:140px;" />
+							  <col style="width:880px;" />
+							</colgroup>
+							<tr>
+								<th><fmt:message key="title"/></th>
+								<td>
+									<input type="text" id="item_ttl" name="item_ttl" style="width:97%;"/>
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="ctgy"/></th>
+								<td>
+									<select id="lrg_cd" name="lrg_cd" style="width:150px" onchange="setMrgComboInfo();">
+									</select>
+									<select id="mrg_cd" name="mrg_cd" style="width:150px">
+									</select>
+								</td>
+<!-- 								<th>수량</th> -->
+<!-- 								<td> -->
+<!-- 									<input type="text" id="item_qty" name="item_qty"style="width:100px;ime-mode:disabled;" onkeypress="return onlyNum2()"/> -->
+<!-- 								</td> -->
+							</tr>
+							<tr>
+								<th><fmt:message key="use_yn"/></th>
+								<td>
+									<select id="use_yn" name="use_yn" style="width:130px">
+										<option value="Y"><fmt:message key="use_y"/></option>
+										<option value="N"><fmt:message key="use_n"/></option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="file"/></th>
+								<td>
+									<table style="border: hidden;">
+										<colgroup>
+										  <col style="width:120px;" />
+										  <col style="width:auto;" />
+										</colgroup>
+										<tr>
+											<td style="border: hidden;">
+												<ul class="btns fl">
+							                        <li><a href="javascript:doFileAttach();"><fmt:message key="BUTTON.FILE_ATTACH"/><span></span></a></li>
+							                    </ul>
+											</td>
+											<td style="border: hidden;">
+												 <fmt:message key="COMMENT.FILE_ATTACH"/>
+											</td>
+										</tr>
+										<tr>
+											<td colspan="2" id="att_file_nm">
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="exp"/></th>
+								<td>
+									<div name="tx_editor_div_1" id="tx_editor_div_1"></div>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div id="div_layer"></div>
+					<div id="view_div_layer"></div>
+                	<%@ include file="../include/hncis_message.gas"%>
+				</div>
+			</div>
+		</form>
+		<form id="fileForm" name="fileForm">
+			<input type="hidden" id="file_doc_no" name="file_doc_no">
+			<input type="hidden" id="hid_use_yn"  name="hid_use_yn">
+			<input type="hidden" id="file_status"  name="file_status">
+			<input type="hidden" id="file_eeno" name="file_eeno">
+			<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+		</form>
+		</div>
+		<%@ include file="/daumeditor/pages/template/simple.gas"%>
+	</body>
+</html>
+		<script type="text/javascript">
+		var config1;
+		var initYn = "N";
+
+		function fnSetDocumentReady(){
+			initMenus();
+
+			sess_auth = $("#work_auth").val();
+
+//			$("#item_qty").keyup(function(){$(this).val( $(this).val().replace(/[^0-9]/g,"") );} );
+
+			setLrgComboInfo();
+		}
+
+		function setLrgComboInfo(){
+			var params = {
+				s_type : "S",
+				corp_cd	: sess_corp_cd
+			};
+
+			var paramData = {
+				paramJson : util.jsonToString(params)
+			};
+
+			doCommonAjax("doSearchGfToLrgCombo.do", paramData, "lrgComboCallBack(jsonData);");
+		}
+
+		function lrgComboCallBack(jsonData){
+			$.each(eval(jsonData.sendResult),function(targetNm,optionData){
+				$("#lrg_cd").loadSelect(eval(optionData));
+			});
+
+			setMrgComboInfo();
+		}
+
+		function setMrgComboInfo(){
+			var params = {
+				lrg_cd : $("#lrg_cd").val(),
+				s_type : "S",
+				corp_cd : sess_corp_cd
+			};
+
+			var paramData = {
+				paramJson : util.jsonToString(params)
+			};
+
+			doCommonAjax("doSearchGfToMrgCombo.do", paramData, "mrgComboCallBack(jsonData);");
+		}
+
+		function mrgComboCallBack(jsonData){
+			$.each(eval(jsonData.sendResult),function(targetNm,optionData){
+				$("#mrg_cd").loadSelect(eval(optionData));
+			});
+
+			if(initYn == "N"){
+				initYn = "Y";
+				init();
+			}
+		}
+
+		function init(){
+
+			edtTag = $('#edit_div').html();
+		    $('#edit_div').empty();
+
+		    setEditformInfo();
+
+		    EditorJSLoader.ready(function (Editor) {
+		        new Editor(config1);
+		        Editor.getCanvas().observeJob(Trex.Ev.__IFRAME_LOAD_COMPLETE, function() {
+		            Editor.modify({
+		                //content: htmlDecode(result.rpt_info)
+		            });
+		        });
+		    });
+
+		    if($('#item_seq').val() != ''){
+		    	doSearch('Y');
+		    }
+
+		}
+
+		function setEditformInfo(){
+
+		    $("#tx_editor_div_1").empty();
+		    $("#tx_editor_div_1").append(edtTag.replace(/_0/g,"_1"));
+
+		    config1 = initEditForm('1', 'Y');
+
+		}
+
+		//사진 업로드 이미지 오픈
+		var p_initId;
+		var initFlag = "Y";
+		function popImgEdit(initId){
+
+		    p_initId = initId;
+		    if(initFlag == "Y"){
+		        $("#txx_image"+initId).attr("id", "tx_layer_image"+initId);
+		        initFlag = "N";
+		    }
+
+		    $("#layer_pic").remove();
+		    var picDiv = $("<div/>");
+		    picDiv.attr("id", "layer_pic");
+		    picDiv.addClass("pic_div1 div_border");
+		    $("#div_layer").append(picDiv.load(ctxPath+"/daumeditor/fileAttach.gas"));
+		}
+
+
+		function retrieve(gubn){
+			switch(gubn){
+				case "save" :
+					doSave();
+					break;
+				case "list" :
+					doList();
+					break;
+				case "delete" :
+					doDelete();
+					break;
+			}
+		}
+
+		function doList(){
+			var form = $("<form/>");
+		    form.attr("method" , "post");
+		    form.attr("id"     , "hideForm");
+		    form.attr("action" , "xgf05.gas");
+		    var inp1 = $("<input type='hidden' id='hid_view_nm' name='hid_view_nm'/>").val($("#menu_id").val());
+		    var cond = $("#hid_cond").val();
+		    var inp2 = $("<input type='hidden' id='hid_cond' name='hid_cond'/>").val(cond);
+		    var inp3 = $("<input type='hidden' id='hid_page' name='hid_page'/>").val($("#hid_page").val());
+		    var token = $("<input type='hidden' id='hid_csrfToken' name='hid_csrfToken'/>").val($("#csrfToken").val());
+		    form.append(inp1, inp2, inp3, token);
+		    $("body").append(form);
+		    form.submit();
+		    form.remove();
+		}
+
+		function doSave(){
+
+			if($("#item_ttl").val() == ""){
+				alertUI('<fmt:message key="MSG.INP.0005"/>');
+				$("#item_ttl").focus();
+				return;
+			}
+			if($("#lrg_cd").val() == ""){
+				alertUI('<fmt:message key="MSG.SEL.0012"/>');
+				$("#lrg_cd").focus();
+				return;
+			}
+			if($("#mrg_cd").val() == ""){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				$("#mrg_cd").focus();
+				return;
+			}
+//			if($("#item_qty").val() == ""){
+//				alertUI("수량을 입력해 주세요.");
+//				$("#item_qty").focus();
+//				return;
+//			}
+
+			Editor.switchEditor("_1");
+		    $('#item_cont').val(encodeURIComponent(Editor.getContent()));
+
+			var keyData = {
+					item_seq			: $("#temp_item_seq").val(),
+					item_ttl      		: $("#item_ttl").val(),
+					lrg_cd      		: $("#lrg_cd").val(),
+					mrg_cd      		: $("#mrg_cd").val(),
+					use_yn      		: $("#use_yn").val(),
+//					item_qty      		: $("#item_qty").val(),
+					item_cont      		: htmlEncode($("#item_cont").val()),
+					file_info			: $("#temp_item_seq").val(),
+					ipe_eeno			: sess_empno,
+					updr_eeno			: sess_empno,
+					corp_cd				: sess_corp_cd
+
+			};
+
+			confirmUI('<fmt:message key="MSG.CNF.0004"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramJson 			: util.jsonToString(keyData)
+						};
+						doCommonAjax("doSaveGfToGiftInfo.do", paramData, "setBottomMsg(jsonData.sendResult.message, true);saveCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+		function saveCallBack(result){
+
+			if(result.code1 == "Y"){
+				$("#item_seq").val(result.code);
+				doSearch("N");
+			}
+		}
+
+		function doSearch(msgFlag){
+
+			setFormClear();
+
+			var keyData = {
+					item_seq		: $('#item_seq').val(),
+					corp_cd			: sess_corp_cd
+			};
+			paramData = {
+					paramJson      	: util.jsonToString(keyData)
+			};
+			doCommonAjax("doSearchInfoGfToGiftInfo.do", paramData, "loadCallBack(jsonData.sendResult,'"+msgFlag+"');");
+		}
+
+		/**
+		 * callback
+		 */
+		function loadCallBack(result,msgFlag){
+
+			loadJsonSet(result);
+
+		    var fileHtml = '	<span style="cursor: pointer;" onclick="doViewImg()">' + result.org_file_nm + '</span>';
+		    $('#att_file_nm').html(fileHtml);
+
+			Editor.switchEditor("_1");
+		    Editor.modify({
+		        content: decodeURIComponent(result.item_cont)
+		    });
+
+			if(msgFlag != 'N'){
+				setBottomMsg(result.message, false);
+			}
+
+			setMrgComboInfoForSearch(result.mrg_cd);
+		}
+
+		function doViewImg(){
+			 $("#view_layer_pic").remove();
+			    var picDiv = $("<div/>");
+			    picDiv.attr("id", "view_layer_pic");
+			    picDiv.addClass("view_pic_div1 view_div_border");
+			    $("#view_div_layer").append(picDiv.load("xgf06_view.gas"));
+		}
+
+		function setMrgComboInfoForSearch(mrgCd){
+			var params = {
+				lrg_cd : $("#lrg_cd").val(),
+				s_type : "S",
+				corp_cd	: sess_corp_cd
+			};
+
+			var paramData = {
+				paramJson : util.jsonToString(params)
+			};
+
+			doCommonAjax("doSearchGfToMrgCombo.do", paramData, "mrgComboForSearchCallBack(jsonData,'"+mrgCd+"');");
+		}
+
+		function mrgComboForSearchCallBack(jsonData, mrgCd){
+			$.each(eval(jsonData.sendResult),function(targetNm,optionData){
+				$("#mrg_cd").loadSelect(eval(optionData));
+			});
+			$("#mrg_cd").val(mrgCd);
+		}
+
+		function setFormClear(){
+			$("#item_ttl").val("");
+			$("#lrg_cd").val("");
+			$("#mrg_cd").val("");
+			$("#use_yn").val("Y");
+//			$("#item_qty").val("");
+			$("#item_cont").val("");
+		}
+
+
+		var win;
+		function doFileAttach(){
+			if(win != null){ win.close(); }
+			var url = "xgf06_file.gas", width = "460", height = "453";
+
+			if($("#item_seq").val() == ""){
+				$("#file_doc_no").val($("#temp_item_seq").val());
+			}else{
+				$("#file_doc_no").val($("#item_seq").val());
+			}
+
+			$("#hid_use_yn").val("Y");
+			$("#file_eeno").val("00000000");
+
+			win = newPopWin("about:blank", width, height, "win_file");
+			document.fileForm.hid_csrfToken.value = $("#csrfToken").val();
+			document.fileForm.action = url;
+			document.fileForm.target = "win_file";
+			document.fileForm.method = "post";
+			document.fileForm.submit();
+		}
+
+
+		function doDelete(){
+
+			if($("#item_seq").val() == ""){
+				alertUI('<fmt:message key="MSG.VAL.0009"/>');
+				return;
+			}
+
+			var keyData = {
+					item_seq			: $("#item_seq").val(),
+					corp_cd				: sess_corp_cd
+
+			};
+
+			confirmUI('<fmt:message key="MSG.CNF.0002"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramJson 			: util.jsonToString(keyData)
+						};
+						doCommonAjax("doDeleteGfToGiftInfo.do", paramData, "setBottomMsg(jsonData.sendResult.message, true);deleteCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+		function deleteCallBack(result){
+
+			if(result.code1 == "Y"){
+				var form = $("<form/>");
+			    form.attr("method" , "post");
+			    form.attr("id"     , "hideForm");
+			    form.attr("action" , "xgf05.gas");
+			    var inp1 = $("<input type='hidden' id='hid_view_nm' name='hid_view_nm'/>").val($("#menu_id").val());
+			    var cond = $("#hid_cond").val();
+			    var inp2 = $("<input type='hidden' id='hid_cond' name='hid_cond'/>").val(cond);
+			    var inp3 = $("<input type='hidden' id='hid_page' name='hid_page'/>").val($("#hid_page").val());
+			    var token = $("<input type='hidden' id='hid_csrfToken' name='hid_csrfToken'/>").val($("#csrfToken").val());
+			    form.append(inp1, inp2, inp3, token);
+			    $("body").append(form);
+			    form.submit();
+			    form.remove();
+			}
+		}
+		
+		function pageStepHelpPopup(){
+			if(popup != null ){
+				popup.close();
+			}
+			
+			popup = popUpWindow3($("#help_url").val());
+		}
+		
+		</script>

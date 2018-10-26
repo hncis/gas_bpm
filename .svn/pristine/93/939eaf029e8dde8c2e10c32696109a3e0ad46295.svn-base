@@ -1,0 +1,256 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+
+<html>
+	<head>
+			<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+			<title><fmt:message key="car_sch"/></title>
+			<link rel="stylesheet" type="text/css" media="screen" href="../../script/css/pop_up.css" />
+	</head>
+	<body>
+		<div class="pop_wrap">
+	    	<div class="pop_header">
+	        	<div class="pop_title">
+	            	<h1><fmt:message key="car_sch"/></h1>
+	                <a href="javascript:selfClose();" class="pop_close"></a>
+	            </div>
+	        </div>
+	        <div class="pop_header_shadow"></div>
+	        <div class="pop_content">
+	        	<div class="div_box pop_con">
+	            	<form name="testForm" id="testForm">
+			        <div id="contents_wrap" class="any_page">
+			            <div id="contents">
+			            	<div class="btn_area">
+								<ul class="btns">
+									<li><a href="javascript:doSearch();"><fmt:message key="search"/><span></span></a></li>
+									<!-- <li><a href="javascript:selfClose();">Close<span></span></a></li> -->
+								</ul>
+							</div>
+			                <div class="search_area">
+			                	<table>
+			                        <colgroup>
+			                        	<col style="width:50px;" />
+			                        	<col style="width:80px;" />
+			                        	<col style="width:35px;" />
+			                            <col style="width:auto;" />
+			                        </colgroup>
+			                        <tbody>
+			                            <tr>
+											<td><fmt:message key="car_no"/></td>
+											<td>
+												<input id="key_car_no" type="text" style="width:65px" onkeyup="enterKey();">
+											</td>
+											<td><fmt:message key="dept_nm"/></td>
+											<td>
+												<input type="text" name="key_ops_cd" id="key_ops_cd" style="ime-mode:disabled;width:60px" onkeypress="return onlyNum2()" onkeyup="deptSearch();" maxlength="8">
+												<input id="key_ops_nm" type="text" style="width:120px" class="disabled"">
+												<img id="deptBtn" name="img_ignm_pop" src="<%=ctxPath %>/images/hncis_common/find-f.png" style="cursor:hand;filter:alpha(opacity=100)" class='button' onMouseOver="na_change_img_src('img_ignm_pop','document', '<%=ctxPath %>/images/hncis_common/find-n.png');" onMouseOut="na_restore_img_src('img_ignm_pop');" onclick="deptFind()" align="absmiddle">
+											</td>
+										</tr>
+										<tr>
+											<td><fmt:message key="region"/></td>
+											<td colspan="3">
+												<SELECT NAME="key_regn_cd" ID="key_regn_cd" style="width:100px;">
+												</SELECT>
+											</td>
+										</tr>
+			                        </tbody>
+			                    </table>
+			                </div>
+			                <div class="jq_tbl">
+				                <table id="htmlTable" class="scroll"></table>
+								<div id="htmlPager" class="scroll"></div>
+							</div>
+			                <%@ include file="../include/hncis_message.gas"%>
+			            </div>
+			            <div class="clear"></div>
+			        </div>
+			        </form>
+	                <div class="box_corner box_lt"></div>
+	                <div class="box_corner box_rt"></div>
+	                <div class="box_corner box_lb"></div>
+	                <div class="box_corner box_rb"></div>
+	            </div>
+	        </div>
+	    </div>
+		<%-- <div id="wrap" style="overflow-x:hidden;overflow-y:auto;">
+			<div id="GASC">
+				<form name="testForm" id="testForm">
+					<div id="travel_info">
+						<div class='con_title'><h3><img src='../../images/sub_title/xbv_search_vehicle.jpg' alt=''/></h3></div>
+						<div id='contents'>
+							<div class='sub_btn'>
+								<ul>
+								<li class='work_btn'  onclick=doSearch()><strong>Search</strong></li>
+								<li class='work_btn'  onclick=selfClose();><strong>Close</strong></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div id="basic_info" style="width:413px;height:40px;">
+						<table border="0" style="width:413px;height:40px">
+							<tr>
+								<td width="50px">Plate No.</td>
+								<td width="80px">
+									<input id="key_car_no" type="text" style="width:65px" onkeyup="enterKey();">
+								</td>
+								<td width="50px">Plate No.</td>
+								<td>
+									<input type="text" name="key_ops_cd" id="key_ops_cd" style="ime-mode:disabled;width:60px" onkeypress="return onlyNum2()" onkeyup="deptSearch();" maxlength="8">
+									<input id="key_ops_nm" type="text" style="width:120px" class="disabled"">
+									<img id="deptBtn" name="img_ignm_pop" src="<%=ctxPath %>/images/bttn/find-f.gif" style="cursor:hand;filter:alpha(opacity=100)" class='button' onMouseOver="na_change_img_src('img_ignm_pop','document', '<%=ctxPath %>/images/bttn/find-n.gif');" onMouseOut="na_restore_img_src('img_ignm_pop');" onclick="deptFind()" align="absmiddle">
+								</td>
+							</tr>
+							<tr>
+								<td>Region</td>
+								<td colspan="3">
+									<SELECT NAME="key_regn_cd" ID="key_regn_cd" style="width:100px;">
+									</SELECT>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<table id="htmlTable" class="scroll"></table>
+					<div id="htmlPager" class="scroll"></div>
+		         </form>
+			</div>
+		</div> --%>
+	</body>
+</html>
+<script type="text/javascript">
+function fnSetDocumentReady(){
+	getCommonCode("key_regn_cd:XBV03:A;", "N", "init();");
+}
+
+/**
+ * process init() loading
+ */
+var params;
+var comboVal;
+var lastsel;
+var fnMerge;
+var gridParam;
+var gridName1 = "htmlTable";
+var cn        = ['<fmt:message key="car_no"/>','<fmt:message key="type"/>', '<fmt:message key="engn"/>', '<fmt:message key="type"/>','<fmt:message key="ss_no"/>','<fmt:message key="mil_dis"/>'];
+var datarow   = {chss_no:"",vehl_cd:"",car_type_en:"", car_type_cd:"",car_no:"",trvg_dist:""};
+var cm =
+[
+{name:'car_no',index:'car_no', formatter:'string',width:70,align:'left',editable:false,sortable:false},
+{name:'vehl_cd',index:'vehl_cd', formatter:'string',width:102,align:'left',editable:false,sortable:false},
+{name:'car_type_en',index:'car_type_en', formatter:'string',width:60,align:'center',editable:false,sortable:false},
+{name:'car_type_cd',index:'car_type_cd', formatter:'string',width:60,align:'center',editable:false,sortable:false},
+{name:'chss_no',index:'chss_no', formatter:'string', width:110,align:'left',editable:false,sortable:false},
+{name:'trvg_dist',index:'trvg_dist', formatter:'string', width:110,align:'left',editable:false,sortable:false,hidden:true}
+];
+function init(){
+
+	//set grid parameter
+
+	$("#key_ops_cd").val(sess_dept_code);
+	$("#key_ops_nm").val(sess_dept_name);
+	$("#key_regn_cd").val(sess_plac_work);
+
+
+
+	var params = {
+			corp_cd	   : sess_corp_cd
+		};
+
+	gridParam = {
+		viewEdit : [{
+			gridName     : gridName1,
+			url          : "/doSearchToEmpty.do",
+			colNames     : cn,
+			colModel     : cm,
+			height       : 230,
+			width		 : 452,
+			rowNum       : 10,
+			rownumbers   : true,
+			multiselect  : false,
+			cellEdit     : false,
+			fnMerge      : false,
+			pager		 : "htmlPager",
+			completeFc   : "addGridRow(10);",
+			paramJson    : params
+		}]
+	};
+
+	//common jqGrid call...
+	commonJqGridInit(gridParam);
+
+	jQuery("#"+gridName1).jqGrid("setGridParam",{
+		ondblClickRow : function(rowid, iRow, iCol, e){
+			if(getColValue("car_no", rowid, gridName1) != ""){
+				opener.$("#car_no").val(getColValue("car_no", rowid, gridName1));
+				opener.$("#chss_no").val(getColValue("chss_no", rowid, gridName1));
+				opener.$("#vehl_cd").val(getColValue("vehl_cd", rowid, gridName1));
+				opener.$("#car_type_cd").val(getColValue("car_type_en", rowid, gridName1) + " " + getColValue("car_type_cd", rowid, gridName1));
+				opener.$("#trvg_dist").val(getColValue("trvg_dist", rowid, gridName1));
+				opener.fnChkApplyReqsObjects();
+				selfClose();
+			}
+		}
+	}).trigger('reloadGrid');
+}
+
+
+function doSearch(){
+
+	var params = {
+		dcd       	 : $("#key_ops_cd").val(),
+		regn_cd		 : $("#key_regn_cd").val(),
+		//crgr_eeno	 : sess_empno,
+		car_no       : $("#key_car_no").val(),
+		corp_cd	     : sess_corp_cd,
+		locale		 : sess_locale
+	};
+
+	doCommonSearch("../../hncis/businessVehicles/doSearchGridBvToVehicleListForDept.do", util.jsonToString(params), "loadCallBack();", gridName1, "N");
+}
+
+/**
+ * callback
+ */
+function loadCallBack(){
+	addGridRow();
+}
+
+
+function retrieve(gubn){
+	switch(gubn){
+		case "search" :
+			doSearch();
+			break;
+	}
+}
+
+function afterClose(){
+
+}
+
+function deptFind(){
+	var param = "?dcd=key_ops_cd&dcdNm=key_ops_nm&hid_csrfToken="+$("#csrfToken").val();
+	newPopWin(ctxPath+"/hncis/popup/deptPopup.gas"+param, "440", "510", "pop_dept");
+}
+function deptSearch(){
+	if($("#key_ops_cd").val() != ""){
+		if($("#key_ops_cd").val().length > 8) return;
+		if($("#key_ops_cd").val().length == 8){
+
+			var keyData = {
+					xorg_orga_c : $("#key_ops_cd").val(),
+					corp_cd	    : sess_corp_cd
+			};
+			paramData = {
+				paramJson : util.jsonToString(keyData)
+			};
+			doCommonAjax("/doSearchToDeptInfo.do", paramData, "deptCallBack(jsonData.sendResult)");
+		}
+	}
+}
+
+function deptCallBack(result){
+	$("#key_ops_nm").val(result.xorg_orga_e);
+}
+</script>

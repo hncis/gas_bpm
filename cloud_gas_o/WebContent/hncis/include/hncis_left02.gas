@@ -1,0 +1,35 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<div id="lnb_wrap">
+    <h2>BUSINESS TRIP SUPPORT</h2>
+    <ul class="lnb">
+        <li><a href="#" class="main_menu">International</a>
+            <ul class="sub_menu">
+              <li><a href="javascript:pageLocationHref('/gasc','/hncis/entranceMeal/xem01.gas');">List</a></li>
+              <li><a href="javascript:pageLocationHref('/gasc','/hncis/entranceMeal/xem02.gas');">Request</a></li>
+              <li><a href="#">Confirm</a></li>
+            </ul>
+        </li>
+        <li><a href="#" class="main_menu">Domestic</a>
+            <ul class="sub_menu">
+              <li><a href="#">List</a></li>
+              <li><a href="#">Request</a></li>
+              <li><a href="#">Confirm</a></li>
+            </ul>
+        </li>
+        <li><a href="#" class="main_menu">Land Transportation</a>
+        	<ul class="sub_menu">
+              <li><a href="#">List</a></li>
+              <li><a href="#">Request</a></li>
+              <li><a href="#">Confirm</a></li>
+            </ul>
+        </li>
+        <li><a href="#" class="main_menu">Pick Up Service</a>
+        	<ul class="sub_menu">
+              <li><a href="#">List</a></li>
+              <li><a href="#">Request</a></li>
+              <li><a href="#">Confirm</a></li>
+            </ul>
+        </li>
+    </ul>
+    <div class="lnb_b_bg"></div>
+</div>

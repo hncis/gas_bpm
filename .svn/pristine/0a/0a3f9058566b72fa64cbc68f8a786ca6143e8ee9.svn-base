@@ -1,0 +1,46 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<div id="lnb_wrap">
+    <h2 class="tline">BUSINESS TRIP SUPPORT</h2>
+    <ul class="lnb">
+        <li><a href="#" class="main_menu">system</a>
+            <ul class="sub_menu">
+              <li><a href="javascript:pageLocationHref('/gasc','/hncis/system/xst01.gas');">user</a></li>
+              <li><a href="javascript:pageLocationHref('/gasc','/hncis/system/xst04.gas');">menu</a></li>
+              <li><a href="javascript:pageLocationHref('/gasc','/hncis/system/xst05.gas');">table</a></li>
+              <li><a href="javascript:pageLocationHref('/gasc','/hncis/system/xst02.gas');">manager</a></li>
+              <li><a href="javascript:pageLocationHref('/gasc','/hncis/system/xst03.gas');">dept</a></li>
+              <li><a href="javascript:pageLocationHref('/gasc','/hncis/system/xst06.gas');">batch m</a></li>
+              <li><a href="javascript:pageLocationHref('/gasc','/hncis/system/xst07.gas');">batch p</a></li>
+              <li><a href="javascript:pageLocationHref('/gasc','/hncis/system/xst08.gas');">calendar</a></li>
+              <li><a href="javascript:pageLocationHref('/gasc','/hncis/system/xst09.gas');">approval</a></li>
+              <li><a href="javascript:pageLocationHref('/gasc','/hncis/system/xst10.gas');">Leader</a></li>
+              <li><a href="javascript:pageLocationHref('/gasc','/hncis/system/xst15.gas');">Coordinator</a></li>
+              <li><a href="javascript:pageLocationHref('/gasc','/hncis/system/xst11.gas');">code</a></li>
+              <li><a href="javascript:pageLocationHref('/gasc','/hncis/system/xst12.gas');">background</a></li>
+              <li><a href="javascript:pageLocationHref('/gasc','/hncis/system/xst14.gas');">budget</a></li>
+            </ul>
+        </li>
+        <li><a href="#" class="main_menu">Domestic</a>
+            <ul class="sub_menu">
+              <li><a href="#">List</a></li>
+              <li><a href="#">Request</a></li>
+              <li><a href="#">Confirm</a></li>
+            </ul>
+        </li>
+        <li><a href="#" class="main_menu">Land Transportation</a>
+        	<ul class="sub_menu">
+              <li><a href="#">List</a></li>
+              <li><a href="#">Request</a></li>
+              <li><a href="#">Confirm</a></li>
+            </ul>
+        </li>
+        <li><a href="#" class="main_menu">Pick Up Service</a>
+        	<ul class="sub_menu">
+              <li><a href="#">List</a></li>
+              <li><a href="#">Request</a></li>
+              <li><a href="#">Confirm</a></li>
+            </ul>
+        </li>
+    </ul>
+    <div class="lnb_b_bg"></div>
+</div>

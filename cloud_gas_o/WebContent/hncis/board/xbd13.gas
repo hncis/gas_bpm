@@ -1,0 +1,486 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String getDate = CurrentDateTime.getDate();
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Meal index</title>
+		<link rel="stylesheet" type="text/css" media="screen" href="../../script/css/pop_up.css" />
+	</head>
+	<body>
+		<div class="pop_wrap">
+			<div class="pop_header">
+	        	<div class="pop_title">
+	            	<h1 style="float:left;">Meal Menu</h1>
+	                <a href="javascript:selfClose();" class="pop_close"></a>
+	            </div>
+	        </div>
+	        <div class="ch_date">
+	          	<strong id="date_msg" class="date_msg"></strong>
+	          	<input type="button" class="date_prev_btn" onclick='doSearch("P")' onmouseover='dateBtnOver("P")' onmouseout='dateBtnOut("P")' value="◀Last ">
+	          	<input type="button" class="date_next_btn" onclick='doSearch("N")' onmouseover='dateBtnOver("N")' onmouseout='dateBtnOut("N")' value="Next▶">
+	          	<input type="button" class="date_this_btn" onclick='doSearch("T")' onmouseover='dateBtnOver("T")' onmouseout='dateBtnOut("T")' value="This week">
+			</div>
+			<div class="pop_header_shadow"></div>
+	        <div class="pop_content">
+				<form name="testForm" id="testForm" method="post" enctype="multipart/form-data">
+					<input type="hidden" id="regdate" name="regdate" value="<%=getDate %>">
+		            <div class="info_area">
+		           		<div class="div_box notice fl">
+							<ul class="sec_tab">
+		                        <li class="on" rel="meal_tab01" id="meal_tab01_head">
+		                       	 <h2 onclick="fnChangeTabMainBoard('1');">Brazilian</h2>
+		                        	<p class="box_corner box_lt"></p>
+		                    		<p class="box_corner box_rt"></p>
+		                        </li>
+		                        <li rel="meal_tab02" id="meal_tab02_head">
+		                        	<h2 onclick="fnChangeTabMainBoard('2');">Korean</h2>
+		                        	<p class="box_corner box_lt"></p>
+		                    		<p class="box_corner box_rt"></p>
+		                        </li>
+		                        <li rel="meal_tab03" id="meal_tab03_head">
+		                        	<h2 onclick="fnChangeTabMainBoard('3');">Price & Deadlines</h2>
+		                        	<p class="box_corner box_lt"></p>
+		                    		<p class="box_corner box_rt"></p>
+		                        </li>
+		                    </ul>
+		                    <ul id="meal_tab01" class="sec_tab_con">
+		                    	<li class="meal_tbl_area">
+				                    <table class="pop_tbl_menu" id="htmlTable">
+				                        <colgroup>
+				                            <col width="10%">
+				                            <col width="10%">
+				                            <col width="10%">
+				                            <col width="10%">
+				                            <col width="10%">
+				                            <col width="10%">
+				                            <col width="10%">
+				                            <col width="10%">
+				                            <col width="10%">
+				                        </colgroup>
+				                        <thead>
+				                            <tr>
+				                                <th></th>
+				                                <th>SEGUNDA</th>
+				                                <th>TERÇA</th>
+				                                <th>QUARTA</th>
+				                                <th>QUINTA</th>
+				                                <th>SEXTA</th>
+				                                <th>SÁBADO</th>
+				                                <th>DOMINGO</th>
+				                            </tr>
+				                            <tr id="brDate" class="date_info">
+				                                <th></th>
+				                                <th></th>
+				                                <th></th>
+				                                <th></th>
+				                                <th></th>
+				                                <th></th>
+				                                <th></th>
+				                                <th></th>
+				                             </tr>
+				                        </thead>
+				                        <tbody id="listTbody1">
+				                        </tbody>
+				                    </table>
+								</li>
+		                    </ul>
+		                    <ul id="meal_tab02" class="sec_tab_con">
+		                    	<li class="meal_tbl_area">
+				                    <table class="pop_tbl_menu ko_tbl" id="htmlTable1">
+				                        <colgroup>
+				                            <col width="10%">
+				                            <col width="6%">
+				                            <col width="10%">
+				                            <col width="6%">
+				                            <col width="10%">
+				                            <col width="6%">
+				                            <col width="10%">
+				                            <col width="6%">
+				                            <col width="10%">
+				                            <col width="6%">
+				                            <col width="10%">
+				                        </colgroup>
+				                        <thead>
+				                            <tr>
+				                                <th></th>
+				                                <th colspan="2">SEGUNDA</th>
+				                                <th colspan="2">TERÇA</th>
+				                                <th colspan="2">QUARTA</th>
+				                                <th colspan="2">QUINTA</th>
+				                                <th colspan="2">SEXTA</th>
+				                            </tr>
+				                            <tr id="krDate" class="date_info">
+				                                <th></th>
+				                                <th colspan="2"></th>
+				                                <th colspan="2"></th>
+				                                <th colspan="2"></th>
+				                                <th colspan="2"></th>
+				                                <th colspan="2"></th>
+				                            </tr>
+				                        </thead>
+				                        <tbody id="listTbody2">
+				                        </tbody>
+				                    </table>
+		                    	</li>
+		                    </ul>
+							<ul id="meal_tab03" class="sec_tab_con">
+		                    	<li class="meal_tbl_area">
+				                    <table class="pop_tbl_menu ko_tbl" id="htmlTable2">
+				                        <colgroup>
+				                            <col width="15%">
+				                            <col width="10%">
+				                            <col width="60%">
+				                            <col width="15%">
+				                        </colgroup>
+				                        <thead>
+				                            <tr>
+				                                <th><fmt:message key="eenm"/></th>
+				                                <th>Amount(R$)</th>
+				                                <th>Description</th>
+				                                <th>Dead line for request</th>
+				                            </tr>
+				                            <tr id="brDate" class="date_info">
+				                                <th></th>
+				                                <th></th>
+				                                <th></th>
+				                                <th></th>
+				                             </tr>
+				                        </thead>
+				                        <tbody id="listTbody3">
+				                        </tbody>
+				                    </table>
+		                    	</li>
+		                    </ul>
+		                	<div class="box_corner not_box_lt"></div>
+		                    <div class="box_corner main_box_rt"></div>
+		                    <div class="box_corner box_lb"></div>
+		                    <div class="box_corner box_rb"></div>
+		                </div>
+		            </div>
+				</form>
+			</div>
+		</div>
+	</body>
+</html>
+		<script type="text/javascript">
+		var trTag;
+		var tableName1 = "htmlTable";
+		var tmpBoardType = "1";
+
+		function fnSetDocumentReady(){
+			$(".sec_tab_con").hide(); 
+			$("ul.sec_tab li p").hide();
+			$("ul.sec_tab li:first p").show();
+			$(".sec_tab_con:first").show();
+			
+			$("ul.sec_tab li").click(function() { 
+				$("ul.sec_tab li").removeClass("on");
+				$(this).addClass("on");
+				$("ul.sec_tab li p").hide();
+				$(this).children("p").show();
+				$(".sec_tab_con").hide(); 
+				var activeTab = $(this).attr("rel"); 
+				$("#"+activeTab).show(); 
+			});
+			
+			doSearch();
+		}
+
+		function dateBtnOver(date){
+			if(date=="P"){
+				$(".date_prev_btn").css({"background-position":"0 -24px"});
+			}else if(date=="N"){
+				$(".date_next_btn").css({"background-position":"-26px -24px"});
+			}else if(date=="T"){
+				$(".date_this_btn").css({"background-position":"0 -72px"});
+			}
+		}
+
+		function dateBtnOut(date){
+			if(date=="P"){
+				$(".date_prev_btn").css({"background-position":"0 0"});
+			}else if(date=="N"){
+				$(".date_next_btn").css({"background-position":"-26px 0"});
+			}else if(date=="T"){
+				$(".date_this_btn").css({"background-position":"0 -48px"});
+			}
+		}
+
+		function doSearch(flag){
+			if(typeof(flag) == "undefined"){
+				flag = "T";
+			}
+		    var keyData = {
+		    	flag : flag,
+		    	regdate : $("#regdate").val(),
+				corp_cd	: sess_corp_cd
+		    };
+
+		    var params = {
+		        paramJson : util.jsonToString(keyData)
+		    }; 
+		    doCommonSearchTable("doSearchToMealList.do", params, "searchCallBack(jsonData);", tableName1, trTag, "1");
+		}
+
+		function searchCallBack(rs){
+			//이전주 다음주 일자를 계산하기 위해서 일자를 저장한다.
+			$("#regdate").val(rs.data1);
+			//해당일의 주차를 from ~ to 일자로 표시
+			$("#date_msg").text(rs.data2 + " ~ " + rs.data3);
+			
+			var monDay = dateConversionKr(trimChar(rs.data2, "/"));
+			var brHeaderHtml = "";
+			brHeaderHtml += "<th></th>";
+			for(var br=0; br<7; br++){
+				brHeaderHtml += "<th>"+date_add(monDay,br)+"</th>";
+			}
+			$("#brDate").html(brHeaderHtml);
+			
+			var krHeaderHtml = "";
+			krHeaderHtml += "<th></th>";
+			for(var br=0; br<5; br++){
+				krHeaderHtml += "<th colspan='2'>"+date_add(monDay,br)+"</th>";
+			}
+			$("#krDate").html(krHeaderHtml);
+			
+			
+			var blist = rs.rows;
+			var blistLen = rs.rows.length;
+			var html1 = "";
+			if(blistLen == 0){
+				for(var n=1; n<=10; n++){
+					if(n == "1"){
+						html1 +="<tr style='background-color: #f9e2de'>";
+					}else if(n == "2"){
+						html1 +="<tr style='background-color: #f9e6d8'>";
+					}else if(n == "3"){
+						html1 +="<tr style='background-color: #fafade'>";
+					}else if(n == "4"){
+						html1 +="<tr style='background-color: #f4f4d0'>";
+					}else if(n == "5"){
+						html1 +="<tr style='background-color: #edeec9'>";
+					}else if(n == "6"){
+						html1 +="<tr style='background-color: #e5f4da'>";
+					}else if(n == "7"){
+						html1 +="<tr style='background-color: #daf2f4'>";
+					}else if(n == "8"){
+						html1 +="<tr style='background-color: #e0ecf8'>";
+					}else if(n == "9"){
+						html1 +="<tr style='background-color: #e1e3f4'>";
+					}else if(n == "10"){
+						html1 +="<tr style='background-color: #f8e2f4'>";
+					}
+					html1 +="<td>&nbsp;</td>";
+					html1 +="<td>&nbsp;</td>";
+					html1 +="<td>&nbsp;</td>";
+					html1 +="<td>&nbsp;</td>";
+					html1 +="<td>&nbsp;</td>";
+					html1 +="<td>&nbsp;</td>";
+					html1 +="<td>&nbsp;</td>";
+					html1 +="<td>&nbsp;</td>";
+					html1 +="</tr>";
+				}
+				$("#listTbody1").html(html1);
+			}
+			for(var i=0; i<blistLen; i++){
+				if(blist[i].b_menu_type == "1"){
+					html1 +="<tr style='background-color: #f9e2de'>";
+				}else if(blist[i].b_menu_type == "2"){
+					html1 +="<tr style='background-color: #f9e6d8'>";
+				}else if(blist[i].b_menu_type == "3"){
+					html1 +="<tr style='background-color: #fafade'>";
+				}else if(blist[i].b_menu_type == "4"){
+					html1 +="<tr style='background-color: #f4f4d0'>";
+				}else if(blist[i].b_menu_type == "5"){
+					html1 +="<tr style='background-color: #edeec9'>";
+				}else if(blist[i].b_menu_type == "6"){
+					html1 +="<tr style='background-color: #e5f4da'>";
+				}else if(blist[i].b_menu_type == "7"){
+					html1 +="<tr style='background-color: #daf2f4'>";
+				}else if(blist[i].b_menu_type == "8"){
+					html1 +="<tr style='background-color: #e0ecf8'>";
+				}else if(blist[i].b_menu_type == "9"){
+					html1 +="<tr style='background-color: #e1e3f4'>";
+				}else if(blist[i].b_menu_type == "10"){
+					html1 +="<tr style='background-color: #f8e2f4'>";
+				}
+				html1 +="<td>"+blist[i].b_menu_type_nm+"</td>";
+				html1 +="<td>"+blist[i].mon+"</td>";
+				html1 +="<td>"+blist[i].tue+"</td>";
+				html1 +="<td>"+blist[i].wen+"</td>";
+				html1 +="<td>"+blist[i].thu+"</td>";
+				html1 +="<td>"+blist[i].fri+"</td>";
+				html1 +="<td>"+blist[i].sat+"</td>";
+				html1 +="<td>"+blist[i].sun+"</td>";
+				html1 +="</tr>";
+			}
+			$("#listTbody1").html(html1);
+			$('#listTbody1').rowspan(0);
+			
+			var klist = rs.rows1;
+			var klistLen = rs.rows1.length;
+			var html2 = "";
+			var html3 = "";
+			var html4 = "";
+			if(klistLen == 0){
+				for(var n=1; n<=5; n++){
+					if(n == "1"){
+						html2 +="<tr style='background-color: #f9e2de '>";
+					}else if(n == "2"){
+						html2 +="<tr style='background-color: #f4f4d0'>";
+					}else if(n == "3"){
+						html2 +="<tr style='background-color: #e0ecf8'>";
+					}else if(n == "4"){
+						html2 +="<tr style='background-color: #e1e3f4'>";
+					}else if(n == "5"){
+						html2 +="<tr style='background-color: #f8e2f4'>";
+					}
+					html2 +="<td>&nbsp;</td>";
+					html2 +="<td>&nbsp;</td>";
+					html2 +="<td>&nbsp;</td>";                                                                           
+					html2 +="<td>&nbsp;</td>";
+					html2 +="<td>&nbsp;</td>";
+					html2 +="<td>&nbsp;</td>";
+					html2 +="<td>&nbsp;</td>";
+					html2 +="<td>&nbsp;</td>";
+					html2 +="<td>&nbsp;</td>";
+					html2 +="<td>&nbsp;</td>";
+					html2 +="<td>&nbsp;</td>";
+					html2 +="</tr>";
+				}
+				$("#listTbody2").html(html2);
+				$('#listTbody2').rowspan(0);
+			}
+			for(var i=0; i<klistLen; i++){
+				if(klist[i].k_menu_knd == "1"){
+					if(html2 == ""){
+						html2 +="<tr><th colspan='11' class='meal_time'>조식 café da manhã</th></tr>";
+					}
+					if(klist[i].k_menu_type == "1"){
+						html2 +="<tr style='background-color: #f9e2de '>";
+					}else if(klist[i].k_menu_type == "2"){
+						html2 +="<tr style='background-color: #f4f4d0'>";
+					}else if(klist[i].k_menu_type == "3"){
+						html2 +="<tr style='background-color: #e0ecf8'>";
+					}else if(klist[i].k_menu_type == "4"){
+						html2 +="<tr style='background-color: #e1e3f4'>";
+					}else if(klist[i].k_menu_type == "5"){
+						html2 +="<tr style='background-color: #f8e2f4'>";
+					}
+					html2 +="<td>"+klist[i].k_menu_type_nm+"</td>";
+					html2 +="<td>"+klist[i].mon_ko_menu+"</td>";
+					html2 +="<td>"+klist[i].mon_en_menu+"<br>"+klist[i].mon_po_menu+"</td>";                                                                           
+					html2 +="<td>"+klist[i].tue_ko_menu+"</td>";
+					html2 +="<td>"+klist[i].tue_en_menu+"<br>"+klist[i].tue_po_menu+"</td>";
+					html2 +="<td>"+klist[i].wen_ko_menu+"</td>";
+					html2 +="<td>"+klist[i].wen_en_menu+"<br>"+klist[i].wen_po_menu+"</td>";
+					html2 +="<td>"+klist[i].thu_ko_menu+"</td>";
+					html2 +="<td>"+klist[i].thu_en_menu+"<br>"+klist[i].thu_po_menu+"</td>";
+					html2 +="<td>"+klist[i].fri_ko_menu+"</td>";
+					html2 +="<td>"+klist[i].fri_en_menu+"<br>"+klist[i].fri_po_menu+"</td>";
+					html2 +="</tr>";
+				}
+			}
+			
+			for(var i=0; i<klistLen; i++){
+				if(klist[i].k_menu_knd == "2"){
+					if(html3 == ""){
+						html3 +="<tr><th colspan='11' class='meal_time'>중식 ALMOÇO</th></tr>";
+					}
+					if(klist[i].k_menu_type == "1"){
+						html3 +="<tr style='background-color: #f9e2de '>";
+					}else if(klist[i].k_menu_type == "2"){
+						html3 +="<tr style='background-color: #f4f4d0'>";
+					}else if(klist[i].k_menu_type == "3"){
+						html3 +="<tr style='background-color: #e0ecf8'>";
+					}else if(klist[i].k_menu_type == "4"){
+						html3 +="<tr style='background-color: #e1e3f4'>";
+					}else if(klist[i].k_menu_type == "5"){
+						html3 +="<tr style='background-color: #f8e2f4'>";
+					}
+					html3 +="<td>"+klist[i].k_menu_type_nm+"</td>";
+					html3 +="<td>"+klist[i].mon_ko_menu+"</td>";
+					html3 +="<td>"+klist[i].mon_en_menu+"<br>"+klist[i].mon_po_menu+"</td>";                                                                           
+					html3 +="<td>"+klist[i].tue_ko_menu+"</td>";
+					html3 +="<td>"+klist[i].tue_en_menu+"<br>"+klist[i].tue_po_menu+"</td>";
+					html3 +="<td>"+klist[i].wen_ko_menu+"</td>";
+					html3 +="<td>"+klist[i].wen_en_menu+"<br>"+klist[i].wen_po_menu+"</td>";
+					html3 +="<td>"+klist[i].thu_ko_menu+"</td>";
+					html3 +="<td>"+klist[i].thu_en_menu+"<br>"+klist[i].thu_po_menu+"</td>";
+					html3 +="<td>"+klist[i].fri_ko_menu+"</td>";
+					html3 +="<td>"+klist[i].fri_en_menu+"<br>"+klist[i].fri_po_menu+"</td>";
+					html3 +="</tr>";
+				}
+			}
+			
+			for(var i=0; i<klistLen; i++){
+				if(klist[i].k_menu_knd == "3"){
+					if(html4 == ""){
+						html4 +="<tr><th colspan='11' class='meal_time'>석식 JANTAR</th></tr>";
+					}
+					if(klist[i].k_menu_type == "1"){
+						html4 +="<tr style='background-color: #f9e2de '>";
+					}else if(klist[i].k_menu_type == "2"){
+						html4 +="<tr style='background-color: #f4f4d0'>";
+					}else if(klist[i].k_menu_type == "3"){
+						html4 +="<tr style='background-color: #e0ecf8'>";
+					}else if(klist[i].k_menu_type == "4"){
+						html4 +="<tr style='background-color: #e1e3f4'>";
+					}else if(klist[i].k_menu_type == "5"){
+						html4 +="<tr style='background-color: #f8e2f4'>";
+					}
+					html4 +="<td>"+klist[i].k_menu_type_nm+"</td>";
+					html4 +="<td>"+klist[i].mon_ko_menu+"</td>";
+					html4 +="<td>"+klist[i].mon_en_menu+"<br>"+klist[i].mon_po_menu+"</td>";                                                                           
+					html4 +="<td>"+klist[i].tue_ko_menu+"</td>";
+					html4 +="<td>"+klist[i].tue_en_menu+"<br>"+klist[i].tue_po_menu+"</td>";
+					html4 +="<td>"+klist[i].wen_ko_menu+"</td>";
+					html4 +="<td>"+klist[i].wen_en_menu+"<br>"+klist[i].wen_po_menu+"</td>";
+					html4 +="<td>"+klist[i].thu_ko_menu+"</td>";
+					html4 +="<td>"+klist[i].thu_en_menu+"<br>"+klist[i].thu_po_menu+"</td>";
+					html4 +="<td>"+klist[i].fri_ko_menu+"</td>";
+					html4 +="<td>"+klist[i].fri_en_menu+"<br>"+klist[i].fri_po_menu+"</td>";
+					html4 +="</tr>";
+				}
+			}
+			
+			$("#listTbody2").html(html2+html3+html4);
+			$('#listTbody2').rowspan(0);
+			
+			var clist = rs.rows2;
+			var clistLen = rs.rows2.length;
+			var html3 = "";
+			for(var i=0; i<clistLen; i++){
+				html3 +="<tr style='background-color: #fafade'>";
+				html3 +="<td style='text-align:left'>"+clist[i].co_name+"</td>";
+				html3 +="<td style='text-align:left'>"+clist[i].co_amt.replace(".",",")+"</td>";
+				html3 +="<td style='text-align:left'>"+clist[i].co_desc+"</td>";                                                                           
+				html3 +="<td style='text-align:left'>"+clist[i].co_met+"</td>";
+				html3 +="</tr>";
+			}
+			for(var n=1; n<=15-clistLen; n++){
+				html3 +="<tr style='background-color: #fafade'>";
+				html3 +="<td>&nbsp;</td>";
+				html3 +="<td>&nbsp;</td>";
+				html3 +="<td>&nbsp;</td>";                                                                           
+				html3 +="<td>&nbsp;</td>";
+				html3 +="</tr>";
+			}
+			
+			$("#listTbody3").html(html3);
+		}
+
+		function fnChangeTabMainBoard(boardType){
+			tmpBoardType = boardType;
+			
+			$(".sec_tab>li").removeClass("on");
+			$(".sec_tab>sec_tab_con").hide();
+			$("#meal_tab0"+boardType+"_head").addClass("on");
+			$("#meal_tab0"+boardType).show();
+			$('#listTbody1').rowspan(0);
+			$('#listTbody2').rowspan(0);
+		}
+		</script>

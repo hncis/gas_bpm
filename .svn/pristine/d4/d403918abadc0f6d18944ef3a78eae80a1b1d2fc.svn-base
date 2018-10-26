@@ -1,0 +1,633 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="com.hncis.common.util.*"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId = "XBV04";
+	String M_CHSS_NO 	  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("M_CHSS_NO")).trim());
+	String hid_cond 	  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_cond")));
+	String hid_view_nm    = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_view_nm")));
+	String hid_csrfToken  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_csrfToken")));
+
+	String yy = CurrentDateTime.getDate().substring(0, 4);
+	String mm = CurrentDateTime.getDate().substring(4, 6);
+	String dd = CurrentDateTime.getDate().substring(6, 8);
+
+	String yymmdd = yy + "/" + mm + "/" + dd;
+
+	String yy1 = CurrentDateTime.getDate().substring(0, 4);
+	String mm1 = CurrentDateTime.getDate().substring(4, 6);
+	String dd1 = CurrentDateTime.getDate().substring(6, 8);
+	String ddmmyy = dd+ "/" + mm + "/" + yy;
+	String ddmmyy1 = dd1+ "/" + mm1 + "/" + yy1;
+
+	String strSav = JSPMessageSource.getMessage("BUTTON.SAVE", locale);
+	String strDel = JSPMessageSource.getMessage("BUTTON.DELETE", locale);
+	String strPrn = JSPMessageSource.getMessage("BUTTON.PRINT", locale);
+	String strBck = JSPMessageSource.getMessage("BUTTON.BACK", locale);
+
+	String strBtn = "";
+	//strBtn = "저장/save@삭제/delete@인쇄/print";
+	strBtn = strSav+"/save@"+strDel+"/delete";
+	if(!"".equals(M_CHSS_NO)){
+		strBtn += "@"+strBck+"/back";
+	}
+	
+	String tempPath     = request.getServletPath().toString();
+	String stepHelpUrl  = StringUtil.getStepHelp(tempPath);
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>차량등록</title>
+	</head>
+	<body>
+		<div id="wrap">
+	    	<form name="frm" id="frm">
+				<input type=hidden id="M_CHSS_NO" value="<%=M_CHSS_NO%>">
+				<input type="hidden" id="hid_cond" name="hid_cond" value="<%=hid_cond%>">
+				<input type="hidden" id="hid_view_nm" name="hid_view_nm" value="<%=hid_view_nm%>">
+				<input type=hidden id="chss_no_h">
+				<input type="hidden" id="help_url" name="help_url" value="<%=stepHelpUrl%>">
+				
+		    	<%@ include file="../include/hncis_header.gas"%>
+		        <div id="contents_wrap">
+		        	<%@ include file="../include/hncis_left.gas"%>
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(
+							sess_empno
+							,menuId
+							,strBtn
+							,""
+							,""
+							,null
+							,request)
+						%>
+		                <div class="con_t_area">
+		                	<h3><fmt:message key="car_info"/></h3>
+		                </div>
+		                <div class="vehicle_tbl">
+							<table>
+								<colgroup>
+		                        	<col style="width:150px;" />
+		                            <col style="width:150px;" />
+		                            <col style="width:150px;" />
+		                            <col style="width:150px;" />
+		                            <col style="width:150px;" />
+		                            <col style="width:150px;" />
+		                            <col style="width:100px;" />
+		                            <col style="width:auto;" />
+		                        </colgroup>
+								<tr>
+									<th><fmt:message key="car_no"/></th>
+									<th><fmt:message key="vhcl_no"/>.</th>
+									<th><fmt:message key="reg_no"/></th>
+									<th><fmt:message key="ins_pay"/></th>
+									<th><fmt:message key="reg_year"/></th>
+									<th><fmt:message key="chg_year"/></th>
+									<th colspan="2"><fmt:message key="att_file"/></th>
+								</tr>
+								<tr>
+									<td>
+										<input type="text" id="car_no" name="car_no" class="req-data2"/>
+										<input type="hidden" id="car_no_vld_trm_strt_ymd" name="car_no_vld_trm_strt_ymd" readonly>
+										<input type="hidden" id="car_no_vld_trm_fnh_ymd" name="car_no_vld_trm_fnh_ymd" readonly>
+									</td>
+									<td>
+										<input type="text" id="chss_no" name="chss_no" class="req-data2"/>
+									</td>
+									<td>
+										<input type="text" id="rgst_no" name="rgst_no">
+										<input type="hidden" id="rgst_no_vld_trm_strt_ymd" name="rgst_no_vld_trm_strt_ymd" readonly>
+										<input type="hidden" id="rgst_no_vld_trm_fnh_ymd" name="rgst_no_vld_trm_fnh_ymd" readonly>
+									</td>
+									<td>
+										<input type="text" id="insu_no" name="insu_no" style="width:100px;text-align:right;" maxlength="8" class="inputOnlyNumber"> ￦
+									</td>
+									<td>
+										<input type="text" id="insu_no_vld_trm_strt_ymd" name="insu_no_vld_trm_strt_ymd" class="inputOnlyNumber" maxlength="4">
+									</td>
+									<td>
+										<input type="text" id="insu_no_vld_trm_fnh_ymd" name="insu_no_vld_trm_fnh_ymd" class="inputOnlyNumber"  maxlength="4">
+									</td>
+									<td align="center">
+										<img src='../../images/hncis_bttn/open-n.gif' onClick='doFileAttach();'/>
+									</td>
+									<td align="center">
+										<input type="text" id="file_yn" name="file_yn" style="width:10px;border:0px;"/>
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div class="vehicle_tbl">
+							<table>
+								<colgroup>
+								  <col style="width:95px;" />
+								  <col style="width:90px;" />
+								  <col style="width:80px;" />
+								  <col style="width:80px;" />
+								  <col style="width:80px;" />
+								  <col style="width:110px;" />
+								  <col style="width:90px;" />
+								  <col style="width:130px;" />
+								  <col style="width:60px;" />
+								  <col style="width:auto;" />
+								</colgroup>
+								<tr>
+									<th><fmt:message key="type"/></th>
+									<td colspan="5">
+										<SELECT NAME="vehl_cd" ID="vehl_cd" style="width:250px" class="req-data">
+										</SELECT>
+										<SELECT NAME="car_type_cd" ID="car_type_en" style="width:80px" class="req-data">
+										</SELECT>
+										<SELECT NAME="car_type_en" ID="car_type_cd" style="width:80px" class="req-data">
+										</SELECT>
+										<input type="hidden" id="koil_crd" name="koil_crd" style="width:89%"/>
+									</td>
+									<th><fmt:message key="car_clr"/></th>
+									<td>
+										<input type="text" id="vehl_colr" name="vehl_colr" style="width:120px"/>
+									</td>
+									<th><fmt:message key="car_fl"/></th>
+									<td>
+										<SELECT NAME="fuel_type_cd" ID="fuel_type_cd" style="width:150px" class="req-data">
+										</SELECT>
+									</td>
+								</tr>
+								<tr>
+									<th><fmt:message key="dept_nm"/></th>
+									<td colspan="5">
+										<input type="text" name="dcd" id="dcd" style="ime-mode:disabled;width:60px" onkeypress="return onlyNum2()" onkeyup="deptSearch();" maxlength="8">
+										<input id="dcd_nm" type="text" style="width:200px" class="disabled" readonly>
+										<img id="deptBtn" name="img_ignm_pop" src="<%=ctxPath %>/images/hncis_common/find-f.png" style="cursor:hand;filter:alpha(opacity=100)" class='button' onMouseOver="na_change_img_src('img_ignm_pop','document', '<%=ctxPath %>/images/hncis_common/find-n.png');" onMouseOut="na_restore_img_src('img_ignm_pop');" onclick="deptFind()" align="absmiddle">
+									</td>
+									<th><fmt:message key="car_prsn"/></th>
+									<td colspan="3">
+										<input type="text" id="crgr_eeno" name="crgr_eeno" style="ime-mode:disabled;width:60px;" onkeypress="return onlyNum2()" onkeyup="setCrgrInfo();clearCrgr();" />
+										<input type="text" id="crgr_eeno_nm" name="crgr_eeno_nm" style="width:200px" class="disabled" readonly/>
+									</td>
+								</tr>
+								<tr>
+									<th><fmt:message key="contract_ymd"/></th>
+									<td>
+										<input type="text" id="asst_rgs_ymd" name="asst_rgs_ymd" style="width:70px" readonly class="req-data"/>
+									</td>
+									<th><fmt:message key="deli_ymd"/></th>
+									<td colspan="3">
+										<input type="text" id="deli_ymd" name="deli_ymd" style="width:70px" readonly/>
+									</td>
+									<th><fmt:message key="region"/></th>
+									<td>
+										<SELECT NAME="regn_cd" ID="regn_cd" style="width:96%" class="req-data">
+										</SELECT>
+									</td>
+									<th><fmt:message key="purp"/></th>
+									<td>
+										<SELECT NAME="usf_scn_cd" ID="usf_scn_cd" style="width:150px">
+										</SELECT>
+									</td>
+								</tr>
+								<tr>
+									<th><fmt:message key="apl_strt_trvg_dist"/></th>
+									<td colspan="3">
+										<input type="text" id="apl_strt_trvg_dist" name="apl_strt_trvg_dist" style="width:70px;ime-mode:disabled;text-align:right;" onkeypress="return onlyNum2()" maxlength="10" class="disabled" readonly/> ￦
+									</td>
+									<th><fmt:message key="lst_trvg_dist"/></th>
+									<td>
+										<input type="text" id="lst_trvg_dist" name="lst_trvg_dist" style="width:70px;ime-mode:disabled;text-align:right;" onkeypress="return onlyNum2()" maxlength="7" class="disabled" readonly/> KM
+									</td>
+									<th><fmt:message key="avg_dry_mlg"/></th>
+									<td colspan='3'>
+										<input type="text" id="avg_dry_mlg" name="avg_dry_mlg" style="width:70px;ime-mode:disabled;text-align:right;" onkeypress="return onlyNum2()" maxlength="7" class="disabled" readonly/> KM
+									</td>
+								</tr>
+								<tr>
+									<th><fmt:message key="acdt_hist"/></th>
+									<td class="txtarea" colspan="9">
+										<textarea id="trbl_stts_sbc" name="trbl_stts_sbc" rows="10" cols="0"></textarea>
+									</td>
+								</tr>
+								<tr>
+									<th><fmt:message key="mngr_hist"/></th>
+									<td class="txtarea" colspan="9">
+										<textarea id="ceq_bkgd_sbc" name="ceq_bkgd_sbc" rows="10" cols="0"></textarea>
+									</td>
+								</tr>
+								<tr>
+									<th><fmt:message key="pnt_hist"/></th>
+									<td class="txtarea" colspan="9">
+										<textarea id="pnlt_sbc" name="pnlt_sbc" rows="10" cols="0"></textarea>
+									</td>
+								</tr>
+								<tr>
+									<th><fmt:message key="rem_sbc"/></th>
+									<td class="txtarea" colspan="9">
+										<textarea id="rem_sbc" name="rem_sbc" rows="10" cols="0"></textarea>
+									</td>
+								</tr>
+							</table>
+						</div>
+		                <%@ include file="../include/hncis_message.gas"%>
+		            </div>
+		            <div class="clear"></div>
+		        </div>
+	        </form>
+			<form id="fileForm" name="fileForm">
+				<input type="hidden" id="hid_doc_no" name="hid_doc_no" value="<%=M_CHSS_NO%>">
+				<input type="hidden" id="hid_eeno"  name="hid_eeno" value="00000000">
+				<input type="hidden" id="hid_seq"  name="hid_seq">
+				<input type="hidden" id="hid_use_yn"  name="hid_use_yn" value="Y">
+				<input type="hidden" id="hid_csrfToken"	name="hid_csrfToken">
+			</form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken"	name="hid_csrfToken">
+			</form>
+	    </div>
+	</body>
+</html>
+		<script type="text/javascript">
+		function fnSetDocumentReady(){
+			initMenus();
+			$('#BV').slideDown('fast');
+
+			$(".inputOnlyNumber").numeric();
+
+			getCommonCode("vehl_cd:XBV01:S;car_type_cd:XBV07:S;car_type_en:XBV08:S;regn_cd:XBV03:S;usf_scn_cd:XBV04:S;fuel_type_cd:XBV05:S", "N", "init();");
+		}
+
+		function getKeyCombo(codeStr){
+
+			var codknd = "";
+			switch (codeStr) {
+			case "vehl_cd": codknd = "vehl_cd:S";
+				break;
+			case "car_type_cd": codknd = "car_type_cd:S";
+				break;
+			}
+			getKeyMultiCombo(codknd);
+		};
+
+		function getKeyMultiCombo(codeStr){
+
+			var keyData = {
+					codknd : codeStr
+			};
+
+			doCommonAjax("doSearchBvToCombo.do", keyData, "comboResult(jsonData,'"+codeStr+"');");
+
+		};
+		function comboResult(jsonData,codknd){
+			$.each(eval(jsonData.sendResult),function(index,optionData){
+				$("#"+index).loadSelect(eval(optionData));
+			});
+			if(codknd.indexOf("vehl_cd") > -1){
+				getKeyCombo("car_type_cd");
+			}
+			else{
+				init();
+			}
+		}
+
+		function init(){
+
+			initAfterMenus();
+
+			$("#car_no_vld_trm_strt_ymd").datepicker({ dateFormat: 'yy-mm-dd'});
+			$("#car_no_vld_trm_fnh_ymd").datepicker({ dateFormat: 'yy-mm-dd'});
+
+			$("#rgst_no_vld_trm_strt_ymd").datepicker({ dateFormat: 'yy-mm-dd'});
+			$("#rgst_no_vld_trm_fnh_ymd").datepicker({ dateFormat: 'yy-mm-dd'});
+
+//			$("#insu_no_vld_trm_strt_ymd").datepicker({ dateFormat: 'yy-mm-dd'});
+//			$("#insu_no_vld_trm_fnh_ymd").datepicker({ dateFormat: 'yy-mm-dd'});
+
+			$("#asst_rgs_ymd").datepicker({ dateFormat: 'yy-mm-dd'});
+			$("#deli_ymd").datepicker({ dateFormat: 'yy-mm-dd'});
+
+			if($("#M_CHSS_NO").val() != ""){
+				doSearch();
+			} else {
+				fnChkApplyReqsObjects();
+				fnChkApplyReqsObjects2();
+			}
+		}
+
+		function retrieve(btnFlag){
+			var f = document.frm;
+			switch(btnFlag){
+			   case "search" :
+				    doSearch();
+					break;
+			   case "save" :
+				   doInsert();
+					break;
+			   case "delete" :
+				    doDelete();
+					break;
+			   case "back" :
+				   doBack();
+				   break;
+			   case "print" :
+				   doPrint();
+				   break;
+			}
+		}
+
+		function setFormClear(){
+			$('#chss_no').val("");
+			$('#car_no').val("");
+			$('#car_no_vld_trm_strt_ymd').val("");
+			$('#car_no_vld_trm_fnh_ymd').val("");
+			$('#rgst_no').val("");
+			$('#rgst_no_vld_trm_strt_ymd').val("");
+			$('#rgst_no_vld_trm_fnh_ymd').val("");
+			$('#insu_no').val("");
+			$('#insu_no_vld_trm_strt_ymd').val("");
+			$('#insu_no_vld_trm_fnh_ymd').val("");
+			$('#vehl_cd').val("");
+			$('#car_type_cd').val("");
+			$('#vehl_colr').val("");
+			$('#dcd').val("");
+			$('#dcd_nm').val("");
+			$('#crgr_eeno').val("");
+			$('#crgr_eeno_nm').val("");
+			$('#asst_rgs_ymd').val("");
+			$('#regn_cd').val("");
+			$('#usf_scn_cd').val("");
+			$('#apl_strt_trvg_dist').val("");
+			$('#lst_trvg_dist').val("");
+			$('#avg_dry_mlg').val("");
+			$('#trbl_stts_sbc').val("");
+			$('#ceq_bkgd_sbc').val("");
+			$('#pnlt_sbc').val("");
+			$('#rem_sbc').val("");
+			$('#fuel_type_cd').val("");
+
+		}
+
+		function doSearch(msgFlag){
+			setFormClear();
+
+			var keyData = {
+					chss_no		:$("#M_CHSS_NO").val(),
+					corp_cd		: sess_corp_cd
+			};
+			paramData = {
+					paramJson      	: util.jsonToString(keyData)
+			};
+			doCommonAjax("doSearchInfoBvToVehicleManagement.do", paramData, "loadCallBack(jsonData.sendResult,'"+msgFlag+"');");
+		}
+
+		/**
+		 * callback
+		 */
+		function loadCallBack(result,msgFlag){
+			loadJsonSet(result);
+			if(msgFlag != 'N'){
+				setBottomMsg(result.message, false);
+			}
+			if(Number(result.file_cnt) > 0){
+				$('#file_yn').val('Y');
+			}else{
+				$('#file_yn').val('N');
+			}
+			fnChkApplyReqsObjects();
+			fnChkApplyReqsObjects2();
+			//displaySubmit(document ,result.code );
+		}
+
+		function doInsert(){
+
+			if($("#chss_no").val() == ''){
+				alertUI('<fmt:message key="MSG.INP.0027"/>');
+				$("#chss_no").focus();
+				return;
+			}
+			if($("#vehl_cd").val() == ''){
+				alertUI('<fmt:message key="MSG.SEL.0025"/>');
+				$("#vehl_cd").focus();
+				return;
+			}
+			if($("#car_type_cd").val() == ''){
+				alertUI('<fmt:message key="MSG.SEL.0026"/>');
+				$("#car_type_cd").focus();
+				return;
+			}
+			if($("#regn_cd").val() == ''){
+				alertUI('<fmt:message key="MSG.SEL.0027"/>');
+				$("#regn_cd").focus();
+				return;
+			}
+			if($("#asst_rgs_ymd").val() == ''){
+				alertUI('<fmt:message key="MSG.INP.0028"/>', '', '$("#asst_rgs_ymd").focus();');
+//				$("#asst_rgs_ymd").focus();
+				return;
+			}
+			if($("#fuel_type_cd").val() == ''){
+				alertUI('<fmt:message key="MSG.SEL.0028"/>');
+				$("#fuel_type_cd").focus();
+				return;
+			}
+
+			var keyData = {
+					chss_no						: $("#chss_no").val(),
+					chss_no_h					: $("#chss_no_h").val(),
+					vehl_cd      				: $("#vehl_cd").val(),
+					vehl_colr      				: changeToUni($("#vehl_colr").val()),
+					car_type_cd      			: $("#car_type_cd").val(),
+					car_type_en      			: $("#car_type_en").val(),
+					koil_crd     				: $("#koil_crd").val(),
+					dcd     					: $("#dcd").val(),
+					crgr_eeno     				: $("#crgr_eeno").val(),
+					regn_cd     				: $("#regn_cd").val(),
+					usf_scn_cd     				: $("#usf_scn_cd").val(),
+					asst_rgs_ymd   				: selectNum($("#asst_rgs_ymd").val()),
+					deli_ymd	   				: selectNum($("#deli_ymd").val()),
+					car_no     					: $("#car_no").val(),
+					car_no_vld_trm_strt_ymd     : selectNum($("#car_no_vld_trm_strt_ymd").val()),
+					car_no_vld_trm_fnh_ymd     	: selectNum($("#car_no_vld_trm_fnh_ymd").val()),
+					rgst_no     				: $("#rgst_no").val(),
+					rgst_no_vld_trm_strt_ymd    : selectNum($("#rgst_no_vld_trm_strt_ymd").val()),
+					rgst_no_vld_trm_fnh_ymd     : selectNum($("#rgst_no_vld_trm_fnh_ymd").val()),
+					insu_no     				: $("#insu_no").val(),
+					insu_no_vld_trm_strt_ymd    : $("#insu_no_vld_trm_strt_ymd").val(),
+					insu_no_vld_trm_fnh_ymd     : $("#insu_no_vld_trm_fnh_ymd").val(),
+					apl_strt_trvg_dist      	: $("#apl_strt_trvg_dist").val(),
+					fuel_type_cd		      	: $("#fuel_type_cd").val(),
+					trbl_stts_sbc      			: overLineHtml(changeToUni($("#trbl_stts_sbc").val())),
+					ceq_bkgd_sbc      			: overLineHtml(changeToUni($("#ceq_bkgd_sbc").val())),
+					pnlt_sbc      				: overLineHtml(changeToUni($("#pnlt_sbc").val())),
+					rem_sbc      				: overLineHtml(changeToUni($("#rem_sbc").val())),
+					ipe_eeno					: sess_empno,
+					updr_eeno					: sess_empno,
+					corp_cd						: sess_corp_cd
+
+			};
+
+			confirmUI('<fmt:message key="MSG.CNF.0004"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramJson 			: util.jsonToString(keyData)
+							};
+							doCommonAjax("doInsertBvToVehicleManagement.do", paramData, "setBottomMsg(jsonData.sendResult.message, true);insertCallBack(jsonData.sendResult.code);");
+					}
+				});
+			});
+		}
+		function insertCallBack(chss_no){
+			$("#M_CHSS_NO").val(chss_no);
+
+			doSearch('N');
+
+		}
+
+		function doDelete(){
+			
+			if($("#chss_no_h").val() == ''){
+				alertUI('<fmt:message key="MSG.STAT.0047"/>');
+				return;
+			}
+			
+			var keyData = {
+					chss_no				: $("#chss_no").val(),
+					corp_cd				: sess_corp_cd
+			};
+
+			confirmUI('<fmt:message key="MSG.CNF.0002"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramJson : util.jsonToString(keyData)
+						};
+						doCommonAjax("doDeleteBvToVehicleManagement.do", paramData, "setBottomMsg(jsonData.sendResult.message, true);setLoadUserInfo();");
+					}
+				});
+			});
+		}
+
+
+		var win;
+		function doFileAttach(seq){
+
+			if($("#chss_no_h").val() == ''){
+				alertUI('<fmt:message key="MSG.FILE.0003"/>');
+				return;
+			}
+
+			if(win != null){ win.close(); }
+			var url = "xbv04_file.gas", width = "460", height = "453";
+
+			$("#hid_seq").val('1');
+			$("#hid_doc_no").val($("#chss_no").val());
+			$("#hid_eeno").val('00000000');
+
+			win = newPopWin("about:blank", width, height, "win_file");
+
+			document.fileForm.action = url;
+			document.fileForm.hid_csrfToken.value = $("#csrfToken").val();
+			document.fileForm.target = "win_file";
+			document.fileForm.method = "post";
+			document.fileForm.submit();
+
+		}
+
+		function setLoadUserInfo(){
+
+			setFormClear();
+
+			$("#eeno").val(sess_empno);
+			$("#eeno_nm").val(sess_name);
+			$("#pos_nm").val(sess_step_name);
+			$("#dept_nm").val(sess_dept_name);
+			$("#ptt_ymd").val(getCurrentToDateAddDayEn("/",0));
+		}
+
+
+		function deptFind(){
+			var param = "?dcd=dcd&dcdNm=dcd_nm&hid_csrfToken="+$("#csrfToken").val();
+			newPopWin(ctxPath+"/hncis/popup/deptPopup.gas"+param, "440", "510", "pop_dept");
+		}
+		function deptSearch(){
+			if($("#dcd").val() != ""){
+				if($("#dcd").val().length > 8) return;
+				if($("#dcd").val().length == 8){
+
+					var keyData = {
+							xorg_orga_c : $("#dcd").val(),
+							corp_cd		: sess_corp_cd
+					};
+					paramData = {
+						paramJson : util.jsonToString(keyData)
+					};
+					doCommonAjax("/doSearchToDeptInfo.do", paramData, "deptCallBack(jsonData.sendResult)");
+				}
+			}
+		}
+
+		function deptCallBack(result){
+			$("#dcd_nm").val(result.xorg_orga_e);
+		}
+
+		function setCrgrInfo(){
+			if($("#crgr_eeno").val() != ""){
+				if($("#crgr_eeno").val().length < 8) return;
+				if($("#crgr_eeno").val().length == 8){
+					var keyData = {
+							xusr_empno : $("#crgr_eeno").val(),
+							corp_cd		: sess_corp_cd
+					};
+					paramData = {
+						paramJson : util.jsonToString(keyData)
+					};
+					doCommonAjax("/doSearchToUserInfo.do", paramData, "crgrCallBack(jsonData.sendResult)");
+				}
+			}
+		}
+		/**
+		 * callback
+		 */
+		function crgrCallBack(result){
+			if(result.xusr_name == 'undefined'){
+				alertUI('<fmt:message key="MSG.VAL.0008"/>');
+				$("#crgr_eeno").val("");
+				$("#crgr_eeno_nm").val("");
+			}
+			else{
+				$("#crgr_eeno_nm").val(result.xusr_name);
+			}
+
+
+		}
+		function clearCrgr(){
+			if($("#crgr_eeno").val().length != 8){
+				$("#crgr_eeno_nm").val("");
+			}
+		}
+
+		function doBack(){
+		    var form = $("<form/>");
+		    form.attr("method" , "post");
+		    form.attr("id"     , "submitForm").attr("name", "submitForm");
+		    form.attr("action" , $("#hid_view_nm").val() + ".gas");
+		    var inp1 = $("<input type='hidden' id='hid_cond' name='hid_cond'/>").val($("#hid_cond").val());
+		    var token = $("<input type='hidden' id='hid_csrfToken' name='hid_csrfToken'/>").val($("#csrfToken").val());
+		    form.append(inp1, token);
+		    $("body").append(form);
+		    form.submit();
+		    form.remove();
+		}
+
+		function doPrint(){
+			$.printPreview.loadPrintPreview();
+		}
+		
+		function pageStepHelpPopup(){
+			if(popup != null ){
+				popup.close();
+			}
+			
+			popup = popUpWindow3($("#help_url").val());
+		}
+		</script>

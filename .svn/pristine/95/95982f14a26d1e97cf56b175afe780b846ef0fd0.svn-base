@@ -1,0 +1,945 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XUF04";
+
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH", locale);
+	
+	String strBtn = "";
+	strBtn = strSch+"/search";
+	
+	String tempPath     = request.getServletPath().toString();
+	String stepHelpUrl  = StringUtil.getStepHelp(tempPath);
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>LIST</title>
+	</head>
+	<body>
+		<div id="wrap">
+	    	<form name="frm" id="frm">
+	    		<input type="hidden" id="help_url" name="help_url" value="<%=stepHelpUrl%>">
+	    		
+		    	<%@ include file="../include/hncis_header.gas"%>
+		        <div id="contents_wrap">
+		        	<%@ include file="../include/hncis_left.gas"%>
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,"XUF04" 
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+						<div class="search_area">
+		                	<table>
+		                        <colgroup>
+		                        	<col style="width:100px;" />
+		                        	<col style="width:auto;" />
+		                        </colgroup>
+		                        <tbody>
+		                            <tr>
+		                            	<th><fmt:message key="sex"/></th>
+										<td>
+											<select id="key_sex_gubn" onchange="doTypeSearch();"></select>
+										</td>
+									</tr>
+		                        </tbody>
+		                    </table>
+		                </div>
+		                <div style="float:left; width:550px; height:500px">
+							<div class="con_t_area mt10" style="width:535px; height:30px">
+			                	<h3 style="width:250px; float:left"><fmt:message key="uniform"/></h3>
+			                	<div class="btn_area mt0">
+				                    <ul class="btns fr ml20">
+				                        <li><a href="javascript:fnGridRowAdd('htmlTable1');"><fmt:message key="BUTTON.ADD"/><span></span></a></li>
+				                        <li><a href="javascript:retrieve('type_save');"><fmt:message key="BUTTON.SAVE"/><span></span></a></li>
+				                        <li><a href="javascript:retrieve('type_delete');"><fmt:message key="BUTTON.DELETE"/><span></span></a></li>
+				                    </ul>
+				                </div>
+			                </div>
+			                <table id="htmlTable1" class="scroll"></table>
+							<div id="htmlPager1" class="scroll"></div>
+						</div>
+						<div style="width:480px; height:500px; margin-left:570px; margin-top:0px">
+							<div class="con_t_area mt10" style="width:465px; height:30px">
+			                	<h3 style="width:60px; float:left"><fmt:message key="type"/></h3>
+			                	<div class="btn_area mt0">
+				                    <ul class="btns fr ml20">
+				                        <li><a href="javascript:fnGridRowAdd('htmlTable2');"><fmt:message key="BUTTON.ADD"/><span></span></a></li>
+				                        <li><a href="javascript:retrieve('color_save');"><fmt:message key="BUTTON.SAVE"/><span></span></a></li>
+				                        <li><a href="javascript:retrieve('color_delete');"><fmt:message key="BUTTON.DELETE"/><span></span></a></li>
+				                    </ul>
+				                </div>
+			                </div>
+			                <table id="htmlTable2" class="scroll"></table>
+							<div id="htmlPager2" class="scroll"></div>
+							<div>
+								<div class="con_t_area" style="width:465px; height:30px">
+									<h3 style="width:60px; float:left"><fmt:message key="size"/></h3>
+				                	<div class="btn_area mt0">
+					                    <ul class="btns fr ml20">
+					                        <li><a href="javascript:fnGridRowAdd('htmlTable3');"><fmt:message key="BUTTON.ADD"/><span></span></a></li>
+					                        <li><a href="javascript:retrieve('size_save');"><fmt:message key="BUTTON.SAVE"/><span></span></a></li>
+					                        <li><a href="javascript:retrieve('size_delete');"><fmt:message key="BUTTON.DELETE"/><span></span></a></li>
+					                    </ul>
+									</div>
+				                </div>
+				                <table id="htmlTable3" class="scroll"></table>
+								<div id="htmlPager3" class="scroll"></div>
+							</div>
+						</div>
+		                <%@ include file="../include/hncis_message.gas"%>
+		            </div>
+		            <div class="clear"></div>
+		        </div>
+	        </form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken"	name="hid_csrfToken">
+			</form>
+	    </div>
+	</body>
+</html>
+		<script type="text/javascript">
+		var gridName1 = "htmlTable1";
+		var gridName2 = "htmlTable2";
+		var gridName3 = "htmlTable3";
+
+		var datarow1 = {type_prn_cd:"",type_sex_cd:"",type_cd:"",type_down_flag:"",type_nm:"",type_sort:"",type_dept_cd:""};
+		var datarow2 = {color_prn_cd:"",color_sex_cd:"",color_cd:"",color_down_flag:"",color_nm:"",color_term_cd:"",color_cycle_cd:"",color_sort:"",color_dept_cd:""};
+		var datarow3 = {size_prn_cd:"",size_sex_cd:"",size_cd:"",size_nm:"",size_sort:"",size_dept_cd:""};
+
+		var gridParam_clothes, gridParam_color, gridParam_size;
+		var prnClothesIdx = "";
+		var prnColorIdx   = "";
+		var previSRow2, previSRow3;
+
+		function fnSetDocumentReady(){
+			initMenus();
+			$('#UF').slideDown('fast');
+			
+			getCommonCode("key_sex_gubn:XUF05:Z;", "N", "fnInitGridCombo();");
+		}
+
+		function fnInitGridCombo(){
+			getCommonCode("color_term_cd:XUF04:;color_cycle_cd:XUF01:;", "Y", "init();");
+		}
+
+		function init(){
+// 			cn_clothes = [ '', '', '', '', '근무복명', '정렬번호', ''];
+			var cn_clothes = [ '' // ""
+		          ,'' // ""
+		          ,'' // ""
+		          ,'' // ""
+		          ,'<fmt:message key="uniform_nm"/>' // "근무복명"
+		          ,'<fmt:message key="sort_num"/>' // "정렬번호"
+		          ,'' // "" 
+		          ];
+			cm_clothes = [
+			    {name:'type_prn_cd'   , index:'type_prn_cd'   , formatter:'string', width:350, align:'left'  , editable:true, sortable:false, hidden:true},
+			    {name:'type_sex_cd'   , index:'type_sex_cd'   , formatter:'string', width:350, align:'left'  , editable:true, sortable:false, hidden:true},
+			    {name:'type_cd'       , index:'type_cd'       , formatter:'string', width:350, align:'left'  , editable:true, sortable:false, hidden:true},
+			    {name:'type_down_flag', index:'type_down_flag', formatter:'string', width:350, align:'left'  , editable:true, sortable:false, hidden:true},
+				{name:'type_nm'       , index:'type_nm'       , formatter:'string', width:393, align:'left'  , editable:true, sortable:false,
+					editoptions:{maxlength:"100"}
+				},
+				{name:'type_sort'     , index:'type_sort'     , formatter:'string', width:80 , align:'right' , editable:true, sortable:false,
+					editoptions:{
+						maxlength:"3",
+						dataEvents:[{type:'keyup', 
+							fn:function(e){
+								if(!isNumeric($(e.target).val())){
+									$(e.target).val(selectNum($(e.target).val()));
+								}
+							}
+						}]
+					}
+				},
+				{name:'type_dept_cd', index:'type_dept_cd', formatter:'string', width:0, align:'left'  , editable:true, sortable:false, hidden:true}
+			];
+			
+// 			cn_color = [ '', '', '', '', '구분명', '기간', '수량', '정렬번호', ''];
+			var cn_color = [ '' // ""
+		          ,'' // ""
+		          ,'' // ""
+		          ,'' // ""
+		          ,'<fmt:message key="type_nm"/>' // "구분명"
+		          ,'<fmt:message key="term"/>' // "기간"
+		          ,'<fmt:message key="qty"/>' // "수량"
+		          ,'<fmt:message key="sort_num"/>' // "정렬번호"
+		          ,'' // "" 
+		          ];
+			cm_color = [
+				{name:'color_prn_cd'   , index:'color_prn_cd'   , formatter:'string', width:190, align:'left' , editable:true, sortable:false, hidden:true},
+				{name:'color_sex_cd'   , index:'color_sex_cd'   , formatter:'string', width:350, align:'left' , editable:true, sortable:false, hidden:true},
+				{name:'color_cd'       , index:'color_cd'       , formatter:'string', width:190, align:'left' , editable:true, sortable:false, hidden:true},
+				{name:'color_down_flag', index:'color_down_flag', formatter:'string', width:350, align:'left' , editable:true, sortable:false, hidden:true},
+				{name:'color_nm'       , index:'color_nm'       , formatter:'string', width:232, align:'left' , editable:true, sortable:false,
+					editoptions:{maxlength:"100"}
+				},
+				{name:'color_term_cd' , index:'color_term_cd'   , formatter:'select', width:50, align:'center', editable:true, sortable:false, edittype:"select",
+					editoptions:{value:getComboValue('color_term_cd'), dataInit: function(elem) {$(elem).width(45);}}
+				},
+				{name:'color_cycle_cd' , index:'color_cycle_cd' , formatter:'select', width:50, align:'center', editable:true, sortable:false, edittype:"select",
+					editoptions:{value:getComboValue('color_cycle_cd'), dataInit: function(elem) {$(elem).width(45);}}
+				},
+				{name:'color_sort'     , index:'color_sort'     , formatter:'string', width:80 , align:'right', editable:true, sortable:false,
+					editoptions:{
+						maxlength:"3",
+						dataEvents:[{type:'keyup', 
+							fn:function(e){
+								if(!isNumeric($(e.target).val())){
+									$(e.target).val(selectNum($(e.target).val()));
+								}
+							}
+						}]
+					}
+				},
+				{name:'color_dept_cd', index:'color_dept_cd', formatter:'string', width:0, align:'left'  , editable:true, sortable:false, hidden:true}
+			];
+			
+// 			cn_size = [ '', '', '', '사이즈명', '정렬번호', ''];
+			var cn_size = [ '' // ""
+		          ,'' // ""
+		          ,'' // ""
+		          ,'<fmt:message key="size_nm"/>' // "사이즈명"
+		          ,'<fmt:message key="sort_num"/>' // "정렬번호"
+		          ,'' // "" 
+		          ];
+			cm_size = [
+				{name:'size_prn_cd', index:'size_prn_cd', formatter:'string', width:190, align:'left' , editable:true, sortable:false, hidden:true},
+				{name:'size_sex_cd', index:'size_sex_cd', formatter:'string', width:350, align:'left' , editable:true, sortable:false, hidden:true},
+				{name:'size_cd'    , index:'size_cd'    , formatter:'string', width:190, align:'left' , editable:true, sortable:false, hidden:true},
+				{name:'size_nm'    , index:'size_nm'    , formatter:'string', width:328, align:'left' , editable:true, sortable:false,
+					editoptions:{maxlength:"100"}
+				},
+				{name:'size_sort'  , index:'size_sort'  , formatter:'string', width:80 , align:'right', editable:true, sortable:false,
+					editoptions:{
+						maxlength:"3",
+						dataEvents:[{type:'keyup', 
+							fn:function(e){
+								if(!isNumeric($(e.target).val())){
+									$(e.target).val(selectNum($(e.target).val()));
+								}
+							}
+						}]
+					}
+				},
+				{name:'size_dept_cd', index:'size_dept_cd', formatter:'string', width:0, align:'left'  , editable:true, sortable:false, hidden:true}
+			];
+			
+			gridParam_clothes = {
+				viewEdit : [{
+					gridName      : gridName1,
+					url           : "/doSearchToEmpty.do",
+					colNames      : cn_clothes,
+					colModel      : cm_clothes,
+					width         : 530,
+					height        : 437,
+					sortname      : "type_cd",
+					sortorder     : "asc",
+					rownumbers    : false,
+					multiselect   : true,
+					rowNum		  : "300",
+					cellEdit      : true,
+					fnMerge       : false,
+					selectCellFc  : "doColorSearch('N');",
+					completeFc	  : "fnGridInitCallBack('"+gridName1+"');"
+				}]
+			};
+			
+			gridParam_color = {
+				viewEdit : [{
+					gridName      : gridName2,
+					url           : "/doSearchToEmpty.do",
+					colNames      : cn_color,
+					colModel      : cm_color,
+					width         : 460,
+					height        : 184,
+					sortname      : "color_cd",
+					sortorder     : "asc",
+					rownumbers    : false,
+					multiselect   : true,
+					cellEdit      : true,
+					fnMerge       : false,
+					selectCellFc  : "doSizeSearch('N');",
+					completeFc	  : "fnGridInitCallBack('"+gridName2+"');"
+				}]
+			};
+			
+			gridParam_size = {
+				viewEdit : [{
+					gridName     : gridName3,
+					url          : "/doSearchToEmpty.do",
+					colNames     : cn_size,
+					colModel     : cm_size,
+					width        : 460,
+					height       : 184,
+					sortname     : "size_cd",
+					sortorder    : "asc",
+					rownumbers   : false,
+					multiselect  : true,
+					cellEdit     : true,
+					fnMerge      : false,
+					completeFc	 : "fnGridInitCallBack('"+gridName3+"');"
+				}]
+			};
+			
+			commonJqGridInit(gridParam_clothes);
+		}
+
+		function fnGridInitCallBack(initGrid){
+			switch(initGrid){
+			case "htmlTable1" :
+				addGridRow(19, initGrid, 'datarow1');
+				commonJqGridInit(gridParam_color);
+				break;
+			case "htmlTable2" :
+				addGridRow(8, initGrid, 'datarow2');
+				commonJqGridInit(gridParam_size);
+				break;
+			case "htmlTable3" : 
+				addGridRow(8, initGrid, 'datarow3');
+				doTypeSearch();
+				break;
+			}
+		}
+
+		function retrieve(btnFlag){
+			var f = document.frm;
+			switch(btnFlag){
+			    case "type_search" :
+				    doTypeSearch();
+					break;
+			    case "color_search" :
+				    doColorSearch();
+					break;
+			    case "size_search" :
+				    doSizeSearch();
+					break;
+			    case "type_save" :
+				    doTypeSave();
+					break;
+			    case "color_save" :
+				    doColorSave();
+					break;
+			    case "size_save" :
+				    doSizeSave();
+					break;
+			    case "type_delete" :
+				    doTypeDelete();
+					break;
+			    case "color_delete" :
+				    doColorDelete();
+					break;
+			    case "size_delete" :
+				    doSizeDelete();
+					break;
+			    case "search" :
+			    	doTypeSearch();
+			    	break;
+			}
+		}
+
+		function doTypeSearch(msgFlag){
+			var params = {
+				unif_sex_cd : $("#key_sex_gubn").val(),
+				corp_cd		: sess_corp_cd
+			};
+			
+			doCommonSearch("doSearchTypeofclothesListToItemInfo.do", util.jsonToString(params), "doTypeSearchCallBack();", gridName1, msgFlag);
+		}
+
+		function doColorSearch(msgFlag){
+			var tmpTypeCd = getColValue("type_cd"    , previSRow1, gridName1);
+			var tmpSexCd  = getColValue("type_sex_cd", previSRow1, gridName1);
+			
+			if(tmpTypeCd == ""){
+				return;
+			}
+			
+			var params = {
+				unif_prn_cd : tmpTypeCd,
+				unif_sex_cd : tmpSexCd,
+				corp_cd		: sess_corp_cd
+			};
+			
+			prnClothesIdx = previSRow1;
+			
+			doCommonSearch("doSearchColorListToItemInfo.do", util.jsonToString(params), "doColorSearchCallBack();", gridName2, msgFlag);
+		}
+
+		function doSizeSearch(msgFlag){
+			var tmpColorCd = getColValue("color_cd"    , previSRow2, gridName2);
+			var tmpSexCd   = getColValue("color_sex_cd", previSRow2, gridName2);
+			
+			var params = {
+				unif_prn_cd : tmpColorCd,
+				unif_sex_cd : tmpSexCd,
+				corp_cd		: sess_corp_cd
+			};
+			
+			prnColorIdx = previSRow2;
+			
+			doCommonSearch("doSearchSizeListToItemInfo.do", util.jsonToString(params), "doSizeSearchCallBack();", gridName3, msgFlag);
+		}
+
+		function doTypeSearchCallBack(){
+			var tmpTypeSearch = $("#"+gridName1).getDataIDs().length;
+			
+			previSRow1 = tmpTypeSearch == 0 ? "" : "1";
+			
+			addGridRow(19, gridName1, 'datarow1');
+			if(prnClothesIdx == ""){
+				if(getColValue("type_cd", 1, gridName1) != ""){
+					//$("#"+gridName1).jqGrid("setSelection", 1);
+					jQuery("#"+gridName1).setRowData (1,false,{background:'#B2EBF4'});
+					previSRow1 = 1;
+				}
+			}else{
+				//$("#"+gridName1).jqGrid("setSelection", prnClothesIdx);
+			}
+			
+			doColorSearch("N");
+		}
+
+		function doColorSearchCallBack(){
+			var tmpColorSearch = $("#"+gridName2).getDataIDs().length;
+			
+			previSRow2 = tmpColorSearch == 0 ? "" : "1";
+			
+			addGridRow(8, gridName2, 'datarow2');
+			if(prnColorIdx == ""){
+				if(getColValue("color_cd", 1, gridName2) != ""){
+//					$("#"+gridName2).jqGrid("setSelection", 1);
+				}
+			}else{
+				//$("#"+gridName2).jqGrid("setSelection", prnColorIdx);
+			}
+			
+			jQuery("#"+gridName2).setRowData (1,false,{background:'#B2EBF4'});
+			previSRow2 = 1;
+			
+			doSizeSearch("N");
+		}
+
+		function doSizeSearchCallBack(){
+			addGridRow(8, gridName3, 'datarow3');
+		}
+
+		function fnGridRowAdd(targetGrid){
+			var gridRowId = $("#"+targetGrid).getDataIDs().length;
+			switch(targetGrid){
+			case "htmlTable1" :
+				jQuery("#"+targetGrid).jqGrid("addRowData", gridRowId+1, datarow1);
+				break;
+			case "htmlTable2" :
+				jQuery("#"+targetGrid).jqGrid("addRowData", gridRowId+1, datarow2);
+				break;
+			case "htmlTable3" :
+				jQuery("#"+targetGrid).jqGrid("addRowData", gridRowId+1, datarow3);
+				break;
+			}
+		}
+
+		function doTypeSave(){
+			var iParams = [];
+			var uParams = [];
+			var iData;
+			var uData;
+			
+			var selectRow = $("#"+gridName1).jqGrid("getGridParam", "selarrrow");
+			
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+			
+			for(var i=0; i<selectRow.length; i++){
+				if(selectRow[i]){
+					if($.trim(getColValue("type_cd", selectRow[i], gridName1)) == ""){
+						if($("#key_sex_gubn").val() == ""){
+							alertUI('<fmt:message key="MSG.SEL.0004"/>');
+							$("#key_sex_gubn").focus();
+							return;
+						}
+						if(!fnValidationChk(selectRow[i], "type", "I")){ return; }
+						iData = {
+							unif_type_cd  : "CLOTHES",
+							unif_prn_cd   : "CLOTHES",
+							unif_nm       : getColValue("type_nm"      , selectRow[i], gridName1),
+							unif_sort     : getColValue("type_sort"    , selectRow[i], gridName1),
+							unif_sex_cd   : $("#key_sex_gubn").val(),
+							ipe_eeno      : sess_empno,
+							corp_cd		  : sess_corp_cd
+						};
+						
+						iParams.push(iData);
+					}else{
+						if(!fnValidationChk(selectRow[i], "type", "U")){ return; }
+						uData = {
+							unif_type_cd  : "CLOTHES",
+							unif_prn_cd   : "CLOTHES",
+							unif_cd       : getColValue("type_cd"      , selectRow[i], gridName1),
+							unif_nm       : getColValue("type_nm"      , selectRow[i], gridName1),
+							unif_sort     : getColValue("type_sort"    , selectRow[i], gridName1),
+							unif_sex_cd   : getColValue("type_sex_cd"  , selectRow[i], gridName1),
+							updr_eeno     : sess_empno,
+							corp_cd       : sess_corp_cd
+						};
+						
+						uParams.push(uData);
+					}
+				}
+			}
+			
+			if(iParams.length == 0 && uParams.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+			
+			confirmUI('<fmt:message key="MSG.CNF.0004"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var params = {
+								iParams : util.jsonToList(iParams),
+								uParams : util.jsonToList(uParams),
+							};
+						doCommonAjax("doSaveListToItemInfo.do", params, "doTypeSaveCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function doColorSave(){
+			var iParams = [];
+			var uParams = [];
+			var iData;
+			var uData;
+			
+			var selectRow = $("#"+gridName2).jqGrid("getGridParam", "selarrrow");
+			
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+			
+			if(getColValue("type_cd", previSRow1  , gridName1) == ""){
+				alertUI('<fmt:message key="MSG.SEL.0003"/>');
+				return;
+			}
+			
+			for(var i=0; i<selectRow.length; i++){
+				if(selectRow[i]){
+					if($.trim(getColValue("color_cd", selectRow[i], gridName2)) == ""){
+						if(!fnValidationChk(selectRow[i], "color", "I")){ return; }
+						iData = {
+							unif_type_cd  : "COLOR",
+							unif_prn_cd   : getColValue("type_cd"       , previSRow1  , gridName1),
+							unif_nm       : getColValue("color_nm"      , selectRow[i], gridName2),
+							unif_term_cd  : getColValue("color_term_cd" , selectRow[i], gridName2),
+							unif_cycle_cd : getColValue("color_cycle_cd", selectRow[i], gridName2),
+							unif_sort     : getColValue("color_sort"    , selectRow[i], gridName2),
+							unif_sex_cd   : getColValue("type_sex_cd"   , previSRow1  , gridName1),
+							ipe_eeno      : sess_empno,
+							corp_cd		  : sess_corp_cd
+						};
+						
+						iParams.push(iData);
+					}else{
+						if(!fnValidationChk(selectRow[i], "color", "U")){ return; }
+						uData = {
+							unif_type_cd  : "COLOR",
+							unif_nm       : getColValue("color_nm"      , selectRow[i], gridName2),
+							unif_prn_cd   : getColValue("color_prn_cd"  , selectRow[i], gridName2),
+							unif_cd       : getColValue("color_cd"      , selectRow[i], gridName2),
+							unif_term_cd  : getColValue("color_term_cd" , selectRow[i], gridName2),
+							unif_cycle_cd : getColValue("color_cycle_cd", selectRow[i], gridName2),
+							unif_sort     : getColValue("color_sort"    , selectRow[i], gridName2),
+							unif_sex_cd   : getColValue("color_sex_cd"  , selectRow[i], gridName2),
+							updr_eeno     : sess_empno,
+							corp_cd		  : sess_corp_cd
+						};
+						
+						uParams.push(uData);
+					}
+				}
+			}
+			
+			if(iParams.length == 0 && uParams.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+			
+			confirmUI('<fmt:message key="MSG.CNF.0004"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var params = {
+								iParams : util.jsonToList(iParams),
+								uParams : util.jsonToList(uParams),
+							};
+							doCommonAjax("doSaveListToItemInfo.do", params, "doColorSaveCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function doSizeSave(){
+			var iParams = [];
+			var uParams = [];
+			var iData;
+			var uData;
+			
+			var selectRow = $("#"+gridName3).jqGrid("getGridParam", "selarrrow");
+			
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0003"/>');
+				return;
+			}
+			
+			if(getColValue("color_cd", previSRow2  , gridName2) == ""){
+				alertUI('<fmt:message key="MSG.SEL.0002"/>');
+				return;
+			}
+			
+			for(var i=0; i<selectRow.length; i++){
+				if(selectRow[i]){
+					if($.trim(getColValue("size_cd", selectRow[i], gridName3)) == ""){
+						if(!fnValidationChk(selectRow[i], "size", "I")){ return; }
+						iData = {
+							unif_type_cd  : "SIZE",
+							unif_prn_cd   : getColValue("color_cd"    , previSRow2  , gridName2),
+							unif_nm       : getColValue("size_nm"     , selectRow[i], gridName3),
+							unif_sort     : getColValue("size_sort"   , selectRow[i], gridName3),
+							unif_sex_cd   : getColValue("color_sex_cd", previSRow2  , gridName2),
+							ipe_eeno      : sess_empno,
+							corp_cd		  : sess_corp_cd
+						};
+						
+						iParams.push(iData);
+					}else{
+						if(!fnValidationChk(selectRow[i], "size", "U")){ return; }
+						uData = {
+							unif_type_cd  : "SIZE",
+							unif_prn_cd   : getColValue("size_prn_cd", selectRow[i], gridName3),
+							unif_cd       : getColValue("size_cd"    , selectRow[i], gridName3),
+							unif_nm       : getColValue("size_nm"    , selectRow[i], gridName3),
+							unif_sort     : getColValue("size_sort"  , selectRow[i], gridName3),
+							unif_sex_cd   : getColValue("size_sex_cd", selectRow[i], gridName3),
+							updr_eeno     : sess_empno,
+							corp_cd		  : sess_corp_cd
+						};
+						
+						uParams.push(uData);
+					}
+				}
+			}
+			
+			if(iParams.length == 0 && uParams.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+			
+			confirmUI('<fmt:message key="MSG.CNF.0004"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var params = {
+								iParams : util.jsonToList(iParams),
+								uParams : util.jsonToList(uParams)
+							};
+							doCommonAjax("doSaveListToItemInfo.do", params, "doSizeSaveCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function doTypeSaveCallBack(result){
+			setBottomMsg(result.message, true);
+			doTypeSearch("N");
+		}
+
+		function doColorSaveCallBack(result){
+			setBottomMsg(result.message, true);
+			doColorSearch("N");
+		}
+
+		function doSizeSaveCallBack(result){
+			setBottomMsg(result.message, true);
+			doSizeSearch("N");
+		}
+
+		function doTypeDelete(tgName){
+			var dParams = [];
+			var dData;
+			
+			var selectRow = $("#"+gridName1).jqGrid("getGridParam", "selarrrow");
+			
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+			
+			for(var i=0; i<selectRow.length; i++){
+				if(selectRow[i]){
+					if(!fnValidationChk(selectRow[i], "type", "D")){ return; }
+					dData = {
+						unif_type_cd  : "CLOTHES",
+						unif_prn_cd   : "CLOTHES",
+						unif_cd       : getColValue("type_cd", selectRow[i], gridName1),
+						unif_sex_cd   : getColValue("type_sex_cd", selectRow[i], gridName1),
+						corp_cd		  : sess_corp_cd
+					};
+					
+					dParams.push(dData);
+				}
+			}
+			
+			if(dParams.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+			
+			confirmUI('<fmt:message key="MSG.CNF.0002"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var params = {
+								dParams : util.jsonToList(dParams)
+							};
+							doCommonAjax("doDeleteListToItemInfo.do", params, "doTypeDeleteCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function doColorDelete(tgName){
+			var dParams = [];
+			var dData;
+			
+			var selectRow = $("#"+gridName2).jqGrid("getGridParam", "selarrrow");
+			
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+			
+			var tmpPrnCd = $("#"+gridName1).jqGrid("getGridParam", "selrow");
+			
+			if(tmpPrnCd == "" || prnClothesIdx == ""){
+				alertUI('<fmt:message key="MSG.SEL.0003"/>');
+				return;
+			}
+			
+			for(var i=0; i<selectRow.length; i++){
+				if(selectRow[i]){
+					if(!fnValidationChk(selectRow[i], "color", "D")){ return; }
+					dData = {
+						unif_type_cd  : "COLOR",
+						unif_prn_cd   : getColValue("color_prn_cd", selectRow[i], gridName2),
+						unif_cd       : getColValue("color_cd"    , selectRow[i], gridName2),
+						unif_sex_cd   : getColValue("color_sex_cd", selectRow[i], gridName2),
+						corp_cd		  : sess_corp_cd
+					};
+					
+					dParams.push(dData);
+				}
+			}
+			
+			if(dParams.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+			
+			confirmUI('<fmt:message key="MSG.CNF.0002"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var params = {
+								dParams : util.jsonToList(dParams)
+							};
+							doCommonAjax("doDeleteListToItemInfo.do", params, "doColorDeleteCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function doSizeDelete(tgName){
+			var dParams = [];
+			var dData;
+			
+			var selectRow = $("#"+gridName3).jqGrid("getGridParam", "selarrrow");
+			
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+			
+			var tmpPrnCd = $("#"+gridName1).jqGrid("getGridParam", "selrow");
+			
+			if(tmpPrnCd == "" || prnClothesIdx == ""){
+				alertUI('<fmt:message key="MSG.SEL.0002"/>');
+				return;
+			}
+			
+			for(var i=0; i<selectRow.length; i++){
+				if(selectRow[i]){
+					if(!fnValidationChk(selectRow[i], "size", "D")){ return; }
+					dData = {
+						unif_type_cd  : "SIZE",
+						unif_prn_cd   : getColValue("size_prn_cd", selectRow[i], gridName3),
+						unif_cd       : getColValue("size_cd"    , selectRow[i], gridName3),
+						unif_sex_cd   : getColValue("size_sex_cd", selectRow[i], gridName3),
+						corp_cd		  : sess_corp_cd
+					};
+					
+					dParams.push(dData);
+				}
+			}
+			
+			if(dParams.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+			
+			confirmUI('<fmt:message key="MSG.CNF.0002"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var params = {
+								dParams : util.jsonToList(dParams)
+							};
+							doCommonAjax("doDeleteListToItemInfo.do", params, "doSizeDeleteCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function doTypeDeleteCallBack(result){
+			setBottomMsg(result.message, true);
+			doTypeSearch("N");
+		}
+
+		function doColorDeleteCallBack(result){
+			setBottomMsg(result.message, true);
+			doColorSearch("N");
+		}
+
+		function doSizeDeleteCallBack(result){
+			setBottomMsg(result.message, true);
+			doSizeSearch("N");
+		}
+
+		function fnValidationChk(rowId, type, mode){
+			switch(mode){
+			case "I" :
+			case "U" :
+				switch(type){
+				case "type" :
+					if(getColValue("type_nm", rowId, gridName1) == ""){
+						alertUI('<fmt:message key="uniform"/> ' + rowId + ' <fmt:message key="MSG.ROW.0044"/>');
+						return false;
+					}
+					if(getColValue("type_sort", rowId, gridName1) == ""){
+						alertUI('<fmt:message key="uniform"/> ' + rowId + ' <fmt:message key="MSG.ROW.0085"/>');
+						return false;
+					}
+					break;
+				case "color" :
+					if(getColValue("color_nm", rowId, gridName2) == ""){
+						alertUI('<fmt:message key="type"/> ' + rowId + ' <fmt:message key="MSG.ROW.0086"/>');
+						return false;
+					}
+					if(getColValue("color_sort", rowId, gridName2) == ""){
+						alertUI('<fmt:message key="type"/> ' + rowId + ' <fmt:message key="MSG.ROW.0085"/>');
+						return false;
+					}
+					break;
+				case "size" :
+					if(getColValue("size_nm", rowId, gridName3) == ""){
+						alertUI('<fmt:message key="size"/> ' + rowId + ' <fmt:message key="MSG.ROW.0087"/>');
+						return false;
+					}
+					if(getColValue("size_sort", rowId, gridName3) == ""){
+						alertUI('<fmt:message key="size"/> ' + rowId + ' <fmt:message key="MSG.ROW.0085"/>');
+						return false;
+					}
+					break;
+				}
+				break;
+			case "D" :
+				switch(type){
+				case "type" :
+					if(getColValue("type_cd", rowId, gridName1) == ""){
+						alertUI('<fmt:message key="uniform"/> ' + rowId + ' <fmt:message key="MSG.ROW.0055"/>');
+						return false;
+					}
+//					if(getColValue("type_down_flag", rowId, gridName1) != "0"){
+//						alertUI("Type of Clothes " + rowId + " Line : Has Color Data.");
+//						return false;
+//					}
+					break;
+				case "color" :
+					if(getColValue("color_cd", rowId, gridName2) == ""){
+						alertUI('<fmt:message key="type"/> ' + rowId + ' <fmt:message key="MSG.ROW.0055"/>');
+						return false;
+					}
+//					if(getColValue("color_down_flag", rowId, gridName2) != "0"){
+//						alertUI("Color " + rowId + " Line : Has Size Data.");
+//						return false;
+//					}
+					break;
+				case "size" :
+					if(getColValue("size_cd", rowId, gridName3) == ""){
+						alertUI('<fmt:message key="size"/> ' + rowId + ' <fmt:message key="MSG.ROW.0055"/>');
+						return false;
+					}
+					break;
+				}
+				break;
+			}
+			
+			return true;
+		}
+
+		function deptFind(){
+			var param = "?dcd=key_ops_cd&dcdNm=key_ops_nm&csrfToken="+$("#csrfToken").val();
+			newPopWin(ctxPath+"/hncis/popup/deptPopup.gas"+param, "440", "510", "pop_dept");
+		}
+
+		function deptSearch(){
+			if($("#key_ops_cd").val() != ""){
+				if($("#key_ops_cd").val().length > 8) return;
+				if($("#key_ops_cd").val().length == 8){
+					
+					var keyData = { xorg_orga_c : $("#key_ops_cd").val(),
+							        corp_cd		: sess_corp_cd
+					};
+					paramData = {
+						paramJson : util.jsonToString(keyData)
+					};
+					doCommonAjax("/doSearchToDeptInfo.do", paramData, "deptCallBack(jsonData.sendResult)");
+				}
+			}else{
+				$("#key_ops_nm").val("");
+			}
+		}
+
+		function deptCallBack(result){
+			$("#key_ops_nm").val(result.xorg_orga_e);
+			
+			doTypeSearch();
+		}
+		
+		function pageStepHelpPopup(){
+			if(popup != null ){
+				popup.close();
+			}
+			
+			popup = popUpWindow3($("#help_url").val());
+		}
+		</script>

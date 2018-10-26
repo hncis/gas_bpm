@@ -1,0 +1,220 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String docId = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("docid")));
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>BusinessCard</title>
+		<style type="text/css">
+			#wrap.submit_page #contents_wrap,
+			#wrap.submit_page .any_page,
+			#wrap.submit_page #contents{width:100%}
+		</style>
+	</head>
+	<body>
+		<div id="wrap" class="submit_page">
+			<form name="frm" id="frm">
+				<input type="hidden" id="gubun" name="gubun">
+				<input type="hidden" id="nSource" name="nSource">
+				<input type="hidden" id="dvsn_c" name="dvsn_c">
+				<input type="hidden" id="dvsn_name" name="dvsn_name">
+				<input type="hidden" id="dvsn_kname" name="dvsn_kname">
+				<input type="hidden" id="dvsn_ename" name="dvsn_ename">
+				<input type="hidden" id="odu_regn_cd" name="odu_regn_cd">
+				<input type="hidden" id="ops_cd" name="ops_cd">
+				<input type="hidden" id="if_id" name="if_id" value="<%=docId %>">
+				
+				<div id="contents_wrap" class="any_page">
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,"XVE01"
+							,""
+							,""
+							,""
+							,null
+							,"Y"
+							,request)
+						%>
+						<div class="con_t_area mt0">
+		                	<h3><fmt:message key="basic_info"/></h3>
+		                </div>
+						<div class="search_area">
+							<table>
+								<colgroup>
+		                        	<col style="width:110px;" />
+		                            <col style="width:158px;" />
+		                            <col style="width:73px;" />
+		                            <col style="width:158px;" />
+		                            <col style="width:80px;" />
+		                            <col style="width:158px;" />
+		                            <col style="width:73px;" />
+		                            <col style="width:158px;" />
+		                        </colgroup>
+								<tr>
+									<th><fmt:message key="eeno"/></th>
+									<td><input type="text" id="eeno" style="width:140px" onkeyup="setInsaInfo();cearInsa();" class="disabled" readOnly>
+										<input type="hidden" id="eeno_temp"></td>
+									<th><fmt:message key="eenm"/></th>
+									<td><input type="text" id="keyEenm" style="width:140px" class="disabled" readOnly></td>
+									<th><fmt:message key="position"/></th>
+									<td><input type="text" id="keyPosition" style="width:140px" class="disabled" readOnly></td>
+									<th><fmt:message key="dept_nm"/></th>
+									<td>
+										<input type="hidden" id="keyOpsCd" readOnly>
+										<input type="text" id="keyOpsNm" style="width:140px" class="disabled" readOnly>
+									</td>
+								</tr>
+								<tr>
+									<th><fmt:message key="req_ymd"/></th>
+									<td><input type="text" id="apply_date" style="width:140px" class="disabled" readOnly></td>
+									<th><fmt:message key="doc_no"/></th>
+									<td><input type="text" id="doc_no" style="width:140px" class="disabled" readOnly></td>
+									<th><fmt:message key="pgs_st_nm"/></th>
+									<td>
+										<input type="hidden" id="pgs_st_cd" name="pgs_st_cd">
+										<input type="text" id="pgs_st_nm" name="pgs_st_nm" style="width:140px" class="disabled" readOnly>
+									</td>
+									<th><fmt:message key="tel_no"/></th>
+									<td><input type="text" id="keyTelNo" style="width:140px" class="disabled" readOnly></td>
+								</tr>
+							</table>
+						</div>
+						<div class="con_t_area mt10">
+		                	<h3><fmt:message key="req_info"/></h3>
+		                </div>
+						<div class="search_area">
+			                <table>
+			                	<colgroup>
+			                		<col width="60px"/>
+			                		<col width="200px"/>
+			                		<col width="60px"/>
+			                		<col width="auto"/>
+			                	</colgroup>
+			                	<tr>
+									<th><fmt:message key="type"/></th>
+									<td><select id="type" style="width: 150px" disabled></select></td>
+									<th><fmt:message key="purp"/></th>
+									<td><input type="text" id="purpose" class="disabled" readOnly></td>
+								</tr>
+			                </table>
+						</div>
+						<div id="request_info">
+							<div id="basic_info">
+								<iframe id="ifra" name="ifra" src="" style="padding-top:10px;" width="100%" height="400px" border="0" frameborder="0" framespacing="0" hspace="0" vspace="10" scrolling="no" noresize></iframe>
+							</div>
+						</div>
+						<div class="search_area">
+			                <table>
+			                	<tr>
+									<th width="80px"><fmt:message key="rsn"/></th>
+									<td><input type="text" id="reason" class="disabled" readOnly></td>
+								</tr>
+								<tr>
+									<th width="80px"><fmt:message key="rem_sbc"/></th>
+									<td><textarea id="remark" class="sub_textarea" rows="8" cols="" disabled></textarea></td>
+								</tr>
+			                </table>
+			            </div>
+					</div>
+					<div class="clear"></div>
+				</div>
+			</form>
+		</div>
+	</body>
+</html>
+
+
+<script type="text/javascript">
+	function fnSetDocumentReady(){
+		$(".sub_title").hide();
+		init();
+	}
+	
+	/**
+	 * process init() loading
+	 */
+	function init(){
+		getCommonCode("type:X3001:Z;", "N", "initSearch()");
+	}
+	
+	function initSearch(){
+		var keyData = { 
+				if_id : $("#if_id").val(),
+				corp_cd	: sess_corp_cd
+		};
+		paramData = {
+			paramJson : util.jsonToString(keyData)
+		};
+		doCommonAjax("doSearchSecurtyRequestType.do", paramData, "initCallBack(jsonData.sendResult)");
+	}
+	
+	function initCallBack(result){
+	//	displaySubmit(document ,result.code, 1);
+		chagneType(result.type);
+	}
+	
+	function chagneType(value){
+		$("#type").val(value);
+		var src = "";
+		if(value == "1"){
+			src = ctxPath + "/hncis/security/xve01_vehicle_entrance_submit.gas?csrfToken=" + $("#csrfToken").val();
+		}else if(value == "2"){
+			src = ctxPath + "/hncis/security/xve01_material_leave_submit.gas?csrfToken=" + $("#csrfToken").val();
+		}else if(value == "3"){
+			src = ctxPath + "/hncis/security/xve01_it_devices_submit.gas?csrfToken=" + $("#csrfToken").val();
+		}else if(value == "4"){
+			src = ctxPath + "/hncis/security/xve01_film_submit.gas?csrfToken=" + $("#csrfToken").val();
+		}else if(value == "5"){
+			src = ctxPath + "/hncis/security/xve01_entrance_submit.gas?csrfToken=" + $("#csrfToken").val();
+		}
+		
+		$("#ifra").attr("src", src);
+	}
+	
+	function doSearchRequestInfo(ifId){
+		var params = {
+			if_id : ifId,
+			type  : $("#type").val(),
+			corp_cd	: sess_corp_cd
+		};
+		
+		var paramData = {
+			paramJson : util.jsonToString(params)
+		};
+		
+		doCommonAjax("doSearchToSecurityRequest.do", paramData,"loadCallBack1(jsonData.sendResult);");
+	}
+	
+	function loadCallBack1(result){
+		fnSubmitInfoSettings($("#pgs_st_cd").val(), $("#if_id").val(), result.code, "snb_rson_sbc", $("#approveStepLevel").val());
+		
+		resizeIframePop("contents", "ifrm");
+	}
+	
+	function setInsaInfo(){
+		if($("#eeno").val() != ""){
+			var keyData = { 
+					xusr_empno : $("#eeno").val(),
+					corp_cd		: sess_corp_cd
+			};
+			paramData = {
+				paramJson : util.jsonToString(keyData)
+			};
+			doCommonAjax("/doSearchToUserInfo.do", paramData, "insaCallBack(jsonData.sendResult)");
+		}
+	}
+	
+	function insaCallBack(result){
+		
+	//	setBottomMsg(result.message, false);
+		$("#eeno").val(result.xusr_empno);
+		$("#keyEenm").val(result.xusr_name);
+		$("#keyOpsCd").val(result.xusr_dept_code);
+		$("#keyOpsNm").val(result.xusr_dept_name);
+		$("#odu_regn_cd").val(result.xusr_plac_work);
+		$("#keyTelNo").val(result.xusr_tel_no);
+		$("#keyPosition").val(result.xusr_step_name);
+	}
+</script>

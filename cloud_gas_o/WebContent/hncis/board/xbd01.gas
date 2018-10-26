@@ -1,0 +1,241 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String yy = CurrentDateTime.getYear();
+	String mm = CurrentDateTime.getMonth();
+	String dd = CurrentDateTime.getDay();
+
+	String fromDay = yy + "-" + mm + "-01";
+	String toDay = yy + "-" + mm + "-/" + dd;
+	
+	String sess_gubb 	 = SessionInfo.getSess_mstu_gubb(request);
+	String hid_csrfToken = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_csrfToken")));
+	String hid_page 	 = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_page")));
+	
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH", locale);
+	String strWrt = JSPMessageSource.getMessage("BUTTON.WRITE",locale);
+	
+	String strBtn = "";
+	strBtn = strSch+"/search@"+strWrt+"/write";
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title><fmt:message key="board"/></title>
+		<style>
+			th.ui-th-column div {white-space: normal !important; height: auto !important; padding: 2px;}
+		</style>
+		<link rel="stylesheet" type="text/css" media="screen" href="../../script/css/pop_up.css" />
+	</head>
+	<body>
+		<div class="pop_wrap">
+	    	<div class="pop_header">
+	        	<div class="pop_title">
+	            	<h1><fmt:message key="bd_wt_list"/></h1>
+	                <a href="javascript:selfClose();" class="pop_close"></a>
+	            </div>
+	        </div>
+	        <div class="pop_header_shadow"></div>
+	        <div class="pop_content">
+	        	<div class="div_box pop_con">
+	            	<form name="testForm" id="testForm">
+	            	<input type="hidden" id="key_bod_type" name="key_bod_type" value="N">
+					<input type="hidden" id="sess_gubb" name="sess_gubb" value="<%=sess_gubb%>">
+			        <div id="contents_wrap" class="any_page">
+			            <div id="contents">
+			            	<%=CommonGasc.getButtonOnly(sess_empno
+			                     ,"XBD01"
+			                     ,strBtn
+			                     ,request)
+			               %>
+			                <div class="search_area">
+			                	<table>
+			                        <colgroup>
+			                        	<col style="width:35px;" />
+			                            <col style="width:auto;" />
+			                        </colgroup>
+			                        <tbody>
+			                            <tr>
+											<th><fmt:message key="type"/></th>
+											<td>
+												<select id="key_bod_jgbn" name="key_bod_jgbn" style="width:150px"></select>
+												<select id="key_bod_agbn" name="key_bod_agbn" style="width:150px;display:none">
+													<option value=""><fmt:message key="total"/></option>
+													<option value="1">Ostrava</option>
+												</select>
+											</td>
+										</tr>
+			                        </tbody>
+			                    </table>
+			                </div>
+			                <div class="jq_tbl">
+				                <table id="htmlTable" class="scroll"></table>
+								<div id="htmlPager" class="scroll"></div>
+							</div>
+			                <%@ include file="../include/hncis_message.gas"%>
+			            </div>
+			            <div class="clear"></div>
+			        </div>
+			        </form>
+					<form id="hideForm" name="hideForm">
+						<input type="hidden" id="hid_bod_indx" name="hid_bod_indx">
+						<input type="hidden" id="hid_csrfToken" name="hid_csrfToken" value="<%=hid_csrfToken %>">
+						<input type="hidden" id="hid_page" name="hid_page" value="<%=hid_page %>">
+					</form>
+					<form id="fileForm" name="fileForm">
+						<input type="hidden" id="hid_file_name" name="hid_file_name">
+						<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+					</form>
+	                <div class="box_corner box_lt"></div>
+	                <div class="box_corner box_rt"></div>
+	                <div class="box_corner box_lb"></div>
+	                <div class="box_corner box_rb"></div>
+	            </div>
+	        </div>
+	    </div>
+	</body>
+</html>
+	<script type="text/javascript">
+		function fnSetDocumentReady(){
+			sess_auth = $("#work_auth").val();
+			
+			if(sess_mstu != "M"){
+				document.getElementById("write").style.display = "none"; 
+			}
+			
+			initCombo();
+		}
+
+		function initCombo(){
+			getCommonCode("key_bod_jgbn::A;", "N", "init()", "doSearchToJobCombo.do");		//목적
+		}
+
+		/**
+		 * process init() loading
+		 */
+		var params; 
+		var comboVal;
+		var lastsel;
+		var fnMerge;
+		var gridParam;
+		var gridName1 = "htmlTable";
+		var cn        = ['<fmt:message key="num"/>',	//번호
+		                 '<fmt:message key="type"/>',	//구분 
+		                 '<fmt:message key="title"/>',	//제목 
+		                 "File", 
+		                 '<fmt:message key="reg_ymd"/>',//등록일자	 
+		                 '<fmt:message key="hits"/>'];	//조회수
+		var excelCn   = ["Apply Date", "ID no", "Name", "Grade"];
+		var datarow   = {bod_indx:"", bod_jgbnnm:"", bod_title:"", bod_fname:"", inp_ymd:"", bod_read:""};
+		var cm =
+		[
+			{name:"bod_indx",	index:"bod_indx",	sortable:false, formatter:"string",	width:65,	align:"center",	editable:false,	frozen:false},
+			{name:"bod_jgbnnm",	index:"bod_jgbnnm",	sortable:false, formatter:"string",	width:135,	align:"center",	editable:false,	frozen:false},
+			{name:"bod_title",	index:"bod_title",	sortable:false, formatter:"string",	width:610,	align:"left",	editable:false,	frozen:false},
+			{name:"bod_fname",	index:"bod_fname",	sortable:false, formatter:"string",	width:150,	align:"center",	editable:false,	frozen:false,hidden:true},
+			{name:"inp_ymd",	index:"inp_ymd",	sortable:false, formatter:"string",	width:110,	align:"center",	editable:false,	frozen:false},
+			{name:"bod_read",	index:"bod_read",	sortable:false, formatter:"string",	width:60,	align:"right",	editable:false,	frozen:false}
+		];
+
+		function init(){
+			//set grid parameter
+			gridParam = {
+				viewEdit : [{
+					gridName     : gridName1,
+					url          : "doSearchGridToNotice.do",
+					colNames     : cn,
+					colModel     : cm,
+					width        : "1030",
+					height       : "100%",
+					sortname     : "",
+					sortorder    : "",
+					rownumbers   : true,
+					multiselect  : false,
+					cellEdit     : false,
+					fnMerge      : false,
+					pager		 : "htmlPager",
+					page		 : $("#hid_page").val(),
+					completeFc   : "addGridRow();initAfterMenus();",
+					paramJson    : ""
+				}]
+			};
+			
+			//common jqGrid call...
+			commonJqGridInit(gridParam);
+			
+			jQuery("#"+gridName1).jqGrid("setGridParam",{
+				ondblClickRow : function(rowid, iRow, iCol, e){
+					doUpdate(iRow);
+				}
+			}).trigger('reloadGrid');
+			
+			//method overliding
+			jQuery("#"+gridName1).jqGrid("navGrid","#htmlPager",{edit:false,add:false,del:false,search:false,refresh:false});
+			
+//			addGridRow();
+//			doSearch();
+		}
+
+		function retrieve(gubn){
+			switch(gubn){
+				case "search" :
+					doSearch();
+					break;
+				case "write" :
+					doWrite();
+					break;
+			}
+		}
+
+		function doSearch(msgFlag){
+			var params = {
+				key_bod_agbn : $("#key_bod_agbn").val(),
+				key_bod_jgbn : $("#key_bod_jgbn").val(),
+				key_bod_type : $("#key_bod_type").val(),
+				corp_cd		 : sess_corp_cd
+			};
+
+			doCommonSearch("doSearchGridToNotice.do", util.jsonToString(params), "loadCallBack();", gridName1, msgFlag);
+		}
+
+		function doWrite(){
+			if(sess_auth < 5 && sess_mstu != "M"){
+				alertUI('<fmt:message key="MSG.STAT.0038"/>');
+				return;
+			}
+			hideForm.hid_csrfToken.value = $("#csrfToken").val();
+			hideForm.method = "post";
+			hideForm.action = "xbd02.gas";
+			hideForm.submit();
+		}
+
+		function doUpdate(iRow){
+			var hidBodIndx = getColValue("bod_indx", iRow, gridName1);
+			if(hidBodIndx == "") return;
+			
+			var bsicInfo = { 
+					key_bod_indx : hidBodIndx,
+					corp_cd		 : sess_corp_cd
+			};
+			var paramData = { bsicInfo : util.jsonToString(bsicInfo) };
+			doCommonAjax("doReadBDToBoard.do", paramData, "readCallBack(jsonData.sendResult, "+hidBodIndx+");");
+		}
+
+		/**
+		 * callBack
+		 */
+		function loadCallBack(){
+			addGridRow();
+		}
+
+		function readCallBack(result, hidBodIndx){
+			var hfrm = document.hideForm;
+			$("#hid_bod_indx").val(hidBodIndx);
+			$("#hid_page").val($("#page_htmlPager").val());
+			
+			hfrm.hid_csrfToken.value = $("#csrfToken").val();
+			hfrm.method = "post";
+			hfrm.action = "xbd03.gas";
+			hfrm.submit();
+		}
+		</script>

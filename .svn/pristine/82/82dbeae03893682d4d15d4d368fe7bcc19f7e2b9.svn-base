@@ -1,0 +1,458 @@
+<%@page import="com.hncis.common.util.RSA"%>
+<%@page import="java.security.KeyFactory"%>
+<%@page import="java.security.KeyPair"%>
+<%@page import="java.security.KeyPairGenerator"%>
+<%@page import="java.security.NoSuchAlgorithmException"%>
+<%@page import="java.security.PrivateKey"%>
+<%@page import="java.security.PublicKey"%>
+<%@page import="java.security.spec.InvalidKeySpecException"%>
+<%@page import="java.security.spec.RSAPublicKeySpec"%>
+<%@ page import="java.util.Locale" %>
+<%@ page import="org.springframework.web.servlet.i18n.SessionLocaleResolver" %>
+<%@ page import="org.springframework.context.i18n.LocaleContextHolder" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page contentType="text/html; charset=UTF-8"%>
+<c:choose>
+	<c:when test="${param.reqLocale ne null and param.reqLocale ne ''}">
+		<fmt:setLocale value="${param.reqLocale}"/>
+	</c:when>
+	<c:otherwise>
+		<fmt:setLocale value="${reqLocale}"/>
+	</c:otherwise>
+</c:choose>
+<fmt:setBundle basename="com.hncis.common.message.messages"/>
+<%
+	String ctxPath = request.getContextPath();
+
+	HttpSession hss = request.getSession();
+	hss.invalidate();
+	hss = request.getSession();
+
+	KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+	generator.initialize(1024);
+	KeyPair keyPair = generator.genKeyPair();
+	KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+	PublicKey publicKey = keyPair.getPublic();
+	PrivateKey privateKey = keyPair.getPrivate();
+	
+	hss.setAttribute("_RSA_WEB_Key_", privateKey);
+	RSAPublicKeySpec publicSpec = (RSAPublicKeySpec) keyFactory.getKeySpec(publicKey, RSAPublicKeySpec.class);
+	String publicKeyModulus = publicSpec.getModulus().toString(16);
+	String publicKeyExponent = publicSpec.getPublicExponent().toString(16);
+	String[] urlAddr = request.getServerName().split("\\.");
+	String corp_cd = "china";	
+// 	String corp_cd = "google";	
+	
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>[ General Affairs Solution ]</title>
+	<link rel="stylesheet" href="<%=ctxPath%>/script/css/hncis_login.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="<%=ctxPath%>/script/css/jquery-ui-1.7.1.custom.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="<%=ctxPath%>/script/css/ui.jqgrid.css" />
+	<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="<%=ctxPath%>/script/js/i18n/grid.locale-kr.js"></script>
+	<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery.jqGrid.min.js"></script> 
+	<link rel="stylesheet" type="text/css" media="screen" href="<%=ctxPath%>/script/css/jquery.ui.datepicker.css" />
+	<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery.ui.datepicker.js"></script>
+	<script type="text/javascript" src='<%=ctxPath%>/script/js/jquery.numeric.min.js'></script>
+	<script type="text/javascript" src='<%=ctxPath%>/script/js/jsonUtil.js'></script>
+	<script type="text/javascript" src='<%=ctxPath%>/script/js/common.js'></script>
+	<script type="text/javascript" src='<%=ctxPath%>/script/js/Base64.js'></script>
+	<script type="text/javascript" src="<%=ctxPath%>/script/js/RSA/jsbn.js"></script>
+	<script type="text/javascript" src="<%=ctxPath%>/script/js/RSA/rsa.js"></script>
+	<script type="text/javascript" src="<%=ctxPath%>/script/js/RSA/prng4.js"></script>
+	<script type="text/javascript" src="<%=ctxPath%>/script/js/RSA/rng.js"></script>
+	<script type="text/javascript" src='<%=ctxPath%>/script/js/jquery.blockUI.js'></script>
+</head>
+<body class="loginPage">
+	<div class="login_wrap">
+        <div class="login_con_wrap">
+	        <div class="login_con" style="background:#fff;">
+	        	<div class="login_top">
+		        	<h1>General Affairs Solution LOGIN</h1>
+		            <div class="img_area"></div>
+		        </div>
+	        	<div class="info_input">
+	            	<form name="sForm" method="post" action="" onSubmit="return false">
+				    <input type='hidden' name='okmod' value='login'/>
+					<input type='hidden' name='func' value=''/>
+					<input type='hidden' name='auto_func' value=''/>
+					<input type="hidden" id="csrfToken" name="csrfToken"/>
+					<h2>LOGIN</h2>
+	                <div class="corp_input" style="display: none;">
+	                	<label for="corp_nm"><fmt:message key="comp"/></label>
+	                	<input type="text" name="corp_nm" id="corp_nm" class="search_input" disabled/>
+	                	<input type="text" name="corp_cd" id="corp_cd" value="<%=corp_cd%>" style="display: none;"/>
+	                	<a href="javascript:corpFind();"><img src="/images/hncis_common/find-n.png" alt="" /></a>
+	                </div>
+	            	<div class="id_input input_div">
+	                	<label for="KEY_EMPNO">ID</label>
+	                	<input type="text" name="KEY_EMPNO" id="KEY_EMPNO" onKeyUp="moveFocus()" />
+	                </div>
+	                <div class="pw_input input_div">
+	                    <label for="KEY_PSWD">PW</label>
+	                    <input type="password" name="KEY_PSWD" id="KEY_PSWD" onKeyUp="moveFocus()" />
+	                </div>
+	                <div class="login_function">
+	                	<input type="checkbox" id="cb_saveId" name="isRmbrId" style="vertical-align: bottom;" /><label for="cb_saveId"><fmt:message key="save_id"/></label> 
+	                	<a href="javascript:resetPw();"><fmt:message key="pw_reset"/></a>
+	                </div>
+	                	
+	                </form>
+	                <input type="button" value="LOGIN" class="login_btn" onClick="goLogin();" style="cursor:pointer"/>
+	        	</div>
+	            <!--<div class="login_visual">
+	            	<img src="/images/login/login_visual.jpg" alt="GAS-General Affairs Solution" />
+	            </div>-->
+	            <div class="clear"></div>
+	    	</div>
+    	</div>
+	</div>
+	<div id="alert_pop" style="display:none">
+		<div class="msgBox">
+			<div class="msgBoxIn">
+			    <!--<strong>알림 메세지</strong>
+			    <hr> -->
+			    <ul>
+			        <li id="alert_msg" style="height:auto">메세지 내용</li>
+			        <li>
+						<div class="btn_area">
+                           <a href="#" id="pop_cls" class="white_btn22"><span>닫기</span></a>
+                       	</div>
+					</li>
+			    </ul>
+			   <!-- <div class="boxRound01"><img src="/images/msgbox/layer_pop_topLeft.gif" alt="" /></div>
+			    <div class="boxRound02"><img src="/images/msgbox/layer_pop_topRight.gif" alt="" /></div>
+			    <div class="boxRound03"><img src="/images/msgbox/layer_pop_bottomLeft.gif" alt="" /></div>
+			    <div class="boxRound04"><img src="/images/msgbox/layer_pop_bottomRight.gif" alt="" /></div>-->
+			</div>
+		</div>
+	</div>
+	<div id="confirm_pop" style="display:none">
+		<div class="msgBox">
+			<div class="msgBoxIn">
+			    <!--<strong>알림 메세지</strong>
+			    <hr> -->
+			    <ul>
+			        <li id="confirm_msg" style="height:auto"><fmt:message key="msg_cont"/></li>
+			        <li>
+						<div class="btn_area">
+                          <a href="#" id="pop_yes" class="white_btn22"><span><fmt:message key="conf"/></span></a>
+                          <a href="#" id="pop_no" class="white_btn22"><span><fmt:message key="cncl"/></span></a>
+                      	</div>
+					</li>
+			    </ul>
+			    <!--<div class="boxRound01"><img src="/images/msgbox/layer_pop_topLeft.gif" alt="" /></div>
+			    <div class="boxRound02"><img src="/images/msgbox/layer_pop_topRight.gif" alt="" /></div>
+			    <div class="boxRound03"><img src="/images/msgbox/layer_pop_bottomLeft.gif" alt="" /></div>
+			    <div class="boxRound04"><img src="/images/msgbox/layer_pop_bottomRight.gif" alt="" /></div> -->
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+<script language="JavaScript">
+	var public1 = "<%=publicKeyModulus%>";
+	var public2 = "<%=publicKeyExponent%>";
+	$(document).ready(function(){
+		$(".numeric").numeric();
+	    $('input[name="KEY_EMPNO"]').focus();
+		$(".login_con .input_div input").focus(function(){
+			var lab = $(this).prev("label");
+			$(lab).css("visibility","hidden");
+		});
+		$(".login_con .input_div input").blur(function(){
+			var lab = $(this).prev("label");
+			var in_val = $(this).val();
+			if(in_val.length == 0){
+				$(lab).css("visibility","visible");
+			}else{
+				$(lab).css("visibility","hidden");
+			}
+		});
+		
+		
+		// 쿠키값을 가져온다.
+		var cookie_user_id = getLoginId();
+		var cookie_corp_id = getLoginCorpId();
+		var cookie_corp_nm = getLoginCorpNm();
+
+		/**
+		* 쿠키값이 존재하면 id에 쿠키에서 가져온 id를 할당한 뒤
+		* 체크박스를 체크상태로 변경
+		*/
+		if(cookie_user_id != "") {
+			$("#KEY_EMPNO").val(cookie_user_id);
+			$("#cb_saveId").attr("checked", true);
+		}
+		if(cookie_corp_id != "") {
+			$("#corp_cd").val(cookie_corp_id);
+		}
+		if(cookie_corp_nm != "") {
+			$("#corp_nm").val(cookie_corp_nm);
+		}
+		
+		// 아이디 저장 체크시
+		$("#cb_saveId").change(function(){
+			var _this = this;
+			if($(_this).is(":checked")) {
+				confirmUI('<fmt:message key="MSG.CNF.0036"/>');
+				$("#pop_no").click(function(){
+					$.unblockUI({
+						onUnblock: function(){
+							$(_this).attr("checked", false);
+						}
+					});
+				});
+				$("#pop_yes").click(function(){
+					$.unblockUI({
+						onUnblock: function(){
+							//$(_this).attr("checked", false);
+						}
+					});
+				});
+			}
+
+		});
+		
+		$("#KEY_EMPNO").val('10000001');
+		$("#KEY_PSWD").val('10000001');
+		
+	});
+	var ctxPath = "<%=ctxPath%>";
+	
+	
+	/**
+	* saveLogin
+	* 로그인 정보 저장
+	* @param id
+	*/
+	function saveLogin(id, corpId, corpNm) {
+		if(id != "") {
+		// userid 쿠키에 id 값을 7일간 저장
+		setSaveId("userid", id, 7);
+		setSaveCorpId("corpid", corpId, 7);
+		setSaveCorpNm("corpnm", corpNm, 7);
+		}else{
+		// userid 쿠키 삭제
+		setSaveId("userid", id, -1);
+		setSaveCorpId("corpid", corpId, -1);
+		setSaveCorpNm("corpnm", corpNm, -1);
+		}
+	}
+
+	/**
+	* setSave
+	* Cookie에 user_id를 저장
+	* @param name
+	* @param value
+	* @param expiredays
+	*/
+	function setSaveId(name, value, expiredays) {
+		var today = new Date();
+		today.setDate( today.getDate() + expiredays );
+		document.cookie = name + "=" + escape( value ) + "; path=/; expires=" + today.toGMTString() + ";"
+	}
+	function setSaveCorpId(name, value, expiredays) {
+		var today = new Date();
+		today.setDate( today.getDate() + expiredays );
+		document.cookie = name + "=" + escape( value ) + "; path=/; expires=" + today.toGMTString() + ";"
+	}
+	function setSaveCorpNm(name, value, expiredays) {
+		var today = new Date();
+		today.setDate( today.getDate() + expiredays );
+		document.cookie = name + "=" + escape( value ) + "; path=/; expires=" + today.toGMTString() + ";"
+	}
+
+	/**
+	* getLogin
+	* 쿠키값을 가져온다.
+	* @returns {String}
+	*/
+	function getLoginId() {
+		// userid 쿠키에서 id 값을 가져온다.
+		var cook = document.cookie + ";";
+		var idx = cook.indexOf("userid", 0);
+		var val = "";
+	
+		if(idx != -1) {
+		cook = cook.substring(idx, cook.length);
+		begin = cook.indexOf("=", 0) + 1;
+		end = cook.indexOf(";", begin);
+		val = unescape(cook.substring(begin, end));
+		}
+		return val;
+	}
+	function getLoginCorpId() {
+		// userid 쿠키에서 id 값을 가져온다.
+		var cook = document.cookie + ";";
+		var idx = cook.indexOf("corpid", 0);
+		var val = "";
+	
+		if(idx != -1) {
+		cook = cook.substring(idx, cook.length);
+		begin = cook.indexOf("=", 0) + 1;
+		end = cook.indexOf(";", begin);
+		val = unescape(cook.substring(begin, end));
+		}
+		return val;
+	}
+	function getLoginCorpNm() {
+		// userid 쿠키에서 id 값을 가져온다.
+		var cook = document.cookie + ";";
+		var idx = cook.indexOf("corpnm", 0);
+		var val = "";
+	
+		if(idx != -1) {
+		cook = cook.substring(idx, cook.length);
+		begin = cook.indexOf("=", 0) + 1;
+		end = cook.indexOf(";", begin);
+		val = unescape(cook.substring(begin, end));
+		}
+		return val;
+	}
+
+	
+
+	/**
+	* getLogin
+	* 쿠키값을 가져온다.
+	* @returns {String}
+	*/
+	function getLogin() {
+		// userid 쿠키에서 id 값을 가져온다.
+		var cook = document.cookie + ";";
+		var idx = cook.indexOf("userid", 0);
+		var val = "";
+	
+		if(idx != -1) {
+		cook = cook.substring(idx, cook.length);
+		begin = cook.indexOf("=", 0) + 1;
+		end = cook.indexOf(";", begin);
+		val = unescape(cook.substring(begin, end));
+		}
+		return val;
+	}
+	
+	
+	
+	function goLogin(){
+		var frm = document.sForm;
+		if(frm.KEY_EMPNO.value==""){
+			alertUI('<fmt:message key="MSG.INP.0085"/>');
+			$("#pop_cls").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						frm.KEY_EMPNO.focus();
+					}
+				});
+			});
+			return;
+		}
+		
+		var rsa = new RSAKey();
+		rsa.setPublic(public1, public2);
+		
+		var params = 
+		{
+			xusr_empno : rsa.encrypt(frm.KEY_EMPNO.value),
+			xusr_pswd : rsa.encrypt(frm.KEY_PSWD.value),
+			login_type : 'Y',
+			corp_cd	: frm.corp_cd.value
+		};
+
+		paramData = {
+			paramJson : util.jsonToString(params)
+		};
+		
+		doCommonAjax("/doLogin.do", paramData, "loginCallBack(jsonData.sendResult);");
+	}
+	
+	function loginCallBack(result){
+		var frm = document.sForm;
+		
+		if(result.message == "Y"){
+			
+			if($("#cb_saveId").is(":checked")){ // 저장 체크시
+				saveLogin($("#KEY_EMPNO").val(), $("#corp_cd").val(), $("#corp_nm").val());
+			}else{ // 체크 해제시는 공백
+				saveLogin("", "", "");
+			}
+			
+			frm.action = "<%=ctxPath%>/main.gas";
+			frm.csrfToken.value = result.code;
+			frm.submit();
+		}else{						
+			alertUI(result.message);
+			//frm.KEY_EMPNO.value = "";
+			//frm.KEY_PSWD.value = "";
+			//frm.KEY_EMPNO.focus();
+		}
+	}
+	
+	function goSignup(){
+		var frm = document.sForm;
+		frm.action = "<%=ctxPath%>/agree.gas";
+		frm.submit();
+	}
+
+	function setFocus(){
+		var frm = document.sForm;
+		frm.KEY_EMPNO.focus();
+		return;
+	}
+
+	function moveFocus(){
+		if (window.event.keyCode==13){
+			goLogin();
+		}
+		/*
+		var frm = document.sForm;
+		var obj = frm.KEY_EMPNO;
+		if(obj.value.length==8){
+			frm.KEY_PSWD.focus();
+		}
+		*/
+		return;
+	}
+
+	function openNewWindow(url){
+		window.open(url, "_blank", "width=516, height=400, directories=no, location=no, menubar=no, resizable=no, status=no, toolbar=no");
+	}
+
+	function openPopWindow(theURL,winName,features,cookie_key_val) {
+		var c = document.cookie + ';';
+		if( c.indexOf(cookie_key_val) < 0 )
+			window.open(theURL,winName,features);
+	}
+
+	function openPopups2() {
+		var cnt = 0;
+		openPopWindow('popup/pop_060630.gas', 'pop2',  'fullscreen=no,titlebar=no,toolbar=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=no,left=0,top=0,width=450,height=210','NOPOPTODAY=NoPop');
+		if(0) alertUI(cnt); // pseudo for not-empty-function
+	}
+	
+	function openPopups3() {
+		var cnt = 0;
+		openPopWindow('popup/pop_090210.gas', 'pop2',  'fullscreen=no,titlebar=no,toolbar=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=no,left=0,top=0,width=450,height=180','NOPOPTODAY=NoPop');
+		if(0) alertUI(cnt); // pseudo for not-empty-function
+	}
+	
+	function resetPw(){
+		newPopWin(ctxPath+"/hncis/popup/pop_resetPw.gas", "400", "210", "pop_resetPw");
+	}
+	
+	function corpFind(){
+		newPopWin(ctxPath+"/hncis/popup/pop_findCorp.gas", "500", "510", "pop_findCorp"); 
+	}
+	
+	function corpFindCallBack(corpCd, corpNm){
+		
+		$("#corp_cd").val(corpCd);
+		$("#corp_nm").val(corpNm);
+	}
+</script>

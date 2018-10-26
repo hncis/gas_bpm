@@ -1,0 +1,365 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%	
+	String file_doc_no = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("file_doc_no")) == ""?(String)request.getAttribute("file_doc_no"):request.getParameter("file_doc_no"));
+	String file_eeno = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("file_eeno")) == ""?(String)request.getAttribute("file_eeno"):request.getParameter("file_eeno"));
+	String file_pgs_st_cd = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("file_pgs_st_cd")) == ""?(String)request.getAttribute("file_pgs_st_cd"):request.getParameter("file_pgs_st_cd"));
+	String file_seq = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("file_seq") == null?(Integer)request.getAttribute("file_seq"):request.getParameter("file_seq")));
+	String message = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("message")).equals("")?StringUtil.isNullToString((String)request.getAttribute("message")):request.getParameter("message"));
+	String dispatcherYN = (String)request.getAttribute("dispatcherYN");
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>BusinessTravel - List of Business Traveler</title>
+		<link rel="stylesheet" type="text/css" media="screen" href="../../script/css/pop_up.css" />
+		<style type="text/css">
+			.file_input_div {position:absolute; top: 35px; left:312px; width:100px; height:36px; overflow:hidden;}
+			.file_input_img_btn {padding:0 0 0 5px;}
+			.file_input_hidden {font-size:18px; position:absolute; right:0px; top:0px; opacity:0; filter: alpha(opacity=0); -ms-filter: alpha(opacity=0); cursor:pointer;}
+		</style>
+	</head>
+	<body>
+		<div class="pop_wrap">
+	    	<div class="pop_header">
+	        	<div class="pop_title">
+	            	<h1><fmt:message key="file_attach"/></h1>
+	                <a href="javascript:selfClose();" class="pop_close"></a>
+	            </div>
+	        </div>
+	        <div class="pop_header_shadow"></div>
+	        <div class="pop_content">
+	        	<div class="div_box pop_con">
+	            	<form id="mainForm" name="mainForm" method="post" enctype="multipart/form-data">
+					<input type="hidden" id="file_doc_no" 	name="file_doc_no"  		value="<%=file_doc_no%>">
+					<input type="hidden" id="file_eeno"		name="file_eeno"  		value="<%=file_eeno%>">
+					<input type="hidden" id="file_pgs_st_cd"	name="file_pgs_st_cd"  	value="<%=file_pgs_st_cd%>">
+					<input type="hidden" id="file_seq"	 	name="file_seq"  		value="<%=file_seq%>">
+					<input type="hidden" id="dispatcherYN"	name="dispatcherYN"  	value="<%=dispatcherYN%>">
+					<input type="hidden" id="fileInfo"	 	name="fileInfo">
+			        <div id="contents_wrap" class="any_page">
+			            <div class="search_area">
+							<input type="text" id="fileTemp" name="fileTemp" style="width:257px" readonly>
+							<div class="file_input_div">
+<!-- 				            	<input type="file" id="file_name" name="file_name" style="cursor:pointer;width:100px;height:25px;filter:alpha(opacity=0);position:absolute;top:35px;left:312px;align:center;"onChange='javascript:$("#fileTemp").val(this.value);' size="0"> -->
+				            	<input type="file" id="file_name" name="file_name" class="file_input_hidden" onChange='javascript:$("#fileTemp").val(this.value);' size="0">
+								<img src="../../images/hncis_bttn/find_btn.gif" alt="search" align="absmiddle" class="file_input_img_btn"/>
+							</div>
+			            </div>
+			            <div class="btn_area mt10"> 
+							<ul class="btns"> 
+								<li><a href="javascript:retrieve('save');"><fmt:message key="BUTTON.SAVE"/><span></span></a></li>
+								<li><a href="javascript:retrieve('delete');"><fmt:message key="BUTTON.DELETE"/><span></span></a></li>
+							</ul> 
+						</div>
+			            <div id="contents">
+			                <div class="jq_tbl">
+				                <table id="htmlTable" class="scroll"></table>
+								<div id="htmlPager" class="scroll" style="display:none"></div>
+							</div>
+			            </div>
+			            <div class="clear"></div>
+			        </div>
+			        </form>
+			        <form id="dispatcherForm" name="dispatcherForm" method="post" >
+						<input type="hidden" id="file_doc_no" name="file_doc_no" value="<%=file_doc_no%>">
+						<input type="hidden" id="file_eeno"  name="file_eeno" value="<%=file_eeno%>">
+						<input type="hidden" id="file_pgs_st_cd"  name="file_pgs_st_cd" value="<%=file_pgs_st_cd%>">
+						<input type="hidden" id="file_seq"	name="file_seq"  value="<%=file_seq%>">
+						<input type="hidden" id="message"	name="message"  value="<%=message%>">
+						<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+					</form>
+					<form id="hideForm" name="hideForm" method="post">
+						<table id="htmlTable" class="scroll"></table>
+						<div id="htmlPager" class="scroll" style="display:none"></div>
+					</form>
+	                <div class="box_corner box_lt"></div>
+	                <div class="box_corner box_rt"></div>
+	                <div class="box_corner box_lb"></div>
+	                <div class="box_corner box_rb"></div>
+	            </div>
+	        </div>
+	    </div>
+	    <div id="alert_pop" style="display:none">
+		<div class="msgBox">
+			<div class="msgBoxIn">
+			    <strong><fmt:message key="ntc_msg"/></strong>
+			    <hr> 
+			    <ul>
+			        <li id="alert_msg" style="height:auto"><fmt:message key="msg_cont"/></li>
+			        <li>
+						<div class="btn_area">
+                           <a href="#" id="pop_cls" class="white_btn22"><span><fmt:message key="close"/></span></a>
+                       	</div>
+					</li>
+			    </ul>
+			    <div class="boxRound01"><img src="../../images/msgbox/layer_pop_topLeft.gif" alt="" /></div>
+			    <div class="boxRound02"><img src="../../images/msgbox/layer_pop_topRight.gif" alt="" /></div>
+			    <div class="boxRound03"><img src="../../images/msgbox/layer_pop_bottomLeft.gif" alt="" /></div>
+			    <div class="boxRound04"><img src="../../images/msgbox/layer_pop_bottomRight.gif" alt="" /></div>
+			</div>
+		</div>
+		</div>
+	    <div id="confirm_pop" style="display:none">
+		<div class="msgBox">
+			<div class="msgBoxIn">
+			    <strong><fmt:message key="ntc_msg"/></strong>
+			    <hr> 
+			    <ul>
+			        <li id="confirm_msg" style="height:auto"><fmt:message key="msg_cont"/></li>
+			        <li>
+						<div class="btn_area">
+                           <a href="#" id="pop_yes" class="white_btn22"><span><fmt:message key="conf"/></span></a>
+                           <a href="#" id="pop_no" class="white_btn22"><span><fmt:message key="cncl"/></span></a>
+                       	</div>
+					</li>
+			    </ul>
+			    <div class="boxRound01"><img src="../../images/msgbox/layer_pop_topLeft.gif" alt="" /></div>
+			    <div class="boxRound02"><img src="../../images/msgbox/layer_pop_topRight.gif" alt="" /></div>
+			    <div class="boxRound03"><img src="../../images/msgbox/layer_pop_bottomLeft.gif" alt="" /></div>
+			    <div class="boxRound04"><img src="../../images/msgbox/layer_pop_bottomRight.gif" alt="" /></div>
+			</div>
+		</div>
+	</div>
+	</body>
+</html>
+<script type="text/javascript">
+		
+	function fnSetDocumentReady(){
+		sess_auth = $("#work_auth").val();
+		
+		if($("#dispatcherYN").val() == "Y"){
+			dispatcherSubmit();
+		}else{
+			init();
+		}
+	}
+	
+	/**
+	 * process init() loading
+	 */
+	var params; 
+	var comboVal;
+	var comboVal1;
+	var lastsel;
+	var fnMerge;
+	var gridParam;
+	var gridName1 = "htmlTable";
+	var datarow   = {doc_no:"",eeno:"",seq:"",affr_scn_cd:"",ogc_fil_nm:"", fil_nm:"", fil_mgn_qty:"", file_down:""};
+	
+	function init(){
+		
+// 		var cn        = ["DocNo.", "Eeno", "Seq", "Affr_scn_cd", "Ogc_fil_nm", "파일명", "용량", "다운로드"];
+		var cn = [ '<fmt:message key="req_ymd"/>' // "doc_no"
+		          ,'<fmt:message key="use_ymd"/>' // "eeno"
+		          ,'<fmt:message key="pgs_st_nm"/>' // "seq"
+		          ,'<fmt:message key="rc_nm"/>' // "affr_scn_cd"
+		          ,'<fmt:message key="rm"/>' // "ogc_fil_nm"
+		          ,'<fmt:message key="file_nm"/>' // "파일명"
+		          ,'<fmt:message key="file_size"/>' // "용량"
+		          ,'<fmt:message key="download"/>' // "다운로드"
+		          ];
+		var cm =
+			[
+				{name:"doc_no",			index:"doc_no"	, sortable:false,			formatter:"string",		width:0,	align:"center",	editable:false,	frozen:true, 	hidden:true},
+				{name:"eeno",			index:"eeno"	, sortable:false,			formatter:"string",		width:0,	align:"center",	editable:false,	frozen:true, 	hidden:true},
+				{name:"seq",			index:"seq"		, sortable:false,			formatter:"string",		width:0,	align:"left",	editable:true,	frozen:false, 	hidden : true},
+				{name:"affr_scn_cd",	index:"affr_scn_cd"		, sortable:false,	formatter:"string",		width:0,	align:"left",	editable:true,	frozen:false, 	hidden : true},
+				{name:"ogc_fil_nm",		index:"ogc_fil_nm"		, sortable:false,	formatter:"string",		width:0,	align:"left",	editable:true,	frozen:false, 	hidden : true},
+				{name:"fil_nm",			index:"fil_nm"		, sortable:false,			formatter:"string",		width:180,	align:"left",	editable:false,	frozen:false},
+				{name:"fil_mgn_qty",	index:"fil_mgn_qty"		, sortable:false,			formatter:"string",		width:60,	align:"right",	editable:false,	frozen:false},
+				{name:"file_down",		index:"file_down"		, sortable:false,			formatter:"string",		width:95,	align:"center",	editable:false,	frozen:false}			
+			];
+		
+		var params = {
+				doc_no     	: $("#file_doc_no").val(),
+				eeno       	: $("#file_eeno").val(),
+				seq       	: $("#file_seq").val(),
+				affr_scn_cd : 'BT',
+				corp_cd		: sess_corp_cd
+			};
+		
+		gridParam = {
+			viewEdit : [{
+				gridName     : gridName1,
+				url          : "doSearchBTToFile.do",
+				colNames     : cn,
+				colModel     : cm,
+				width        : "400",
+				height       : "100%",
+				sortname     : "file_nm",
+				sortorder    : "asc",
+				rownumbers   : true,
+				multiselect  : true,
+				cellEdit     : false,
+				fnMerge      : false,
+				completeFc   : "searchCallBack();",
+				selectCellFc : "setChangeImg();",
+				paramJson    : params,
+				rowNum       : "20"
+			}]
+		};
+		
+		commonJqGridInit(gridParam);
+		setGridColumnOptions();
+		//jQuery("#"+gridName1).jqGrid("setFrozenColumns");
+	}
+	
+	function searchCallBack(){
+		addGridRow(10);
+		setChangeImg();
+	}
+	
+	function retrieve(gubn){
+		
+		switch(gubn){
+			case "save" :
+				if(fileExtCheck()){
+					doSave();
+				}else{
+					alertUI('<fmt:message key="MSG.FILE.0004"/>');
+				}
+				break;
+			case "delete" :
+				doDelete();
+				break;
+		}
+	}
+	
+	function doSave(){
+		
+		var fileInfo = {
+			doc_no    		: $("#file_doc_no").val(),
+			eeno    		: $("#file_eeno").val(),
+			pgs_st_cd  		: $("#file_pgs_st_cd").val(),
+			seq		    	: $("#file_seq").val(),
+			affr_scn_cd   	: "BT",
+			csrfToken		: $("#csrfToken").val(),
+			ipe_eeno   		: sess_empno,
+			corp_cd			: sess_corp_cd
+		};
+		
+		if($("#file_name").val() == ""){
+			alertUI("<fmt:message key="MSG.FILE.0001"/>");
+			return;
+		}
+		
+		confirmUI("<fmt:message key="MSG.CNF.0004"/>");
+		$("#pop_yes").click(function(){
+			$.unblockUI({
+				onUnblock: function(){
+					var frm = document.mainForm;
+					frm.fileInfo.value = util.jsonToString(fileInfo);
+					frm.action = "doSaveBTToFile.do";
+					frm.submit();
+				}
+			});
+		});
+	}
+	
+	function setChangeImg(){
+		var gridRow  = jQuery("#"+gridName1);
+		var ids      = gridRow.getDataIDs();
+		
+		for(var i=0;i<ids.length;i++){
+			if(getColValue("doc_no", i+1, gridName1)!=""){
+				var imgSrc = "";			
+				imgSrc = "<img src='../../images/hncis_bttn/download_n.gif' onClick='doFileDown(\""+getColValue("ogc_fil_nm", i+1, gridName1)+"\");'/>";			
+				gridRow.jqGrid("setRowData", i+1, {file_down:imgSrc});
+			}
+		}
+		
+		if($("#dispatcherYN").val() == "Y"){
+			if($("#message").val() != ""){
+				alertUI($("#message").val());
+			}
+		}
+	}
+	
+	function doFileDown(file_name){
+		
+		var fileInfo = {
+			doc_no    		: $("#file_doc_no").val(),
+			eeno    		: $("#file_eeno").val(),
+			seq		    	: $("#file_seq").val(),
+			affr_scn_cd   	: "BT",
+			ogc_fil_nm   	: file_name,
+			corp_cd			: sess_corp_cd
+		};
+		
+		var frm = document.mainForm;
+		frm.fileInfo.value = util.jsonToString(fileInfo);
+		frm.action = "doFileDown.do";
+		frm.submit();
+		
+	}
+	
+	function dispatcherSubmit(){
+		$("#dispatcherYN").val("N");
+		var frm = document.dispatcherForm;
+		frm.hid_csrfToken.value = $("#csrfToken").val();
+		frm.action = "./xbt01_file.gas";
+		frm.submit();
+	}
+	
+	function doDelete(){
+		
+		var fileInfo = [];
+		var selectRow = jQuery("#"+gridName1).jqGrid("getGridParam", "selarrrow");
+		
+		if(selectRow.length == 0){
+			alertUI("<fmt:message key="MSG.SEL.0011"/>");
+			return;
+		}else{
+			for(var i = 0; i < selectRow.length; i++){
+				rowId = selectRow[i];
+				if(getColValue("doc_no", rowId, gridName1) == ""){
+					alertUI("File Attach " + rowId + " Line : There is no Data.");
+					return;
+				}
+				if(rowId){
+					data = {
+						doc_no			: getColValue("doc_no", rowId, gridName1),
+						eeno			: getColValue("eeno", rowId, gridName1),
+						seq				: getColValue("seq", rowId, gridName1),
+						affr_scn_cd		: "BT",
+						ogc_fil_nm		: getColValue("ogc_fil_nm", rowId, gridName1),
+						corp_cd			: sess_corp_cd
+					};
+					fileInfo.push(data);
+				}
+			}
+			
+			confirmUI("삭제 하시겠습니까?");
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								fileInfo		: util.jsonToList(fileInfo)
+						};
+						doCommonAjax("doDeleteBTToFile.do", paramData, "deleteCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+	}
+	
+	function deleteCallBack(result){
+		alertUI(result.message);
+		$("#dispatcherYN").val("N");
+		doSearch();
+	}
+	
+	function doSearch(){
+		
+		var params = {
+				doc_no     	: $("#file_doc_no").val(),
+				eeno       	: $("#file_eeno").val(),
+				seq       	: $("#file_seq").val(),
+				affr_scn_cd : 'BT',
+				corp_cd		: sess_corp_cd
+			};
+		
+		doCommonSearch("doSearchBTToFile.do", util.jsonToString(params), "searchCallBack();", gridName1);
+	}
+</script>

@@ -1,0 +1,61 @@
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page import="com.hncis.common.application.SessionInfo" %>
+<%@ page import="com.hncis.common.application.CommonGasc" %>
+<%@ page import="com.hncis.common.exception.impl.SessionException" %>
+<%@ page import="com.hncis.common.util.*" %>
+<%@ page import="java.util.List" %>
+<%@ page errorPage = "/WEB-INF/view/sessionError.gas" %>
+<%
+	String ctxPath = request.getContextPath();
+	String menuId = "XVE01";
+	String hid_req_date = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_req_date")));
+	String hid_eeno     = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_eeno")));
+%>
+<!DOCTYPE html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>Security Mgmt.</title>
+		<link rel="stylesheet" type="text/css" media="screen" href="<%=ctxPath%>/script/css/jquery-ui-1.8.18.custom.css" />    
+		<link rel="stylesheet" type="text/css" media="screen" href="<%=ctxPath%>/script/css/ui.jqgrid.css" />
+		<%-- <link rel='stylesheet' type="text/css" media="screen" href="<%=ctxPath%>/script/css/global_common.css"/>
+		<link rel='stylesheet' type="text/css" media="screen" href="<%=ctxPath%>/script/css/global_sub.css"/> --%>
+		<link rel='stylesheet' type="text/css" media="screen" href="<%=ctxPath%>/script/css/hncis_common.css" />
+		<link rel="stylesheet" type="text/css" media="screen" href="<%=ctxPath%>/script/css/jquery.ui.datepicker.css" />
+		 
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/i18n/grid.locale-en.js"></script>
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery.jqGrid.min.js"></script> 
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery-groupTable.js"></script> 
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery.ui.datepicker.js"></script>
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery-menu.js"></script>
+		<script type="text/javascript" src='<%=ctxPath%>/script/js/jsonUtil.js'></script>
+		<script type="text/javascript" src='<%=ctxPath%>/script/js/common.js'></script> 
+		<script type="text/javascript" src='<%=ctxPath%>/script/js/jquery.numeric.min.js'></script>
+		
+		<script>
+			var ctxPath = "<%=ctxPath%>"; 
+		</script>
+		<script type="text/javascript" src="./js/entranceMeal_material_leave.js"></script>
+	</head>
+	<body onload="initComboMaterial();">
+		<form name="frm" id="frm">
+			<div id="contents">
+                <div class="jq_tbl">
+	                <table id="htmlTable" class="scroll"></table>
+	                <div id="htmlPager" class="scroll" style="display:none"></div>
+	            </div>
+			</div>
+			<div class="clear"></div>
+		</form>
+		<form id="fileForm" name="fileForm">
+			<input type="hidden" id="file_doc_no" name="file_doc_no">
+			<input type="hidden" id="file_eeno"  name="file_eeno">
+			<input type="hidden" id="hid_use_yn"  name="hid_use_yn">
+			<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+		</form>
+		<form id="hideForm" name="hideForm" method="post">
+			<input type="hidden" id="hid_csrfToken"	name="hid_csrfToken">
+		</form>
+	</body>
+</html>

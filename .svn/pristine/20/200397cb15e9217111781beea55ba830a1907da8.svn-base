@@ -1,0 +1,5 @@
+#REAL(MSSQL)
+jdbc.driverClassName=core.log.jdbc.driver.Mssql2005Driver
+jdbc.url=jdbc:sqlserver://10.127.3.102:1433;database=gasc;failoverPartner=10.127.3.101\\MIRROR
+jdbc.username=Z2FzY3dhcw==
+jdbc.password=UEBzc3cwcmQ=

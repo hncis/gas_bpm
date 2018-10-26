@@ -1,0 +1,3435 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="System">
+
+
+   <select id="selectMenuListToUserManagement" resultClass="bgabGascz004Dto" parameterClass="bgabGascz002Dto">
+	  	/*selectMenuListToUserManagement*/
+	  	SELECT menu_lgrp_cd
+			 , b.xcod_hname AS menu_lgrp_nm
+			 , menu_mgrp_cd
+			 , scrn_nm
+			 , '' AS auth
+		  FROM BGAB_GASCZ004_GAS a
+		  LEFT OUTER JOIN BGAB_GASCZ005$corp_cd$ b
+			ON a.menu_lgrp_cd = b.xcod_code
+			AND a.locale = B.locale
+		 WHERE menu_sgrp_cd = '000'
+		   AND b.xcod_knd = 'X0002'
+		   AND b.locale = #locale#
+		   AND menu_lgrp_cd NOT IN ('M1', 'M9')
+		   AND use_yn = '1'
+		 <isNotEmpty property="corp_cd">
+		   AND MENU_MGRP_CD IN (
+				SELECT TASK_GUBUN
+			    FROM BGAB_GASCZ031
+			    WHERE CORP_CD = #corp_cd#
+			      AND APPR_USE_YN = 'Y'
+		   )
+		 </isNotEmpty>
+		 ORDER BY menu_lgrp_cd, menu_mgrp_cd
+   </select>
+
+   <update id="updateUserInfoToUserManagement" parameterClass="bgabGascz002Dto">
+   		/*updateUserInfoToUserManagement*/
+   		UPDATE BGAB_GASCZ002$corp_cd$ SET
+	   		xusr_name 			= #xusr_name#,
+	   		xusr_en_name 		= #xusr_en_name#,
+	   		xusr_step_code 		= #xusr_step_code#,
+	   		xusr_step_name 		= #xusr_step_name#,
+			xusr_auth_knd 		= #xusr_auth_knd#,
+			xusr_plac_work 		= #xusr_plac_work#,
+			xusr_retr_flag 		= #xusr_retr_flag#,
+			xusr_dept_code 		= #xusr_dept_code#,
+			xusr_dept_name 		= (SELECT XORG_ORGA_E FROM BGAB_GASCZ003$corp_cd$ WHERE XORG_ORGA_C = #xusr_dept_code#),
+			<!-- xusr_bsns_dept 		= (SELECT XORG_ORGA_CSNER FROM BGAB_GASCZ003$corp_cd$ WHERE XORG_ORGA_C = #xusr_dept_code#), -->
+			xusr_aply_date 		= #xusr_aply_date#,
+			xusr_sex 			= #xusr_sex#,
+			xusr_tel_no			= #xusr_tel_no#,
+			xusr_work_phone_no	= #xusr_work_phone_no#,
+			xusr_mail_adr		= #xusr_mail_adr#,
+			xusr_postal_code 	= #xusr_postal_code#,
+			xusr_addr 			= #xusr_addr#,
+			xusr_work_auth 		= #xusr_work_auth#,
+			xusr_updt_date 		= SYSDATE
+		WHERE xusr_empno = #xusr_empno#
+   </update>
+
+   <select id="selectMenuCountToMenuManagement" resultClass="String" parameterClass="bgabGascz004Dto">
+	  	/*selectMenuCountToMenuManagement*/
+	  	SELECT COUNT(*)
+		FROM BGAB_GASCZ004_GAS
+		WHERE menu_lgrp_cd = #menu_lgrp_cd#
+		<isNotEmpty property="menu_mgrp_cd" prepend="and">
+			menu_mgrp_cd = #menu_mgrp_cd#
+		</isNotEmpty>
+		<isNotEmpty property="menu_sgrp_cd" prepend="and">
+			menu_sgrp_cd = #menu_sgrp_cd#
+		</isNotEmpty>
+		<isEqual property="mgrpCheck" compareValue="Y" prepend="and">
+			menu_sgrp_cd = '000'
+		</isEqual>
+   </select>
+
+   <select id="selectMenuListToMenuManagement" resultClass="bgabGascz004Dto" parameterClass="bgabGascz004Dto">
+	  	/*selectMenuListToMenuManagement*/
+	  	SELECT * FROM (
+	  		SELECT rownum rnum, k.*
+			FROM(
+			  	SELECT
+			  	   a.*,
+			  	   a.menu_mgrp_cd AS menu_mgrp_cd_old,
+			  	   a.menu_sgrp_cd AS menu_sgrp_cd_old,
+			  	   a.scrn_id      AS scrn_id_old
+				FROM BGAB_GASCZ004_GAS a
+				WHERE menu_lgrp_cd = #menu_lgrp_cd#
+				<isNotEmpty property="menu_mgrp_cd" prepend="and">
+					menu_mgrp_cd = #menu_mgrp_cd#
+				</isNotEmpty>
+				<isNotEmpty property="menu_sgrp_cd" prepend="and">
+					menu_sgrp_cd = #menu_sgrp_cd#
+				</isNotEmpty>
+				<isEqual property="mgrpCheck" compareValue="Y" prepend="and">
+					menu_sgrp_cd = '000'
+				</isEqual>
+				ORDER BY menu_lgrp_cd ASC, menu_mgrp_cd ASC, menu_sgrp_cd ASC, scrn_idc_rnkg ASC
+			) k
+		) j WHERE rnum between #startRow# AND #endRow#
+   </select>
+
+   <insert id="insertListToMenuManagement" parameterClass="bgabGascz004Dto">
+		/*insertListToMenuManagement*/
+		INSERT INTO BGAB_GASCZ004_GAS (
+			menu_lgrp_cd            ,
+			menu_mgrp_cd            ,
+			menu_sgrp_cd            ,
+			scrn_id                 ,
+			scrn_idc_rnkg           ,
+			scrn_nm                 ,
+			menu_img_path_adr       ,
+			use_yn                  ,
+			auth_cd                 ,
+			user_init_scrn_use_yn   ,
+			chgr_init_scrn_use_yn   ,
+			th1_use_yn              ,
+			th2_use_yn              ,
+			th3_use_yn              ,
+			th4_use_yn              ,
+			th5_use_yn              ,
+			th6_use_yn              ,
+			th7_use_yn              ,
+			th8_use_yn              ,
+			th9_use_yn              ,
+			th10_use_yn             ,
+			locale                  ,
+			ipe_eeno                ,
+			inp_ymd                 ,
+			updr_eeno               ,
+			mdfy_ymd
+		)VALUES(
+			#menu_lgrp_cd#				,
+			#menu_mgrp_cd#				,
+			#menu_sgrp_cd#				,
+			#scrn_id#					,
+			#scrn_idc_rnkg#				,
+			#scrn_nm#					,
+			#menu_img_path_adr#			,
+			#use_yn#					,
+			#auth_cd#					,
+			#user_init_scrn_use_yn#		,
+			#chgr_init_scrn_use_yn#		,
+			#th1_use_yn#				,
+			#th2_use_yn#				,
+			#th3_use_yn#				,
+			#th4_use_yn#				,
+			#th5_use_yn#				,
+			#th6_use_yn#				,
+			#th7_use_yn#				,
+			#th8_use_yn#				,
+			#th9_use_yn#				,
+			#th10_use_yn#				,
+			#locale#                    ,
+			#ipe_eeno#					,
+			SYSDATE					    ,
+			#updr_eeno#					,
+			SYSDATE
+		)
+   </insert>
+
+    <update id="updateListToMenuManagement" parameterClass="bgabGascz004Dto">
+   		/*updateListToMenuManagement*/
+   		UPDATE BGAB_GASCZ004_GAS SET
+   			<!--
+			menu_lgrp_cd          = #menu_lgrp_cd#,
+			menu_mgrp_cd          = #menu_mgrp_cd#,
+			menu_sgrp_cd          = #menu_sgrp_cd#,
+			-->
+			menu_mgrp_cd          = #menu_mgrp_cd#,
+			menu_sgrp_cd          = #menu_sgrp_cd#,
+			scrn_id               = NVL(#scrn_id#, ' '),
+			scrn_idc_rnkg         = #scrn_idc_rnkg#,
+			scrn_nm               = #scrn_nm#,
+			menu_img_path_adr     = #menu_img_path_adr#,
+			use_yn                = #use_yn#,
+			auth_cd               = #auth_cd#,
+			user_init_scrn_use_yn = #user_init_scrn_use_yn#,
+			chgr_init_scrn_use_yn = #chgr_init_scrn_use_yn#,
+			th1_use_yn            = #th1_use_yn#,
+			th2_use_yn            = #th2_use_yn#,
+			th3_use_yn            = #th3_use_yn#,
+			th4_use_yn            = #th4_use_yn#,
+			th5_use_yn            = #th5_use_yn#,
+			th6_use_yn            = #th6_use_yn#,
+			th7_use_yn            = #th7_use_yn#,
+			th8_use_yn            = #th8_use_yn#,
+			th9_use_yn            = #th9_use_yn#,
+			th10_use_yn           = #th10_use_yn#,
+			locale                = #locale#,
+			updr_eeno             = #updr_eeno#,
+			mdfy_ymd              = SYSDATE
+		WHERE menu_lgrp_cd = #menu_lgrp_cd#
+		  AND menu_mgrp_cd = #menu_mgrp_cd_old#
+		  AND menu_sgrp_cd = #menu_sgrp_cd_old#
+		  AND scrn_id      = NVL(#scrn_id_old#, ' ')
+		  AND locale = #locale#
+   </update>
+   <delete id="deleteListToMenuManagement" parameterClass="bgabGascz004Dto">
+   		/*deleteListToMenuManagement*/
+   		DELETE FROM BGAB_GASCZ004_GAS
+   		WHERE menu_lgrp_cd = #menu_lgrp_cd#
+		  AND menu_mgrp_cd = #menu_mgrp_cd#
+		  AND menu_sgrp_cd = #menu_sgrp_cd#
+		  AND scrn_id      = #scrn_id#
+		  AND locale = #locale#
+   </delete>
+
+   <select id="selectTableListToTableInformation" resultClass="TableInfo" parameterClass="TableInfo">
+		/*selectTableListToTableInformation*/
+		SELECT table_name AS table_name FROM INFORMATION_SCHEMA.tables
+		WHERE 1 = 1
+		AND   TABLE_SCHEMA = 'hgas'
+		<isNotEmpty property="table_name" prepend="and">
+			table_name  LIKE '%' || #table_name# || '%'
+		</isNotEmpty>
+		ORDER BY table_name
+   </select>
+
+   <select id="selectAttributeListToTableInformation" resultClass="TableInfo" parameterClass="TableInfo">
+       <!--
+		SELECT c.column_id,  b.column_name,
+		  decode(d.column_name, null, '', 'PK') primary_key,
+		  c.data_type,
+		  c.data_length,
+		  c.nullable
+		FROM user_tab_comments a,
+		  user_col_comments b,
+		  user_tab_columns c,
+		  user_ind_columns d
+		WHERE a.table_type  = 'TABLE'
+		  AND a.table_name  = #table_name#
+		  AND a.table_name  = b.table_name
+		  AND a.table_name  = c.table_name
+		  AND b.column_name = c.column_name
+		  AND b.table_name  = d.table_name(+)
+		  AND b.column_name = d.column_name(+)
+		  AND d.index_name(+) like '%_PK'
+		ORDER BY a.table_name, c.column_id
+		 -->
+		 /*selectAttributeListToTableInformation*/
+		 SELECT a.ordinal_position AS column_id ,
+		    a.column_name,
+		    CASE
+			  WHEN b.constraint_name IS NOT NULL THEN 'PK'
+			  ELSE ''
+		    END AS PRIMARY_KEY,
+			a.data_type,
+			a.CHARACTER_MAXIMUM_LENGTH AS data_length,
+			CASE
+			 WHEN a.is_nullable = 'NO' then 'N'
+			 ELSE 'Y'
+			end AS nullable
+		FROM INFORMATION_SCHEMA.columns a
+		LEFT OUTER join INFORMATION_SCHEMA.KEY_COLUMN_USAGE b
+		ON a.table_name   = b.table_name
+		AND a.column_name = b.column_name
+		WHERE a.TABLE_NAME= #table_name#
+   </select>
+
+   <select id="selectIndexListToTableInformation" resultClass="TableInfo" parameterClass="TableInfo">
+		/*selectIndexListToTableInformation*/
+		SHOW INDEX FROM $table_name$
+   </select>
+
+   <select id="selectListToBatchManagement" parameterClass="BatchInfo" resultClass="BatchInfo">
+		/*selectListToBatchManagement*/
+		SELECT
+		  id AS seq,      job_id,       job_name, type_id, description,
+		  use_start_date, use_end_date, val,      use_yn,  create_date,
+		  update_date
+		FROM(
+			SELECT
+			   id,             job_id,       job_name, type_id, description,
+			   use_start_date, use_end_date, val,      use_yn,  create_date,
+			   update_date
+			FROM(
+				SELECT
+				    id,             job_id,       job_name, type_id, description,
+				    use_start_date, use_end_date, val,      use_yn,  create_date,
+				    update_date
+				FROM hmb_job_schedule
+				WHERE 1=1
+				<isNotEmpty property="job_id" prepend="and">
+					job_id = #job_id#
+			  	</isNotEmpty>
+			) a
+		) b ORDER BY TO_NUMBER(id), job_name
+	</select>
+
+	<select id="selectParameterListToBatchManagement" parameterClass="BatchInfo" resultClass="BatchInfo">
+		/*selectParameterListToBatchManagement*/
+		SELECT
+		  id AS parameter_id, schedule_id, name AS parameter_name, val, type AS type_id,
+		  auto_increment_yn, description
+		FROM(
+			SELECT id, schedule_id, name, val, type, auto_increment_yn, description
+			FROM hmb_job_schedule_params
+			WHERE schedule_id = #seq#
+		) a
+	</select>
+
+	<select id="selectCountToDeptChangeManagement" resultClass="String" parameterClass="bgabGascz006Dto">
+	  	/*selectCountToDeptChangeManagement*/
+	  	SELECT	 COUNT(*) AS cnt
+		FROM	 BGAB_GASCZ006 Z006$corp_cd$
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON Z006.xgac_empno = Z002.xusr_empno
+		LEFT OUTER JOIN BGAB_GASCZ003$corp_cd$ Z003
+		ON Z006.xgac_gasc_dept	 =	Z003.xorg_orga_c
+		WHERE 1 = 1
+		<isEqual property="search_gubn" compareValue="2" prepend="and">
+			xgac_empno LIKE #search_value# || '%'
+		</isEqual>
+		<isEqual property="search_gubn" compareValue="3" prepend="and">
+			xusr_name LIKE '%' || #search_value# || '%'
+		</isEqual>
+		<isEqual property="search_gubn" compareValue="4" prepend="and">
+			xusr_dept_name LIKE '%' || #search_value# || '%'
+		</isEqual>
+   </select>
+   <select id="selectListToDeptChangeManagement" resultClass="bgabGascz006Dto" parameterClass="bgabGascz006Dto">
+	  	/*selectListToDeptChangeManagement*/
+	  	SELECT	*
+		FROM(
+			SELECT	rownum rnum, t.*
+			FROM(
+				SELECT	 xgac_empno			AS empno_old,
+				         xgac_empno			AS empno,
+						 xusr_name			AS hname,
+						 xusr_dept_name		AS insa_dept_nm,
+						 xusr_plac_work	    AS insa_plac,
+						 xgac_gasc_dept		AS gasc_dept,
+						 xorg_orga_e		AS gasc_dept_nm,
+						 xgac_gasc_plac		AS gasc_plac,
+						 NVL(xgac_reasn,' ') AS reasn,
+						 updr_ymd			AS updr_ymd
+				FROM	 BGAB_GASCZ006 Z006
+				LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+				ON Z006.xgac_empno = Z002.xusr_empno
+				LEFT OUTER JOIN BGAB_GASCZ003$corp_cd$ Z003
+				ON Z006.xgac_gasc_dept	 =	Z003.xorg_orga_c
+				WHERE 1 = 1
+				<isEqual property="search_gubn" compareValue="2" prepend="and">
+					xgac_empno LIKE #search_value# || '%'
+				</isEqual>
+				<isEqual property="search_gubn" compareValue="3" prepend="and">
+					xusr_name LIKE '%' || #search_value# || '%'
+				</isEqual>
+				<isEqual property="search_gubn" compareValue="4" prepend="and">
+					xusr_dept_name LIKE '%' || #search_value# || '%'
+				</isEqual>
+				ORDER BY xgac_empno ASC
+			)t
+		) u WHERE rnum BETWEEN #startRow# AND #endRow#
+   </select>
+   <insert id="insertToDeptChangeManagement" parameterClass="bgabGascz006Dto">
+		/*insertToDeptChangeManagement*/
+		INSERT INTO BGAB_GASCZ006(
+			 xgac_empno
+			,xgac_gasc_dept
+			,xgac_gasc_plac
+			,xgac_reasn
+			,inp_ymd
+			,updr_ymd
+			,inp_empno
+			,updr_empno
+		)VALUES(
+			 #empno#
+			,#gasc_dept#
+			,#gasc_plac#
+			,#reasn#
+			,SYSDATE
+			,SYSDATE
+			,#inp_empno#
+			,#updr_empno#
+		)
+	</insert>
+
+	<update id="updateToDeptChangeManagement" parameterClass="bgabGascz006Dto">
+		/*updateToDeptChangeManagement*/
+		UPDATE	BGAB_GASCZ006
+		   SET	xgac_gasc_dept 	= #gasc_dept#	,
+				xgac_gasc_plac 	= #gasc_plac#	,
+				xgac_reasn 		= #reasn#		,
+				updr_empno		= #updr_empno#	,
+				updr_ymd		= SYSDATE
+		 WHERE	xgac_empno = #empno#
+	</update>
+
+	<update id="updateToInsaDeptChangeManagement" parameterClass="bgabGascz006Dto">
+		/*updateToInsaDeptChangeManagement*/
+		UPDATE	BGAB_GASCZ002$corp_cd$
+		   SET	xusr_dept_code = #gasc_dept#,
+				xusr_dept_name = ( SELECT XORG_ORGA_E FROM BGAB_GASCZ003$corp_cd$ WHERE XORG_ORGA_C = #gasc_dept# ),
+				xusr_plac_work = #gasc_plac#
+		 WHERE	xusr_empno = #empno#
+
+	</update>
+
+	<delete id="deleteToDeptChangeManagement" parameterClass="bgabGascz006Dto">
+		/*deleteToDeptChangeManagement*/
+		DELETE FROM	BGAB_GASCZ006
+		WHERE	xgac_empno = #empno#
+	</delete>
+
+	<select id="selectCountToManagerManagement" parameterClass="bgabGascz007Dto" resultClass="java.lang.String">
+		/*selectCountToManagerManagement*/
+		SELECT	 COUNT(*) AS cnt
+		FROM	 BGAB_gascz007$corp_cd$ a
+				LEFT OUTER JOIN
+			      (SELECT xcod_knd, xcod_code, xcod_hname, xcod_ename
+			      FROM BGAB_GASCZ005$corp_cd$
+			      ) b
+			    ON xcod_knd = 'X0011'
+			    AND xcod_code = a.xdsm_gubn2
+				LEFT OUTER JOIN(
+					select	 xusr_empno
+							,xusr_name
+							,xusr_dept_code
+							,xusr_dept_name
+							,xusr_work_auth
+					FROM BGAB_GASCZ002$corp_cd$
+				)c
+				ON xdsm_empno = c.xusr_empno
+		WHERE	xdsm_plac = #xdsm_plac#
+		<isNotEmpty property="xdsm_gubn1" prepend="and">
+			xdsm_gubn1 = #xdsm_gubn1#
+		</isNotEmpty>
+		<isEqual property="search_gubn" compareValue="2" prepend="and">
+			c.xusr_empno LIKE '%' || #search_value# || '%'
+		</isEqual>
+		<isEqual property="search_gubn" compareValue="3" prepend="and">
+			c.xusr_name LIKE '%' || #search_value# || '%'
+		</isEqual>
+		<isEqual property="search_gubn" compareValue="4" prepend="and">
+			c.xusr_dept_name LIKE '%' || #search_value# || '%'
+		</isEqual>
+	</select>
+
+	<select id="selectListToManagerManagement" parameterClass="bgabGascz007Dto" resultClass="bgabGascz007Dto">
+		/*selectListToManagerManagement*/
+		SELECT	*
+		FROM(
+			SELECT	rownum rnum, t.*
+			FROM(
+				SELECT	 xdsm_plac
+						,xdsm_plac AS xdsm_plac_org
+						,xdsm_gubn1
+						,xdsm_gubn1 AS xdsm_gubn1_org
+						,xdsm_gubn2
+						,xdsm_gubn2 AS xdsm_gubn2_org
+						,xdsm_empno
+						,xdsm_empno AS xdsm_empno_org
+						,c.xusr_name
+						,c.xusr_dept_code
+						,RTRIM(REPLACE(c.xusr_dept_name,'　','')) AS xusr_dept_name
+						,NVL(c.xusr_work_auth,'')             AS xusr_work_auth
+						,xdsm_idc_yn
+						,xdsm_mgmt_scn_cd
+						,''                                      AS mgmt_dept
+						,xdsm_hpno
+						,xdsm_rem
+						,xdsm_plac  AS xdsm_plac_h
+						,xdsm_gubn1 AS xdsm_gubn1_h
+						,xdsm_gubn2 AS xdsm_gubn2_h
+						,xdsm_empno AS xdsm_empno_h
+				FROM	 BGAB_gascz007$corp_cd$ a
+						LEFT OUTER JOIN
+					      (SELECT xcod_knd, xcod_code, xcod_hname, xcod_ename
+					      FROM BGAB_GASCZ005$corp_cd$
+					      ) b
+					    ON xcod_knd = 'X0011'
+					    AND xcod_code = a.xdsm_gubn2
+						LEFT OUTER JOIN(
+							select	 xusr_empno
+									,xusr_name
+									,xusr_dept_code
+									,xusr_dept_name
+									,xusr_work_auth
+							FROM BGAB_GASCZ002$corp_cd$
+						)c
+						on xdsm_empno = c.xusr_empno
+				where	xdsm_plac = #xdsm_plac#
+				<isNotEmpty property="xdsm_gubn1" prepend="and">
+					xdsm_gubn1 = #xdsm_gubn1#
+				</isNotEmpty>
+				<isEqual property="search_gubn" compareValue="2" prepend="and">
+					c.xusr_empno like '%' || #search_value# || '%'
+				</isEqual>
+				<isEqual property="search_gubn" compareValue="3" prepend="and">
+					c.xusr_name like '%' || #search_value# || '%'
+				</isEqual>
+				<isEqual property="search_gubn" compareValue="4" prepend="and">
+					c.xusr_dept_name like '%' || #search_value# || '%'
+				</isEqual>
+				ORDER BY  xdsm_gubn1, xdsm_gubn2
+			)t
+		)a WHERE rnum between #startRow# AND #endRow#
+	</select>
+
+	<select id="selectMenuToComboList" parameterClass="commonCode" resultClass="commonCode">
+		/*selectMenuToComboList*/
+		SELECT MENU_LGRP_CD AS "KEY"
+			 , MENU_MGRP_CD AS VALUE
+		     , SCRN_NM AS NAME
+		  FROM BGAB_GASCZ004_GAS Z004
+		  JOIN BGAB_GASCZ031 Z031
+		    ON Z004.MENU_MGRP_CD = Z031.TASK_GUBUN
+           AND Z031.APPR_USE_YN = 'Y'
+           AND Z031.CORP_CD = #corp_cd#
+		 WHERE MENU_LGRP_CD != 'M1'
+		   AND MENU_LGRP_CD != 'M9'
+		   AND SCRN_IDC_RNKG = '0'
+		   AND LOCALE = #locale#
+
+		<!--
+		SELECT xcod_hname  AS "key",
+			    xcod_code  AS value,
+			    xcod_ename AS name
+		FROM BGAB_GASCZ005$corp_cd$
+		WHERE xcod_knd = 'X0011'
+		ORDER BY CONVERT(NUMERIC, xcod_order)
+
+
+
+		select	 a.menu_lgrp_cd key
+		<isEqual property="codknd" compareValue="xza05">
+				,a.menu_mgrp_cd||b.scrn_id value
+		</isEqual>
+		<isNotEqual property="codknd" compareValue="xza05">
+				,b.scrn_id value
+		</isNotEqual>
+				,a.scrn_nm name
+				,a.menu_mgrp_cd menu_mgrp_cd
+		from(
+				select   menu_lgrp_cd
+						,menu_mgrp_cd
+						,scrn_nm
+						,use_yn
+						,scrn_idc_rnkg
+				from	 BGAB_GASCZ004_GAS
+				where	 1=1
+				// and		 menu_lgrp_cd = #xcodKind#
+				and		 menu_sgrp_cd = '000'
+				and		 scrn_id = ' '
+			) a,
+			(
+				select   menu_lgrp_cd
+						,menu_mgrp_cd
+						,substr(scrn_id, 2,2) scrn_id
+						,scrn_nm
+				from	 BGAB_GASCZ004_GAS
+				where	 1=1
+				// and		 menu_lgrp_cd = #xcodKind#
+				and		 menu_sgrp_cd &lt;&gt; '000'
+				and		 scrn_id &lt;&gt; ' '
+			)b
+		where	a.menu_lgrp_cd = b.menu_lgrp_cd
+		and		a.menu_mgrp_cd = b.menu_mgrp_cd
+		and		a.use_yn = '1'
+		group by a.scrn_nm, b.scrn_id, a.menu_lgrp_cd, a.menu_mgrp_cd, a.scrn_idc_rnkg
+		ORDER BY a.menu_lgrp_cd, a.scrn_nm
+		-->
+	</select>
+
+	<select id="selectCountToBatchProcessResult" parameterClass="batchProcess" resultClass="String">
+		/*selectCountToBatchProcessResult*/
+		SELECT COUNT(*)
+		FROM hmb_job_schedule a, batch_job_instance b, batch_job_execution c
+		WHERE a.job_id = b.job_name
+		AND b.job_instance_id = c.job_instance_id
+		<isNotEmpty property="job_id" prepend="and">
+			a.job_id = #job_id#
+		</isNotEmpty>
+		<isNotEmpty property="start_time" prepend="and">
+			CAST( TO_DATE( c.start_time,'YYYYMMDD' ) AS CHAR(8) ) between #start_time# AND #end_time#
+		</isNotEmpty>
+	</select>
+
+	<select id="selectListToBatchProcessResult" parameterClass="batchProcess" resultClass="batchProcess">
+		/*selectListToBatchProcessResult*/
+		SELECT job_id, job_name, searchType, start_time, end_time, interval1, status, iptCnt, uptCnt, RNUM
+		FROM(
+			SELECT
+			   rownum rnum,, job_id, job_name, searchType, start_time,
+			   end_time, interval1, status, iptCnt, uptCnt
+			FROM
+			(
+				SELECT
+				    a.job_id,
+				    a.job_name,
+				    b.job_instance_id,
+				    '3'                    AS searchType,
+				  <!--
+					F_BATCH_PARAMS(B.Job_Instance_Id)                    AS searchType,
+				   -->
+	   				CAST( TO_DATE( c.create_time,'YYYY-MM-DD' ) AS CHAR(10) ) AS create_day,
+	   				SUBSTR(CAST( TO_DATE( c.start_time,'%T' ) AS CHAR(8) ),1,5) AS create_time,
+	   				CAST( TO_DATE( c.start_time,'YYYY-MM-DD %T' ) AS CHAR(30) )  AS start_time,
+	   				CAST( TO_DATE( c.end_time,'YYYY-MM-DD %T' ) AS CHAR(30) )  AS end_time,
+	   				<!--
+					ROUND((ROUND(CONVERT(DATE, REPLACE(REPLACE(REPLACE(CONVERT(NVARCHAR, c.end_time, 120),'-',''),':',''),' ','')) - CONVERT(DATE, REPLACE(REPLACE(REPLACE(CONVERT(NVARCHAR, c.start_time, 120),'-',''),':',''),' ','')), 0) * 24) + (CONVERT(DATE, REPLACE(REPLACE(REPLACE(CONVERT(NVARCHAR, c.end_time, 120),'-',''),':',''),' ','')) - CONVERT(DATE, REPLACE(REPLACE(REPLACE(CONVERT(NVARCHAR, c.start_time, 120),'-',''),':',''),' ',''))) % 1 * 24, 0)
+					+ ' 시간 ' + ROUND((CONVERT(DATE, REPLACE(REPLACE(REPLACE(CONVERT(NVARCHAR, c.end_time, 120),'-',''),':',''),' ','')) - CONVERT(DATE, REPLACE(REPLACE(REPLACE(CONVERT(NVARCHAR, c.start_time, 120),'-',''),':',''),' ',''))) * 24 % 1 * 60, 0)
+					+ ' 분 ' + ROUND(ROUND((CONVERT(DATE, REPLACE(REPLACE(REPLACE(CONVERT(NVARCHAR, c.end_time, 120),'-',''),':',''),' ','')) - CONVERT(DATE, REPLACE(REPLACE(REPLACE(CONVERT(NVARCHAR, c.end_time, 120),'-',''),':',''),' ',''))) * 24 * 60 % 1 * 60, 0), 0)
+					+ ' 초 ' AS interval,
+					 -->
+					DATEDIFF(c.start_time, c.end_time) /60/60  + ' hour ' + DATEDIFF(c.start_time, c.end_time) /60  + ' min ' + DATEDIFF(c.start_time, c.end_time) % 60 + ' sec' AS interval1,
+					c.status,
+					c.iptCnt,
+					c.uptCnt
+				FROM hmb_job_schedule a, batch_job_instance b, batch_job_execution c
+				WHERE a.job_id = b.job_name
+				AND b.job_instance_id = c.job_instance_id
+				<isNotEmpty property="job_id" prepend="and">
+					a.job_id = #job_id#
+				</isNotEmpty>
+				<isNotEmpty property="start_time" prepend="and">
+					CAST( TO_DATE( c.start_time,'YYYYMMDD' ) AS CHAR(8) ) between #start_time# AND #end_time#
+				</isNotEmpty>
+				ORDER BY start_time DESC
+			) c
+
+		) d WHERE rnum BETWEEN #startRow# AND #endRow#
+	</select>
+
+	<update id="updateBatchInfoToBatchManagement" parameterClass="BatchInfo">
+		/*updateBatchInfoToBatchManagement*/
+		UPDATE hmb_job_schedule
+		SET
+			job_name       = #job_name#,
+			type_id        = #type_id#,
+			use_start_date = #use_start_date#,
+			use_end_date   = #use_end_date#,
+			val            = #val#,
+			use_yn         = #use_yn#,
+			description    = #description#,
+			update_date    = SYSDATE
+        WHERE id = #seq#
+   </update>
+
+   <update id="updateParameterToBatchManagement" parameterClass="BatchInfo">
+		/*updateParameterToBatchManagement*/
+		UPDATE hmb_job_schedule_params
+		SET
+			name              = #parameter_name#,
+			val               = #val#,
+			type              = #type_id#,
+			auto_increment_yn = #auto_increment_yn#,
+			description       = #description#,
+			update_date       = SYSDATE
+        WHERE schedule_id     = #schedule_id#
+        AND id = #parameter_id#
+   </update>
+
+   <update id="updateBatchInfoToBatchManagementByExecute" parameterClass="BatchInfo">
+	  /*updateBatchInfoToBatchManagementByExecute*/
+	  UPDATE hmb_job_schedule
+		SET
+			type_id = '1'
+        WHERE 1=1
+        	AND id = #seq#
+	</update>
+
+	<insert id="insertToManagerManagement" parameterClass="bgabGascz007Dto">
+		/*insertToManagerManagement*/
+		INSERT INTO BGAB_gascz007$corp_cd$(
+			 xdsm_plac
+			,xdsm_gubn1
+			,xdsm_gubn2
+			,xdsm_empno
+			,xdsm_idc_yn
+			,xdsm_mgmt_scn_cd
+			,xdsm_hpno
+			,xdsm_rem
+			,xdsm_inp_ymd
+			,xdsm_inp_empno
+			,xdsm_upt_ymd
+			,xdsm_upt_empno
+		) VALUES (
+			 #xdsm_plac#
+			,#xdsm_gubn1#
+			,#xdsm_gubn2#
+			,#xdsm_empno#
+			,#xdsm_idc_yn#
+			,#xdsm_mgmt_scn_cd#
+			,#xdsm_hpno#
+			,#xdsm_rem#
+			,SYSDATE
+			,#inp_empno#
+			,SYSDATE
+			,#upt_empno#
+		)
+	</insert>
+	<select id="selectInfoToManagerManagementAuth" parameterClass="java.lang.String" resultClass="java.lang.String">
+	    /*selectInfoToManagerManagementAuth*/
+		SELECT   NVL(xusr_work_auth, '') AS xusr_work_auth
+		FROM     BGAB_GASCZ002$corp_cd$
+		WHERE    xusr_empno = '$xdsmEmpno$'
+	</select>
+	<select id="selectInfoManagerManagementMenuMgrpCd" parameterClass="bgabGascz007Dto" resultClass="java.lang.String">
+	    /*selectInfoManagerManagementMenuMgrpCd*/
+		SELECT	menu_mgrp_cd
+		FROM	BGAB_GASCZ004_GAS
+		WHERE	SUBSTR(scrn_id, 2, 2) = #xdsm_gubn2#
+		<isNotEmpty property="menu_mgrp_cd" prepend="and">
+			menu_mgrp_cd          = #menu_mgrp_cd#
+		</isNotEmpty>
+		AND use_yn = '1'
+		GROUP BY menu_mgrp_cd
+	</select>
+	<update id="updateToManagerManagementXusrAuth" parameterClass="bgabGascz002Dto">
+	    /*updateToManagerManagementXusrAuth*/
+		UPDATE  BGAB_GASCZ002$corp_cd$
+		SET     xusr_work_auth   = #xusr_old_auth#,
+		        xusr_updt_empno  = #xusr_updt_empno#,
+		        xusr_updt_date   = SYSDATE
+		WHERE   xusr_empno       = #xusr_empno#
+	</update>
+	<update id="updateToManagerManagement" parameterClass="bgabGascz007Dto">
+	    /*updateToManagerManagement*/
+		UPDATE	 BGAB_gascz007$corp_cd$
+		SET		xdsm_plac         = #xdsm_plac#
+				,xdsm_gubn1       = #xdsm_gubn1#
+				,xdsm_gubn2       = #xdsm_gubn2#
+				,xdsm_empno       = #xdsm_empno#
+				,xdsm_hpno        = #xdsm_hpno#
+				,xdsm_idc_yn      = #xdsm_idc_yn#
+				,xdsm_mgmt_scn_cd = #xdsm_mgmt_scn_cd#
+				,xdsm_rem         = #xdsm_rem#
+				,xdsm_upt_ymd     = SYSDATE
+				,xdsm_upt_empno   = #upt_empno#
+		WHERE	 xdsm_plac  = #xdsm_plac_org#
+		AND		 xdsm_gubn1 = #xdsm_gubn1_org#
+		AND		 xdsm_gubn2 = #xdsm_gubn2_org#
+		AND		 xdsm_empno = #xdsm_empno_org#
+	</update>
+
+	<delete id="deleteToManagerManagement" parameterClass="bgabGascz007Dto">
+	    /*deleteToManagerManagement*/
+		DELETE FROM	BGAB_gascz007$corp_cd$
+		WHERE	xdsm_plac  = #xdsm_plac#
+		AND		xdsm_gubn1 = #xdsm_gubn1#
+		AND		xdsm_gubn2 = #xdsm_gubn2#
+		AND		xdsm_empno = #xdsm_empno#
+	</delete>
+
+	<select id="selectListToCalendarManagement" parameterClass="BGABGasckcalDto" resultClass="BGABGasckcalDto">
+		/*selectListToCalendarManagement*/
+		SELECT	odu_regn_cd   AS odu_regn_cd,
+				plnt_adsc_ymd AS plnt_adsc_ymd,
+				dow_cd        AS dow_cd,
+				odu_dd_yn     AS odu_dd_yn,
+				rem_sbc       AS rem_sbc,
+				TO_CHAR( inp_ymd, 'yyyy-mm-dd' ) AS inp_ymd,
+				TO_CHAR( mdfy_ymd, 'yyyy-mm-dd' ) AS mdfy_ymd,
+				ipe_eeno      AS ipe_eeno,
+				updr_eeno     AS updr_eeno,
+				plnt_adsc_ymd AS plnt_adsc_ymd_h
+		FROM	bgab_gasckcal$corp_cd$
+		WHERE	1 = 1
+		AND		odu_regn_cd = #odu_regn_cd#
+		AND		TO_CHAR(plnt_adsc_ymd, 'YYYYMMDD') LIKE #plnt_adsc_ymd# || '%'
+		ORDER BY plnt_adsc_ymd
+   </select>
+   <select id="selectCountToCalendarManagement" parameterClass="BGABGasckcalDto" resultClass="java.lang.String">
+		/*selectCountToCalendarManagement*/
+		SELECT	COUNT(*)
+		FROM	bgab_gasckcal$corp_cd$
+		WHERE	1 = 1
+		AND		odu_regn_cd = #odu_regn_cd#
+		AND		TO_CHAR(plnt_adsc_ymd, 'YYYYMMDD') like #plnt_adsc_ymd# + '%'
+   </select>
+   <insert id="insertToCalendarManagement" parameterClass="BGABGasckcalDto">
+		/*insertToCalendarManagement*/
+		<!--
+		INSERT INTO BGAB_GASCKCAL$corp_cd$
+		(
+			ODU_REGN_CD,
+			PLNT_ADSC_YMD,
+			DOW_CD,
+			ODU_DD_YN,
+			REM_SBC,
+			INP_YMD,
+			MDFY_YMD,
+			IPE_EENO,
+			UPDR_EENO
+		)
+		VALUES
+		(
+			#odu_regn_cd#,
+			#plnt_adsc_ymd#,
+			#dow_cd#,
+			#odu_dd_yn#,
+			#rem_sbc#,
+			CAST( TO_DATE( SYSDATE,'YYYYMMDD' ) AS CHAR(8) ),
+			CAST( TO_DATE( SYSDATE,'YYYYMMDD' ) AS CHAR(8) ),
+			#ipe_eeno#,
+			#updr_eeno#
+		)
+		ON DUPLICATE KEY
+		UPDATE
+			ODU_DD_YN 			= #odu_dd_yn#,
+		    REM_SBC 			= #rem_sbc#,
+			UPDR_EENO        	= #updr_eeno#,
+			MDFY_YMD 			= CAST( TO_DATE( SYSDATE,'YYYYMMDD' ) AS CHAR(8) )
+		 -->
+		MERGE INTO BGAB_GASCKCAL$corp_cd$
+			USING DUAL
+			ON (ODU_REGN_CD = #odu_regn_cd# AND TO_CHAR(PLNT_ADSC_YMD, 'YYYYMMDD') = #plnt_adsc_ymd#)
+		WHEN MATCHED THEN
+			UPDATE SET
+				ODU_DD_YN 			= #odu_dd_yn#,
+			    REM_SBC 			= #rem_sbc#,
+				UPDR_EENO        	= #updr_eeno#,
+				MDFY_YMD 			= SYSDATE
+		WHEN NOT MATCHED THEN
+			INSERT(
+				ODU_REGN_CD,
+				PLNT_ADSC_YMD,
+				DOW_CD,
+				ODU_DD_YN,
+				REM_SBC,
+				INP_YMD,
+				MDFY_YMD,
+				IPE_EENO,
+				UPDR_EENO
+			)values(
+				#odu_regn_cd#,
+				TO_DATE(#plnt_adsc_ymd#, 'YYYYMMDD'),
+				#dow_cd#,
+				#odu_dd_yn#,
+				#rem_sbc#,
+				SYSDATE,
+				SYSDATE,
+				#ipe_eeno#,
+				#updr_eeno#
+			)
+	</insert>
+
+	<insert id="updateToCalendarManagement" parameterClass="BGABGasckcalDto">
+		/*updateToCalendarManagement*/
+		UPDATE	BGAB_gasckcal$corp_cd$
+		SET		odu_dd_yn = #odu_dd_yn#,
+				rem_sbc   = #rem_sbc#,
+				updr_eeno = #updr_eeno#,
+				mdfy_ymd  = SYSDATE,
+		WHERE	1 = 1
+		AND		odu_regn_cd   = #odu_regn_cd#
+		AND		TO_CHAR(plnt_adsc_ymd, 'YYYYMMDD') = #plnt_adsc_ymd#
+	</insert>
+	<select id="selectCountToMyApproval" parameterClass="commonApproval" resultClass="java.lang.String">
+		/*selectCountToMyApproval*/
+		SELECT	COUNT(*)
+		FROM
+		(
+			SELECT	a.if_id,
+					a.table_name,
+					a.rpts_eeno,
+					TO_CHAR( a.rpts_ymd,'YYYY-MM-DD') AS rpts_ymd,
+					a.tot_level,
+					b.level_index,
+					d.xusr_name  AS rpts_eeno_nm,
+					e.xcod_hname AS system_name ,
+					f.xcod_hname AS submit_path
+			FROM BGAB_GASCZ009$corp_cd$ a
+			LEFT OUTER JOIN BGAB_GASCZ010$corp_cd$ b
+			ON a.if_id = b.if_id
+			INNER JOIN BGAB_GASCZ002$corp_cd$ d
+			ON a.rpts_eeno = d.xusr_empno
+			INNER JOIN BGAB_GASCZ005$corp_cd$ e
+			ON a.system_code = e.xcod_code
+			AND e.xcod_knd='X0005'
+			AND e.locale = #locale#
+			INNER JOIN BGAB_GASCZ005$corp_cd$ f
+			ON a.system_code = f.xcod_code
+<!-- 			AND f.xcod_knd='X0006' -->
+			AND F.XCOD_KND = 'X4000'
+			AND f.locale = #locale#
+			WHERE (a.result = 'A' OR (a.now_level <![CDATA[>]]> 1 AND a.result = 'S'))
+			AND a.cancel != 'Y'
+			AND ((a.rdcs_eeno =  #rdcs_eeno# and  b.result = '1') OR  (a.rpts_eeno =  #rdcs_eeno# and  b.result = '1'))
+		) g
+	</select>
+
+	<select id="selectListToMyApproval" parameterClass="commonApproval" resultClass="commonApproval">
+		/*selectListToMyApproval*/
+		SELECT	*
+		FROM
+		(
+			SELECT	rownum rnum, t.*
+			FROM
+			(
+				SELECT	 a.if_id,
+						a.table_name,
+						a.rpts_eeno,
+						a.rpts_dept,
+						TO_CHAR( a.rpts_ymd, 'YYYY-MM-DD' ) AS rpts_ymd,
+						a.rdcs_eeno,
+						a.tot_level,
+						b.level_index,
+						d.xusr_name  AS rpts_eeno_nm,
+						e.xcod_hname AS system_name ,
+						f.xcod_hname AS submit_path
+				FROM BGAB_GASCZ009$corp_cd$ a
+				LEFT OUTER JOIN BGAB_GASCZ010$corp_cd$ b
+				ON a.if_id = b.if_id
+				INNER JOIN BGAB_GASCZ002$corp_cd$ d
+				ON a.rpts_eeno = d.xusr_empno
+				INNER JOIN BGAB_GASCZ005$corp_cd$ e
+				ON a.system_code = e.xcod_code
+				AND e.locale = #locale#
+				AND e.xcod_knd='X0005'
+				INNER JOIN BGAB_GASCZ005$corp_cd$ f
+				ON a.system_code = f.xcod_code
+				AND f.locale = #locale#
+<!-- 				AND f.xcod_knd='X0006' -->
+				AND F.XCOD_KND = 'X4000'
+				WHERE (a.result = 'A' OR (a.now_level <![CDATA[>]]> 1 AND a.result = 'S'))
+				AND a.cancel != 'Y'
+				<!--
+				AND a.rdcs_eeno = #rdcs_eeno#
+				AND b.result = '1'
+				-->
+				AND ((a.rdcs_eeno =  #rdcs_eeno# and  b.result = '1') OR  (a.rpts_eeno =  #rdcs_eeno# and  b.result = '1'))
+				ORDER BY a.rpts_ymd desc
+			)t
+		) u WHERE rnum BETWEEN #startRow# AND #endRow#
+	</select>
+
+	<update id="updateToMyApprovalForDepute" parameterClass="bgabGascz008Dto">
+		/*updateToMyApprovalForDepute*/
+		UPDATE	BGAB_GASCZ008$corp_cd$
+		SET		empno = #empno#,
+				name  = (SELECT xusr_name FROM BGAB_GASCZ002$corp_cd$ WHERE xusr_empno=#empno#),
+				subt_flag = #subt_flag#,
+				subt_FROM = #subt_from#,
+				subt_to   = #subt_to#,
+				updr_eeno = #updr_eeno#,
+				mdfy_ymd  = SYSDATE
+		WHERE	1 = 1
+		AND		empno_org = #empno_org#
+	</update>
+	<update id="updateToMyApprovalForDeputeByApprovalInfo" parameterClass="bgabGascz008Dto">
+		/*updateToMyApprovalForDeputeByApprovalInfo*/
+		UPDATE	BGAB_GASCZ009$corp_cd$
+		SET		rdcs_eeno = #empno#
+		WHERE	1 = 1
+		AND		result = 'A'
+		AND 	cancel != 'Y'
+		AND		rdcs_eeno = #empno_org#
+		AND		NVL(rdcs_dept, #orga_c#) = #orga_c#
+	</update>
+	<update id="updateToMyApprovalForDeputeByApprovalInfoDetail" parameterClass="bgabGascz008Dto">
+		/*updateToMyApprovalForDeputeByApprovalInfoDetail*/
+		UPDATE	BGAB_GASCZ010$corp_cd$
+		SET		rdcs_eeno = #empno#
+		WHERE	1 = 1
+		AND		result IN ('1', '0')
+		AND		rdcs_eeno = #empno_org#
+		AND		NVL(rdcs_dept, #orga_c#) = #orga_c#
+	</update>
+	<update id="updateToMyApprovalForDeputeByRestore" parameterClass="bgabGascz008Dto">
+		/*updateToMyApprovalForDeputeByRestore*/
+		UPDATE	BGAB_GASCZ008$corp_cd$
+		SET		empno = #empno_org#,
+				name = (SELECT xusr_name FROM BGAB_GASCZ002$corp_cd$ WHERE xusr_empno=#empno_org#),
+				subt_flag = '',
+				subt_from = '',
+				subt_to   = '',
+				updr_eeno = #updr_eeno#,
+				mdfy_ymd = SYSDATE
+		WHERE	1 = 1
+		AND		empno_org = #empno_org#
+	</update>
+
+	<select id="selectToMyApprovalForDepute" parameterClass="bgabGascz008Dto" resultClass="java.lang.String">
+		/*selectToMyApprovalForDepute*/
+		SELECT	empno
+		FROM	BGAB_GASCZ008$corp_cd$
+		WHERE	1 = 1
+		AND		empno_org = #empno_org#
+	</select>
+
+	<select id="selectToMyApprovalUserInfo" parameterClass="bgabGascz008Dto" resultClass="bgabGascz008Dto">
+		/*selectToMyApprovalUserInfo*/
+		SELECT	a.empno    AS empno,
+				a.empno_org      AS empno_org,
+				b.xusr_name      AS empno_nm,
+				b.xusr_dept_name AS dept_nm
+		FROM	BGAB_GASCZ008$corp_cd$ a
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ b
+		ON 	a.empno = b.xusr_empno
+		WHERE	1 = 1
+		AND		(a.empno_org = #empno_org# OR a.empno = #empno_org#)
+		AND rownum = 1
+	</select>
+
+	<select id="selectCountReaderManagement" parameterClass="bgabGascz008Dto" resultClass="java.lang.String">
+	/*selectCountReaderManagement*/
+		<!--
+		select count(*)
+		from
+		(
+			select  m.level as lev,
+					Z008.orga_c,
+			        Z008.orga_e,
+			        Z008.orga_csner,
+			        Z008.empno_org,
+			        c.xusr_name AS name_org,
+			        Z008.empno,
+			        Z008.empno as empno_temp,
+			        d.xusr_name AS name,
+			        Z008.subt_flag
+			from
+			(
+			     SELECT @l := @l + 1 AS level,
+			     		@r as _ORGA_C,
+			            (
+			              SELECT @r := ORGA_CSNER FROM bgab_gascz008$corp_cd$ WHERE ORGA_C = _ORGA_C
+			            ) AS _ORGA_CSNER
+			      FROM (
+			        SELECT @r := #orga_c#
+			        	   ,@l :=0
+			      ) vars, bgab_gascz008$corp_cd$ h
+			      WHERE @r <![CDATA[<>]]> 0
+			)m
+			left outer join bgab_gascz008$corp_cd$ Z008
+			on m._ORGA_C = Z008.ORGA_C
+			LEFT OUTER JOIN BGAB_GASCZ003$corp_cd$ b
+			ON Z008.orga_csner = b.xorg_orga_c
+			LEFT OUTER JOIN BGAB_GASCZ002 c
+			ON Z008.empno_org  = c.xusr_empno
+			LEFT OUTER JOIN BGAB_GASCZ002 d
+			ON Z008.empno        = d.xusr_empno
+			<isNotEmpty property="empno" prepend="and">
+				Z008.empno = #empno#
+			</isNotEmpty>
+		)c
+		 -->
+		SELECT COUNT(*)
+		FROM
+		(
+			SELECT orga_c, orga_e, orga_csner, empno_org, c.xusr_name as name_org, empno, d.xusr_name as name, subt_flag
+			FROM (SELECT orga_c, orga_e, orga_csner, empno_org, empno, subt_flag, level as xorg_org_level
+					FROM bgab_gascz008$corp_cd$
+					START WITH orga_c = #orga_c#
+					CONNECT BY PRIOR orga_csner = orga_c
+					ORDER BY xorg_org_level) a,
+				bgab_gascz003$corp_cd$ b, bgab_gascz002$corp_cd$ c, bgab_gascz002$corp_cd$ d
+			WHERE a.orga_csner = b.xorg_orga_c(+)
+			AND a.empno_org = c.xusr_empno(+)
+			AND a.empno = d.xusr_empno(+)
+		)a
+		WHERE 1=1
+		<isNotEmpty property="empno" prepend="and">
+			empno = #empno#
+		</isNotEmpty>
+	</select>
+
+	<select id="selectReaderManagement" parameterClass="bgabGascz008Dto" resultClass="bgabGascz008Dto">
+		/*selectReaderManagement*/
+		<!--
+		SELECT *
+		FROM
+		(
+	  		SELECT k.* , rnum
+			FROM(
+				select  rownum rnum,
+						m.level as lev,
+						Z008.orga_c,
+				        Z008.orga_e,
+				        Z008.orga_csner,
+				        Z008.empno_org,
+				        c.xusr_name AS name_org,
+				        Z008.empno,
+				        Z008.empno as empno_temp,
+				        d.xusr_name AS name,
+				        Z008.subt_flag
+				from
+				(
+				     SELECT @l := @l + 1 AS level,
+				     		@r as _ORGA_C,
+				            (
+				              SELECT @r := ORGA_CSNER FROM bgab_gascz008$corp_cd$ WHERE ORGA_C = _ORGA_C
+				            ) AS _ORGA_CSNER
+				      FROM (
+				        SELECT @r := #orga_c#
+				        	   ,@l :=0
+				      ) vars, bgab_gascz008$corp_cd$ h
+				      WHERE @r <![CDATA[<>]]> 0
+				)m
+				left outer join bgab_gascz008$corp_cd$ Z008
+				on m._ORGA_C = Z008.ORGA_C
+				LEFT OUTER JOIN BGAB_GASCZ003$corp_cd$ b
+				ON Z008.orga_csner = b.xorg_orga_c
+				LEFT OUTER JOIN BGAB_GASCZ002 c
+				ON Z008.empno_org  = c.xusr_empno
+				LEFT OUTER JOIN BGAB_GASCZ002 d
+				ON Z008.empno        = d.xusr_empno
+				<isNotEmpty property="empno" prepend="and">
+					Z008.empno = #empno#
+				</isNotEmpty>
+			) k
+		) j WHERE rnum between #startRow# AND #endRow#
+		 -->
+		 SELECT *
+		 FROM
+			(SELECT a.* , rownum rnum
+			FROM
+			(
+				SELECT orga_c, orga_e, orga_csner, empno_org, c.xusr_name as name_org, empno, d.xusr_name as name, subt_flag
+				FROM (SELECT orga_c, orga_e, orga_csner, empno_org, empno, subt_flag, level as xorg_org_level
+						FROM bgab_gascz008$corp_cd$
+						START WITH orga_c = #orga_c#
+						CONNECT BY PRIOR orga_csner = orga_c
+						ORDER BY xorg_org_level) a,
+					bgab_gascz003$corp_cd$ b, bgab_gascz002$corp_cd$ c, bgab_gascz002$corp_cd$ d
+				WHERE a.orga_csner = b.xorg_orga_c(+)
+				AND a.empno_org = c.xusr_empno(+)
+				AND a.empno = d.xusr_empno(+)
+			)a
+			WHERE 1=1
+			<isNotEmpty property="empno" prepend="and">
+				empno = #empno#
+			</isNotEmpty>
+			)j
+		WHERE rnum between #startRow# AND #endRow#
+	</select>
+
+	<update id="updateReaderManagement" parameterClass="bgabGascz008Dto">
+   		/*updateReaderManagement*/
+   		UPDATE BGAB_GASCZ008$corp_cd$ SET
+			empno 		= #empno#,
+			name 		= #name#,
+			subt_flag 	= #subt_flag#,
+			updr_eeno 	= #updr_eeno#,
+			mdfy_ymd    = SYSDATE
+		WHERE orga_c = #orga_c#
+   </update>
+
+   <select id="selectCountCodeManagementBySystem" parameterClass="bgabGascz005Dto" resultClass="java.lang.String">
+		/*selectCountCodeManagementBySystem*/
+		SELECT COUNT(*) FROM BGAB_GASCZ005$corp_cd$
+		WHERE 1=1
+		AND locale = #locale#
+		<isNotEmpty property="xcod_knd" prepend="and">
+			xcod_knd = #xcod_knd#
+		</isNotEmpty>
+		<isNotEmpty property="xcod_hname" prepend="and">
+			xcod_hname like '%' || #xcod_hname# || '%'
+		</isNotEmpty>
+	</select>
+
+	<select id="selectCodeManagementBySystem" parameterClass="bgabGascz005Dto" resultClass="bgabGascz005Dto">
+		/*selectCodeManagementBySystem*/
+		SELECT	*
+		FROM
+		(
+			SELECT	rownum rnum, t.*
+			FROM
+			(
+				SELECT	xcod_knd,
+					xcod_knd as xcod_knd_old,
+					xcod_code,
+					xcod_code as xcod_code_old,
+					xcod_hname,
+					xcod_ename,
+					xcod_order,
+					xcod_aply_flag
+				FROM BGAB_GASCZ005$corp_cd$
+				WHERE 1 = 1
+				AND locale = #locale#
+				<isNotEmpty property="xcod_knd" prepend="and">
+					xcod_knd = #xcod_knd#
+				</isNotEmpty>
+				<isNotEmpty property="xcod_hname" prepend="and">
+					xcod_hname like '%' || #xcod_hname# || '%'
+				</isNotEmpty>
+				ORDER BY xcod_order ASC
+			)t
+		) u WHERE rnum BETWEEN #startRow# AND #endRow#
+	</select>
+
+	<insert id="insertListToCodeManagementBySystem" parameterClass="bgabGascz005Dto">
+		/*insertListToCodeManagementBySystem*/
+		INSERT INTO BGAB_GASCZ005$corp_cd$(
+			xcod_knd            ,
+			xcod_code           ,
+			xcod_hname          ,
+			xcod_ename          ,
+			xcod_aply_flag      ,
+			xcod_order          ,
+			xcod_entr_empno     ,
+			xcod_entr_date      ,
+			xcod_updt_empno     ,
+			xcod_updt_date		,
+			locale
+		)VALUES(
+			#xcod_knd#				,
+			#xcod_code#				,
+			#xcod_hname#			,
+			#xcod_ename#			,
+			#xcod_aply_flag#		,
+			#xcod_order#			,
+			#ipe_eeno#				,
+			SYSDATE					,
+			#updr_eeno#				,
+			SYSDATE					,
+			#locale#
+		)
+   </insert>
+
+   <update id="updateListToCodeManagementBySystem" parameterClass="bgabGascz005Dto">
+		/*updateListToCodeManagementBySystem*/
+		UPDATE BGAB_GASCZ005$corp_cd$ SET
+			xcod_knd 		= #xcod_knd#,
+			xcod_code 		= #xcod_code#,
+			xcod_hname 		= #xcod_hname#,
+			xcod_ename 		= #xcod_ename#,
+			xcod_aply_flag 	= #xcod_aply_flag#,
+			xcod_order 		= #xcod_order#,
+			xcod_updt_empno = #updr_eeno#,
+			xcod_updt_date 	= SYSDATE
+		WHERE xcod_knd = #xcod_knd_old#
+   		 AND xcod_code = #xcod_code_old#
+   </update>
+
+   <delete id="deleteListToCodeManagementBySystem" parameterClass="bgabGascz005Dto">
+   		/*deleteListToCodeManagementBySystem*/
+   		DELETE FROM BGAB_GASCZ005$corp_cd$
+   		WHERE xcod_knd = #xcod_knd#
+   		  AND xcod_code = #xcod_code#
+   </delete>
+
+   <insert id="insertToBackgroundImage" parameterClass="bgabGascz005Dto">
+		/*insertToBackgroundImage*/
+		INSERT INTO BGAB_GASCZ005$corp_cd$(
+			xcod_knd            ,
+			xcod_code           ,
+			xcod_hname          ,
+			xcod_aply_flag      ,
+			xcod_order          ,
+			xcod_entr_empno     ,
+			xcod_entr_date      ,
+			xcod_updt_empno     ,
+			xcod_updt_date
+		)VALUES(
+			#xcod_knd#				,
+			(SELECT NVL(MAX(xcod_code), 0)+1 AS max_seq FROM BGAB_GASCZ005$corp_cd$ WHERE xcod_knd= #xcod_knd#),
+			#xcod_hname#			,
+			'N'		                ,
+			''			            ,
+			#xcod_entr_empno#		,
+			SYSDATE				,
+			#xcod_updt_empno#		,
+			SYSDATE
+		)
+   </insert>
+
+   <delete id="deleteToBackgroundImage" parameterClass="bgabGascz005Dto">
+   		/*deleteToBackgroundImage*/
+   		DELETE FROM BGAB_GASCZ005$corp_cd$
+   		WHERE xcod_knd = #xcod_knd#
+   		  AND xcod_code = #xcod_code#
+   </delete>
+
+	<select id="selectBackgroundImage" resultClass="java.lang.String" parameterClass="java.lang.String">
+		/*selectBackgroundImage*/
+		SELECT	xcod_hname
+		FROM	BGAB_GASCZ032$corp_cd$
+		WHERE rownum = 1
+	</select>
+
+	<select id="selectCountBackgroundImageAll" resultClass="java.lang.String" parameterClass="bgabGascz005Dto">
+		/*selectCountBackgroundImageAll*/
+		SELECT	COUNT(*)
+		FROM	BGAB_GASCZ032$corp_cd$
+	</select>
+
+	<select id="selectBackgroundImageAll" resultClass="bgabGascz005Dto" parameterClass="bgabGascz005Dto">
+		/*selectBackgroundImageAll*/
+		SELECT * FROM
+		(
+			SELECT	xcod_hname
+			FROM	BGAB_GASCZ032$corp_cd$
+		) a
+		WHERE rnum BETWEEN #startRow# AND #endRow#
+	</select>
+
+	<update id="updateToBackgroundImage" parameterClass="bgabGascz005Dto">
+   		/*updateToBackgroundImage*/
+   		UPDATE	BGAB_GASCZ032$corp_cd$
+   		SET		xcod_hname      =#xcod_hname#
+   </update>
+
+   <update id="updateToBackgroundImageApplyY" parameterClass="bgabGascz005Dto">
+   		/*updateToBackgroundImageApplyY*/
+   		UPDATE	BGAB_GASCZ005$corp_cd$
+   		SET		xcod_aply_flag = 'Y',
+   				xcod_aply_date = SYSDATE,
+   				xcod_updt_empno = #xcod_updt_empno#,
+   				xcod_updt_date  = SYSDATE
+   		WHERE xcod_knd = #xcod_knd#
+   		AND   xcod_code = #xcod_code#
+   </update>
+
+   <update id="updateToBackgroundImageApplyN" parameterClass="bgabGascz005Dto">
+   		/*updateToBackgroundImageApplyN*/
+   		UPDATE	BGAB_GASCZ005$corp_cd$
+   		SET		xcod_aply_flag = 'N',
+   				xcod_aply_date = SYSDATE,
+   				xcod_updt_empno = #xcod_updt_empno#,
+   				xcod_updt_date  = SYSDATE
+   		WHERE xcod_knd = #xcod_knd#
+   		AND   xcod_code != #xcod_code#
+   </update>
+
+	<select id="selectChartToDashBoardEm" resultClass="dashBoard" parameterClass="dashBoard">
+		/*selectChartToDashBoardPc*/
+		SELECT  'EM' AS biz_type,
+	                NVL(sum(
+	                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '01' THEN 1
+	                        ELSE 0
+	                   END),0) AS M01,
+			        NVL(sum(
+			                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '02' THEN 1
+			                        ELSE 0
+			                   END),0) AS M02,
+			        NVL(sum(
+			                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '03' THEN 1
+			                        ELSE 0
+			                   END),0) AS M03,
+			        NVL(sum(
+			                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '04' THEN 1
+			                        ELSE 0
+			                   END),0) AS M04,
+			        NVL(sum(
+			                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '05' THEN 1
+			                        ELSE 0
+			                   END),0) AS M05,
+			        NVL(sum(
+			                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '06' THEN 1
+			                        ELSE 0
+			                   END),0) AS M06,
+			        NVL(sum(
+			                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '07' THEN 1
+			                        ELSE 0
+			                   END),0) AS M07,
+			        NVL(sum(
+			                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '08' THEN 1
+			                        ELSE 0
+			                   END),0) AS M08,
+			        NVL(sum(
+			                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '09' THEN 1
+			                        ELSE 0
+			                   END),0) AS M09,
+			        NVL(sum(
+			                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '10' THEN 1
+			                        ELSE 0
+			                   END),0) AS M10,
+			        NVL(sum(
+			                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '11' THEN 1
+			                        ELSE 0
+			                   END),0) AS M11,
+			        NVL(sum(
+			                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '12' THEN 1
+			                        ELSE 0
+			                   END),0) AS M12
+			FROM bgab_gascem01
+			WHERE 1 = 1
+	<isNotEmpty property="key_year" prepend="and">
+		ptt_ymd LIKE #key_year# + '%'
+	</isNotEmpty>
+	</select>
+	<select id="selectChartToDashBoardBt" resultClass="dashBoard" parameterClass="dashBoard">
+	   /*selectChartToDashBoardBt*/
+	    SELECT  'BT' AS biz_type,
+	        NVL(sum(
+	                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '01' THEN 1
+	                        ELSE 0
+	                   END),0) AS M01,
+	        NVL(sum(
+	                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '02' THEN 1
+	                        ELSE 0
+	                   END),0) AS M02,
+	        NVL(sum(
+	                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '03' THEN 1
+	                        ELSE 0
+	                   END),0) AS M03,
+	        NVL(sum(
+	                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '04' THEN 1
+	                        ELSE 0
+	                   END),0) AS M04,
+	        NVL(sum(
+	                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '05' THEN 1
+	                        ELSE 0
+	                   END),0) AS M05,
+	        NVL(sum(
+	                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '06' THEN 1
+	                        ELSE 0
+	                   END),0) AS M06,
+	        NVL(sum(
+	                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '07' THEN 1
+	                        ELSE 0
+	                   END),0) AS M07,
+	        NVL(sum(
+	                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '08' THEN 1
+	                        ELSE 0
+	                   END),0) AS M08,
+	        NVL(sum(
+	                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '09' THEN 1
+	                        ELSE 0
+	                   END),0) AS M09,
+	        NVL(sum(
+	                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '10' THEN 1
+	                        ELSE 0
+	                   END),0) AS M10,
+	        NVL(sum(
+	                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '11' THEN 1
+	                        ELSE 0
+	                   END),0) AS M11,
+	        NVL(sum(
+	                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '12' THEN 1
+	                        ELSE 0
+	                   END),0) AS M12
+	FROM bgab_gascbt01$corp_cd$
+	WHERE 1 = 1
+		<isNotEmpty property="key_year" prepend="and">
+			ptt_ymd LIKE #key_year# + '%'
+		</isNotEmpty>
+	</select>
+
+	<select id="selectChartToDashBoardPc" resultClass="dashBoard" parameterClass="dashBoard">
+		/*selectChartToDashBoardPc*/
+		SELECT  'PC' AS biz_type,
+	                NVL(sum(
+	                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '01' THEN 1
+	                        ELSE 0
+	                   END),0) AS M01,
+			        NVL(sum(
+			                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '02' THEN 1
+			                        ELSE 0
+			                   END),0) AS M02,
+			        NVL(sum(
+			                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '03' THEN 1
+			                        ELSE 0
+			                   END),0) AS M03,
+			        NVL(sum(
+			                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '04' THEN 1
+			                        ELSE 0
+			                   END),0) AS M04,
+			        NVL(sum(
+			                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '05' THEN 1
+			                        ELSE 0
+			                   END),0) AS M05,
+			        NVL(sum(
+			                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '06' THEN 1
+			                        ELSE 0
+			                   END),0) AS M06,
+			        NVL(sum(
+			                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '07' THEN 1
+			                        ELSE 0
+			                   END),0) AS M07,
+			        NVL(sum(
+			                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '08' THEN 1
+			                        ELSE 0
+			                   END),0) AS M08,
+			        NVL(sum(
+			                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '09' THEN 1
+			                        ELSE 0
+			                   END),0) AS M09,
+			        NVL(sum(
+			                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '10' THEN 1
+			                        ELSE 0
+			                   END),0) AS M10,
+			        NVL(sum(
+			                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '11' THEN 1
+			                        ELSE 0
+			                   END),0) AS M11,
+			        NVL(sum(
+			                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '12' THEN 1
+			                        ELSE 0
+			                   END),0) AS M12
+			FROM BGAB_gascca01
+			WHERE 1 = 1
+	<isNotEmpty property="key_year" prepend="and">
+		ptt_ymd LIKE #key_year# + '%'
+	</isNotEmpty>
+	</select>
+	<select id="selectChartToDashBoardBv" resultClass="dashBoard" parameterClass="dashBoard">
+		/*selectChartToDashBoardBv*/
+		SELECT  'BV' AS biz_type,
+		       NVL(sum(
+		                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '01' THEN 1
+		                        ELSE 0
+		                   END),0) AS M01,
+		        NVL(sum(
+		                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '02' THEN 1
+		                        ELSE 0
+		                   END),0) AS M02,
+		        NVL(sum(
+		                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '03' THEN 1
+		                        ELSE 0
+		                   END),0) AS M03,
+		        NVL(sum(
+		                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '04' THEN 1
+		                        ELSE 0
+		                   END),0) AS M04,
+		        NVL(sum(
+		                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '05' THEN 1
+		                        ELSE 0
+		                   END),0) AS M05,
+		        NVL(sum(
+		                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '06' THEN 1
+		                        ELSE 0
+		                   END),0) AS M06,
+		        NVL(sum(
+		                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '07' THEN 1
+		                        ELSE 0
+		                   END),0) AS M07,
+		        NVL(sum(
+		                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '08' THEN 1
+		                        ELSE 0
+		                   END),0) AS M08,
+		        NVL(sum(
+		                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '09' THEN 1
+		                        ELSE 0
+		                   END),0) AS M09,
+		        NVL(sum(
+		                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '10' THEN 1
+		                        ELSE 0
+		                   END),0) AS M10,
+		        NVL(sum(
+		                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '11' THEN 1
+		                        ELSE 0
+		                   END),0) AS M11,
+		        NVL(sum(
+		                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '12' THEN 1
+		                        ELSE 0
+		                   END),0) AS M12
+		FROM bgab_gascbv02$corp_cd$
+		WHERE 1 = 1
+	<isNotEmpty property="key_year" prepend="and">
+		ptt_ymd like #key_year# + '%'
+	</isNotEmpty>
+	</select>
+	<select id="selectChartToDashBoardPs" resultClass="dashBoard" parameterClass="dashBoard">
+		/*selectChartToDashBoardPs*/
+		SELECT  'PS' AS biz_type,
+	       NVL(sum(
+	                 CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '01' THEN 1
+	                      ELSE 0
+	                 END),0) AS M01,
+	        NVL(sum(
+	                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '02' THEN 1
+	                        ELSE 0
+	                   END),0) AS M02,
+	        NVL(sum(
+	                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '03' THEN 1
+	                        ELSE 0
+	                   END),0) AS M03,
+	        NVL(sum(
+	                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '04' THEN 1
+	                        ELSE 0
+	                   END),0) AS M04,
+	        NVL(sum(
+	                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '05' THEN 1
+	                        ELSE 0
+	                   END),0) AS M05,
+	        NVL(sum(
+	                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '06' THEN 1
+	                        ELSE 0
+	                   END),0) AS M06,
+	        NVL(sum(
+	                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '07' THEN 1
+	                        ELSE 0
+	                   END),0) AS M07,
+	        NVL(sum(
+	                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '08' THEN 1
+	                        ELSE 0
+	                   END),0) AS M08,
+	        NVL(sum(
+	                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '09' THEN 1
+	                        ELSE 0
+	                   END),0) AS M09,
+	        NVL(sum(
+	                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '10' THEN 1
+	                        ELSE 0
+	                   END),0) AS M10,
+	        NVL(sum(
+	                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '11' THEN 1
+	                        ELSE 0
+	                   END),0) AS M11,
+	        NVL(sum(
+	                   CASE WHEN SUBSTR(CONVERT(NVARCHAR, ptt_ymd, 101),1, 2) = '12' THEN 1
+	                        ELSE 0
+	                   END),0) AS M12
+		FROM bgab_gascps01$corp_cd$
+		WHERE 1 = 1
+	<isNotEmpty property="key_year" prepend="and">
+		ptt_ymd like #key_year#  + '%'
+	</isNotEmpty>
+   </select>
+
+   <select id="selectSwitchToBudgetCheckList" resultClass="bgabGascz005Dto">
+		SELECT XCOD_KND
+			 , XCOD_CODE
+			 , XCOD_HNAME
+			 , SCRN_NM AS XCOD_ENAME
+		FROM (
+			SELECT XCOD_KND
+				 , XCOD_CODE
+				 , XCOD_HNAME
+			FROM BGAB_GASCZ005$corp_cd$
+			WHERE XCOD_KND       = 'X0020'
+			  AND XCOD_APLY_FLAG = 'Y'
+		) SCRN_CD
+		LEFT OUTER JOIN (
+			SELECT SCRN_ID
+				 , SCRN_NM
+			FROM (
+				SELECT MENU_LGRP_CD
+					 , MENU_MGRP_CD
+					 , SUBSTR(MAX(SCRN_ID), 2, 2) AS SCRN_ID
+				FROM BGAB_GASCZ004_GAS
+				WHERE MENU_LGRP_CD != 'M1'
+				GROUP BY MENU_LGRP_CD, MENU_MGRP_CD
+			) SCRN_ID
+			LEFT OUTER JOIN (
+				SELECT MENU_LGRP_CD
+					 , MENU_MGRP_CD
+					 , SCRN_NM
+				FROM BGAB_GASCZ004_GAS
+				WHERE SCRN_ID = ' '
+				GROUP BY MENU_LGRP_CD, MENU_MGRP_CD, SCRN_NM
+			) SCRN_NM
+			 ON SCRN_ID.MENU_LGRP_CD = SCRN_NM.MENU_LGRP_CD
+			AND SCRN_ID.MENU_MGRP_CD = SCRN_NM.MENU_MGRP_CD
+		) SCRN_NM
+		 ON SCRN_CD.XCOD_CODE = SCRN_NM.SCRN_ID
+	</select>
+
+	<select id="selectSwitchToBudgetCheck" parameterClass="bgabGascz005Dto" resultClass="bgabGascz005Dto">
+		SELECT XCOD_HNAME
+		FROM BGAB_GASCZ005$corp_cd$
+		WHERE XCOD_KND  = #xcod_knd#
+		  AND XCOD_CODE = #xcod_code#
+	</select>
+
+	<update id="updateSwitchToBudgetCheck" parameterClass="bgabGascz005Dto">
+   		UPDATE BGAB_GASCZ005$corp_cd$ SET
+   			XCOD_HNAME			= #xcod_hname#			,
+			XCOD_UPDT_EMPNO		= #xcod_updt_empno#		,
+			XCOD_UPDT_DATE		= SYSDATE
+		WHERE XCOD_KND = #xcod_knd#
+		AND XCOD_CODE = #xcod_code#
+   </update>
+
+   <select id="selectCountCoordiManagement" resultClass="String" parameterClass="bgabGascz003Dto">
+	  	/*selectCountCoordiManagement*/
+	  	SELECT 	COUNT(*)
+		FROM 	BGAB_GASCZ003$corp_cd$
+		WHERE 	1 = 1
+		AND   	XORG_DEPT_LV = '4'
+		<isNotEmpty property="xorg_orga_c" prepend="and">
+			xorg_orga_c = #xorg_orga_c#
+		</isNotEmpty>
+   </select>
+
+   <select id="selectCoordiManagement" resultClass="bgabGascz003Dto" parameterClass="bgabGascz003Dto">
+	  	/*selectCoordiManagement*/
+	  	SELECT * FROM (
+	  		SELECT k.*
+			FROM(
+			  	SELECT
+			  	   ROW_NUMBER() OVER(ORDER BY XORG_ORGA_C ASC, XORG_ORGA_E ASC) AS rnum,
+			  	   A.XORG_ORGA_C,
+			  	   A.XORG_ORGA_E,
+			  	   A.XORG_CRD_I,
+				   A.XORG_CRD_M,
+				   A.XORG_CRD_I AS XORG_CRD_I_H
+				FROM BGAB_GASCZ003$corp_cd$ A
+				WHERE 	1 = 1
+				AND   	XORG_DEPT_LV = '4'
+				<isNotEmpty property="xorg_orga_c" prepend="and">
+					xorg_orga_c = #xorg_orga_c#
+				</isNotEmpty>
+			) k
+		) j WHERE rnum between #startRow# AND #endRow#
+   </select>
+   <update id="updateCoordiManagement" parameterClass="bgabGascz003Dto">
+   		UPDATE BGAB_GASCZ003$corp_cd$ SET
+   			XORG_CRD_I			= #xorg_crd_i#,
+			XORG_CRD_M		= #xorg_crd_m#
+		WHERE XORG_ORGA_C = #xorg_orga_c#
+   </update>
+   <select id="selectCountCoordiDept" resultClass="String" parameterClass="String">
+	  	/*selectCountCoordiDept*/
+	  	SELECT 	COUNT(*)
+		FROM 	BGAB_GASCZ008$corp_cd$
+		WHERE 	1 = 1
+		AND   	ORGA_C = #xorg_orga_c#
+   </select>
+
+
+   <update id="updateCoordiInfoApp" parameterClass="bgabGascz003Dto">
+   		/*updateCoordiInfoApp*/
+   		UPDATE 	BGAB_GASCZ008$corp_cd$ SET
+   				EMPNO = #xorg_crd_i#,
+				NAME = #xorg_crd_m#,
+				EMPNO_ORG = #xorg_crd_i#
+		WHERE 	ORGA_C = #xorg_orga_c# + 'C'
+   </update>
+
+    <select id="selectDeptInfoApp" resultClass="bgabGascz008Dto" parameterClass="String">
+	  	/*selectDeptInfoApp*/
+	  	SELECT 	*
+		FROM 	BGAB_GASCZ008$corp_cd$
+		WHERE 	ORGA_C = #xorg_orga_c#
+   </select>
+   <update id="updateCoordiInfoAppForInsert" parameterClass="bgabGascz003Dto">
+   		/*updateCoordiInfoAppForInsert*/
+   		UPDATE 	BGAB_GASCZ008$corp_cd$ SET
+   				ORGA_CSNER = #xorg_orga_c# + 'C'
+		WHERE 	ORGA_C = #xorg_orga_c#
+   </update>
+   <insert id="insertCoordiInfoApp" parameterClass="bgabGascz008Dto">
+   		/*insertCoordiInfoApp*/
+   		INSERT INTO BGAB_GASCZ008$corp_cd$(
+			ORGA_C
+			,ORGA_E
+			,EMPNO
+			,NAME
+			,LEVL_C
+			,CALL_M
+			,RANK_C
+			,RANK_E
+			,ORGA_CSNER
+			,SUBT_FLAG
+			,INP_YMD
+			,IPE_EENO
+			,MDFY_YMD
+			,UPDR_EENO
+			,SUBT_FROM
+			,SUBT_TO
+			,EMPNO_ORG
+		)VALUES(
+			#orga_c#
+			,#orga_e#
+			,#empno#
+			,#name#
+			,#levl_c#
+			,#call_m#
+			,#rank_c#
+			,#rank_e#
+			,#orga_csner#
+			,#subt_flag#
+			,SYSDATE
+			,#ipe_eeno#
+			,SYSDATE
+			,#updr_eeno#
+			,#subt_from#
+			,#subt_to#
+			,#empno_org#
+		)
+   </insert>
+
+   <update id="updateCoordiInfoAppForDelete" parameterClass="bgabGascz008Dto">
+   		/*updateCoordiInfoAppForDelete*/
+   		UPDATE 	BGAB_GASCZ008$corp_cd$ SET
+   				orga_csner = #orga_csner#
+		WHERE 	ORGA_C = #orga_c#
+   </update>
+   <delete id="deleteCoordiInfoApp" parameterClass="bgabGascz003Dto">
+   		/*deleteCoordiInfoApp*/
+   		DELETE 	BGAB_GASCZ008$corp_cd$
+		WHERE 	ORGA_C = #xorg_orga_c# + 'C'
+   </delete>
+
+	<select id="selectCountToApproveLevelManagement" resultClass="String" parameterClass="bgabGascz013Dto">
+		/*selectCountToApproveLevelManagement*/
+		SELECT COUNT(*)
+	      FROM BGAB_GASCZ005$corp_cd$ Z005
+	      LEFT OUTER JOIN BGAB_GASCZ013$corp_cd$ Z013
+	        ON Z005.XCOD_CODE = Z013.APP_TYPE
+	     WHERE Z005.XCOD_KND='X3011'
+	       AND Z005.LOCALE=#locale#
+	       AND Z005.XCOD_ENAME IN (SELECT TASK_GUBUN FROM BGAB_GASCZ031 WHERE CORP_CD = #corp_cd# AND APPR_USE_YN = 'Y')
+	    ORDER BY Z005.XCOD_CODE ASC
+	</select>
+
+	<select id="selectListToApproveLevelManagement" parameterClass="bgabGascz013Dto" resultClass="bgabGascz013Dto">
+		/*selectListToApproveLevelManagement*/
+		SELECT OLD_APP_TYPE
+			 , APP_TYPE
+			 , APP_LEVEL
+			 , USE_YN
+			 , REM_SBC
+			 , RNUM
+		FROM
+		(
+			SELECT rownum rnum, A.*
+			FROM (
+				SELECT Z013.APP_TYPE AS OLD_APP_TYPE
+					 , Z005.XCOD_CODE AS APP_TYPE
+					 , Z013.APP_LEVEL
+					 , Z013.USE_YN
+					 , Z013.REM_SBC
+			    FROM BGAB_GASCZ005$corp_cd$ Z005
+			      LEFT OUTER JOIN BGAB_GASCZ013$corp_cd$ Z013
+			        ON Z005.XCOD_CODE = Z013.APP_TYPE
+			     WHERE Z005.XCOD_KND='X3011'
+			       AND Z005.LOCALE=#locale#
+			       AND Z005.XCOD_ENAME IN (SELECT TASK_GUBUN FROM BGAB_GASCZ031 WHERE CORP_CD = #corp_cd# AND APPR_USE_YN = 'Y')
+			    ORDER BY Z005.XCOD_CODE ASC
+			) A
+		) B
+		WHERE RNUM BETWEEN #startRow# AND #endRow#
+	</select>
+
+	<insert id="insertListToApproveLevelManagement" parameterClass="bgabGascz013Dto">
+		/*insertListToApproveLevelManagement*/
+		INSERT INTO BGAB_GASCZ013$corp_cd$ (
+			  APP_TYPE
+			, APP_LEVEL
+			, REM_SBC
+			, USE_YN
+			, IPE_EENO
+			, INP_YMD
+		) VALUES (
+			  #app_type#
+			, #app_level#
+			, #rem_sbc#
+			, #use_yn#
+			, #ipe_eeno#
+			, SYSDATE
+		)
+	</insert>
+
+	<update id="updateListToApproveLevelManagement" parameterClass="bgabGascz013Dto">
+		/*updateListToApproveLevelManagement*/
+		UPDATE BGAB_GASCZ013$corp_cd$ SET
+			  APP_LEVEL = #app_level#
+			, REM_SBC   = #rem_sbc#
+			, USE_YN   = #use_yn#
+			, MDFY_YMD  = SYSDATE
+			, UPDR_EENO = #updr_eeno#
+		WHERE APP_TYPE = #app_type#
+	</update>
+
+	<delete id="deleteListToApproveLevelManagement" parameterClass="bgabGascz013Dto">
+		/*deleteListToApproveLevelManagement*/
+		DELETE FROM BGAB_GASCZ013$corp_cd$
+		WHERE APP_TYPE = #app_type#
+	</delete>
+
+	<insert id="insertListToVendorManagement" parameterClass="bgabGascz014Dto">
+   		/* insertListToVendorManagement */
+   		INSERT INTO BGAB_GASCZ014(
+   			  JOB
+   			, VENDOR_CODE
+   			, VENDOR_NAME
+   			, USE_YN
+   			, NOTE
+   			, IPE_EENO
+   			, INP_YMD
+   			, UPDR_EENO
+   			, MDFY_YMD
+   		)VALUES(
+   			  #job#
+   			, #vendor_code#
+   			, #vendor_name#
+   			, #use_yn#
+   			, #note#
+   			, #ipe_eeno#
+			, SYSDATE
+			, #updr_eeno#
+			, SYSDATE
+   		)
+	</insert>
+
+	<update id="updateListToVendorManagement" parameterClass="bgabGascz014Dto">
+   		/* updateListToVendorManagement */
+   		UPDATE BGAB_GASCZ014
+   		   SET JOB = #job#
+   		     , VENDOR_CODE = #vendor_code#
+   		     , VENDOR_NAME = #vendor_name#
+   		     , USE_YN = #use_yn#
+   		     , NOTE = #note#
+   		 WHERE JOB = #old_job#
+   		   AND VENDOR_CODE = #old_vendor_code#
+	</update>
+
+	<delete id="deleteListToVendorManagement" parameterClass="bgabGascz014Dto">
+   		/* deleteListToVendorManagement */
+   		DELETE FROM BGAB_GASCZ014
+   		 WHERE JOB = #job#
+   		   AND VENDOR_CODE = #vendor_code#
+	</delete>
+
+	<select id="selectCountVendorManagement" parameterClass="bgabGascz014Dto" resultClass="String">
+		/* selectCountVendorManagement */
+		SELECT COUNT(*)
+		  FROM BGAB_GASCZ014
+		 WHERE 1=1
+		 <isNotEmpty property="key_job">
+		   AND JOB = #key_job#
+		 </isNotEmpty>
+		 <isNotEmpty property="key_code">
+		   AND VENDOR_CODE = #key_code#
+		 </isNotEmpty>
+		 <isNotEmpty property="key_name">
+		   AND VENDOR_NAME = #key_name#
+		 </isNotEmpty>
+	</select>
+
+	<select id="selectVendorManagement" parameterClass="bgabGascz014Dto" resultClass="bgabGascz014Dto">
+   		/* selectVendorManagement */
+   		SELECT *
+		FROM (SELECT ROW_NUMBER() OVER(ORDER BY JOB) AS rnum
+				   , A.*
+				FROM (
+				   		SELECT JOB
+				   			 , VENDOR_CODE
+				   			 , VENDOR_NAME
+				   			 , USE_YN
+				   			 , NOTE
+				   			 , JOB AS OLD_JOB
+				   			 , VENDOR_CODE AS OLD_VENDOR_CODE
+				   		  FROM BGAB_GASCZ014
+						 WHERE 1=1
+						 <isNotEmpty property="key_job">
+						   AND JOB = #key_job#
+						 </isNotEmpty>
+						 <isNotEmpty property="key_code">
+						   AND VENDOR_CODE = #key_code#
+						 </isNotEmpty>
+						 <isNotEmpty property="key_name">
+						   AND VENDOR_NAME = #key_name#
+						 </isNotEmpty>
+					  ) A
+		 	   ) Z
+	     WHERE rnum between #startRow# AND #endRow#
+	</select>
+
+
+ 	<select id="selectToVendorManagementData" parameterClass="bgabGascz014Dto" resultClass="String">
+		/* selectToVendorManagementData */
+		SELECT COUNT(*)
+		  FROM BGAB_GASCZ014
+		 WHERE VENDOR_CODE = #vendor_code#
+		   AND JOB = #job#
+	</select>
+
+	<insert id="insertListToPurchaseOrderManagement" parameterClass="bgabGascz015Dto">
+   		/* insertListToPurchaseOrderManagement */
+   		INSERT INTO BGAB_GASCZ015(
+   			  JOB
+   			, ORDER_NO
+   			, USE_YN
+   			, NOTE
+   			, IPE_EENO
+   			, INP_YMD
+   			, UPDR_EENO
+   			, MDFY_YMD
+   		)VALUES(
+   			  #job#
+   			, #order_no#
+   			, #use_yn#
+   			, #note#
+   			, #ipe_eeno#
+			, SYSDATE
+			, #updr_eeno#
+			, SYSDATE
+   		)
+	</insert>
+
+	<update id="updateListToPurchaseOrderManagement" parameterClass="bgabGascz015Dto">
+   		/* updateListToPurchaseOrderManagement */
+   		UPDATE BGAB_GASCZ015
+   		   SET JOB = #job#
+   		     , ORDER_NO = #order_no#
+   		     , USE_YN = #use_yn#
+   		     , NOTE = #note#
+   		 WHERE JOB = #old_job#
+   		   AND ORDER_NO = #old_order_no#
+	</update>
+
+	<delete id="deleteListToPurchaseOrderManagement" parameterClass="bgabGascz015Dto">
+   		/* deleteListToPurchaseOrderManagement */
+   		DELETE FROM BGAB_GASCZ015
+   		 WHERE JOB = #job#
+   		   AND ORDER_NO = #order_no#
+	</delete>
+
+	<select id="selectCountPurchaseOrderManagement" parameterClass="bgabGascz015Dto" resultClass="String">
+		/* selectCountPurchaseOrderManagement */
+		SELECT COUNT(*)
+		  FROM BGAB_GASCZ015
+		 WHERE 1=1
+		 <isNotEmpty property="key_job">
+		   AND JOB = #key_job#
+		 </isNotEmpty>
+	</select>
+
+	<select id="selectPurchaseOrderManagement" parameterClass="bgabGascz015Dto" resultClass="bgabGascz015Dto">
+   		/* selectPurchaseOrderManagement */
+   		SELECT *
+		FROM (SELECT ROW_NUMBER() OVER(ORDER BY JOB) AS rnum
+				   , A.*
+				FROM (
+				   		SELECT JOB
+				   			 , ORDER_NO
+				   			 , USE_YN
+				   			 , NOTE
+				   			 , JOB AS OLD_JOB
+				   			 , ORDER_NO AS OLD_ORDER_NO
+				   		  FROM BGAB_GASCZ015
+						 WHERE 1=1
+						 <isNotEmpty property="key_job">
+						   AND JOB = #key_job#
+						 </isNotEmpty>
+					  ) A
+		 	   ) Z
+	     WHERE rnum between #startRow# AND #endRow#
+	</select>
+
+	<select id="selectPurchaseOrderComboList" parameterClass="commonCode" resultClass="commonCode">
+		/* selectPurchaseOrderComboList */
+		SELECT JOB AS "key"
+			 , ORDER_NO AS VALUE
+		     , ORDER_NO AS NAME
+		  FROM BGAB_GASCZ015
+		 WHERE JOB = #codknd#
+	</select>
+
+	<!-- restrant menu mgmt(date) -->
+	<select id="selectByDateMenu" parameterClass="bgabGascz019Dto" resultClass="bgabGascz019Dto">
+		/* Query id : selectByDateMenu */
+		SELECT REGDATE
+		     , CASE WHEN DAY_CNT = '1' THEN 'SUN'
+			        WHEN DAY_CNT = '2' THEN 'MON'
+			        WHEN DAY_CNT = '3' THEN 'TUE'
+			        WHEN DAY_CNT = '4' THEN 'WEN'
+			        WHEN DAY_CNT = '5' THEN 'THU'
+			        WHEN DAY_CNT = '6' THEN 'FRI'
+			        WHEN DAY_CNT = '7' THEN 'SAT'
+			   END AS E_DAY
+		     , CASE WHEN DAY_CNT = '1' THEN 'DOMINGO'
+			        WHEN DAY_CNT = '2' THEN 'SEGUNDA'
+			        WHEN DAY_CNT = '3' THEN 'TERÇA'
+			        WHEN DAY_CNT = '4' THEN 'QUARTA'
+			        WHEN DAY_CNT = '5' THEN 'QUINTA'
+			        WHEN DAY_CNT = '6' THEN 'SEXTA'
+			        WHEN DAY_CNT = '7' THEN 'SÁBADO'
+			   END AS P_DAY
+		  FROM(
+			SELECT DBO.CONVERT_DATE(CONVERT(CHAR(10),DATEADD(D,NUMBER, #yearMonth#+'01'),112)) AS REGDATE
+				 , DATEPART(WEEKDAY, CONVERT(CHAR(10),DATEADD(D,NUMBER, #yearMonth#+'01'),112)) AS DAY_CNT
+			  FROM MASTER..SPT_VALUES WITH(NOLOCK)
+			 WHERE TYPE = 'P'
+			   AND CONVERT(CHAR(10),DATEADD(D,NUMBER,#yearMonth#+'01'),112) <![CDATA[<]]> DATEADD("M", 1, #yearMonth#+'01')
+		) A
+	</select>
+
+	<!-- restrant menu search(brasilan) -->
+	<select id="selectByBrasilMenu" parameterClass="bgabGascz019Dto" resultClass="bgabGascz019Dto">
+		/* Query id : selectByBrasilMenu */
+		SELECT PTT_YMD AS B_PTT_YMD
+			 , SEQ_NO AS B_SEQ_NO
+			 , MENU_TYPE AS B_MENU_TYPE
+			 , MENU_NM AS B_MENU_NM
+			 , MENU_SORT AS B_MENU_SORT
+		  FROM BGAB_GASCZBR1
+		 WHERE TO_CHAR(PTT_YMD, 'YYYYMMDD') = #b_ptt_ymd#
+		ORDER BY CONVERT(INT,MENU_TYPE)
+	</select>
+
+	<!-- restrant menu search(korean) -->
+	<select id="selectByKoreaMenu" parameterClass="bgabGascz019Dto" resultClass="bgabGascz019Dto">
+		/* Query id : selectByKoreaMenu */
+		SELECT PTT_YMD AS K_PTT_YMD
+			 , SEQ_NO AS K_SEQ_NO
+			 , MENU_TYPE AS K_MENU_TYPE
+			 , MENU_KND AS K_MENU_KND
+			 , MENU_KO_NM AS K_MENU_KO_NM
+			 , MENU_EN_NM AS K_MENU_EN_NM
+			 , MENU_PO_NM AS K_MENU_PO_NM
+			 , MENU_SORT AS K_MENU_SORT
+		  FROM BGAB_GASCZKR1
+		 WHERE TO_CHAR(PTT_YMD, 'YYYYMMDD') = #k_ptt_ymd#
+		 ORDER BY MENU_KND, CONVERT(INT,MENU_TYPE)
+	</select>
+
+	<!-- restrant menu search(coffee) -->
+	<select id="selectByCoffee" parameterClass="bgabGascz019Dto" resultClass="bgabGascz019Dto">
+		/* Query id : selectByCoffee */
+		SELECT DOC_NO
+			 , CO_NAME
+			 , CO_AMT
+			 , CO_DESC
+			 , CO_MET
+			 , SORT_NO
+		  FROM BGAB_GASCZCO1
+		 ORDER BY SORT_NO
+	</select>
+
+	<!-- restrant menu insert(brasilan) -->
+	<insert id="insertByBrasilanMenu" parameterClass="bgabGascz019Dto">
+		/* Query id : insertByBrasilanMenu */
+		INSERT INTO BGAB_GASCZBR1(
+			   PTT_YMD
+			 , SEQ_NO
+			 , MENU_TYPE
+			 , MENU_NM
+			 , MENU_SORT
+			 , INP_YMD
+			 , IPE_EENO
+			 , UPDR_YMD
+			 , UPDR_EENO
+		)VALUES(
+			   TO_DATE(#b_ptt_ymd#, 'YYYYMMDD')
+			 , (SELECT NVL(MAX(SEQ_NO),0)+1
+			      FROM BGAB_GASCZBR1
+			     WHERE TO_CHAR(PTT_YMD, 'YYYYMMDD') = #b_ptt_ymd#)
+			 , #b_menu_type#
+			 , #b_menu_nm#
+			 , (SELECT NVL(MAX(MENU_SORT),0)+1
+			      FROM BGAB_GASCZBR1
+			     WHERE TO_CHAR(PTT_YMD, 'YYYYMMDD') = #b_ptt_ymd#
+			       AND MENU_TYPE = #b_menu_type#)
+			 , SYSDATE
+			 , #ipe_eeno#
+			 , SYSDATE
+			 , #updr_eeno#
+		)
+	</insert>
+
+	<!-- restrant menu update(brasilan) -->
+	<update id="updateByBrasilanMenu" parameterClass="bgabGascz019Dto">
+		/* Query id : updateByBrasilanMenu */
+		UPDATE BGAB_GASCZBR1
+		   SET MENU_TYPE = #b_menu_type#
+			 , MENU_NM = #b_menu_nm#
+			 , UPDR_YMD = SYSDATE
+			 , UPDR_EENO = #updr_eeno#
+		 WHERE TO_CHAR(PTT_YMD, 'YYYYMMDD') = #b_ptt_ymd#
+		   AND SEQ_NO = #b_seq_no#
+	</update>
+
+	<!-- restrant menu update(brasilan) -->
+	<delete id="deleteByBrasilanMenu" parameterClass="bgabGascz019Dto">
+		/* Query id : deleteByBrasilanMenu */
+		DELETE BGAB_GASCZBR1
+		 WHERE TO_CHAR(PTT_YMD, 'YYYYMMDD') = #b_ptt_ymd#
+		   AND SEQ_NO = #b_seq_no#
+	</delete>
+
+	<!-- restrant menu insert(korean) -->
+	<insert id="insertByKoreanMenu" parameterClass="bgabGascz019Dto">
+		/* Query id : insertByKoreanMenu */
+		INSERT INTO BGAB_GASCZKR1(
+			   PTT_YMD
+			 , SEQ_NO
+			 , MENU_TYPE
+			 , MENU_KND
+			 , MENU_KO_NM
+			 , MENU_EN_NM
+			 , MENU_PO_NM
+			 , MENU_SORT
+			 , INP_YMD
+			 , IPE_EENO
+			 , UPDR_YMD
+			 , UPDR_EENO
+		)VALUES(
+			   TO_DATE(#k_ptt_ymd#, 'YYYYMMDD')
+			 , (SELECT NVL(MAX(SEQ_NO),0)+1
+			      FROM BGAB_GASCZKR1
+			     WHERE TO_CHAR(PTT_YMD, 'YYYYMMDD') = #k_ptt_ymd#)
+			 , #k_menu_type#
+			 , #k_menu_knd#
+			 , #k_menu_ko_nm#
+			 , #k_menu_en_nm#
+			 , #k_menu_po_nm#
+			 , (SELECT NVL(MAX(MENU_SORT),0)+1
+			      FROM BGAB_GASCZKR1
+			     WHERE TO_CHAR(PTT_YMD, 'YYYYMMDD') = #k_ptt_ymd#
+			       AND MENU_TYPE = #k_menu_type#
+			       AND MENU_KND = #k_menu_knd#)
+			 , SYSDATE
+			 , #ipe_eeno#
+			 , SYSDATE
+			 , #updr_eeno#
+		)
+	</insert>
+
+	<!-- restrant menu update(korean) -->
+	<update id="updateByKoreanMenu" parameterClass="bgabGascz019Dto">
+		/* Query id : updateByKoreanMenu */
+		UPDATE BGAB_GASCZKR1
+		   SET MENU_TYPE = #k_menu_type#
+		   	 , MENU_KND = #k_menu_knd#
+			 , MENU_KO_NM = #k_menu_ko_nm#
+			 , MENU_EN_NM = #k_menu_en_nm#
+			 , MENU_PO_NM = #k_menu_po_nm#
+			 , UPDR_YMD = SYSDATE
+			 , UPDR_EENO = #updr_eeno#
+		 WHERE TO_CHAR(PTT_YMD, 'YYYYMMDD') = #k_ptt_ymd#
+		   AND SEQ_NO = #k_seq_no#
+	</update>
+
+	<!-- restrant menu update(korean) -->
+	<delete id="deleteByKoreanMenu" parameterClass="bgabGascz019Dto">
+		/* Query id : deleteByKoreanMenu */
+		DELETE BGAB_GASCZKR1
+		 WHERE TO_CHAR(PTT_YMD, 'YYYYMMDD') = #k_ptt_ymd#
+		   AND SEQ_NO = #k_seq_no#
+	</delete>
+
+	<!-- restrant menu insert(coffee) -->
+	<insert id="insertByCoffee" parameterClass="bgabGascz019Dto">
+		/* Query id : insertByCoffee */
+		INSERT INTO BGAB_GASCZCO1(
+		       DOC_NO
+			 , CO_NAME
+			 , CO_AMT
+			 , CO_DESC
+			 , CO_MET
+			 , SORT_NO
+			 , INP_YMD
+			 , IPE_EENO
+			 , UPDR_YMD
+			 , UPDR_EENO
+		)VALUES(
+		       (select NVL(max(doc_no),0)+1 from BGAB_GASCZCO1)
+			 , #co_name#
+			 , #co_amt#
+			 , #co_desc#
+			 , #co_met#
+			 , (SELECT NVL(MAX(SORT_NO),0)+1 FROM BGAB_GASCZCO1)
+			 , SYSDATE
+			 , #ipe_eeno#
+			 , SYSDATE
+			 , #updr_eeno#
+		)
+	</insert>
+
+	<!-- restrant menu update(coffee) -->
+	<update id="updateByCoffee" parameterClass="bgabGascz019Dto">
+		/* Query id : updateByCoffee */
+		UPDATE BGAB_GASCZCO1
+		   SET CO_NAME = #co_name#
+			 , CO_AMT = #co_amt#
+			 , CO_DESC = #co_desc#
+			 , CO_MET = #co_met#
+			 , UPDR_YMD = SYSDATE
+			 , UPDR_EENO = #updr_eeno#
+		 WHERE DOC_NO = #doc_no#
+	</update>
+
+	<!-- restrant menu update(coffee) -->
+	<delete id="deleteByCoffee" parameterClass="bgabGascz019Dto">
+		/* Query id : deleteByCoffee */
+		DELETE BGAB_GASCZCO1
+		 WHERE DOC_NO = #doc_no#
+	</delete>
+
+	<select id="selectVendorCodeCombo" parameterClass="commonCode" resultClass="commonCode">
+		/* selectVendorCodeCombo */
+		SELECT VENDOR_CODE AS CODE
+		     , VENDOR_NAME AS NAME
+		     , JOB AS KEY
+		  FROM BGAB_GASCZ014
+   		 WHERE JOB = #codknd#
+	</select>
+
+	<insert id="insertListToMaterialManagement" parameterClass="bgabGascz016Dto">
+   		/* insertListToMaterialManagement */
+   		INSERT INTO BGAB_GASCZ016(
+   			  JOB
+   			, MATERIAL_CODE
+   			, MATERIAL_DESC
+   			, MATERIAL_GROUP
+   			, USE_YN
+   			, NOTE
+   			, IPE_EENO
+   			, INP_YMD
+   			, UPDR_EENO
+   			, MDFY_YMD
+   		)VALUES(
+   			  #job#
+   			, #material_code#
+   			, #material_desc#
+   			, #material_group#
+   			, #use_yn#
+   			, #note#
+   			, #ipe_eeno#
+			, SYSDATE
+			, #updr_eeno#
+			, SYSDATE
+   		)
+	</insert>
+
+	<update id="updateListToMaterialManagement" parameterClass="bgabGascz016Dto">
+   		/* updateListToMaterialManagement */
+   		UPDATE BGAB_GASCZ016
+   		   SET JOB = #job#
+   		     , MATERIAL_CODE = #material_code#
+   		     , MATERIAL_DESC = #material_desc#
+   		     , MATERIAL_GROUP = #material_group#
+   		     , USE_YN = #use_yn#
+   		     , NOTE = #note#
+   		 WHERE JOB = #old_job#
+   		   AND Material_CODE = #old_material_code#
+	</update>
+
+	<delete id="deleteListToMaterialManagement" parameterClass="bgabGascz016Dto">
+   		/* deleteListToMaterialManagement */
+   		DELETE FROM BGAB_GASCZ016
+   		 WHERE JOB = #job#
+   		   AND MATERIAL_CODE = #material_code#
+	</delete>
+
+	<select id="selectCountMaterialManagement" parameterClass="bgabGascz016Dto" resultClass="String">
+		/* selectCountMaterialManagement */
+		SELECT COUNT(*)
+		  FROM BGAB_GASCZ016
+		 WHERE 1=1
+		 <isNotEmpty property="key_job">
+		   AND JOB = #key_job#
+		 </isNotEmpty>
+		 <isNotEmpty property="key_code">
+		   AND MATERIAL_CODE = #key_code#
+		 </isNotEmpty>
+		 <isNotEmpty property="key_name">
+		   AND MATERIAL_DESC = #key_name#
+		 </isNotEmpty>
+	</select>
+
+	<select id="selectMaterialManagement" parameterClass="bgabGascz016Dto" resultClass="bgabGascz016Dto">
+   		/* selectMaterialManagement */
+   		SELECT *
+		FROM (SELECT ROW_NUMBER() OVER(ORDER BY JOB) AS rnum
+				   , A.*
+				FROM (
+				   		SELECT JOB
+				   			 , MATERIAL_CODE
+				   			 , MATERIAL_DESC
+				   			 , MATERIAL_GROUP
+				   			 , USE_YN
+				   			 , NOTE
+				   			 , JOB AS OLD_JOB
+				   			 , MATERIAL_CODE AS OLD_MATERIAL_CODE
+				   		  FROM BGAB_GASCZ016
+						 WHERE 1=1
+						 <isNotEmpty property="key_job">
+						   AND JOB = #key_job#
+						 </isNotEmpty>
+						 <isNotEmpty property="key_code">
+						   AND MATERIAL_CODE = #key_code#
+						 </isNotEmpty>
+						 <isNotEmpty property="key_name">
+						   AND MATERIAL_NAME = #key_name#
+						 </isNotEmpty>
+					  ) A
+		 	   ) Z
+	     WHERE rnum between #startRow# AND #endRow#
+	</select>
+
+ 	<select id="selectToMaterialManagementData" parameterClass="bgabGascz016Dto" resultClass="String">
+		/* selectToMaterialManagementData */
+		SELECT COUNT(*)
+		  FROM BGAB_GASCZ016
+		 WHERE MATERIAL_CODE = #material_code#
+		   AND JOB = #job#
+	</select>
+
+    <select id="selectUserWorkPlace" parameterClass="bgabGascz002Dto" resultClass="bgabGascz002Dto">
+    	/* selectUserWorkPlace */
+    	SELECT B.XCOD_HNAME AS XUSR_PLAC_WORK
+    	     , A.XUSR_COST_CD
+    	  FROM BGAB_GASCZ002$corp_cd$ A
+		  JOIN BGAB_GASCZ005$corp_cd$ B
+		    ON A.XUSR_PLAC_WORK = B.XCOD_CODE
+		   AND B.XCOD_KND = 'X3016'
+    	 WHERE XUSR_EMPNO = #xusr_empno#
+    </select>
+
+    <select id="selectCheckBudgetSwitch" parameterClass="bgabGascz005Dto" resultClass="bgabGascz005Dto">
+    	/* selectCheckBudgetSwitch */
+    	SELECT XCOD_KND
+             , XCOD_CODE
+             , XCOD_HNAME
+          FROM BGAB_GASCZ005$corp_cd$
+         WHERE XCOD_KND = 'X0020'
+           AND XCOD_APLY_FLAG = 'Y'
+           AND XCOD_CODE = #xcod_code#
+           AND LOCALE = #locale#
+    </select>
+
+    <select id="selectUserInfoDetailPopup" parameterClass="bgabGascz002Dto" resultClass="bgabGascz002Dto">
+	    /*selectUserInfoDetailPopup*/
+	    SELECT * FROM
+		    (SELECT rownum rnum, A.*
+		      FROM (
+					SELECT xusr_empno,
+						  xusr_name,
+						  xusr_plac_work,
+						  xusr_cnfm_auth,
+						  xusr_dept_code,
+						  xusr_dept_name,
+						  xusr_auth_knd,
+						  xusr_dept_knd,
+						  xusr_step_code,
+						  xusr_step_name,
+						  xusr_work_auth,
+						  xusr_tel_no,
+						  xusr_mail_adr
+					FROM BGAB_GASCZ002$corp_cd$
+					WHERE xusr_retr_flag ='N'
+					<isNotEmpty property="xusr_empno" prepend="and">
+					xusr_empno = #xusr_empno#
+					</isNotEmpty>
+					<isNotEmpty property="xusr_name" prepend="and">
+					xusr_name = #xusr_name#
+					</isNotEmpty>
+					) A
+					ORDER BY xusr_empno)
+		WHERE rnum = 1
+		<!-- LIMIT 1 -->
+	</select>
+
+	<delete id="deleteUserInfoTempByExcelUpload" parameterClass="bgabGascz002Dto">
+	    /*deleteUserInfoTempByExcelUpload*/
+	    DELETE
+	      FROM   BGAB_GASCZ002_TEMP
+    </delete>
+
+	<delete id="deleteUserInfoByExcelUpload" parameterClass="bgabGascz002Dto">
+	    /*deleteUserInfoByExcelUpload*/
+	    DELETE
+	      FROM   BGAB_GASCZ002$corp_cd$
+    </delete>
+
+    <insert id="insertUserInfoToUserInfoTemp" parameterClass="bgabGascz002Dto">
+	    /*insertUserInfoToUserInfoTemp*/
+	    INSERT   INTO BGAB_GASCZ002_TEMP
+	    ( XUSR_EMPNO
+        , XUSR_AUTH_KND
+        , XUSR_NAME
+        , XUSR_EN_NAME
+        , XUSR_GNRL_AREA
+        , XUSR_PLAC_WORK
+        , XUSR_BSNS_DEPT
+        , XUSR_DEPT_CODE
+        , XUSR_DEPT_NAME
+        , XUSR_STEP_CODE
+        , XUSR_STEP_NAME
+        , XUSR_COST_CD
+        , XUSR_COST_NM
+        , XUSR_MAIL_ADR
+        , XUSR_DEPT_KND
+        , XUSR_CNFM_AUTH
+        , XUSR_ALL_AUTH
+        , XUSR_WORK_AUTH
+        , XUSR_APLY_FLAG
+        , XUSR_APLY_DATE
+        , XUSR_PSWD
+        , XUSR_PSWD_DATE
+        , XUSR_BSNS_DEPT2
+        , XUSR_BSNS_DEPT3
+        , XUSR_DEPT_CODE2
+        , XUSR_DEPT_CODE3
+        , XUSR_RETR_FLAG
+        , XUSR_TEL_NO
+        , XUSR_ENTR_EMPNO
+        , XUSR_UPDT_EMPNO
+        , XUSR_ENTR_DATE
+        , XUSR_UPDT_DATE
+        , XUSR_WORK_PHONE_NO
+        , XUSR_BENEFIT_PLAN_CD
+        , XUSR_BENEFIT_PLAN_NM
+        , XUSR_WORK_SCHEDULE_CD
+        , XUSR_WORK_SCHEDULE_NM
+        , XUSR_STREET
+        , XUSR_HOUSE
+        , XUSR_APTMT
+        , XUSR_CITY
+        , XUSR_DISTRICT
+        , XUSR_POSTAL_CODE
+        , XUSR_ADDR
+        , XUSR_SEX
+        , XUSR_PSWD_KEY
+        , locale
+	    )
+	    SELECT   XUSR_EMPNO
+		       , XUSR_AUTH_KND
+		       , XUSR_NAME
+		       , XUSR_EN_NAME
+		       , XUSR_GNRL_AREA
+		       , XUSR_PLAC_WORK
+		       , XUSR_BSNS_DEPT
+		       , XUSR_DEPT_CODE
+		       , XUSR_DEPT_NAME
+		       , XUSR_STEP_CODE
+		       , XUSR_STEP_NAME
+		       , XUSR_COST_CD
+		       , XUSR_COST_NM
+		       , XUSR_MAIL_ADR
+		       , XUSR_DEPT_KND
+		       , XUSR_CNFM_AUTH
+		       , XUSR_ALL_AUTH
+		       , XUSR_WORK_AUTH
+		       , XUSR_APLY_FLAG
+		       , XUSR_APLY_DATE
+		       , XUSR_PSWD
+		       , XUSR_PSWD_DATE
+		       , XUSR_BSNS_DEPT2
+		       , XUSR_BSNS_DEPT3
+		       , XUSR_DEPT_CODE2
+		       , XUSR_DEPT_CODE3
+		       , XUSR_RETR_FLAG
+		       , XUSR_TEL_NO
+		       , XUSR_ENTR_EMPNO
+		       , XUSR_UPDT_EMPNO
+		       , XUSR_ENTR_DATE
+		       , XUSR_UPDT_DATE
+		       , XUSR_WORK_PHONE_NO
+		       , XUSR_BENEFIT_PLAN_CD
+		       , XUSR_BENEFIT_PLAN_NM
+		       , XUSR_WORK_SCHEDULE_CD
+		       , XUSR_WORK_SCHEDULE_NM
+		       , XUSR_STREET
+		       , XUSR_HOUSE
+		       , XUSR_APTMT
+		       , XUSR_CITY
+		       , XUSR_DISTRICT
+		       , XUSR_POSTAL_CODE
+		       , XUSR_ADDR
+		       , XUSR_SEX
+		       , XUSR_PSWD_KEY
+		       , locale
+	      FROM   BGAB_GASCZ002$corp_cd$
+    </insert>
+
+    <insert id="insertUserInfoByExcelUpload" parameterClass="bgabGascz002Dto">
+	    /*insertUserInfoByExcelUpload*/
+	    INSERT   INTO BGAB_GASCZ002$corp_cd$
+	    ( XUSR_EMPNO
+        , XUSR_AUTH_KND
+        , XUSR_NAME
+        , XUSR_EN_NAME
+        , XUSR_PLAC_WORK
+        , XUSR_DEPT_CODE
+        , XUSR_DEPT_NAME
+        , XUSR_STEP_CODE
+        , XUSR_STEP_NAME
+        , XUSR_MAIL_ADR
+        , XUSR_DEPT_KND
+        , XUSR_CNFM_AUTH
+        , XUSR_WORK_AUTH
+        , XUSR_PSWD
+        , XUSR_PSWD_DATE
+        , XUSR_RETR_FLAG
+        , XUSR_TEL_NO
+        , XUSR_ENTR_EMPNO
+        , XUSR_UPDT_EMPNO
+        , XUSR_ENTR_DATE
+        , XUSR_UPDT_DATE
+        , XUSR_WORK_PHONE_NO
+        , XUSR_POSTAL_CODE
+        , XUSR_ADDR
+        , XUSR_SEX
+        , XUSR_APLY_DATE
+        , locale
+	    )
+	    VALUES
+	    ( #xusr_empno#
+        , #xusr_auth_knd#
+        , #xusr_name#
+        , #xusr_en_name#
+        , '0'
+        , #xusr_dept_code#
+        , #xusr_dept_name#
+        , #xusr_step_code#
+        , #xusr_step_name#
+        , #xusr_mail_adr#
+        , '1'
+        , '1'
+        , #xusr_work_auth#
+        , #xusr_pswd#
+        , #xusr_pswd_date#
+        , #xusr_retr_flag#
+        , #xusr_tel_no#
+        , #xusr_entr_empno#
+        , #xusr_updt_empno#
+        , SYSDATE
+        , SYSDATE
+        , #xusr_work_phone_no#
+        , #xusr_postal_code#
+        , #xusr_addr#
+        , #xusr_sex#
+        , #xusr_aply_date#
+        , #locale#
+	    )
+    </insert>
+
+	<delete id="deleteDeptInfoTempByExcelUpload" parameterClass="bgabGascz003Dto">
+	    /*deleteDeptInfoTempByExcelUpload*/
+	    DELETE
+	      FROM   BGAB_GASCZ003_TEMP
+    </delete>
+
+	<delete id="deleteDeptInfoByExcelUpload" parameterClass="bgabGascz003Dto">
+	    /*deleteDeptInfoByExcelUpload*/
+	    DELETE
+	      FROM   BGAB_GASCZ003$corp_cd$
+    </delete>
+
+    <insert id="insertDeptInfoToDeptInfoTemp" parameterClass="bgabGascz003Dto">
+	    /*insertDeptInfoToDeptInfoTemp*/
+	    INSERT   INTO BGAB_GASCZ003_TEMP
+	    ( XORG_ORGA_C
+		, XORG_ORGA_E
+		, XORG_ORGA_CSNER
+		, XORG_CLOS_D
+		, XORG_PLAC_C
+		, XORG_RSPS_I
+		, XORG_RSPS_M
+		, XORG_RSPS_CRANK
+		, XORG_RSPS_MRANK
+		, XORG_CRD_I
+		, XORG_CRD_M
+		, XORG_COMPANY
+		, XORG_DEPT_LV
+		, XORG_DEPT_LV_NM
+		, CREATETIME
+		, UPDATETIME
+	    )
+	    SELECT   XORG_ORGA_C
+			   , XORG_ORGA_E
+			   , XORG_ORGA_CSNER
+			   , XORG_CLOS_D
+			   , XORG_PLAC_C
+			   , XORG_RSPS_I
+			   , XORG_RSPS_M
+			   , XORG_RSPS_CRANK
+			   , XORG_RSPS_MRANK
+			   , XORG_CRD_I
+			   , XORG_CRD_M
+			   , XORG_COMPANY
+			   , XORG_DEPT_LV
+			   , XORG_DEPT_LV_NM
+			   , CREATETIME
+			   , UPDATETIME
+	      FROM   BGAB_GASCZ003$corp_cd$
+    </insert>
+
+    <insert id="insertDeptInfoByExcelUpload" parameterClass="bgabGascz003Dto">
+	    /*insertDeptInfoByExcelUpload*/
+	    INSERT   INTO BGAB_GASCZ003$corp_cd$
+	    ( XORG_ORGA_C
+		, XORG_ORGA_E
+		, XORG_ORGA_CSNER
+		, XORG_CLOS_D
+		, XORG_PLAC_C
+		, XORG_RSPS_I
+		, XORG_RSPS_M
+		, XORG_RSPS_CRANK
+		, XORG_RSPS_MRANK
+		, XORG_COMPANY
+		, XORG_DEPT_LV
+		, CREATETIME
+		, UPDATETIME
+	    )
+	    VALUES
+	    ( #xorg_orga_c#
+        , #xorg_orga_e#
+        , #xorg_orga_csner#
+        , #xorg_clos_d#
+        , '0'
+        , #xorg_rsps_i#
+        , #xorg_rsps_m#
+        , #xorg_rsps_crank#
+        , #xorg_rsps_mrank#
+        , #corp_cd#
+        , #xorg_dept_lv#
+        , SYSDATE
+        , SYSDATE
+	    )
+    </insert>
+
+
+
+    <select id="selectXst30InfoListCount" parameterClass="bgabGascz030Dto" resultClass="int">
+    	/* system.xml :: selectXst30InfoListCount */
+    	SELECT   COUNT(*)
+    	  FROM   BGAB_GASCZ030 A
+		  LEFT   OUTER JOIN  (SELECT   *
+		    	                FROM   BGAB_GASCZ005$corp_cd$
+						       WHERE   XCOD_KND = 'XST30'
+						       		   AND locale = #locale#
+						 	 ) G
+			ON   A.PGS_ST_CD = G.XCOD_CODE
+		 WHERE   1  = 1
+	     <isNotEmpty property="strt_ymd">
+	       AND   TO_CHAR( A.REG_YMD,'YYYYMMDD' ) <![CDATA[>=]]> #strt_ymd#
+	     </isNotEmpty>
+	     <isNotEmpty property="fnh_ymd">
+	       AND   TO_CHAR( A.REG_YMD,'YYYYMMDD' ) <![CDATA[<=]]> #fnh_ymd#
+	     </isNotEmpty>
+	     <isNotEmpty property="corp_nm">
+	       AND   A.CORP_NM LIKE '%' || #corp_nm# || '%'
+	     </isNotEmpty>
+	     <isNotEmpty property="req_user_nm">
+	       AND   A.REQ_USER_NM LIKE '%' || #req_user_nm# || '%'
+	     </isNotEmpty>
+	     <isNotEmpty property="pgs_st_cd">
+	       AND   A.PGS_ST_CD = #pgs_st_cd#
+	     </isNotEmpty>
+    </select>
+
+    <select id="selectXst30InfoList" parameterClass="bgabGascz030Dto" resultClass="bgabGascz030Dto">
+    	/* system.xml :: selectXst30InfoList */
+    	SELECT *
+    	FROM
+    	(
+    		SELECT   rownum rnum, PAGE.*
+    	  	FROM
+    	  	(
+    	  		SELECT   Z30.CORP_CD
+					      ,Z30.CORP_NM
+					      , TO_CHAR(Z30.REG_YMD,'YYYY-MM-DD') AS REG_YMD
+				          , Z30.PGS_ST_CD
+				          , G.XCOD_HNAME AS PGS_ST_NM
+					      ,Z30.REQ_USER_NM
+					      ,Z30.REQ_CONTACT
+					      ,Z30.REQ_EMAIL
+					      ,Z31.TASK01
+					      ,Z31.TASK02
+					      ,Z31.TASK03
+					      ,Z31.TASK04
+					      ,Z31.TASK05
+					      ,Z31.TASK06
+					      ,Z31.TASK07
+					      ,Z31.TASK08
+					      ,Z31.TASK09
+					      ,Z31.TASK10
+					      ,Z31.TASK11
+					      ,Z31.TASK12
+					      ,Z31.TASK13
+					      ,Z31.TASK14
+					      ,Z31.TASK15
+					      ,Z31.TASK16
+					      ,Z31.TASK17
+					      ,Z31.TASK18
+					      ,Z31.TASK19
+					      ,Z31.TASK20
+					      ,Z31.TASK30
+					      ,Z31.TASK31
+					      ,Z30.INP_YMD
+					      ,Z30.IPE_EENO
+					      ,Z30.MDFY_YMD
+					      ,Z30.UPDR_EENO
+					      ,Z30.VEN_CD
+					      ,Z30.LOCALE
+					FROM BGAB_GASCZ030 Z30
+					LEFT OUTER JOIN
+					(
+						SELECT CORP_CD
+							,MAX(DECODE(TASK_GUBUN,'001',DECODE(TEMP_APPR_USE_YN,NULL,APPR_USE_YN,TEMP_APPR_USE_YN),NULL)) AS TASK01
+					        ,MAX(DECODE(TASK_GUBUN,'002',DECODE(TEMP_APPR_USE_YN,NULL,APPR_USE_YN,TEMP_APPR_USE_YN),NULL)) AS TASK02
+					        ,MAX(DECODE(TASK_GUBUN,'003',DECODE(TEMP_APPR_USE_YN,NULL,APPR_USE_YN,TEMP_APPR_USE_YN),NULL)) AS TASK03
+					        ,MAX(DECODE(TASK_GUBUN,'004',DECODE(TEMP_APPR_USE_YN,NULL,APPR_USE_YN,TEMP_APPR_USE_YN),NULL)) AS TASK04
+					        ,MAX(DECODE(TASK_GUBUN,'007',DECODE(TEMP_APPR_USE_YN,NULL,APPR_USE_YN,TEMP_APPR_USE_YN),NULL)) AS TASK05
+					        ,MAX(DECODE(TASK_GUBUN,'009',DECODE(TEMP_APPR_USE_YN,NULL,APPR_USE_YN,TEMP_APPR_USE_YN),NULL)) AS TASK06
+					        ,MAX(DECODE(TASK_GUBUN,'010',DECODE(TEMP_APPR_USE_YN,NULL,APPR_USE_YN,TEMP_APPR_USE_YN),NULL)) AS TASK07
+					        ,MAX(DECODE(TASK_GUBUN,'012',DECODE(TEMP_APPR_USE_YN,NULL,APPR_USE_YN,TEMP_APPR_USE_YN),NULL)) AS TASK08
+					        ,MAX(DECODE(TASK_GUBUN,'014',DECODE(TEMP_APPR_USE_YN,NULL,APPR_USE_YN,TEMP_APPR_USE_YN),NULL)) AS TASK09
+					        ,MAX(DECODE(TASK_GUBUN,'016',DECODE(TEMP_APPR_USE_YN,NULL,APPR_USE_YN,TEMP_APPR_USE_YN),NULL)) AS TASK10
+					        ,MAX(DECODE(TASK_GUBUN,'017',DECODE(TEMP_APPR_USE_YN,NULL,APPR_USE_YN,TEMP_APPR_USE_YN),NULL)) AS TASK11
+					        ,MAX(DECODE(TASK_GUBUN,'018',DECODE(TEMP_APPR_USE_YN,NULL,APPR_USE_YN,TEMP_APPR_USE_YN),NULL)) AS TASK12
+					        ,MAX(DECODE(TASK_GUBUN,'020',DECODE(TEMP_APPR_USE_YN,NULL,APPR_USE_YN,TEMP_APPR_USE_YN),NULL)) AS TASK13
+					        ,MAX(DECODE(TASK_GUBUN,'021',DECODE(TEMP_APPR_USE_YN,NULL,APPR_USE_YN,TEMP_APPR_USE_YN),NULL)) AS TASK14
+					        ,MAX(DECODE(TASK_GUBUN,'008',DECODE(TEMP_APPR_USE_YN,NULL,APPR_USE_YN,TEMP_APPR_USE_YN),NULL)) AS TASK15
+					        ,MAX(DECODE(TASK_GUBUN,'011',DECODE(TEMP_APPR_USE_YN,NULL,APPR_USE_YN,TEMP_APPR_USE_YN),NULL)) AS TASK16
+					        ,MAX(DECODE(TASK_GUBUN,'013',DECODE(TEMP_APPR_USE_YN,NULL,APPR_USE_YN,TEMP_APPR_USE_YN),NULL)) AS TASK17
+					        ,MAX(DECODE(TASK_GUBUN,'022',DECODE(TEMP_APPR_USE_YN,NULL,APPR_USE_YN,TEMP_APPR_USE_YN),NULL)) AS TASK18
+					        ,MAX(DECODE(TASK_GUBUN,'023',DECODE(TEMP_APPR_USE_YN,NULL,APPR_USE_YN,TEMP_APPR_USE_YN),NULL)) AS TASK19
+					        ,MAX(DECODE(TASK_GUBUN,'024',DECODE(TEMP_APPR_USE_YN,NULL,APPR_USE_YN,TEMP_APPR_USE_YN),NULL)) AS TASK20
+					        ,MAX(DECODE(TASK_GUBUN,'030',DECODE(TEMP_APPR_USE_YN,NULL,APPR_USE_YN,TEMP_APPR_USE_YN),NULL)) AS TASK30
+					        ,MAX(DECODE(TASK_GUBUN,'031',DECODE(TEMP_APPR_USE_YN,NULL,APPR_USE_YN,TEMP_APPR_USE_YN),NULL)) AS TASK31
+					FROM BGAB_GASCZ031
+					GROUP BY CORP_CD
+					) Z31
+					ON Z30.CORP_CD = Z31.CORP_CD
+					LEFT   OUTER JOIN  (SELECT   *
+					                      FROM   BGAB_GASCZ005$corp_cd$
+					                     WHERE   XCOD_KND = 'XST30'
+					                     		 AND locale = #locale#
+					                   ) G
+					ON   Z30.PGS_ST_CD = G.XCOD_CODE
+			     WHERE   1  = 1
+			     <isNotEmpty property="strt_ymd">
+			       AND   TO_CHAR( Z30.REG_YMD,'YYYYMMDD' ) <![CDATA[>=]]> #strt_ymd#
+			     </isNotEmpty>
+			     <isNotEmpty property="fnh_ymd">
+			       AND   TO_CHAR( Z30.REG_YMD,'YYYYMMDD' ) <![CDATA[<=]]> #fnh_ymd#
+			     </isNotEmpty>
+			     <isNotEmpty property="corp_nm">
+			       AND   Z30.CORP_NM LIKE '%' || #corp_nm# || '%'
+			     </isNotEmpty>
+			     <isNotEmpty property="req_user_nm">
+			       AND   Z30.REQ_USER_NM LIKE '%' || #req_user_nm# || '%'
+			     </isNotEmpty>
+			     <isNotEmpty property="pgs_st_cd">
+			       AND   Z30.PGS_ST_CD = #pgs_st_cd#
+			     </isNotEmpty>
+			     ORDER BY Z30.REG_YMD DESC
+    	      ) PAGE
+    	)K
+    	 WHERE   RNUM BETWEEN #startRow# AND #endRow#
+    </select>
+
+    <select id="selectMenuInfo" parameterClass="bgabGascz030Dto" resultClass="bgabGascz030Dto">
+    	/* system.xml :: selectMenuInfo */
+    	SELECT *
+    	FROM
+    	(
+    		SELECT   rownum rnum, PAGE.*
+    	  	FROM
+    	  	(
+    	  		SELECT   Z30.CORP_CD
+					      ,Z30.CORP_NM
+					      , TO_CHAR( Z30.REG_YMD,'YYYY-MM-DD' ) AS REG_YMD
+				          , Z30.PGS_ST_CD
+				          , G.XCOD_HNAME AS PGS_ST_NM
+					      ,Z30.REQ_USER_NM
+					      ,Z30.REQ_CONTACT
+					      ,Z30.REQ_EMAIL
+					      ,Z31.TASK01
+					      ,Z31.TASK02
+					      ,Z31.TASK03
+					      ,Z31.TASK04
+					      ,Z31.TASK05
+					      ,Z31.TASK06
+					      ,Z31.TASK07
+					      ,Z31.TASK08
+					      ,Z31.TASK09
+					      ,Z31.TASK10
+					      ,Z31.TASK11
+					      ,Z31.TASK12
+					      ,Z31.TASK13
+					      ,Z31.TASK14
+					      ,Z31.TASK15
+					      ,Z31.TASK16
+					      ,Z31.TASK17
+					      ,Z31.TASK18
+					      ,Z31.TASK19
+					      ,Z31.TASK20
+					      ,Z31.TASK30
+					      ,Z31.TASK31
+					      ,Z30.INP_YMD
+					      ,Z30.IPE_EENO
+					      ,Z30.MDFY_YMD
+					      ,Z30.UPDR_EENO
+					      ,Z30.VEN_CD
+					FROM BGAB_GASCZ030 Z30
+					LEFT OUTER JOIN
+					(
+						SELECT CORP_CD
+							,MAX(DECODE(TASK_GUBUN,'001',APPR_USE_YN,NULL)) AS TASK01
+					        ,MAX(DECODE(TASK_GUBUN,'002',APPR_USE_YN,NULL)) AS TASK02
+					        ,MAX(DECODE(TASK_GUBUN,'003',APPR_USE_YN,NULL)) AS TASK03
+					        ,MAX(DECODE(TASK_GUBUN,'004',APPR_USE_YN,NULL)) AS TASK04
+					        ,MAX(DECODE(TASK_GUBUN,'007',APPR_USE_YN,NULL)) AS TASK05
+					        ,MAX(DECODE(TASK_GUBUN,'009',APPR_USE_YN,NULL)) AS TASK06
+					        ,MAX(DECODE(TASK_GUBUN,'010',APPR_USE_YN,NULL)) AS TASK07
+					        ,MAX(DECODE(TASK_GUBUN,'012',APPR_USE_YN,NULL)) AS TASK08
+					        ,MAX(DECODE(TASK_GUBUN,'014',APPR_USE_YN,NULL)) AS TASK09
+					        ,MAX(DECODE(TASK_GUBUN,'016',APPR_USE_YN,NULL)) AS TASK10
+					        ,MAX(DECODE(TASK_GUBUN,'017',APPR_USE_YN,NULL)) AS TASK11
+					        ,MAX(DECODE(TASK_GUBUN,'018',APPR_USE_YN,NULL)) AS TASK12
+					        ,MAX(DECODE(TASK_GUBUN,'020',APPR_USE_YN,NULL)) AS TASK13
+					        ,MAX(DECODE(TASK_GUBUN,'021',APPR_USE_YN,NULL)) AS TASK14
+					        ,MAX(DECODE(TASK_GUBUN,'008',APPR_USE_YN,NULL)) AS TASK15
+					        ,MAX(DECODE(TASK_GUBUN,'011',APPR_USE_YN,NULL)) AS TASK16
+					        ,MAX(DECODE(TASK_GUBUN,'013',APPR_USE_YN,NULL)) AS TASK17
+					        ,MAX(DECODE(TASK_GUBUN,'022',APPR_USE_YN,NULL)) AS TASK18
+					        ,MAX(DECODE(TASK_GUBUN,'023',APPR_USE_YN,NULL)) AS TASK19
+					        ,MAX(DECODE(TASK_GUBUN,'024',APPR_USE_YN,NULL)) AS TASK20
+					        ,MAX(DECODE(TASK_GUBUN,'030',APPR_USE_YN,NULL)) AS TASK30
+					        ,MAX(DECODE(TASK_GUBUN,'031',APPR_USE_YN,NULL)) AS TASK31
+					FROM BGAB_GASCZ031
+					GROUP BY CORP_CD
+					) Z31
+					ON Z30.CORP_CD = Z31.CORP_CD
+					LEFT   OUTER JOIN  (SELECT   *
+					                      FROM   BGAB_GASCZ005$corp_cd$
+					                     WHERE   XCOD_KND = 'XST30'
+					                     		 AND locale = #locale#
+					                   ) G
+					ON   Z30.PGS_ST_CD = G.XCOD_CODE
+			     WHERE   1  = 1
+			     <isNotEmpty property="corp_cd">
+			     	AND Z30.CORP_CD = #corp_cd#
+<!-- 			       AND   Z30.CORP_CD LIKE '%' || #corp_cd# || '%' -->
+			     </isNotEmpty>
+			  ) PAGE
+    	)K
+    </select>
+
+    <update id="updateXst30PgsStCd" parameterClass="bgabGascz030Dto">
+    	/* system.xml :: updateXst30PgsStCd */
+    	UPDATE   BGAB_GASCZ030
+    	   SET   PGS_ST_CD = #pgs_st_cd#
+    	       , MDFY_YMD  = SYSDATE
+			   , UPDR_EENO = #updr_eeno#
+    	 WHERE   CORP_CD = #corp_cd#
+   	</update>
+
+   	<update id="updateXst30ToApprUseFlag" parameterClass="bgabGascz030Dto">
+   		/* system.xml :: updateXst30ToApprUseFlag */
+   		UPDATE BGAB_GASCZ031 SET
+   			  APPR_USE_YN      = TEMP_APPR_USE_YN
+   			, TEMP_APPR_USE_YN = null
+   		WHERE CORP_CD = #corp_cd#
+   	</update>
+
+   	 <insert id="insertUserInfo" parameterClass="bgabGascz002Dto">
+	    /*insertUserInfo*/
+	    INSERT   INTO BGAB_GASCZ002$corp_cd$
+	    ( XUSR_EMPNO
+        , XUSR_AUTH_KND
+        , XUSR_NAME
+        , XUSR_EN_NAME
+        , XUSR_GNRL_AREA
+        , XUSR_PLAC_WORK
+        , XUSR_BSNS_DEPT
+        , XUSR_DEPT_CODE
+        , XUSR_DEPT_NAME
+        , XUSR_STEP_CODE
+        , XUSR_STEP_NAME
+        , XUSR_COST_CD
+        , XUSR_COST_NM
+        , XUSR_MAIL_ADR
+        , XUSR_DEPT_KND
+        , XUSR_CNFM_AUTH
+        , XUSR_ALL_AUTH
+        , XUSR_WORK_AUTH
+        , XUSR_APLY_FLAG
+        , XUSR_APLY_DATE
+        , XUSR_PSWD
+        , XUSR_PSWD_DATE
+        , XUSR_BSNS_DEPT2
+        , XUSR_BSNS_DEPT3
+        , XUSR_DEPT_CODE2
+        , XUSR_DEPT_CODE3
+        , XUSR_RETR_FLAG
+        , XUSR_TEL_NO
+        , XUSR_ENTR_EMPNO
+        , XUSR_UPDT_EMPNO
+        , XUSR_ENTR_DATE
+        , XUSR_UPDT_DATE
+        , XUSR_WORK_PHONE_NO
+        , XUSR_BENEFIT_PLAN_CD
+        , XUSR_BENEFIT_PLAN_NM
+        , XUSR_WORK_SCHEDULE_CD
+        , XUSR_WORK_SCHEDULE_NM
+        , XUSR_STREET
+        , XUSR_HOUSE
+        , XUSR_APTMT
+        , XUSR_CITY
+        , XUSR_DISTRICT
+        , XUSR_POSTAL_CODE
+        , XUSR_ADDR
+        , XUSR_SEX
+        , LOCALE
+	    )
+	    VALUES
+	    ( #xusr_empno#
+        , #xusr_auth_knd#
+        , #xusr_name#
+        , #xusr_en_name#
+        , #xusr_gnrl_area#
+        , #xusr_plac_work#
+        , #xusr_bsns_dept#
+        , #xusr_dept_code#
+        , #xusr_dept_name#
+        , #xusr_step_code#
+        , #xusr_step_name#
+        , #xusr_cost_cd#
+        , #xusr_cost_nm#
+        , #xusr_mail_adr#
+        , #xusr_dept_knd#
+        , #xusr_cnfm_auth#
+        , #xusr_all_auth#
+        , #xusr_work_auth#
+        , #xusr_aply_flag#
+        , #xusr_aply_date#
+        , #xusr_pswd#
+        , #xusr_pswd_date#
+        , #xusr_bsns_dept2#
+        , #xusr_bsns_dept3#
+        , #xusr_dept_code2#
+        , #xusr_dept_code3#
+        , #xusr_retr_flag#
+        , #xusr_tel_no#
+        , #xusr_entr_empno#
+        , #xusr_updt_empno#
+        , SYSDATE
+        , SYSDATE
+        , #xusr_work_phone_no#
+        , #xusr_benefit_plan_cd#
+        , #xusr_benefit_plan_nm#
+        , #xusr_work_schedule_cd#
+        , #xusr_work_schedule_nm#
+        , #xusr_street#
+        , #xusr_house#
+        , #xusr_aptmt#
+        , #xusr_city#
+        , #xusr_district#
+        , #xusr_postal_code#
+        , #xusr_addr#
+        , #xusr_sex#
+        , #locale#
+	    )
+    </insert>
+
+	<insert id="insertApprovalUseYn" parameterClass="bgabGascz031Dto">
+	    /*insertApprovalUseYn*/
+	    INSERT   INTO BGAB_GASCZ031
+	    ( CORP_CD
+	    , TASK_GUBUN
+	    , APPR_USE_YN
+	    , INP_YMD
+	    , IPE_EENO
+	    , MDFY_YMD
+	    , UPDR_EENO
+	    )
+        VALUES
+        ( #corp_cd#
+        , #task_gubun#
+        , #appr_use_yn#
+        , SYSDATE
+        , #ipe_eeno#
+        , SYSDATE
+        , #updr_eeno#
+        )
+    </insert>
+
+    <update id="updateMenuStatus" parameterClass="bgabGascz031Dto">
+    	/* updateMenuStatus */
+    	UPDATE BGAB_GASCZ031 SET
+    		  APPR_USE_YN = #appr_use_yn#
+    		, MDFY_YMD    = SYSDATE
+    		, UPDR_EENO   = #updr_eeno#
+    	WHERE CORP_CD    = #corp_cd#
+    	  AND TASK_GUBUN = #task_gubun#
+    </update>
+
+    <select id="selectUserList" resultClass="BgabGascz002Dto" parameterClass="BgabGascz002Dto">
+		/*selectUserList*/
+		SELECT XUSR_EMPNO
+			  ,XUSR_AUTH_KND
+			  ,XUSR_NAME
+			  ,XUSR_EN_NAME
+			  ,XUSR_GNRL_AREA
+			  ,XUSR_PLAC_WORK
+			  ,XUSR_BSNS_DEPT
+			  ,XUSR_DEPT_CODE
+			  ,XUSR_DEPT_NAME
+			  ,XUSR_STEP_CODE
+			  ,XUSR_STEP_NAME
+			  ,XUSR_COST_CD
+			  ,XUSR_COST_NM
+			  ,XUSR_MAIL_ADR
+			  ,XUSR_DEPT_KND
+			  ,XUSR_CNFM_AUTH
+			  ,XUSR_ALL_AUTH
+			  ,XUSR_WORK_AUTH
+			  ,XUSR_APLY_FLAG
+			  ,XUSR_APLY_DATE
+			  ,XUSR_PSWD
+			  ,XUSR_PSWD_DATE
+			  ,XUSR_BSNS_DEPT2
+			  ,XUSR_BSNS_DEPT3
+			  ,XUSR_DEPT_CODE2
+			  ,XUSR_DEPT_CODE3
+			  ,XUSR_RETR_FLAG
+			  ,XUSR_TEL_NO
+			  ,XUSR_ENTR_EMPNO
+			  ,XUSR_UPDT_EMPNO
+			  ,XUSR_ENTR_DATE
+			  ,XUSR_UPDT_DATE
+			  ,XUSR_WORK_PHONE_NO
+			  ,XUSR_BENEFIT_PLAN_CD
+			  ,XUSR_BENEFIT_PLAN_NM
+			  ,XUSR_WORK_SCHEDULE_CD
+			  ,XUSR_WORK_SCHEDULE_NM
+			  ,XUSR_STREET
+			  ,XUSR_HOUSE
+			  ,XUSR_APTMT
+			  ,XUSR_CITY
+			  ,XUSR_DISTRICT
+			  ,XUSR_POSTAL_CODE
+			  ,XUSR_ADDR
+			  ,XUSR_SEX
+			  ,XUSR_PSWD_KEY
+			  ,locale
+		FROM BGAB_GASCZ002$corp_cd$
+	</select>
+
+    <select id="selectDeptInfoList" resultClass="bgabGascz003Dto" parameterClass="bgabGascz003Dto">
+		/*selectDeptInfoList*/
+		SELECT XORG_ORGA_C
+				,XORG_ORGA_E
+				,XORG_ORGA_CSNER
+				,XORG_CLOS_D
+				,XORG_PLAC_C
+				,XORG_RSPS_I
+				,XORG_RSPS_M
+				,XORG_RSPS_CRANK
+				,XORG_RSPS_MRANK
+				,XORG_CRD_I
+				,XORG_CRD_M
+				,XORG_COMPANY
+				,XORG_DEPT_LV
+				,XORG_DEPT_LV_NM
+				,CREATETIME
+				,UPDATETIME
+		FROM BGAB_GASCZ003$corp_cd$
+	</select>
+
+	<delete id="deleteAprvInfo" parameterClass="bgabGascz003Dto">
+    	/* system.xml :: deleteAprvInfo */
+    	DELETE FROM  BGAB_GASCZ008$corp_cd$
+   	</delete>
+
+   	 <insert id="insertAprvInfo" parameterClass="bgabGascz008Dto">
+	    /*insertAprvInfo*/
+	    INSERT INTO BGAB_GASCZ008$corp_cd$(
+			ORGA_C				,
+			ORGA_E				,
+			EMPNO				,
+			EMPNO_ORG			,
+			NAME				,
+			LEVL_C				,
+			CALL_M				,
+			RANK_C				,
+			RANK_E				,
+			ORGA_CSNER			,
+			SUBT_FLAG			,
+			SUBT_FROM			,
+			SUBT_TO				,
+			INP_YMD				,
+			IPE_EENO			,
+			MDFY_YMD			,
+			UPDR_EENO
+		) VALUES(
+			#orga_c#			,
+			#orga_e#			,
+			#empno#				,
+			#empno_org#			,
+			#name#				,
+			TO_NUMBER(DECODE(NVL(#levl_c#, ''),'',1,#levl_c#)),
+			'Manager'			,
+			#rank_c#			,
+			#rank_e#			,
+			NVL(#orga_csner#,'')		,
+			''					,
+			''					,
+			''					,
+			SYSDATE			,
+			'BATCH'				,
+			SYSDATE			,
+			'BATCH'
+		)
+	 </insert>
+
+	<update id="updateApprovalUseYn" parameterClass="bgabGascz031Dto">
+	    /*updateApprovalUseYn*/
+	    UPDATE   BGAB_GASCZ031$corp_cd$
+	       SET   APPR_USE_YN = #appr_use_yn#
+    	       , MDFY_YMD  = SYSDATE
+			   , UPDR_EENO = #updr_eeno#
+	     WHERE   CORP_CD = #corp_cd#
+	       AND   TASK_GUBUN = #task_gubun#
+    </update>
+
+	<select id="selectApprovalUseYn" parameterClass="bgabGascz031Dto" resultClass="bgabGascz031Dto">
+	    /*selectApprovalUseYn*/
+    </select>
+
+
+	 <select id="selectGridToDeptInfoManagementCount" parameterClass="bgabGascz003Dto" resultClass="String">
+    	/* system.xml :: selectGridToDeptInfoManagementCount */
+    	SELECT   COUNT(*)
+    	FROM   BGAB_GASCZ003$corp_cd$ A
+		WHERE   1  = 1
+	     <isNotEmpty property="xorg_orga_e">
+	       AND   A.XORG_ORGA_E LIKE '%' || #xorg_orga_e# || '%'
+	     </isNotEmpty>
+    </select>
+
+    <select id="selectGridToDeptInfoManagementList" parameterClass="bgabGascz003Dto" resultClass="bgabGascz003Dto">
+    	/* system.xml :: selectGridToDeptInfoManagementList */
+    	SELECT *
+    	FROM
+    	(
+    		SELECT   rownum rnum, PAGE.*
+    	  	FROM   (SELECT   A.XORG_ORGA_C
+							,A.XORG_ORGA_E
+							,A.XORG_ORGA_CSNER
+							,A.XORG_CLOS_D
+							,A.XORG_PLAC_C
+							,A.XORG_RSPS_I
+							,A.XORG_RSPS_M
+							,A.XORG_RSPS_CRANK
+							,A.XORG_RSPS_MRANK
+							,A.XORG_CRD_I
+							,A.XORG_CRD_M
+							,A.XORG_COMPANY
+							,A.XORG_DEPT_LV
+							,A.XORG_DEPT_LV_NM
+							,TO_CHAR( TO_DATE( A.CREATETIME,'YYYY-MM-DD' ), 'yyyy-mm-dd' ) AS CREATETIME
+							,TO_CHAR( TO_DATE( A.UPDATETIME,'YYYY-MM-DD' ), 'yyyy-mm-dd' ) AS UPDATETIME
+							,A.XORG_ORGA_C AS XORG_ORGA_C_OLD
+				    FROM   BGAB_GASCZ003$corp_cd$ A
+			     WHERE   1  = 1
+			     <isNotEmpty property="xorg_orga_e">
+			       AND   A.XORG_ORGA_E LIKE '%' || #xorg_orga_e# || '%'
+			     </isNotEmpty>
+			     ORDER BY A.XORG_DEPT_LV ASC, XORG_ORGA_C ASC
+    	      ) PAGE
+    	)K
+    	 WHERE   RNUM BETWEEN #startRow# AND #endRow#
+    </select>
+
+    	<insert id="insertListToDeptInfoManagement" parameterClass="bgabGascz003Dto">
+   		/* insertListToDeptInfoManagement */
+   		INSERT INTO BGAB_GASCZ003$corp_cd$(
+   			 	XORG_ORGA_C
+				,XORG_ORGA_E
+				,XORG_ORGA_CSNER
+				,XORG_CLOS_D
+				,XORG_PLAC_C
+				,XORG_RSPS_I
+				,XORG_RSPS_M
+				,XORG_RSPS_CRANK
+				,XORG_RSPS_MRANK
+				,XORG_CRD_I
+				,XORG_CRD_M
+				,XORG_COMPANY
+				,XORG_DEPT_LV
+				,XORG_DEPT_LV_NM
+				,CREATETIME
+				,UPDATETIME
+   		)VALUES(
+   			  	#xorg_orga_c#
+				,#xorg_orga_e#
+				,#xorg_orga_csner#
+				,#xorg_clos_d#
+				,'0'
+				,#xorg_rsps_i#
+				,#xorg_rsps_m#
+				,#xorg_rsps_crank#
+				,#xorg_rsps_mrank#
+				,''
+				,''
+				,#corp_cd#
+				,#xorg_dept_lv#
+				,''
+				,SYSDATE
+				,SYSDATE
+   		)
+	</insert>
+
+	<update id="updateListToDeptInfoManagement" parameterClass="bgabGascz003Dto">
+   		/* updateListToDeptInfoManagement */
+   		UPDATE BGAB_GASCZ003$corp_cd$
+   		   SET XORG_ORGA_C			= #xorg_orga_c#
+				,XORG_ORGA_E		= #xorg_orga_e#
+				,XORG_ORGA_CSNER	= #xorg_orga_csner#
+				,XORG_CLOS_D		= #xorg_clos_d#
+				,XORG_RSPS_I		= #xorg_rsps_i#
+				,XORG_RSPS_M		= #xorg_rsps_m#
+				,XORG_RSPS_CRANK	= #xorg_rsps_crank#
+				,XORG_RSPS_MRANK	= #xorg_rsps_mrank#
+				,XORG_DEPT_LV		= #xorg_dept_lv#
+   		 WHERE xorg_orga_c = #xorg_orga_c_old#
+	</update>
+
+	<delete id="deleteListToDeptInfoManagement" parameterClass="bgabGascz003Dto">
+   		/* deleteListToDeptInfoManagement */
+   		DELETE FROM BGAB_GASCZ003$corp_cd$
+   		WHERE XORG_ORGA_C = #xorg_orga_c#
+	</delete>
+
+	<select id="selectApprToUseYn" resultClass="bgabGascz013Dto" parameterClass="bgabGascz013Dto">
+		/*selectApprToUseYn*/
+		SELECT USE_YN
+			   ,APP_LEVEL
+		FROM BGAB_GASCZ013$corp_cd$
+		WHERE APP_TYPE LIKE '%' || #app_type# || '%'
+	</select>
+
+
+
+
+
+
+
+
+	<select id="selectLogoMngrToFile" parameterClass="BgabGascZ033Dto" resultClass="BgabGascZ033Dto">
+		/* system.xml :: selectLogoMngrToFile */
+		SELECT CORP_CD
+			 , OGC_FIL_NM
+		FROM BGAB_GASCZ033
+		WHERE CORP_CD = #corp_cd#
+	</select>
+
+	<insert id="mergeLogoMngrToFile" parameterClass="BgabGascZ033Dto">
+		/* system.xml :: mergeLogoMngrToFile */
+	    MERGE INTO BGAB_GASCZ033 A
+	    USING DUAL
+	    ON (A.CORP_CD = #corp_cd#)
+	    WHEN MATCHED THEN
+			UPDATE SET
+			  OGC_FIL_NM  = #ogc_fil_nm#
+			, FIL_NM      = #fil_nm#
+			, FIL_MGN_QTY = #fil_mgn_qty#
+			, MDFY_YMD    = SYSDATE
+			, UPDR_EENO   = #updr_eeno#
+	    WHEN NOT MATCHED THEN
+	    INSERT (
+			  CORP_CD
+			, OGC_FIL_NM
+			, FIL_NM
+			, FIL_MGN_QTY
+			, INP_YMD
+			, IPE_EENO
+		) VALUES (
+			  #corp_cd#
+			, #ogc_fil_nm#
+			, #fil_nm#
+			, #fil_mgn_qty#
+			, SYSDATE
+			, #ipe_eeno#
+		)
+	</insert>
+	
+	<update id="insertXst35Hist" parameterClass="bgabGascz035Dto">
+		/* system.xml :: insertXst35Hist */
+		INSERT INTO BGAB_GASCZ035 (
+		       IDX
+		     , CORP_CD
+			 , CORP_NM
+			 , PAY_AMT
+			 , USE_CNT
+			 , VEN_CD
+			 , REG_USER_NM
+			 , REQ_CONTACT
+			 , REQ_EMAIL
+			 , BUY_DATE
+			 , INP_YMD
+			 , IPE_EENO
+			 , MDFY_YMD
+			 , UPDR_EENO
+		) VALUES (
+		       SEQ_BGAB_GASCZ035.NEXTVAL
+		     , #corp_cd#
+			 , #corp_nm#
+			 , #pay_amt#
+			 , #use_cnt#
+			 , #ven_cd#
+			 , #req_user_nm#
+			 , #req_contact#
+			 , #req_email#
+			 , #buy_date#
+			 , SYSDATE
+			 , #ipe_eeno#
+			 , SYSDATE
+			 , #updr_eeno#		
+		)
+	</update>
+	
+	<!-- 라이선스 구매이력 총건수 -->
+	<select id="selectXst35ListCount" parameterClass="bgabGascz035Dto" resultClass="String">
+		/* system.xml :: selectXst35ListCount */
+		SELECT COUNT(*) AS TOTAL_CNT
+		  FROM BGAB_GASCZ035
+		 WHERE 1=1
+		 <isNotEmpty property="corp_cd">
+		   AND CORP_CD = #corp_cd#
+		 </isNotEmpty>
+		 <isNotEmpty property="corp_nm">
+		   AND CORP_NM = #corp_nm#
+		 </isNotEmpty>
+	</select>
+	
+	<!-- 라이선스 구매이력 리스트 -->
+	<select id="selectXst35List" parameterClass="bgabGascz035Dto" resultClass="bgabGascz035Dto">
+		/* system.xml :: selectXst35List */
+    	SELECT K.*
+    	  FROM (
+    		SELECT ROWNUM AS RNUM
+    			 , PAGE.*
+    	  	  FROM (
+				SELECT CORP_CD
+					 , CORP_NM
+					 , PAY_AMT
+					 , USE_CNT
+					 , VEN_CD
+					 , REQ_USER_NM
+					 , REQ_CONTACT
+					 , REQ_EMAIL
+					 , BUY_DATE
+				  FROM BGAB_GASCZ035
+				 WHERE 1=1
+				 <isNotEmpty property="corp_cd">
+				   AND CORP_CD = #corp_cd#
+				 </isNotEmpty>
+				 <isNotEmpty property="corp_nm">
+				   AND CORP_NM = #corp_nm#
+				 </isNotEmpty>
+				 ORDER BY IDX DESC
+    	    ) PAGE
+    	)K
+    	WHERE K.RNUM BETWEEN #startRow# AND #endRow#
+	</select>
+
+</sqlMap>

@@ -1,0 +1,119 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title><fmt:message key="help"/></title>
+		<link rel="stylesheet" type="text/css" media="screen" href="<%=ctxPath%>/script/css/hncis_common.css" />
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/jsonUtil.js"></script>
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/common.js"></script>
+		<link rel="stylesheet" type="text/css" media="screen" href="../../script/css/pop_up.css" />
+		<link rel="stylesheet" type="text/css" href="<%=ctxPath%>/script/js/autocomplete/redmond.css">
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/autocomplete/jquery.js"></script>
+		<script type="text/javascript" src="<%=ctxPath%>/script/js/autocomplete/jquery-ui.js"></script>
+	</head>
+	
+	<body style="overflow-x: hidden">
+		<div class="pop_wrap info_wrap">
+			<div class="pop_header_pos">
+				<div class="pop_header">
+		        	<div class="pop_title">
+		            	<h1><fmt:message key="xlv"/> - <fmt:message key="statis"/></h1>
+		                <a href="javascript:selfClose();" id="pop_tip_cls" class="pop_close"></a>
+		            </div>
+		        </div>
+		        <ul class="info_menu menuNum05">
+		        	<li><a href="#info01"><span><fmt:message key="HELP.0037"/></span></a></li>
+		        	<li><a href="#info02"><span><fmt:message key="browse"/></span></a></li>
+		        	<li></li>
+		        	<li></li>
+		        	<li></li>
+		        </ul>
+	        </div>
+	        <div class="pop_info_content">
+	        	<div class="tit_area" id="info01">
+	        		<span class="info_num">01</span>
+	        		<h2><fmt:message key="HELP.0037"/></h2>
+	        	</div>
+	        	<table class="pop_info_tbl">
+	        		<colgroup>
+	        			<col style="width:25%;"/>
+	        			<col style="width:75%;"/>
+	        		</colgroup>
+	        		<thead>
+	        			<tr>
+	        				<th><fmt:message key="gubun"/></th>
+	        				<th><fmt:message key="exp"/></th>
+	        			</tr>
+	        		</thead>
+	        		<tbody>
+	        			<tr>
+	        				<td><fmt:message key="year"/></td>
+	        				<td>
+	        					<fmt:message key="HELP.0078"/>
+	        					<br/>
+	        					<span class="txt_blue">
+									<fmt:message key="HELP.0043"/>
+	        					</span>
+	        				</td>
+	        			</tr>
+	        			<tr>
+	        				<td><fmt:message key="dept_nm"/></td>
+	        				<td>
+	        					<fmt:message key="HELP.0044"/>
+	        					<br/>
+	        					<span class="txt_blue">
+									<fmt:message key="HELP.0080"/>
+	        					</span>
+	        				</td>
+	        			</tr>
+	        		</tbody>
+	        	</table>
+	        	
+	        	<div class="tit_area" id="info02">
+	        		<span class="info_num">02</span>
+	        		<h2><fmt:message key="browse"/></h2>
+	        	</div>
+				<table class="pop_info_tbl">
+	        		<colgroup>
+	        			<col style="width:0%;"/>
+	        			<col style="width:100%;"/>
+	        		</colgroup>
+	        		<thead>
+	        			<tr>
+	        				<th></th>
+	        				<th><fmt:message key="exp"/></th>
+	        			</tr>
+	        		</thead>
+	        		<tbody>
+	        			<tr>
+	        				<td>&nbsp;</td>
+	        				<td><fmt:message key="HELP.0081"/></td>
+	        			</tr>
+	        		</tbody>
+	        	</table>
+	        	
+	        	<!-- 빈칸 생성 영역 -->
+	        	<div class="pop_info_tbl"></div>
+	        </div>
+	    </div>
+	</body>
+	<script type="text/javascript">
+		function fnSetDocumentReady(){
+			var $sub_menu = $(".info_menu li a"),
+				$titArea = $(".tit_area"),
+				$tblArea = $(".pop_info_tbl");
+			
+			//마지막 영역 빈칸 생성
+			$tblArea.last().height("430");
+			
+			//클릭 이벤트
+			$sub_menu.click(function(){
+				var idx = $(this).parent().index();
+				var topVal = $titArea.eq(idx).offset().top - 122;
+				$("html, body").animate({scrollTop : topVal}, 400);
+			})
+		}
+	</script>
+</html>

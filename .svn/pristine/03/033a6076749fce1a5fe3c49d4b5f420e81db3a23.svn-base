@@ -1,0 +1,641 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId = "XVE01";
+	String hid_req_date = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_req_date")));
+	String hid_eeno     = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_eeno")));
+	
+	String tempPath     = request.getServletPath().toString();
+	String stepHelpUrl  = StringUtil.getStepHelp(tempPath);
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>차량출입신청</title>
+	</head>
+	<body>
+		<form name="frm" id="frm">
+			<input type="hidden" id="loc" value="<%=sess_locale%>"/>
+			<div id="contents">
+                <div class="con_t_area mt0" id="btn_add">
+                	<div class="btn_area mt0">
+	                    <ul class="btns fr ml20">
+	                    	<li><a href="javascript:doFileAttach();"><fmt:message key="BUTTON.FILE_ATTACH"/><span></span></a></li>
+	                        <li><a href="javascript:gridRowAdd();"><fmt:message key="BUTTON.ADD"/><span></span></a></li>
+	                        <li><a href="javascript:gridRowDel();"><fmt:message key="BUTTON.DELETE"/><span></span></a></li>
+	                    </ul>
+	                </div>
+                </div>
+                <div class="jq_tbl">
+	                <table id="htmlTable" class="scroll"></table>
+	                <div id="htmlPager" class="scroll" style="display:none"></div>
+	            </div>
+			</div>
+			<div class="clear"></div>
+		</form>
+		<form id="fileForm" name="fileForm">
+			<input type="hidden" id="file_doc_no" name="file_doc_no">
+			<input type="hidden" id="file_eeno"  name="file_eeno">
+			<input type="hidden" id="hid_use_yn"  name="hid_use_yn">
+			<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+		</form>
+		<form id="hideForm" name="hideForm" method="post">
+			<input type="hidden" id="hid_csrfToken"	name="hid_csrfToken">
+		</form>
+	</body>
+</html>
+		<script type="text/javascript">
+		var gridParam;
+		var gridName1 = "htmlTable";
+		var row_no = 0;
+		
+// 		var cn = ["시작일", "종료일", "차종", "차량등록번호", "색상", "차량번호", "운전자명", "운전자 면허", "종류", "유효기간", "Seq",
+// 		          "eeno", "apply_date", "purpose", "parking_area", "corp_company", "biz_number", "activity", "charge", "phone", "address", "pgs_st_cd", "if_id", "pgs_st_nm", "reason", "remark", "doc_no", ""];
+		var cn = ['<fmt:message key="strt_ymd"/>' // "시작일"
+		          ,'<fmt:message key="end_ymd"/>' // "종료일"
+		          ,'<fmt:message key="car_nm"/>' // "차종"
+		          ,'<fmt:message key="car_reg_no"/>' // "차량등록번호"
+		          ,'<fmt:message key="car_clr"/>' // "색상"
+		          ,'<fmt:message key="car_no"/>' // "차량번호"
+		          ,"<fmt:message key='dvr_nm'/>" // "운전자명"
+		          ,"<fmt:message key='dvr_lic'/>" // "운전자 면허"
+		          ,'<fmt:message key="kind"/>' // "종류"
+		          ,'<fmt:message key="exp_date"/>' // "유효기간"
+		          ,'' // "seq"
+		          ,'' // "eeno"
+		          ,'' // "apply_date"
+		          ,'' // "purpose"
+		          ,'' // "parking_area"
+		          ,'' // "corp_company"
+		          ,'' // "biz_number"
+		          ,'' // "activity"
+		          ,'' // "charge"
+		          ,'' // "phone"
+		          ,'' // "address"
+		          ,'' // "pgs_st_cd"
+		          ,'' // "if_id"
+		          ,'' // "pgs_st_nm"
+		          ,'' // "reason"
+		          ,'' // "remark"
+		          ,'' // "doc_no"
+		          ,'' // ""
+		          ];
+		var datarow = {start_ymd:"", end_ymd:"", model:"", renavam:"", color:"", plate:"", driver_name:"", driver_lic:"", category:"", cnh_exp:"", seq:"",
+					   eeno:"", apply_date:"", purpose:"", parking_area:"", corp_company:"", biz_number:"", activity:"", charge:"", phone:"", address:"", pgs_st_cd:"", if_id:"", pgs_st_nm:"", reason:"", remark:"", doc_no:"", snb_rson_sbc:""};
+		var cm = [
+			{name:"start_ymd",	index:"start_ymd"	, sortable:false,	formatter:"string",		width:157,	align:"left",	editable:true,	frozen : false,
+				editoptions: {
+					readonly : true,
+		            dataInit: function(element) {
+		     		    $(element).datepicker({
+		     		    	dateFormat: 'yy-mm-dd',
+		     		    	onSelect: function(dataText, inst){
+		     		    	}
+				    	});
+		            }
+				}
+			},
+			{name:"end_ymd",	index:"end_ymd" 	, sortable:false,	formatter:"string",		width:157,	align:"left",	editable:true,	frozen : false,
+				editoptions: {
+					readonly : true,
+		            dataInit: function(element) {
+		     		    $(element).datepicker({
+		     		    	dateFormat: 'yy-mm-dd',
+		     		    	onSelect: function(dataText, inst){
+		     		    	}
+				    	});
+		            }
+				}
+			},
+			{name:"model",			index:"model"			, sortable:false,		formatter:"string",		width:352,	align:"left",	editable:true},
+			{name:"renavam",		index:"renavam"			, sortable:false,		formatter:"string",		width:0,	align:"left",	editable:true, hidden:true},
+			{name:"color",			index:"color"			, sortable:false,		formatter:"string",		width:0,	align:"left",	editable:true, hidden:true},
+			{name:"plate",			index:"plate"			, sortable:false,		formatter:"string",		width:157,	align:"left",	editable:true, maxlength: 7},
+			{name:"driver_name",	index:"driver_name"		, sortable:false,		formatter:"string",		width:157,	align:"left",	editable:true},
+			{name:"driver_lic",		index:"driver_lic"		, sortable:false,		formatter:"string",		width:0,	align:"left",	editable:true, hidden:true},
+			{name:"category",		index:"category"		, sortable:false,		formatter:"string",		width:0,	align:"left",	editable:true, hidden:true},
+			{name:"cnh_exp",		index:"cnh_exp"			, sortable:false,		formatter:"string",		width:0,	align:"left",	editable:true, hidden:true},
+			{name:"seq",			index:"seq"				, sortable:false,		formatter:"string",		width:0,	align:"left",	editable:true, hidden:true},
+			{name:"eeno",			index:"eeno"			, sortable:false,		formatter:"string",		width:0,	align:"left",	editable:true, hidden:true},
+			{name:"apply_date",		index:"apply_date"		, sortable:false,		formatter:"string",		width:0,	align:"left",	editable:true, hidden:true},
+			{name:"purpose",		index:"purpose"			, sortable:false,		formatter:"string",		width:0,	align:"left",	editable:true, hidden:true},
+			{name:"parking_area",	index:"parking_area"	, sortable:false,		formatter:"string",		width:0,	align:"left",	editable:true, hidden:true},
+			{name:"corp_company",	index:"corp_company"	, sortable:false,		formatter:"string",		width:0,	align:"left",	editable:true, hidden:true},
+			{name:"biz_number",		index:"biz_number"		, sortable:false,		formatter:"string",		width:0,	align:"left",	editable:true, hidden:true},
+			{name:"activity",		index:"activity"		, sortable:false,		formatter:"string",		width:0,	align:"left",	editable:true, hidden:true},
+			{name:"charge",			index:"charge"			, sortable:false,		formatter:"string",		width:0,	align:"left",	editable:true, hidden:true},
+			{name:"phone",			index:"phone"			, sortable:false,		formatter:"string",		width:0,	align:"left",	editable:true, hidden:true},
+			{name:"address",		index:"address"			, sortable:false,		formatter:"string",		width:0,	align:"left",	editable:true, hidden:true},
+			{name:"pgs_st_cd",		index:"pgs_st_cd"		, sortable:false,		formatter:"string",		width:0,	align:"left",	editable:true, hidden:true},
+			{name:"if_id",			index:"if_id"			, sortable:false,		formatter:"string",		width:0,	align:"left",	editable:true, hidden:true},
+			{name:"pgs_st_nm",		index:"pgs_st_nm"		, sortable:false,		formatter:"string",		width:0,	align:"left",	editable:true, hidden:true},
+			{name:"reason",			index:"reason"			, sortable:false,		formatter:"string",		width:0,	align:"left",	editable:true, hidden:true},
+			{name:"remark",			index:"remark"			, sortable:false,		formatter:"string",		width:0,	align:"left",	editable:true, hidden:true},
+			{name:"doc_no",			index:"doc_no"			, sortable:false,		formatter:"string",		width:0,	align:"left",	editable:true, hidden:true},
+			{name:"snb_rson_sbc",	index:"snb_rson_sbc"	, sortable:false,		formatter:"string",		width:0,	align:"left",	editable:true, hidden:true}
+		];
+
+		function fnSetDocumentReady(){
+			parent.$("#help_url").val("<%=stepHelpUrl%>");
+			parent.document.title = document.title;
+			var apply_date_temp = "";
+			if(parent.$("#eeno_temp").val() == "" || parent.$("#eeno_temp").val() != parent.$("#eeno").val()){
+				apply_date_temp = "";
+			}else{
+				apply_date_temp = parent.$("#apply_date").val();
+			}
+
+			var params = {
+				eeno	     : parent.$("#eeno").val(),
+				apply_date 	 : apply_date_temp,
+				doc_no 		 : parent.$("#hid_doc_no").val(),
+				type		 : "1",
+				corp_cd	     : sess_corp_cd,
+				locale		 : sess_locale
+			};
+
+			//set grid parameter
+			gridParam = {
+				viewEdit : [{
+					gridName     : gridName1,
+					url          : "doSearchSecurityRequestVehicle.do",
+//					url          : "/doSearchToEmpty.do",
+					colNames     : cn,
+					colModel     : cm,
+					height       : "100%",
+					sortname     : "",
+					sortorder    : "",
+					rownumbers   : true,
+					multiselect  : false,
+					cellEdit     : true,
+					fnMerge      : false,
+					paramJson    : params,
+					completeFc   : "addGridRow(5);loadDataSet();"
+				}]
+			};
+
+			commonJqGridInit(gridParam);
+		}
+
+		function loadDataSet(){
+			parent.$("#if_id").val(getColValue("if_id", 1));
+			parent.$("#apply_date").val(getColValue("apply_date", 1));
+			parent.$("#purpose").val(getColValue("purpose", 1));
+			parent.$("#reason").val(getColValue("reason", 1));
+			parent.$("#pgs_st_cd").val(getColValue("pgs_st_cd", 1));
+			parent.$("#pgs_st_nm").val(getColValue("pgs_st_nm", 1));
+			if(getColValue("doc_no", 1) != ""){
+				parent.$("#doc_no").val(getColValue("doc_no", 1));
+				parent.$("#hid_doc_no").val(getColValue("doc_no", 1));
+			}
+			parent.$("#snb_rson_sbc").val(getColValue("snb_rson_sbc", 1));
+
+			fnChkApplyReqsObjects();
+
+			resizeIframe();
+
+			parent.sbcReadonlySet();
+			parent.doSearchRequestInfo(getColValue("if_id", 1));
+			
+			doSaerchSecurityRemark();
+		}
+
+		function doSaerchSecurityRemark(){
+			var keyData = {
+				doc_no : parent.$("#doc_no").val(),
+				corp_cd	: sess_corp_cd
+			};
+
+			paramData = {
+				paramJson : util.jsonToString(keyData)
+			};
+
+			doCommonAjax("doSaerchSecurityRemark.do", paramData, "searchRemarkCallBack(jsonData.sendResult)");
+		}
+
+		function searchRemarkCallBack(result){
+			parent.$("#remark").val(result.remark);
+			
+			row_no = jQuery("#"+gridName1).getDataIDs().length;
+		}
+
+
+		function gridRowAdd(){
+			row_no = row_no + 1;
+			jQuery("#htmlTable").jqGrid("addRowData", row_no, datarow);
+
+			resizeIframe();
+		}
+
+		function doCudAction(gubun) {
+			var url = "";
+			var callBack = "actionCallBack(jsonData.sendResult);";
+			var params = [];
+			var ids = jQuery("#"+gridName1).getDataIDs();
+
+			if(gubun == "save"){
+				if(!validation(gubun))return;
+
+				url = "doInsertSecurityRequestVehicle.do";
+			}else if(gubun == "delete"){
+				if(sess_mstu != "M" && sess_auth != 5 && parent.$("#eeno").val() != sess_empno && $("#pgs_st_cd").val() != "0"){
+					parent.alertUI('<fmt:message key="MSG.STAT.0016"/>');
+					return;
+				}
+				url = "doDeleteSecurityRequestVehicle.do";
+			}
+
+			var d= new Date();
+			var m = d.getMonth() +1;
+			var day = d.getDate();
+			if(m < 10){ m = "0" + m; }
+			if(day < 10){ day = "0" + day; }
+			var app_dt = d.getFullYear() + "-" + m + "-" + day;
+			if(parent.$("#apply_date").val() != ""){
+				app_dt = parent.$("#apply_date").val();
+			}
+
+			if(gubun == "delete"){
+				list = {
+					eeno     		: parent.$("#eeno").val(),
+					apply_date		: app_dt,
+					doc_no			: parent.$("#hid_doc_no").val(),
+					type			: "1",
+					corp_cd	     	: sess_corp_cd
+				};
+				params.push(list);
+			}else{
+				for(var i = 0; i < ids.length; i++){
+					rowId = ids[i];
+					if(rowId){
+						if(getColValue("start_ymd", rowId) != "" && getColValue("end_ymd", rowId) != ""){
+							if(getColValue("model", rowId) == ""){
+								parent.alertUI(rowId + ' <fmt:message key="MSG.ROW.0030"/>');
+								return;
+							}
+
+							if(selectNum(getColValue("start_ymd", rowId)) > selectNum(getColValue("end_ymd", rowId))){
+								parent.alertUI(rowId + ' <fmt:message key="MSG.ROW.0097"/>');
+								return;
+							}
+
+							list = {
+								seq				: $.trim(getColValue("seq", rowId)),
+								eeno     		: parent.$("#eeno").val(),
+								doc_no			: parent.$("#hid_doc_no").val(),
+								apply_date		: app_dt,
+								type			: "1",
+								purpose 		: parent.$("#purpose").val(),
+								start_ymd   	: getColValue("start_ymd", rowId),
+								end_ymd   		: getColValue("end_ymd", rowId),
+								model   		: getColValue("model", rowId),
+								renavam   		: getColValue("renavam", rowId),
+								color   		: getColValue("color", rowId),
+								plate   		: getColValue("plate", rowId),
+								driver_name		: getColValue("driver_name", rowId),
+								driver_lic 		: getColValue("driver_lic", rowId),
+								category   		: getColValue("category", rowId),
+								cnh_exp   		: getColValue("cnh_exp", rowId),
+								pgs_st_cd   	: "0",
+								reason			: parent.$("#reason").val(),
+								remark			: overLineHtml(changeToUni(parent.$("#remark").val())),
+								ipe_eeno    	: sess_empno,
+								updr_eeno   	: sess_empno,
+								corp_cd	     	: sess_corp_cd
+							};
+							params.push(list);
+						}
+					}
+				}
+			}
+
+			if(params.length == 0){
+				parent.alertUI('<fmt:message key="MSG.INP.0053"/>');
+				return;
+			}
+
+			if(gubun == 'save'){
+				strConfirm = '<fmt:message key="MSG.CNF.0004"/>';
+			} else if(gubun == 'edit'){
+				strConfirm = '<fmt:message key="MSG.CNF.0003"/>';
+			} else if(gubun == 'delete'){
+				strConfirm = '<fmt:message key="MSG.CNF.0002"/>';
+			}
+			
+			parent.confirmUI(strConfirm);
+			parent.$("#pop_yes").click(function(){
+				parent.$.unblockUI({
+					onUnblock: function(){
+ 						var paramData = {
+								paramJson : util.jsonToList(params)
+						};
+
+						doCommonAjax(url, paramData, callBack);
+					}
+				});
+			});
+		}
+
+		function actionCallBack(result){
+			parent.setBottomMsg(result.message, true);
+			parent.$("#hid_doc_no").val(result.code1);
+			parent.$("#doc_no").val(result.code1);
+
+			if(result.code1 != "" && result.code1 != null){
+				parent.$("#type").attr("disabled", true);
+			}else{
+				parent.$("#type").attr("disabled", false);
+				parent.$("#type").attr("style", "backgroundColor: '#ffffff'; width: 150px;");
+			}
+
+			if(null != result.code2 && result.code2 != ""){
+				parent.$("#eeno").val(result.code2);
+				parent.$("#eeno_temp").val(result.code2);
+			}
+			if(null != result.code && result.code != ""){
+				parent.$("#apply_date").val(result.code);
+			}
+
+// 			parent.SubmitClear();
+
+			doSearch("N");
+		}
+
+		function doSearch(msgFlag){
+			var apply_date_temp = "";
+
+			if(parent.$("#eeno_temp").val() == "" || parent.$("#eeno_temp").val() != parent.$("#eeno").val()){
+				apply_date_temp = "";
+			}else{
+				apply_date_temp = parent.$("#apply_date").val();
+			}
+
+			var params = {
+				eeno	     : parent.$("#eeno").val(),
+				doc_no		 : parent.$("#hid_doc_no").val(),
+				apply_date 	 : apply_date_temp,
+				type		 : "1",
+				corp_cd	     : sess_corp_cd,
+				locale		 : sess_locale
+			};
+			doCommonSearch("doSearchSecurityRequestVehicle.do", util.jsonToString(params), "addGridRow(5);loadDataSet();", gridName1, msgFlag);
+		}
+
+		function doApprove(gubun){
+			var url = "";
+			var callBack = "";
+			var pgs_st_cd = "";
+			if(gubun == "request"){
+				url = "doApproveSecurityRequest.do";
+				callBack = "approveCallBack('"+gubun+"', jsonData.sendResult);";
+				pgs_st_cd = "A";
+			}else if(gubun == "requestCancel"){
+				url = "doApproveCancelSecurityRequest.do";
+				callBack = "approveCallBack('"+gubun+"', jsonData.sendResult);";
+			}
+
+			var bsicInfo;
+			if(gubun == "request"){
+				bsicInfo = {
+					key_mode      : gubun,
+					key_eeno      : parent.$("#eeno").val(),
+					key_req_date  : parent.$("#apply_date").val(),
+					key_pgs_st_cd : pgs_st_cd,
+					doc_no		  : parent.$("#hid_doc_no").val(),
+					type		  : "1",
+					updr_eeno     : sess_empno,
+					corp_cd	      : sess_corp_cd
+				};
+			}else{
+				bsicInfo = {
+					if_id     : parent.$("#if_id").val(),
+					doc_no    : parent.$("#hid_doc_no").val(),
+					pgs_st_cd : "0",
+					updr_eeno : sess_empno,
+					corp_cd	  : sess_corp_cd,
+					locale	  : sess_locale
+				};
+			}
+
+			var paramData = {
+					bsicInfo : util.jsonToString(bsicInfo)
+			};
+			doCommonAjax(url, paramData, callBack);
+		}
+
+		function approveCallBack(gubun, result){
+			parent.setBottomMsg(result.message, true);
+// 			parent.SubmitClear();
+			doSearch("N");
+		}
+
+		function doConfirm(){
+			var bsicInfo = {
+				key_mode      : "confirm",
+				key_eeno      : parent.$("#eeno").val(),
+				key_req_date  : parent.$("#apply_date").val(),
+				key_pgs_st_cd : "3",
+				type		  : "1",
+				doc_no		  : parent.$("#hid_doc_no").val(),
+				updr_eeno     : sess_empno,
+				corp_cd	      : sess_corp_cd
+			};
+
+			var paramData = {
+					bsicInfo : util.jsonToString(bsicInfo)
+			};
+			doCommonAjax("doConfirmSecurityRequestVehicle.do", paramData, "confirmCallBack(jsonData.sendResult);");
+		}
+
+		function doConfirmCancel(){
+			if($("#rq_imtr_sbc").val() == ""){
+				parent.alertUI("Please enter the reason for confirm cancel in Note.");
+				return;
+			}
+
+			var bsicInfo = {
+				key_mode      : "confirmCancel",
+				key_eeno      : parent.$("#eeno").val(),
+				key_req_date  : parent.$("#apply_date").val(),
+				key_pgs_st_cd : "0",
+				type		  : "1",
+				doc_no		  : parent.$("#hid_doc_no").val(),
+				snb_rson_sbc  : parent.$("#snb_rson_sbc").val(),
+				updr_eeno     : sess_empno,
+				corp_cd	      : sess_corp_cd
+			};
+
+			var paramData = {
+				bsicInfo : util.jsonToString(bsicInfo)
+			};
+			doCommonAjax("doConfirmCancelSecurityRequestVehicle.do", paramData, "confirmCallBack(jsonData.sendResult);");
+		}
+
+		function confirmCallBack(result){
+			parent.setBottomMsg(result.message, true);
+			parent.SubmitClear();
+			doSearch("N");
+		}
+
+		function validation(gubun){
+			if(parent.$("#eeno").val().length < 7){
+				parent.alertUI("Please enter your Id number!");
+				$("#eeno").focus();
+				return false;
+			}
+//			if(parent.$("#purpose").val() == ""){
+//				parent.alertUI("Please enter Purpose!");
+//				parent.$("#purpose").focus();
+//				return false;
+//			}
+			return true;
+		}
+
+		function resizeIframe(){
+			var doc = document.getElementById("contents");
+			parent.document.getElementById("ifra").height = (doc.offsetHeight+20) + "px";
+		}
+
+		var win;
+		function doFileAttach(){
+			if(win != null){ win.close(); }
+			var url = "xve_file.gas", width = "460", height = "453";
+
+			if(parent.$("#hid_doc_no").val() == ""){
+				$("#file_doc_no").val(parent.$("#temp_doc_no").val());
+			}else{
+				$("#file_doc_no").val(parent.$("#hid_doc_no").val());
+			}
+			$("#file_eeno").val("00000000");
+
+			if($("#work_auth").val() < 5 && sess_mstu != "M"){
+				if( $("#pgs_st_cd").val() == ""){
+					$("#hid_use_yn").val("Y");
+				}else if(sess_empno == $("#eeno").val()){
+					if($("#pgs_st_cd").val() == "0"){
+						$("#hid_use_yn").val("Y");
+					}else{
+						$("#hid_use_yn").val("N");
+					}
+				}else{
+					$("#hid_use_yn").val("N");
+				}
+			}else{
+				$("#hid_use_yn").val("Y");
+			}
+
+			win = newPopWin("about:blank", width, height, "win_file");
+			document.fileForm.hid_csrfToken.value = $("#csrfToken").val();
+			document.fileForm.action = url;
+			document.fileForm.target = "win_file";
+			document.fileForm.method = "post";
+			document.fileForm.submit();
+		}
+
+		function fnCopy(gubun) {
+			if(parent.$("#pgs_st_cd").val() == ""){
+				parent.alertUI("can't copy");
+				return;
+			}
+			var url = "doInsertSecurityRequestVehicleCopy.do";
+			var callBack = "actionCallBack(jsonData.sendResult);";
+			var params = [];
+			var ids = jQuery("#"+gridName1).getDataIDs();
+
+			var d= new Date();
+			var m = d.getMonth() +1;
+			var day = d.getDate();
+			if(m < 10){ m = "0" + m; }
+			if(day < 10){ day = "0" + day; }
+			var app_dt = d.getFullYear() + "-" + m + "-" + day;
+
+			for(var i = 0; i < ids.length; i++){
+				rowId = ids[i];
+				if(rowId){
+					if(getColValue("start_ymd", rowId) != "" && getColValue("end_ymd", rowId) != "" && getColValue("model", rowId) != ""){
+						list = {
+							seq				: "",
+							eeno     		: parent.$("#eeno").val(),
+							doc_no			: "",
+							apply_date		: app_dt,
+							type			: "1",
+							purpose 		: parent.$("#purpose").val(),
+							start_ymd   	: getColValue("start_ymd", rowId),
+							end_ymd   		: getColValue("end_ymd", rowId),
+							model   		: getColValue("model", rowId),
+							renavam   		: getColValue("renavam", rowId),
+							color   		: getColValue("color", rowId),
+							plate   		: getColValue("plate", rowId),
+							driver_name		: getColValue("driver_name", rowId),
+							driver_lic 		: getColValue("driver_lic", rowId),
+							category   		: getColValue("category", rowId),
+							cnh_exp   		: getColValue("cnh_exp", rowId),
+							pgs_st_cd   	: "0",
+							reason			: parent.$("#reason").val(),
+							remark			: overLineHtml(changeToUni(parent.$("#remark").val())),
+							ipe_eeno    	: sess_empno,
+							updr_eeno   	: sess_empno,
+							corp_cd	    	: sess_corp_cd
+						};
+						params.push(list);
+					}
+				}
+			}
+
+			var paramData = {
+				paramJson : util.jsonToList(params)
+			};
+			doCommonAjax(url, paramData, callBack);
+		}
+
+		function gridRowDel(){
+			var params = [];
+			var rowId = jQuery("#"+gridName1).jqGrid("getGridParam", "selrow");
+
+			if(parent.$("#pgs_st_cd").val() != '0' && parent.$("#pgs_st_cd").val() != ''){
+				parent.alertUI('<fmt:message key="MSG.STAT.0003"/>');
+				return;
+			}
+			
+			if(rowId == "" || rowId == null){
+				parent.alertUI('<fmt:message key="MSG.CNF.0025"/>');
+				return;
+			}
+			
+			if(getColValue("doc_no", rowId, gridName1) != ""){
+				var param = {
+					eeno		: parent.$("#eeno").val(),
+					apply_date  : parent.$("#apply_date").val(),
+					doc_no    	: getColValue("doc_no", rowId, gridName1),
+					seq    		: getColValue("seq", rowId, gridName1),
+					corp_cd		: sess_corp_cd
+				};
+				params.push(param);
+			}
+			
+			parent.confirmUI('<fmt:message key="MSG.CNF.0042"/>');
+			parent.$("#pop_yes").click(function(){
+				parent.$.unblockUI({
+					onUnblock: function(){
+ 						if(params.length > 0){
+							var paramData = {
+								paramJson : util.jsonToList(params)
+							};
+							doCommonAjax("doDeleteSecurityRequestVehicle.do", paramData, "setBottomMsg(jsonData.sendResult.message, true);gridRowDelCallBack();");
+						}else{
+							gridRowDelCallBack();
+						}
+					}
+				});
+			});
+		}
+		
+		function gridRowDelCallBack(){
+			var rowId = jQuery("#"+gridName1).jqGrid("getGridParam", "selrow");
+			$("#"+gridName1).delRowData(rowId);
+			if(jQuery("#"+gridName1).getDataIDs().length < 5){
+				gridRowAdd();
+			}
+		}
+
+		</script>

@@ -1,0 +1,227 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String docId = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("docid")));
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>BusinessCard</title>
+	</head>
+	<body>
+		<div id="wrap" class="submit_page">
+		<form name="frm" id="frm">
+			<input type="hidden" id="if_id" name="if_id" value="<%=docId%>">
+
+			<div id="contents_wrap" class="any_page">
+				<div id="contents">
+					<%=CommonGasc.getTitleAndButtonNew(sess_empno
+						,"XGF01"
+						,""
+						,null
+						,null
+						,null
+						,"Y"
+						,request)
+					%>
+					<div class="con_t_area mt10">
+	                	<h3><fmt:message key="basic_info"/></h3>
+	                </div>
+					<div class="search_area">
+						<table>
+							<colgroup>
+	                        	<col style="width:110px;" />
+	                            <col style="width:158px;" />
+	                            <col style="width:73px;" />
+	                            <col style="width:158px;" />
+	                            <col style="width:80px;" />
+	                            <col style="width:158px;" />
+	                            <col style="width:73px;" />
+	                            <col style="width:158px;" />
+	                        </colgroup>
+							<tr>
+								<th><fmt:message key="eeno"/></th>
+								<td><input type="text" id="eeno" style="width:140px" class="inputOnlyNumber disabled" readonly>
+									<input type="hidden" id="eeno_temp"></td>
+								<th><fmt:message key="eenm"/></th>
+								<td><input type="text" id="keyEenm" style="width:140px" class="disabled" readOnly></td>
+								<th><fmt:message key="position"/></th>
+								<td><input type="text" id="keyPosition" style="width:140px" class="disabled" readOnly></td>
+								<th><fmt:message key="dept_nm"/></th>
+								<td>
+									<input type="hidden" id="keyOpsCd" readOnly>
+									<input type="text" id="keyOpsNm" style="width:140px" class="disabled" readOnly>
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="req_ymd"/></th>
+								<td><input type="text" id="req_date" style="width:140px" class="disabled" readOnly></td>
+								<th><fmt:message key="doc_no"/></th>
+								<td><input type="text" id="doc_no" style="width:140px" class="disabled" readOnly></td>
+								<th><fmt:message key="pgs_st_nm"/></th>
+								<td>
+									<input type="hidden" id="pgs_st_cd" name="pgs_st_cd">
+									<input type="text" id="pgs_st_nm" name="pgs_st_nm" style="width:140px" class="disabled" readOnly>
+								</td>
+								<th><fmt:message key="tel_no"/></th>
+								<td><input type="text" id="keyTelNo" style="width:140px" class="disabled" readOnly></td>
+							</tr>
+						</table>
+					</div>
+					<div class="con_t_area">
+	                	<h3><fmt:message key="req_info"/></h3>
+	                </div>
+					<div class="search_area">
+						<table>
+							<colgroup>
+							  <col style="width:110px;" />
+							  <col style="width:158px;" />
+							  <col style="width:73px;" />
+							  <col style="width:158px;" />
+							  <col style="width:80px;" />
+							  <col style="width:auto;" />
+							</colgroup>
+							<tr>
+								<th><fmt:message key="rcv_user"/></th>
+								<td id="rcv_user_nm_td">
+									<input type="text" id="rcv_user_nm" name="rcv_user_nm" style="width:140PX;" maxlength="20" class="disabled" readOnly/>
+								</td>
+								<th><fmt:message key="tel_no"/></th>
+								<td id="rcv_contact_td">
+									<input type="text" id="rcv_contact" name="rcv_contact" style="width:140PX;" maxlength="15" class="disabled" readOnly/>
+								</td>
+								<th><fmt:message key="rcv_wish_ymd"/></th>
+								<td id="rcv_ymd_td">
+									<input type="text" id="rcv_ymd" name="rcv_ymd" style="width:70px;" class="disabled" readOnly/>
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="rcv_addr"/></th>
+								<td colspan="5" id="rcv_addr_td">
+									<input type="text" id="rcv_zip_code" name="rcv_zip_code" style="width:7%;" class="disabled" readonly="readonly"/>
+									<input type="text" id="rcv_addr" name="rcv_addr" style="width:40%;" class="disabled" readonly="readonly"/>
+									<input type="text" id="rcv_addr2" name="rcv_addr2" style="width:42%;" class="disabled" readonly="readonly"/>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div class="con_t_area">
+	                	<h3><fmt:message key="gift_info"/></h3>
+	                </div>
+					<div class="vehicle_tbl">
+						<table>
+							<colgroup>
+							  <col style="width:140px;" />
+							  <col style="width:auto;" />
+							</colgroup>
+							<tr>
+								<th><fmt:message key="title"/></th>
+								<td id="item_ttl">
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="ctgy"/></th>
+								<td id="item_ctgry">
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="exp"/></th>
+								<td>
+									<div name="tx_editor_div_1" id="tx_editor_div_1" style="height:500px;">
+		                                 <iframe name="frm_editVeiw" id="frm_editVeiw" frameBorder="0" style="width:100%; height:100%" allowTransparency="true"></iframe>
+		                             </div>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</form>
+		</div>
+		<%@ include file="/daumeditor/pages/template/simple.gas"%>
+	</body>
+</html>
+		<script type="text/javascript">
+		function fnSetDocumentReady(){
+			$(".sub_title").hide();
+		
+			doSearch();
+		}
+		
+		function doSearch(msgFlag){
+			var keyData = {
+				if_id	: $('#if_id').val(),
+				corp_cd	: sess_corp_cd,
+				locale	: sess_locale
+			};
+			paramData = {
+					paramJson      	: util.jsonToString(keyData)
+			};
+			doCommonAjax("doSearchInfoGfToGiftInfoByIfId.do", paramData, "loadCallBack(jsonData.sendResult,'"+msgFlag+"');");
+		}
+
+		/**
+		 * callback
+		 */
+		function loadCallBack(result,msgFlag){
+
+			$('#item_ttl').text(result.item_ttl);
+			$('#item_ctgry').text(result.item_ctgry);
+
+			frm_editVeiw.document.open();
+		    frm_editVeiw.document.write(editViewHtmlSt()+decodeURIComponent(result.item_cont)+editViewHtmlEnd());
+		    frm_editVeiw.document.close();
+
+		    doSearch2();
+		}
+
+		function doSearch2(msgFlag){
+			var keyData = {
+				if_id	: $('#if_id').val(),
+				corp_cd	: sess_corp_cd,
+				locale	: sess_locale
+			};
+			paramData = {
+					paramJson      	: util.jsonToString(keyData)
+			};
+			doCommonAjax("doSearchInfoGfToGiftRequstInfo.do", paramData, "loadCallBack2(jsonData.sendResult,'"+msgFlag+"');");
+		}
+
+		/**
+		 * callback
+		 */
+		function loadCallBack2(result,msgFlag){
+			$('#item_ttl').text(result.item_ttl);
+			$('#item_ctgry').text(result.item_ctgry);
+			$('#item_seq').val(result.item_seq);
+
+			frm_editVeiw.document.open();
+			frm_editVeiw.document.write(editViewHtmlSt()+decodeURIComponent(result.item_cont)+editViewHtmlEnd());
+			frm_editVeiw.document.close();
+
+			var rcvYmd = result.rcv_ymd;
+
+			$("#eeno").val(result.eeno);
+			$("#keyEenm").val(result.eenm);
+			$("#keyOpsNm").val(result.ops_nm);
+			$("#keyTelNo").val(result.tel_no);
+			$("#keyPosition").val(result.pos_nm);
+			$("#snb_rson_sbc").val(result.snb_rson_sbc);
+			
+			$('#rcv_user_nm').val(result.rcv_user_nm);
+			$('#rcv_contact').val(result.rcv_contact);
+			$('#rcv_ymd').val(rcvYmd.substring(0, 4) + '-' + rcvYmd.substring(4, 6) + '-' + rcvYmd.substring(6, 8));
+			$('#rcv_zip_code').val(result.rcv_zip_code);
+			$('#rcv_addr').val(result.rcv_addr);
+			$('#rcv_addr2').val(result.rcv_addr2);
+			$('#pgs_st_cd').val(result.pgs_st_cd);
+			$("#pgs_st_nm").val(result.pgs_st_nm);
+			$("#if_id").val(result.if_id);
+			$("#doc_no").val(result.doc_no);
+			$("#req_date").val(result.req_ymd);
+			
+			fnSubmitInfoSettings($("#pgs_st_cd").val(), $("#if_id").val(), result.code, "snb_rson_sbc", "1");
+			
+			resizeIframePop("contents", "ifrm");
+		}
+		</script>

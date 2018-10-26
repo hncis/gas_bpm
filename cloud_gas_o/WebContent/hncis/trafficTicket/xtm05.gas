@@ -1,0 +1,57 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XTM05";
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Code Management</title>
+		<script type="text/javascript" src="./js/xtm05.js"></script>
+	</head>
+	<body>
+		<div id="wrap">
+    	<form name="testForm" id="testForm">
+	    	<%@ include file="../include/hncis_header.html"%>
+	        <div id="contents_wrap">
+	        	<%@ include file="../include/hncis_left.gas"%>
+	            <div id="contents">
+	            	<%=CommonGasc.getTitleAndButtonNew(sess_empno
+						,"XTM05"
+						,"search/search@저장/save@삭제/delete@추가/addrow"
+						,null
+						,null
+						,null
+						,request)
+					%>
+	                <div class="search_area">
+	                	<table>
+	                        <colgroup>
+	                        	<col style="width:70px;" />
+	                            <col style="width:auto;" />
+	                        </colgroup>
+	                        <tbody>
+	                            <tr>
+									<th>Code</th>
+									<td>
+										<input type="text" id="key_desc_code" name="key_desc_code" onChange="doSearch();" style="width:100px">
+									</td>
+								</tr>
+	                        </tbody>
+	                    </table>
+	                </div>
+	                <div class="jq_tbl">
+		                <table id="htmlTable" class="scroll"></table>
+						<div id="htmlPager" class="scroll"></div>
+					</div>
+	                <%@ include file="../include/hncis_message.gas"%>
+	            </div>
+	            <div class="clear"></div>
+	        </div>
+        </form>
+		<form id="hideForm" name="hideForm" method="post">
+			<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+		</form>
+	    </div>
+	</body>
+</html>

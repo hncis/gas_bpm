@@ -1,0 +1,493 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="com.hncis.common.util.*" %>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XRM02";
+	String hid_cond  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_cond")));
+	
+	String yy = CurrentDateTime.getYear();
+	String mm = CurrentDateTime.getMonth();
+	
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH", locale);
+	
+	String strBtn = "";
+	strBtn = strSch+"/search";
+	
+	String tempPath     = request.getServletPath().toString();
+	String stepHelpUrl  = StringUtil.getStepHelp(tempPath);
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>List(Monthly)</title>
+	</head>
+	<body>
+		<div id="wrap">
+	    	<form name="frm" id="frm">
+	    	<input type=hidden id="curr_yy" value="<%=yy%>">
+	    	<input type=hidden id="curr_mm" value="<%=mm%>">
+	    	<input type="hidden" id="help_url" name="help_url" value="<%=stepHelpUrl%>">
+	    	
+		    	<%@ include file="../include/hncis_header.gas"%>
+		        <div id="contents_wrap">
+		        	<%@ include file="../include/hncis_left.gas"%>
+		            <div id="contents">
+		            	<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,"XRM02"
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+		                <div class="search_area">
+		                	<input type="hidden" id="menu_id" name="menu_id" value="<%=menuId.toLowerCase() %>">
+							<input type="hidden" id="hid_cond" name="hid_cond" value="<%=hid_cond %>">
+							<input type="hidden" id="hid_page" name="hid_page">
+		                	<table>
+		                        <colgroup>
+		                        	<col style="width:50px;" />
+		                        	<col style="width:170px;" />
+		                        	<col style="width:50px;" />
+		                        	<col style="width:170px;" />
+		                        	<col style="width:50px;" />
+		                            <col style="width:auto;" />
+		                        </colgroup>
+		                        <tbody>
+		                            <tr>
+										<th><fmt:message key="month_day"/></th>
+							    		<td>
+							    			<SELECT id="key_year" style="width: 70px;" onchange="doSearch();">
+							    				<option value="2016">2016</option>
+							    				<option value="2017">2017</option>
+							    				<option value="2018">2018</option>
+							    				<option value="2019">2019</option>
+							    				<option value="2020">2020</option>
+							    				<option value="2021">2021</option>
+							    				<option value="2022">2022</option>
+							    				<option value="2023">2023</option>
+							    				<option value="2024">2024</option>
+							    				<option value="2025">2025</option>
+							    				<option value="2026">2026</option>
+											</SELECT>
+											<SELECT id="key_month" style="width: 50px;" onchange="doSearch();">
+												<option value="01">1</option>
+												<option value="02">2</option>
+												<option value="03">3</option>
+												<option value="04">4</option>
+												<option value="05">5</option>
+												<option value="06">6</option>
+												<option value="07">7</option>
+												<option value="08">8</option>
+												<option value="09">9</option>
+												<option value="10">10</option>
+												<option value="11">11</option>
+												<option value="12">12</option>
+											</SELECT>
+							    		</td>
+							    		<th><fmt:message key="region"/></th>
+							    		<td>
+							    			<SELECT id="key_room_plant" style="width: 150px;" onchange="searchRoomPlaceComb();">
+											</SELECT>
+							    		</td>
+							    		<th><fmt:message key="place"/></th>
+							    		<td>
+							    			<SELECT id="key_room_place" style="width: 300px;" onchange="doSearch();">
+											</SELECT>
+							    		</td>
+									</tr>
+		                        </tbody>
+		                    </table>
+		                </div>
+		                <div class="jq_tbl">
+			                <table id="htmlTable" class="scroll"></table>
+							<div id="htmlPager" class="scroll" style="display: none;"></div>
+						</div>
+		                <%@ include file="../include/hncis_message.gas"%>
+		            </div>
+		            <div class="clear"></div>
+		        </div>
+	        </form>
+	    </div>
+	</body>
+</html>
+		<script type="text/javascript">
+		var firstYn = "Y";
+		var authType = "N";
+		var datarow1 = {car_nm:"",day_num:"",day_name:"",res_col:"",new_write_key:""
+				,tm0000:"",tm0030:"",tm0100:"",tm0130:"",tm0200:"",tm0230:"",tm0300:"",tm0330:"",tm0400:"",tm0430:"",tm0500:"",tm0530:"",tm0600:"",tm0630:""
+				,tm0700:"",tm0730:"",tm0800:"",tm0830:"",tm0900:"",tm0930:"",tm1000:"",tm1030:"",tm1100:"",tm1130:"",tm1200:"",tm1230:"",tm1300:"",tm1330:""
+				,tm1400:"",tm1430:"",tm1500:"",tm1530:"",tm1600:"",tm1630:"",tm1700:"",tm1730:"",tm1800:"",tm1830:"",tm1900:"",tm1930:"",tm2000:"",tm2030:""
+				,tm2100:"",tm2130:"",tm2200:"",tm2230:"",tm2300:"",tm2330:""
+				,tm0000_yn:"",tm0030_yn:"",tm0100_yn:"",tm0130_yn:"",tm0200_yn:"",tm0230_yn:"",tm0300_yn:"",tm0330_yn:"",tm0400_yn:"",tm0430_yn:"",tm0500_yn:"",tm0530_yn:"",tm0600_yn:"",tm0630_yn:""
+				,tm0700_yn:"",tm0730_yn:"",tm0800_yn:"",tm0830_yn:"",tm0900_yn:"",tm0930_yn:"",tm1000_yn:"",tm1030_yn:"",tm1100_yn:"",tm1130_yn:"",tm1200_yn:"",tm1230_yn:"",tm1300_yn:"",tm1330_yn:""
+				,tm1400_yn:"",tm1430_yn:"",tm1500_yn:"",tm1530_yn:"",tm1600_yn:"",tm1630_yn:"",tm1700_yn:"",tm1730_yn:"",tm1800_yn:"",tm1830_yn:"",tm1900_yn:"",tm1930_yn:"",tm2000_yn:"",tm2030_yn:""
+				,tm2100_yn:"",tm2130_yn:"",tm2200_yn:"",tm2230_yn:"",tm2300_yn:"",tm2330_yn:""	
+			};
+
+		var cn1 =['<fmt:message key="day"/>', '<fmt:message key="week_day"/>','',
+		          '00','30','00','30','00','30','00','30','00','30','00','30','00','30','00','30','00','30','00','30'
+		          ,'00','30','00','30','00','30','00','30','00','30','00','30','00','30','00','30','00','30','00','30'
+		          ,'00','30','00','30','00','30','00','30'
+		          ,'','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
+			 		];
+			var cm1 = [
+// 			        {name:'day_num',index:'day_num', formatter:'string',width:30,align:'center',editable:false,sortable:false},
+// 			  		{name:'day_name',index:'day_name', formatter:'string',width:30,align:'center',editable:false,sortable:false},
+			  		{name:"day_num", 		index:"day_num"	, sortable:false, 		formatter:"string", 	width:30, 	align:"center", editable:false, frozen:false,
+			        	cellattr:function(rowId, tv, rowObject, cm, rdata){
+			        		if(rowObject.day_name == "Sun" || rowObject.day_name == "일"){
+			        			return 'style="color: red"';
+			        		}if(rowObject.day_name == "Sat" || rowObject.day_name == "토"){
+			        			return 'style="color: blue"';
+			        		}else{
+			        			return 'style=""';
+			        		}
+			        	}
+					},
+			  		{name:"day_name", 		index:"day_name"	, sortable:false, 		formatter:"string", 	width:30, 	align:"center", editable:false, frozen:false,
+			        	cellattr:function(rowId, tv, rowObject, cm, rdata){
+			        		if(rowObject.day_name == "Sun" || rowObject.day_name == "일"){
+			        			return 'style="color: red"';
+			        		}if(rowObject.day_name == "Sat" || rowObject.day_name == "토"){
+			        			return 'style="color: blue"';
+			        		}else{
+			        			return 'style=""';
+			        		}
+			        	}
+					},
+			  		{name:'new_write_key',index:'new_write_key', formatter:'string',width:0,hidden:true,sortable:false},
+			  		{name:'tm0000',index:'tm0000', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm0030',index:'tm0030', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm0100',index:'tm0100', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm0130',index:'tm0130', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm0200',index:'tm0200', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm0230',index:'tm0230', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm0300',index:'tm0300', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm0330',index:'tm0330', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm0400',index:'tm0400', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm0430',index:'tm0430', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm0500',index:'tm0500', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm0530',index:'tm0530', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm0600',index:'tm0600', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm0630',index:'tm0630', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm0700',index:'tm0700', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm0730',index:'tm0730', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm0800',index:'tm0800', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm0830',index:'tm0830', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm0900',index:'tm0900', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm0930',index:'tm0930', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm1000',index:'tm1000', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm1030',index:'tm1030', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm1100',index:'tm1100', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm1130',index:'tm1130', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm1200',index:'tm1200', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm1230',index:'tm1230', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm1300',index:'tm1300', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm1330',index:'tm1330', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm1400',index:'tm1400', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm1430',index:'tm1430', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm1500',index:'tm1500', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm1530',index:'tm1530', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm1600',index:'tm1600', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm1630',index:'tm1630', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm1700',index:'tm1700', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm1730',index:'tm1730', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm1800',index:'tm1800', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm1830',index:'tm1830', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm1900',index:'tm1900', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm1930',index:'tm1930', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm2000',index:'tm2000', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm2030',index:'tm2030', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm2100',index:'tm2100', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm2130',index:'tm2130', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm2200',index:'tm2200', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm2230',index:'tm2230', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm2300',index:'tm2300', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm2330',index:'tm2330', formatter:'string',width:15,editable:false,sortable:false},
+			  		{name:'tm0000_yn',index:'tm0000_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm0030_yn',index:'tm0030_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm0100_yn',index:'tm0100_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm0130_yn',index:'tm0130_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm0200_yn',index:'tm0200_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm0230_yn',index:'tm0230_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm0300_yn',index:'tm0300_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm0330_yn',index:'tm0330_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm0400_yn',index:'tm0400_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm0430_yn',index:'tm0430_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm0500_yn',index:'tm0500_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm0530_yn',index:'tm0530_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm0600_yn',index:'tm0600_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm0630_yn',index:'tm0630_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm0700_yn',index:'tm0700_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm0730_yn',index:'tm0730_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm0800_yn',index:'tm0800_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm0830_yn',index:'tm0830_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm0900_yn',index:'tm0900_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm0930_yn',index:'tm0930_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm1000_yn',index:'tm1000_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm1030_yn',index:'tm1030_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm1100_yn',index:'tm1100_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm1130_yn',index:'tm1130_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm1200_yn',index:'tm1200_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm1230_yn',index:'tm1230_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm1300_yn',index:'tm1300_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm1330_yn',index:'tm1330_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm1400_yn',index:'tm1400_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm1430_yn',index:'tm1430_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm1500_yn',index:'tm1500_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm1530_yn',index:'tm1530_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm1600_yn',index:'tm1600_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm1630_yn',index:'tm1630_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm1700_yn',index:'tm1700_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm1730_yn',index:'tm1730_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm1800_yn',index:'tm1800_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm1830_yn',index:'tm1830_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm1900_yn',index:'tm1900_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm1930_yn',index:'tm1930_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm2000_yn',index:'tm2000_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm2030_yn',index:'tm2030_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm2100_yn',index:'tm2100_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm2130_yn',index:'tm2130_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm2200_yn',index:'tm2200_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm2230_yn',index:'tm2230_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm2300_yn',index:'tm2300_yn',width:0,editable:false,hidden:true},
+			  		{name:'tm2330_yn',index:'tm2330_yn',width:0,editable:false,hidden:true}
+			  		];
+
+		function fnSetDocumentReady(){
+			initMenus();
+			$('#RM').slideDown('fast');  
+			
+			$("#key_year").val($("#curr_yy").val());
+			$("#key_month").val($("#curr_mm").val());
+			
+			//공통 콤보 조회
+			getCommonCode("key_room_plant:X0004;", "N", "searchRoomAuthInfo();");	// 기술지원
+		}
+
+		//회의실 담당자 조회
+		function searchRoomAuthInfo(){
+			var keyData = {
+					admin_id : sess_empno,
+					corp_cd	 : sess_corp_cd
+			};
+			paramData = 
+			{
+				paramJson 			: util.jsonToString(keyData)
+
+			};
+			doCommonAjax("doSearchRmToRoomAuthInfo.do", paramData,"roomAuthCallBack(jsonData.sendResult);");
+		}
+
+		function roomAuthCallBack(result){
+
+			// 권한에 따른 제어
+			if($("#work_auth").val() < 5 && sess_mstu != "M"){
+				authType = "N";
+				if(result.room_code != ""){
+					authType = result.room_code;
+				}
+				else{
+					authType = "N";
+				}
+			}else{
+				authType = "Y";
+			}
+			
+			searchRoomPlaceComb();
+		}
+
+		function searchRoomPlaceComb(){
+			var params = {
+					room_plant		: $('#key_room_plant').val(),
+					mode			: 'N',
+					auth_type		: authType,
+					admin_id		: sess_empno,
+					corp_cd			: sess_corp_cd
+				};
+			doCommonAjax("doSearchRmToMultiComboPlant.do", params,"plantComboCallBack(jsonData);");
+		}
+
+		function plantComboCallBack(jsonData){
+			$.each(eval(jsonData.sendResult),function(targetNm,optionData){
+				$("#key_room_place").loadSelect(eval(optionData));
+			});
+			
+			if(firstYn == "Y"){
+				firstYn = "N";
+				init();
+			}else{
+				doSearch();
+			}
+		}
+
+		function init(){
+			if($("#hid_cond").val() != ""){
+				var hidCond = $("#hid_cond").val().split("|");
+				if(hidCond[0] != "") $("#key_year").val(hidCond[0]);
+				if(hidCond[1] != "") $("#key_month").val(hidCond[1]);
+				if(hidCond[2] != "") $("#key_room_plant").val(hidCond[2]);
+				if(hidCond[3] != "") $("#key_room_place").val(hidCond[3]);
+			}
+			
+			var params = {
+				sply_ymd	: $("#key_year").val()+$("#key_month").val(),
+				room_plant  : $("#key_room_plant").val(),
+				room_place  : $("#key_room_place").val(),
+				corp_cd		: sess_corp_cd
+			};
+			
+			gridParam = {
+				viewEdit : [{
+					gridName     : "htmlTable",
+					url          : "/doSearchToEmpty.do",
+					colNames     : cn1,
+					colModel     : cm1,
+					height       : "100%",
+					sortname     : "car_nm",
+					sortorder    : "desc",
+					rownumbers   : false,
+					multiselect  : false,
+					cellEdit     : false,
+					fnMerge      : false,
+					scroll       : false,
+					rowNum       : 31,
+					paramJson    : params,
+					dblClickRowFc : "celldbClickAction(rowId,iRow,iCol,e);",
+//					selectCellFc  : "cellClickAction(rowid, iCol, cellcontent);",
+					completeFc	 	: "fnGridInitComplete();"
+				}]
+			};
+
+			commonJqGridInit(gridParam, "N");
+			
+			setTimeout("doSearch()","1000");
+		}
+
+		function fnGridInitComplete(){
+			jQuery("#htmlTable").jqGrid('setGroupHeaders', {
+				useColSpanStyle: true, 
+				groupHeaders:[
+		          {startColumnName: 'tm0000', numberOfColumns: 2, titleText: '00'},
+		          {startColumnName: 'tm0100', numberOfColumns: 2, titleText: '01'},
+		          {startColumnName: 'tm0200', numberOfColumns: 2, titleText: '02'},
+		          {startColumnName: 'tm0300', numberOfColumns: 2, titleText: '03'},
+		          {startColumnName: 'tm0400', numberOfColumns: 2, titleText: '04'},
+		          {startColumnName: 'tm0500', numberOfColumns: 2, titleText: '05'},
+		          {startColumnName: 'tm0600', numberOfColumns: 2, titleText: '06'},
+		          {startColumnName: 'tm0700', numberOfColumns: 2, titleText: '07'},
+		          {startColumnName: 'tm0800', numberOfColumns: 2, titleText: '08'},
+		          {startColumnName: 'tm0900', numberOfColumns: 2, titleText: '09'},
+		          {startColumnName: 'tm1000', numberOfColumns: 2, titleText: '10'},
+		          {startColumnName: 'tm1100', numberOfColumns: 2, titleText: '11'},
+		          {startColumnName: 'tm1200', numberOfColumns: 2, titleText: '12'},
+		          {startColumnName: 'tm1300', numberOfColumns: 2, titleText: '13'},
+		          {startColumnName: 'tm1400', numberOfColumns: 2, titleText: '14'},
+		          {startColumnName: 'tm1500', numberOfColumns: 2, titleText: '15'},
+		          {startColumnName: 'tm1600', numberOfColumns: 2, titleText: '16'},
+		          {startColumnName: 'tm1700', numberOfColumns: 2, titleText: '17'},
+		          {startColumnName: 'tm1800', numberOfColumns: 2, titleText: '18'},
+		          {startColumnName: 'tm1900', numberOfColumns: 2, titleText: '19'},
+		          {startColumnName: 'tm2000', numberOfColumns: 2, titleText: '20'},
+		          {startColumnName: 'tm2100', numberOfColumns: 2, titleText: '21'},
+		          {startColumnName: 'tm2200', numberOfColumns: 2, titleText: '22'},
+		          {startColumnName: 'tm2300', numberOfColumns: 2, titleText: '23'}
+		        ]
+			}); 
+			
+		}
+
+		function retrieve(gubn){
+			switch(gubn){
+				case "search" :
+					doSearch();
+					break;
+				case "mapInfo" :
+				   doPopMapInfo();
+				    break;
+			}
+		}
+
+		function doSearch(){
+			params = {
+				sply_ymd	: $("#key_year").val()+$("#key_month").val(),
+				room_plant  : $("#key_room_plant").val(),
+				room_place  : $("#key_room_place").val(),
+				corp_cd		: sess_corp_cd,
+				locale		: $("#lo").val()
+			};
+			
+			doCommonSearch("doSearchGridRmToListForMon.do", util.jsonToString(params), "doSearchCallBack();", "htmlTable","Y");
+		}
+
+		function doSearchCallBack(){
+			var gridId = jQuery('#htmlTable').jqGrid('getDataIDs');
+			for(var i = 1 ; i <= gridId.length ; i++){
+				for(var n = 51 ; n < 99 ; n++){
+					
+					var colVal = jQuery("#htmlTable").getCell(i,n);
+					
+					if(colVal != ''){
+						
+						var valArr = colVal.split('/,/');
+						var cm = jQuery("#htmlTable").jqGrid('getGridParam', 'colModel');
+						$("#htmlTable").setCell(i,cm[n-48].name,' ', {background:valArr[0]},{'title':valArr[1]});
+						$("#htmlTable").setCell(i,cm[n].name,valArr[2]);
+					}
+					//$("#htmlTable").setCell(i,'res_col','',{color:'red'},'');
+				}
+			}
+		}
+
+		function celldbClickAction(rowId,iRow,iCol,e){
+			if($("#htmlTable").getCell(rowId,iCol+48) != ''){
+//				var hid_doc_no = $("#htmlTable").getCell(rowId,iCol+48);
+//				
+//				if(hid_doc_no != ""){
+//					var hfrm = document.hideForm;
+//					$("#hid_doc_no").val(hid_doc_no);
+//					$("#hid_req_ymd").val($("#key_year").val()+$("#key_month").val()+getColValue("day_num", rowId, "htmlTable"));
+//					$("#hid_csrfToken").val($("#csrfToken").val());
+//					hfrm.action = "xrm01.gas";
+//					hfrm.submit();
+//				}
+				
+				var hid_doc_no = $("#htmlTable").getCell(rowId,iCol+48);
+				if(hid_doc_no != ""){
+		            var form = $("<form/>");
+		            form.attr("method" , "post");
+		            form.attr("id"     , "hideForm");
+		            form.attr("action" , "xrm01.gas");
+		            var inp1 = $("<input type='hidden' id='hid_doc_no' name='hid_doc_no'/>").val(hid_doc_no);
+		            var inp2 = $("<input type='hidden' id='hid_req_ymd' name='hid_req_ymd'/>").val($("#key_year").val()+$("#key_month").val()+getColValue("day_num", rowId, "htmlTable"));
+		            var inp3 = $("<input type='hidden' id='hid_room_plant' name='hid_room_plant'/>").val($("#key_room_plant").val());
+		            var cond = "";
+		            cond += $("#key_year").val();
+		            cond += "|" + $("#key_month").val();
+		            cond += "|" + $("#key_room_plant").val();
+		            cond += "|" + $("#key_room_place").val();
+		            
+		            var inp4 = $("<input type='hidden' id='hid_cond' name='hid_cond'/>").val(cond);
+		            var inp5 = $("<input type='hidden' id='hid_view_nm' name='hid_view_nm'/>").val($("#menu_id").val());
+		            var token = $("<input type='hidden' id='hid_csrfToken' name='hid_csrfToken'/>").val($("#csrfToken").val());
+		            form.append(inp1, inp2, inp3, inp4, inp5, token);
+		            $("body").append(form);
+		            form.submit();
+		            form.remove();
+				}
+			}
+		}
+		function doPopMapInfo(){
+			alertUI("Iamge popup.");
+		}
+		
+		function pageStepHelpPopup(){
+			if(popup != null ){
+				popup.close();
+			}
+			
+			popup = popUpWindow3($("#help_url").val());
+		}
+		</script>

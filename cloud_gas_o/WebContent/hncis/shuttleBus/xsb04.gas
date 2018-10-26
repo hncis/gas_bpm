@@ -1,0 +1,273 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId = "XSB04";
+	String hid_csrfToken    = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_csrfToken")));
+	String hid_doc_no		= StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_doc_no")));
+	String hid_eeno			= StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_eeno")));
+	String hid_cond 	    = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_cond")));
+	String hid_view_nm      = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_view_nm")));
+	
+	String strBtn = "";
+	strBtn = "Confirm/confirm@reject/reject";
+	if(!"".equals(hid_doc_no)){
+		strBtn += "@back/back";
+	}
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>BusinessCard</title>
+		<script type="text/javascript" src="./js/xsb04.js"></script>
+	</head>
+	<body>
+		<div id="wrap">
+		<form name="frm" id="frm">
+			<input type="hidden" id="gubun" name="gubun">
+			<input type="hidden" id="nSource" name="nSource">
+			<input type="hidden" id="sses_eeno" name="sses_eeno" value="<%=sess_empno%>">
+			<input type="hidden" id="sses_eenm" name="sses_eenm" value="<%=sess_name%>">
+			<input type="hidden" id="hid_doc_no" name="hid_doc_no" value="<%=hid_doc_no %>">
+			<input type="hidden" id="hid_eeno" name="hid_eeno" value="<%=hid_eeno %>">
+			<input type="hidden" id="hid_cond" name="hid_cond" value="<%=hid_cond%>">
+			<input type="hidden" id="hid_view_nm" name="hid_view_nm" value="<%=hid_view_nm%>">
+			<input type="hidden" id="if_id" name="if_id">
+			<input type="hidden" id="bef_doc_no" name="bef_doc_no">
+			<input type="hidden" id="final_yn" name="final_yn">
+			<input type="hidden" id="ipe_eeno" name="ipe_eeno">
+			<input type="hidden" id="fileInfo" name="fileInfo">
+			<input type="hidden" id="req_type" name="req_type">
+			
+			<%@ include file="../include/hncis_header.gas"%>
+			<div id="contents_wrap">
+				<%@ include file="../include/hncis_left.gas"%>
+				<div id="contents">
+					<%=CommonGasc.getTitleAndButtonNew(sess_empno
+						,menuId
+						,strBtn
+						,""
+						,""
+						,null
+						,request)
+					%>
+					<div class="con_t_area mt10">
+	                	<h3>기본정보</h3>
+	                </div>
+					<div class="search_area">
+						<table>
+							<colgroup>
+	                        	<col style="width:110px;" />
+	                            <col style="width:158px;" />
+	                            <col style="width:73px;" />
+	                            <col style="width:158px;" />
+	                            <col style="width:80px;" />
+	                            <col style="width:158px;" />
+	                            <col style="width:73px;" />
+	                            <col style="width:158px;" />
+	                        </colgroup>
+							<tr>
+								<th>사번</th>
+								<td><input type="text" id="eeno" style="width:140px" onkeyup="setInsaInfo();cearInsa();" class="disabled" readOnly>
+									<input type="hidden" id="eeno_temp"></td>
+								<th>이름</th>
+								<td><input type="text" id="keyEenm" style="width:140px" class="disabled" readOnly></td>
+								<th>직급</th>
+								<td><input type="text" id="keyPosition" style="width:140px" class="disabled" readOnly></td>
+								<th>부서</th>
+								<td>
+									<input type="hidden" id="keyOpsCd" style="width:65px" readOnly>
+									<input type="text" id="keyOpsNm" style="width:140px" class="disabled" readOnly>
+								</td>
+							</tr>
+							<tr>
+								<th>신청일자</th>
+								<td><input type="text" id="apply_date" style="width:140px" class="disabled" readOnly></td>
+								<th>문서번호</th>
+								<td><input type="text" id="doc_no" style="width:140px" class="disabled" readOnly></td>
+								<th>진행상태</th>
+								<td>
+									<input type="hidden" id="pgs_st_cd" name="pgs_st_cd">
+									<input type="text" id="pgs_st_nm" name="pgs_st_nm" style="width:140px" class="disabled" readOnly>
+								</td>
+								<th>연락처</th>
+								<td><input type="text" id="keyTelNo" style="width:140px" class="disabled" readOnly></td>
+							</tr>
+							<tr>
+								<th class="div_nameF">반려사유</th>
+								<td class="inputF" colspan="7">
+									<input type="text" id="snb_rson_sbc" name="snb_rson_sbc" style="width:843px">
+								</td>
+							</tr>
+						</table>
+					</div>
+
+					<div class="con_t_area">
+	                	<h3>Request Information</h3>
+	                </div>
+					<div class="search_area">
+		                <table>
+		                	<colgroup>
+		                		<col style="width: 100px;"/>
+		                		<col style="width: 100px;"/>
+		                		<col style="width: 70px;"/>
+		                		<col style="width: 470px;"/>
+		                		<col style="width: 60px;"/>
+		                		<col style="width: auto;"/>
+		                	</colgroup>
+		                	<tr>
+								<th>Line</th>
+								<td>
+									<input type="text" id="r_line_nm" style="width: 70px" class="disabled" readOnly>
+									<input type="hidden" id="r_line">
+								</td>
+								<th>Bus Stop</th>
+								<td>
+									<input type="text" id="r_busStop_nm" style="width: 450px" class="disabled" readOnly>
+									<input type="hidden" id="r_busStop">
+								</td>
+								<th>Time</th>
+								<td>
+									<input type="text" id="bus_time" style="width:99px" class="disabled" readOnly>
+								</td>
+							</tr>
+		                </table>
+		                <table>
+		                	<colgroup>
+		                		<col style="width: 100px;"/>
+		                		<col style="width: auto;"/>
+		                		<col style="width: 100px;"/>
+		                		<col style="width: auto;"/>
+		                	</colgroup>
+		                	<tr>
+								<th>Address</th>
+								<td colspan="3"><input type="text" id="r_address" style="width: 800px" class="disabled" readOnly></td>
+							</tr>
+		                	<tr>
+								<th>Nº</th>
+								<td><input type="text" id="r_numb" style="width: 300px" class="disabled" readOnly></td>
+								<th>Complement</th>
+								<td><input type="text" id="r_complement" style="width: 300px" class="disabled" readOnly></td>
+							</tr>
+		                	<tr>
+								<th>District</th>
+								<td><input type="text" id="r_district" style="width: 300px" class="disabled" readOnly></td>
+								<th>City</th>
+								<td><input type="text" id="r_city" style="width: 300px" class="disabled" readOnly></td>
+							</tr>
+		                	<tr>
+								<th>Zip Code</th>
+								<td><input type="text" id="r_zipCode" style="width: 300px" class="disabled" readOnly></td>
+								<th>Work Shift</th>
+								<td>
+									<select id="r_workShift" style="width: 300px" disabled></select>
+									<select id="r_workShift_new" style="width: 300px; display:none;" disabled></select>
+									<input type="hidden" id="hid_workShift">
+								</td>
+							</tr>
+		                </table>
+		            </div>
+		            
+	                <div class="con_t_area">
+	                	<h3 class="fl">Change Request</h3>
+	                	<div class="btn_area mt0" id="btn_mail" style="display:none;">
+		                    <ul class="btns fr">
+		                        <li><a href="javascript:sendEmail();">Send Email<span></span></a></li>
+		                    </ul>
+		                </div>
+	                </div>
+	                <div class="search_area">
+	               		<table>
+		                	<colgroup>
+		                		<col style="width: 150px;"/>
+		                		<col style="width: auto;"/>
+		                		<col style="width: 150px;"/>
+		                		<col style="width: auto;"/>
+		                	</colgroup>
+		                	<tr>
+								<th>유형</th>
+								<td colspan="3"><select id="type" style="width: 250px" onchange="changeType(this.value)"></select></td>
+							</tr>
+		                	<tr id="row1" style="display: none;">
+								<th>Line</th>
+								<td><input type="text" id="line" style="width: 250px" class="disabled" readOnly></td>
+								<th>Bus Stop</th>
+								<td><input type="text" id="busStop" style="width: 250px" class="disabled" readOnly></td>
+							</tr>
+		                	<tr id="row2" style="display: none;">
+								<th>Address</th>
+								<td colspan="3"><input type="text" id="address" style="width: 736px" class="disabled" readOnly></td>
+							</tr>
+		                	<tr id="row3" style="display: none;">
+								<th>Nº</th>
+								<td><input type="text" id="numb" style="width: 250px" class="disabled" readOnly></td>
+								<th>Complement</th>
+								<td><input type="text" id="complement" style="width: 250px" class="disabled" readOnly></td>
+							</tr>
+		                	<tr id="row4" style="display: none;">
+								<th>District</th>
+								<td><input type="text" id="district" style="width: 250px" class="disabled" readOnly></td>
+								<th>City</th>
+								<td><input type="text" id="city" style="width: 250px" class="disabled" readOnly></td>
+							</tr>
+		                	<tr id="row5" style="display: none;">
+								<th>Zip Code</th>
+								<td colspan="3"><input type="text" id="zipCode" style="width: 250px" class="disabled" readOnly></td>
+							</tr>
+							<tr id="row6" style="display: none;">
+								<th>Work Shift</th>
+								<td><select id="workShift" style="width: 250px" disabled></select></td>
+							</tr>
+		                	<tr id="row7" style="display: none;">
+								<th>Attach File</th>
+								<td colspan="3">
+									<input type="hidden" id="fil_nm">
+									<input type="text" id="fileTemp" name="fileTemp" style="width:736px" class="disabled" readonly onclick="doFileDown();">
+								</td>
+							</tr>
+							<tr>
+								<th width="80px">Remark</th>
+								<td colspan="3"><textarea id="remark" class="sub_textarea" rows="8" cols="" disabled></textarea></td>
+							</tr>
+		                </table>
+		            </div>
+		            
+	                <div class="con_t_area">
+	                	<h3 class="fl">Remarks answer</h3>
+	                	<div class="btn_area mt0" id="btn_mail">
+		                    <ul class="btns fr">
+		                        <li><a href="javascript:doFileAttach();">파일첨부<span></span></a></li>
+		                    </ul>
+		                </div>
+	                </div>
+	                <div class="search_area">
+	               		<table>
+		                	<colgroup>
+		                		<col style="width: 150px;"/>
+		                		<col style="width: auto;"/>
+		                		<col style="width: 150px;"/>
+		                		<col style="width: auto;"/>
+		                	</colgroup>
+		                	<tr>
+								<th width="80px">Remarks answer</th>
+								<td colspan="3"><textarea id="remRemarksswer" class="sub_textarea" rows="8" cols=""></textarea></td>
+							</tr>
+		                </table>
+		            </div>
+					<%@ include file="../include/hncis_message.gas"%>
+				</div>
+				<div class="clear"></div>
+			</div>
+		</form>
+		<form id="hideForm" name="hideForm" method="post">
+			<input type="hidden" id="hid_csrfToken"	name="hid_csrfToken">
+		</form>
+		<form id="fileForm" name="fileForm">
+			<input type="hidden" id="file_doc_no" name="file_doc_no">
+			<input type="hidden" id="hid_use_yn"  name="hid_use_yn">
+			<input type="hidden" id="file_status"  name="file_status">
+			<input type="hidden" id="file_eeno" name="file_eeno">
+			<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+		</form>
+		</div>
+	</body>
+</html>

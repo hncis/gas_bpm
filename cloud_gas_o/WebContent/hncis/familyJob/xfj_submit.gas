@@ -1,0 +1,372 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String docId = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("docid")));
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title><fmt:message key="rc"/></title>
+		<style type="text/css">
+			#wrap.submit_page #contents_wrap,
+			#wrap.submit_page .any_page,
+			#wrap.submit_page #contents{width:100%}
+		</style>
+	</head>
+	<body>
+		<div id="wrap" class="submit_page">
+		<form name="frm" id="frm">
+			<input type="hidden" id="gubun" name="gubun">
+				<input type="hidden" id="nSource" name="nSource">
+				<input type="hidden" id="req_yn" name="req_yn">
+				<input type="hidden" id="if_id" name="if_id" value="<%=docId %>">
+			
+			<div id="contents_wrap" class="any_page">
+				<div id="contents">
+					<%=CommonGasc.getTitleAndButtonNew(sess_empno
+						,"XRM01"
+						,""
+						,""
+						,""
+						,null
+						,"Y"
+						,request)
+					%>
+					<div class="con_t_area mt10">
+	                	<h3><fmt:message key="basic_info"/></h3>
+	                </div>
+					<div class="search_area">
+						<table>
+							<colgroup>
+	                        	<col style="width:110px;" />
+	                            <col style="width:158px;" />
+	                            <col style="width:73px;" />
+	                            <col style="width:158px;" />
+	                            <col style="width:80px;" />
+	                            <col style="width:158px;" />
+	                            <col style="width:73px;" />
+	                            <col style="width:158px;" />
+	                        </colgroup>
+							<tr>
+								<th><fmt:message key="eeno"/></th>
+								<td><input type="text" id="eeno" style="width:140px" class="disabled" readOnly>
+								<th><fmt:message key="eenm"/></th>
+								<td><input type="text" id="keyEenm" style="width:140px" class="disabled" readOnly></td>
+								<th><fmt:message key="position"/></th>
+								<td><input type="text" id="keyPosition" style="width:140px" class="disabled" readOnly></td>
+								<th><fmt:message key="dept_nm"/></th>
+								<td>
+									<input type="hidden" id="keyOpsCd" readOnly>
+									<input type="text" id="keyOpsNm" style="width:140px" class="disabled" readOnly>
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="req_ymd"/></th>
+								<td><input type="text" id="req_date" style="width:140px" class="disabled" readOnly></td>
+								<th><fmt:message key="doc_no"/></th>
+								<td><input type="text" id="doc_no" style="width:140px" class="disabled" readOnly></td>
+								<th><fmt:message key="pgs_st_nm"/></th>
+								<td>
+									<input type="hidden" id="pgs_st_cd" name="pgs_st_cd">
+									<input type="text" id="pgs_st_nm" name="pgs_st_nm" style="width:140px" class="disabled" readOnly>
+								</td>
+								<th><fmt:message key="tel_no"/></th>
+								<td><input type="text" id="keyTelNo" style="width:140px" class="disabled" readOnly></td>
+							</tr>
+						</table>
+					</div>
+
+					<div class="con_t_area">
+	                	<h3><fmt:message key="req_info"/></h3>
+	                </div>
+	                <div class="vehicle_tbl">
+						<table>
+							<colgroup>
+							  <col style="width:140px;" />
+							  <col style="width:370px;" />
+							  <col style="width:140px;" />
+							  <col style="width:370px;" />
+							</colgroup>
+							<tr>
+								<th><fmt:message key="gubun"/></th>
+								<td>
+									<select id="fj_type" name="fj_type" style="width:150px" disabled></select>
+									<select id="fj_gubun" name="fj_gubun" style="width:150px" disabled></select>
+								</td>
+								<th><fmt:message key="f_date"/></th>
+								<td>
+									<input id="fj_date" type="text" style="width:80px" readonly disabled/>
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="f_relation"/></th>
+								<td>
+									<select id="fj_rel" name="fj_rel" style="width:150px" disabled></select>
+								</td>
+								<th><fmt:message key="f_compay"/></th>
+								<td>
+									<input id="fj_compay" type="text" style="width:80px;" dir="rtl" readonly disabled/> 원
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="f_target"/></th>
+								<td>
+									<input id="fj_targetNm" type="text" style="width:80px" readonly disabled/>
+								</td>
+								<th><fmt:message key="place"/></th>
+								<td>
+									<input id="fj_place" type="text" readonly disabled/>
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="f_reason"/></th>
+								<td colspan="3"><input id="fj_reason" type="text" readonly disabled/></td>
+							</tr>
+							<tr>
+								<th><fmt:message key="f_file"/></th>
+								<td colspan="3">
+									<input id="fil_nm" type="text" readonly disabled/>
+									<!--<ul class="btns">
+				                        <li><a href="javascript:doFileAttach();"><fmt:message key="BUTTON.FILE_ATTACH"/><span></span></a></li>
+				                    </ul>-->
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="rem_sbc"/></th>
+								<td colspan="3">
+									<textarea rows="8" id="fj_sbc" style="width:100%" readonly disabled></textarea>
+								</td>
+							</tr>
+						</table>
+					</div>
+					
+					<div class="con_t_area">
+	                	<h3><fmt:message key="f_item"/></h3>
+	                </div>
+	                <div class="vehicle_tbl">
+						<table>
+							<colgroup>
+							  <col style="width:140px;" />
+							  <col style="width:370px;" />
+							  <col style="width:140px;" />
+							  <col style="width:370px;" />
+							</colgroup>
+							<tr>
+								<th><fmt:message key="f_selItem"/></th>
+								<td colspan="3"><div id="div_chk"></div></td>
+							</tr>
+							<tr>
+								<th><fmt:message key="f_delDt"/></th>
+								<td>
+									<input id="fj_delDate" type="text" style="width:80px" readonly disabled/>
+									<select id="fj_delTime" style="width:80px" disabled></select>
+								</td>
+								<th><fmt:message key="f_delAddr"/></th>
+								<td>
+									<input id="fj_delAddr" type="text" readonly disabled/>
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="f_delTitle"/></th>
+								<td colspan="3"><input id="fj_delTitle" type="text" readonly disabled/></td>
+							</tr>
+							<tr>
+								<th><fmt:message key="f_delSbc"/></th>
+								<td colspan="3">
+									<textarea rows="8" id="fj_delSbc" style="width:100%" readonly disabled></textarea>
+								</td>
+							</tr>
+						</table>
+					</div>
+				<div class="clear"></div>
+			</div>
+		</form>
+		<form id="hideForm" name="hideForm" method="post">
+			<input type="hidden" id="hid_csrfToken"	name="hid_csrfToken">
+		</form>
+		</div>
+		<img id="loading_progress_img" src="<%=ctxPath %>/images/common/progress_bar.gif" width="362" height="131" style="display:none" />
+	</body>
+	<script type="text/javascript">
+	var initFlag = "Y";
+	function fnSetDocumentReady(){
+		$(".sub_title").hide();
+	
+		getCommonCode("fj_type:XFJ01:Z;fj_delTime:TIME:S", "N", "init();");
+	}
+
+	function init(){
+		getCommonCode("chk_type1:XFJ02:Z;chk_type2:XFJ03:Z", "N", "setCheckBoxInfoCallback(jsonData.sendResult);");
+	}
+	
+	function setCheckBoxInfoCallback(jsonData){
+		comboVal_chk = jsonData;
+		
+		setMultiCombo();
+		
+		//setCheckBox();
+	}
+	
+	function setCheckBox(){
+		var tmpNm = "";
+		var comboVal2 = "";
+		if($("#fj_type").val() == "A"){ 
+			tmpNm = "chk_type1";
+		}else{
+			tmpNm = "chk_type2";
+		}
+		
+		$.each(eval(comboVal_gubun),function(targetNm,optionData){
+			if(targetNm == "F_GUBUN"){
+				$.each(eval(optionData),function(index,optionData){
+					if(optionData.value == $("#fj_gubun").val()){
+						tmpItem = optionData.item;
+					}
+				});
+			}
+		});
+		
+		$.each(eval(comboVal_chk),function(targetNm,optionData){
+			if(targetNm == tmpNm){
+				$.each(eval(optionData),function(index,optionData){
+					if((tmpItem).indexOf(optionData.value) > -1){
+						comboVal2 += "<input type='checkbox' name='chk' value='" +  optionData.value + "'> " + optionData.name + " "
+		    		}
+				});
+			}
+		});
+		
+		$("#div_chk").html(comboVal2);
+	}
+	
+	function setMultiCombo(){
+		var params = {
+			f_type  : "A",
+			corp_cd	: sess_corp_cd
+		};
+
+		var paramData = {
+			paramJson : util.jsonToString(params)
+		};
+
+		doCommonAjax("doSearchToFamilyJobCombo.do", paramData, "doSearchToFamilyJobComboCallback(jsonData.sendResult);");
+	}
+
+	function doSearchToFamilyJobComboCallback(jsonData){
+		comboVal_gubun = jsonData;
+		
+		setComboGubun();
+	}
+
+	function setComboGubun(gubun, rel, pay){
+		var comboVal2 = "";
+		$.each(eval(comboVal_gubun),function(targetNm,optionData){
+			if(targetNm == "F_GUBUN"){
+				$.each(eval(optionData),function(index,optionData){
+					if(optionData.key == $("#fj_type").val()){
+						comboVal2 += '<option role="option" value="' +
+						            optionData.value + '">' +
+									optionData.name + '</option>';
+					}
+				});
+				
+				$("select#fj_gubun").html(comboVal2);
+				
+				if(gubun != undefined){
+					$("#fj_gubun").val(gubun);
+				}
+			}
+		});
+		
+		setComboRelation(rel, pay);
+	}
+
+	function setComboRelation(rel, pay){
+		var comboVal2 = "";
+		$.each(eval(comboVal_gubun),function(targetNm,optionData){
+			if(targetNm == "F_REL"){
+				$.each(eval(optionData),function(index,optionData){
+					if(optionData.key == $("#fj_gubun").val()){
+						comboVal2 += '<option role="option" value="' +
+						            optionData.value + '">' +
+									optionData.name + '</option>';
+					}
+				});
+				
+				$("select#fj_rel").html(comboVal2);
+				
+				if(rel != undefined){
+					$("#fj_rel").val(rel);
+				}
+			}
+		});
+		
+		setCheckBox();
+		setCompanyPay(pay);
+	}
+
+	function setCompanyPay(pay){
+		$("#fj_compay").val("");
+		$.each(eval(comboVal_gubun),function(targetNm,optionData){
+			if(targetNm == "F_REL"){
+				$.each(eval(optionData),function(index,optionData){
+					if(optionData.value == $("#fj_rel").val()){
+						$("#fj_compay").val(optionData.pay);
+					}
+				});
+			}
+
+			if(pay != undefined){
+				$("#fj_compay").val(pay);
+			}
+		});
+		
+		if(initFlag == "Y"){
+			initFlag = "N";
+			if($("#hid_doc_no").val() != ""){
+				doSearch("Y");
+			}
+		}
+	}
+	
+	function doSearch(){
+		var param = {
+			if_id 		: $("#if_id").val(),
+			corp_cd		: sess_corp_cd,
+			locale		: sess_locale
+		};
+
+		var paramData = {
+			paramJson : util.jsonToString(param)
+		};
+
+		doCommonAjax("doSearchToFamilyJob.do", paramData, "doSearchCallBack(jsonData.sendResult);");
+	}
+	
+	function doSearchCallBack(result){
+		loadJsonSet(result);
+		
+		//setCheckBox();
+	    
+		setComboGubun(result.fj_gubun, result.fj_rel, result.fj_compay);
+
+		$("#eeno").val(result.eeno);
+		$("#keyEenm").val(result.eenm);
+		$("#keyPosition").val(result.step_nm);
+		$("#keyOpsNm").val(result.dept_nm);
+		$("#keyTelNo").val(result.tel_no);
+		$("#req_date").val(result.inp_ymd);
+
+		fnSubmitInfoSettings($("#pgs_st_cd").val(), $("#if_id").val(), result.code, "snb_rson_sbc", $("#approveStepLevel").val());
+		
+		$("input:checkbox[name='chk']").each(
+    		function(){
+	    		if((result.fj_delItem).indexOf(this.value) > -1){
+	    			this.checked = true;
+	    		}
+    		}
+	    )
+		
+	}
+	</script>
+</html>

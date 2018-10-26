@@ -1,0 +1,214 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XTM03";
+	String hid_doc_no  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_doc_no")));
+	String hid_eeno  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_eeno")));
+	String hid_view_nm = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_view_nm")));
+	String hid_cond  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_cond")));
+	String strBtn = "";
+	strBtn = "accept/apply";
+	if(!"".equals(hid_doc_no)){
+		strBtn += "@back/back";
+	}
+%>
+<html>
+	<head>
+		<title>Traffic Ticket - view</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<script type="text/javascript" src="./js/xtm03.js"></script>
+	</head>
+	<body>
+		<div id="wrap">
+			<form name="mainForm" id="mainForm">
+				<input type="hidden" id="nSource" name="nSource">
+				<input type="hidden" id="hid_doc_no" name="hid_doc_no" value="<%=hid_doc_no%>">
+				<input type="hidden" id="hid_eeno" name="hid_eeno" value="<%=hid_eeno%>">
+				<input type="hidden" id="hid_view_nm" name="hid_view_nm" value="<%=hid_view_nm%>">
+				<input type="hidden" id="hid_cond" name="hid_cond" value="<%=hid_cond%>">
+				<input type="hidden" id="menu_id" name="menu_id" value="<%=menuId.toLowerCase()%>">
+				<%@ include file="../include/hncis_header.gas"%>
+				<div id="contents_wrap">
+					<%@ include file="../include/hncis_left.html"%>
+					<div id="contents">
+						<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,menuId
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+						<div class="con_t_area mt10">
+		                	<h3>기본정보</h3>
+		                </div>
+		                <div class="search_area">
+		                	<table>
+		                        <colgroup>
+		                        	<col style="width:95px;" />
+		                            <col style="width:158px;" />
+		                            <col style="width:73px;" />
+		                            <col style="width:158px;" />
+		                            <col style="width:80px;" />
+		                            <col style="width:158px;" />
+		                            <col style="width:73px;" />
+		                            <col style="width:158px;" />
+		                        </colgroup>
+		                        <tbody>
+		                            <tr>
+										<th class="div_nameF">User ID</th>
+										<td class="inputF">
+											<input type="text" id="eeno" name="eeno" style="width:140px;" class="disabled">
+										</td>
+										<th class="div_name">Name</th>
+										<td class="inputS">
+											<input type="text" id="ee_nm" name="ee_nm" style="width:140px;" class="disabled">
+										</td>
+										<th class="div_name">Position</th>
+										<td class="inputT">
+											<input type="text" id="poa_nm" name="poa_nm" style="width:140px;" class="disabled">
+										</td>
+										<th class="div_nameF">Dept.</th>
+										<td class="inputF">
+											<input type="text" id="ops_nm" name="ops_nm" style="width:140px;" class="disabled">
+											<input type="hidden" id="ops_cd" name="ops_cd" readonly>
+										</td>
+									</tr>
+									<tr>
+										<th class="div_nameF">신청일자</th>
+										<td class="inputF">
+											<input type="text" id="ptt_ymd" name="ptt_ymd" style="width:140px;" class="disabled">
+										</td>
+										<th class="div_name">Doc No.</th>
+										<td class="inputS">
+											<input type="text" id="doc_no" name="doc_no" style="width:140px;" class="disabled">
+										</td>
+										<th class="div_name">Phone</th>
+										<td class="inputT">
+											<input type="text" id="tel_no" name="tel_no" style="width:140px;" class="disabled"/>
+										</td>
+										<th class="div_name">Status</th>
+										<td class="inputT">
+											<input type="hidden" id="pgs_st_cd" name="pgs_st_cd" style="width:30px" readOnly>
+											<input type="text" id="pgs_st_nm" name="pgs_st_nm" style="width:140px;" class="disabled">
+										</td>
+									</tr>
+		                        </tbody>
+		                    </table>
+		                </div>
+						<div class="con_t_area mt10">
+		                	<h3>Vehicle Information</h3>
+		                </div>
+		                <div class="search_area">
+		                	<table>
+		                        <colgroup>
+		                        	<col style="width:40px;" />
+		                            <col style="width:165px;" />
+		                            <col style="width:40px;" />
+		                            <col style="width:158px;" />
+		                        </colgroup>
+		                        <tbody>
+		                            <tr>
+										<th class="div_nameF">Vehicle</th>
+										<td class="inputF">
+											<input type="text" id="vehl_nm" name="vehl_nm" style="width:95%;" class="disabled">
+										</td>
+										<th class="div_name">Number Plate</th>
+										<td class="inputS">
+											<input type="text" id="car_no" name="car_no" style="width:95%;" class="disabled">
+										</td>
+									</tr>
+		                        </tbody>
+		                    </table>
+		                </div>
+						<div class="con_t_area mt10">
+		                	<h3>Traffic Ticket Information</h3>
+		                </div>
+		                <div class="search_area">
+		                	<table>
+		                        <colgroup>
+		                        	<col style="width:97px;" />
+		                            <col style="width:160px;" />
+		                            <col style="width:77px;" />
+		                            <col style="width:162px;" />
+		                        	<col style="width:80px;" />
+		                            <col style="width:160px;" />
+		                            <col style="width:75px;" />
+		                            <col style="width:158px;" />
+		                        </colgroup>
+		                        <tbody>
+		                            <tr>
+										<th class="div_nameF">AIT</th>
+										<td class="inputF">
+											<input type="text" id="tic_aet" name="tic_aet" style="width:140px;" class="disabled">
+										</td>
+										<th class="div_nameF">Code</th>
+										<td class="inputF">
+											<input type="text" id="tic_code" name="tic_code" style="width:140px" class="disabled">
+										</td>
+										<th class="div_nameF">Point</th>
+										<td class="inputF">
+											<input type="text" id="tic_pint" name="tic_pint" style="width:140px;text-align:right;" class="disabled">
+										</td>
+										<th class="div_name">Amount</th>
+										<td class="inputS">
+											<input type="text" id="tic_amt" name="tic_amt" style="width:140px;text-align:right;" class="disabled">
+										</td>
+									</tr>
+									<tr>
+										<th class="div_name">Date/Time</th>
+										<td class="inputS">
+											<input type="text" id="tic_ymd" name="tic_ymd" style="width:70px;" class="disabled">
+											<input type="text" id="tic_time" name="tic_time" style="width:50px;" class="disabled">
+										</td>
+										<th class="div_nameF">Description</th>
+										<td class="inputF" colspan="5">
+											<input type="text" id="tic_desc" name="tic_desc" style="width:619px" class="disabled">
+										</td>
+									</tr>
+		                            <tr>
+										<th class="div_name">Region</th>
+										<td class="inputS">
+											<input type="text" id="region_nm" name="region_nm" style="width:140px;" class="disabled">
+										</td>
+										<th class="div_name">Place</th>
+										<td class="inputS">
+											<input type="text" id="tic_place" name="tic_place" style="width:140px;" class="disabled">
+										</td>
+										<th class="div_name">City</th>
+										<td class="inputS">
+											<input type="text" id="tic_city" name="tic_city" style="width:140px;" class="disabled">
+										</td>
+										<th class="div_name">HR Payment</th>
+										<td class="inputS">
+											<input type="text" id="tic_payment" name="tic_payment" style="width:140px;" class="disabled">
+										</td>
+									</tr>
+		                            <tr>
+										<th class="div_name">Remarks</th>
+										<td class="inputS" colspan="3">
+											<input type="text" id="tic_remarks" name="tic_remarks" style="width:94.5%" class="disabled">
+										</td>
+										<th class="div_name" colspan="3">Deadline To Indicate The Driver</th>
+										<td class="inputS">
+											<input type="text" id="drv_lmt_ymd" name="drv_lmt_ymd" style="width:140px;" class="disabled">
+										</td>
+									</tr>
+		                        </tbody>
+		                    </table>
+		                </div>
+		                <div class="jq_tbl">
+		                	<table id="htmlTable" class="scroll"></table>
+		                	<div id="htmlPager" class="scroll"></div>
+		                </div>
+	                	<%@ include file="../include/hncis_message.gas"%>
+	            	</div>
+	            	<div class="clear"></div>
+				</div>
+			</form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>	
+		</div>			
+	</body>
+</html>

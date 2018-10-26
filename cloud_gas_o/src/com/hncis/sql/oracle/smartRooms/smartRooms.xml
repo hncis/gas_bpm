@@ -1,0 +1,1983 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<!--  
+  제목 : 스마트 회의실
+  일자 : 2016-05-26
+  만든이 : 이동원
+  DB_Type : Mysql
+-->
+<sqlMap namespace="smartRooms">
+    <sql id="pageTop">
+		SELECT Z.*
+		  FROM (
+			SELECT X.*
+				 , CEIL((ROWNUM) / #page_size#) AS CUR_PAGE
+			  FROM (
+    </sql>
+
+    <sql id="pageBottom">
+				)X
+				<!-- , (SELECT @row_num := 0) R --><!-- Oracle 전환으로  -->
+			)Z
+			WHERE Z.CUR_PAGE = #cur_page#
+    </sql>
+    
+	<sql id="jqGridPageTop">
+		SELECT Z.*
+		  FROM (
+			SELECT X.*
+				 , ROWNUM AS CUR_PAGE
+			  FROM (
+    </sql>
+    
+    <sql id="jqGridPageBottom">
+				)X
+				<!-- , (SELECT @row_num := 0) R --><!-- Oracle 전환으로  -->
+			)Z
+			WHERE Z.CUR_PAGE BETWEEN #startRow# AND #endRow#
+    </sql>
+    
+	<!-- 회의실 공통 -->
+	<!-- 공통코드 -->
+	<select id="searchComboByXsm" parameterClass="bgabGascsm05" resultClass="bgabGascsm05">
+		/* Query Id : searchComboByXsm */
+		SELECT XSM_CODE
+			 , XSM_HNAME
+			 , XSM_ENAME
+		  FROM BGAB_GASCSM05$corp_cd$
+		 WHERE XSM_USE_YN = 'Y'
+		   AND XSM_KND = #xsm_knd#
+		 ORDER BY XSM_SORT_NO
+	</select>
+	
+	<!-- key by doc_no -->
+	<select id="searchXsmByDocNo" parameterClass="java.util.HashMap" resultClass="bgabGascsmDto">
+		/* Query Id : searchXsmByDocNo */
+		SELECT B.DOC_NO
+			 , B.SEQ_NO
+			 , A.CNF_FILE_ID
+		  FROM BGAB_GASCSM01$corp_cd$ A
+		 INNER JOIN BGAB_GASCSM02$corp_cd$ B
+		    ON A.DOC_NO = B.DOC_NO
+		 WHERE A.PGS_ST_CD NOT IN('3', '4')
+		   <isNotEmpty property="doc_no">
+		   AND A.DOC_NO = #doc_no#
+		   </isNotEmpty>
+		   <isEmpty property="doc_no">
+		   AND A.BD_CD || A.CORM_FL_CD || A.CORM_CD) = #key_no#
+		   AND CONCAT(#cnf_ymd#,#cnf_time#) <![CDATA[>=]]> CONCAT(TO_CHAR(B.CNF_FROM_YMD,'YYYYMMDD'),B.CNF_FROM_TIME)
+		   AND CONCAT(#cnf_ymd#,#cnf_time#) <![CDATA[<]]> CONCAT(TO_CHAR(B.CNF_TO_YMD, 'YYYYMMDD'),B.CNF_TO_TIME)
+		   </isEmpty>
+	</select>
+	
+	<!-- 반복요일 일자 조회 -->
+	<select id="searchXsmBySpecialDay" parameterClass="hashMap" resultClass="bgabGascsm01">
+		/* Query Id : searchXsmBySpecialDay */
+		SELECT *
+		  FROM (
+			SELECT CAST(TO_DATE(TO_DATE,'YYYYMMDD') AS CHAR(8)) AS PTT_YMD
+				 , WEEKOFYEAR(TO_DATE) AS WEEK_CNT
+			     , DAYOFWEEK(TO_DATE) AS WEEK_DAY_CNT
+			     , CONCAT(CASE DAYOFWEEK(TO_DATE)
+			            WHEN '1' THEN '일'
+			            WHEN '2' THEN '월'
+			            WHEN '3' THEN '화'
+			            WHEN '4' THEN '수'
+			            WHEN '5' THEN '목'
+			            WHEN '6' THEN '금'
+			            WHEN '7' THEN '토'
+			       END, '요일') AS WEEK_DAY
+			FROM 
+			(SELECT ADDDATE(CAST(TO_DATE(#from_ymd#,'YYYY-MM-DD') AS CHAR(10)), T4*10000 + T3*1000 + T2*100 + T1*10 + T0) TO_DATE FROM
+			 (SELECT 0 T0 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) T0,
+			 (SELECT 0 T1 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) T1,
+			 (SELECT 0 T2 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) T2,
+			 (SELECT 0 T3 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) T3,
+			 (SELECT 0 T4 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) T4) V
+			WHERE TO_DATE BETWEEN CAST(TO_DATE(#from_ymd#,'YYYY-MM-DD') AS CHAR(10)) AND CAST(TO_DATE(#to_ymd#,'YYYY-MM-DD') AS CHAR(10))
+		)Z
+		WHERE 1=1
+		<dynamic>
+			<iterate property="spe_day" prepend="AND Z.WEEK_DAY_CNT IN" open="(" close=")" conjunction=",">
+				<isNotNull property="spe_day">#spe_day[]#</isNotNull>
+			</iterate>
+		</dynamic>
+	</select>
+	
+	<!-- 회의실 중복 체크 -->
+	<select id="searchCormDupCheck" parameterClass="bgabGascsm01" resultClass="String">
+		/* Query Id : searchCormDupCheck */
+		SELECT CASE WHEN COUNT(Z.DOC_NO) > 0 THEN 'Y' ELSE 'N' END AS ISDUPYN
+		  FROM (
+		    SELECT A.DOC_NO
+		         , A.CNF_TITLE
+		         , B.CNF_FROM_YMD
+		         , B.CNF_FROM_TIME
+		         , B.CNF_TO_YMD
+		         , B.CNF_TO_TIME
+		      FROM BGAB_GASCSM01$corp_cd$ A
+		         , BGAB_GASCSM02$corp_cd$ B
+		     WHERE A.DOC_NO = B.DOC_NO
+		       AND A.PGS_ST_CD NOT IN('3', '4')
+		       AND A.REGN_CD = #regn_cd# 
+		       AND A.BD_CD = #bd_cd#
+		       AND A.CORM_FL_CD = #corm_fl_cd#
+		       AND A.CORM_CD = #corm_cd#
+		       <isNotEmpty property="doc_no">
+		       AND A.DOC_NO != #doc_no#
+		       </isNotEmpty>
+		       AND (CONCAT(#cnf_from_ymd#,#cnf_from_time#) <![CDATA[<=]]> CONCAT(TO_CHAR(B.CNF_FROM_YMD, 'YYYYMMDD'),B.CNF_FROM_TIME)
+		        OR CONCAT(#cnf_from_ymd#,#cnf_from_time#) <![CDATA[<=]]> CONCAT(TO_CHAR(B.CNF_TO_YMD, 'YYYYMMDD'),B.CNF_TO_TIME))
+		       AND (CONCAT(#cnf_to_ymd#,#cnf_to_time#) <![CDATA[>=]]> CONCAT(TO_CHAR(B.CNF_FROM_YMD, 'YYYYMMDD'),B.CNF_FROM_TIME)
+		        OR CONCAT(#cnf_to_ymd#,#cnf_to_time#) <![CDATA[>=]]> CONCAT(TO_CHAR(B.CNF_TO_YMD, 'YYYYMMDD'),B.CNF_TO_TIME))
+		     ORDER BY B.CNF_FROM_YMD
+		     		, B.CNF_FROM_TIME
+		)Z
+	</select>
+	
+	<!-- 권한구분에 따른 사용자 조회 -->
+	<select id="searchEtcUserList" parameterClass="bgabGascsmDto" resultClass="bgabGascsmDto">
+		/* Query Id : searchEtcUserList */
+		SELECT AUTH_CD
+		  FROM BGAB_GASCSM06$corp_cd$
+		 WHERE CAST(TO_DATE(SYSDATE, 'YYYYMMDD') AS CHAR(8)) BETWEEN FROM_YMD AND TO_YMD
+		   AND EENO = #etcUser#
+      	   <isNotEmpty property="auth_cd">
+           AND AUTH_CD = #auth_cd#
+           </isNotEmpty>
+	</select>
+		
+	<!-- 정책검사 -->
+	<select id="searchConferencePolicy" parameterClass="hashMap" resultClass="hashMap">
+		/* Query Id : searchConferencePolicy */
+		SELECT NVL(A.RES_FROM_TIME, '0600') AS RES_FROM_TIME
+			 , NVL(A.RES_TO_TIME, '2359') AS RES_TO_TIME
+			 , NVL(A.USE_FROM_TIME, '0600') AS USE_FROM_TIME
+			 , NVL(A.USE_TO_TIME, '2359') AS USE_TO_TIME
+			 , NVL(A.RES_LMT_CNT, 0) AS RES_LMT_CNT
+			 , NVL(A.RES_MAX_MIN, 0) AS RES_MAX_MIN
+			 , B.XSM_HNAME AS RES_MAX_MIN_NAME
+		  FROM BGAB_GASCSM04$corp_cd$ A
+		  LEFT OUTER JOIN BGAB_GASCSM05$corp_cd$ B
+		    ON A.RES_MAX_MIN = B.XSM_CODE
+		   AND B.XSM_KND = 'SM004'
+		 WHERE A.REGN_CD = #regn_cd#
+		   AND A.BD_CD = #bd_cd#
+		   AND A.CORM_FL_CD = #corm_fl_cd#
+		   AND A.CORM_CD = #corm_cd#
+	</select>
+	
+	<!-- 사용일자 기준으로 해당팀에서 예약한 건수 조회 -->
+	<select id="searchTodayReservCnt" parameterClass="bgabGascsm01" resultClass="String">
+		/* Query Id : searchTodayReservCnt */
+		SELECT COUNT(1) AS CNT
+		  FROM BGAB_GASCSM01$corp_cd$ A
+		  LEFT OUTER JOIN BGAB_GASCSM02$corp_cd$ B
+		    ON A.DOC_NO = B.DOC_NO
+		 WHERE A.PGS_ST_CD NOT IN('3', '4')
+		   AND B.CNF_FROM_YMD = #cnf_from_ymd#, 'YYYYMMDD')
+		   AND A.CNF_DEPT_CODE = #cnf_dept_code#, 'YYYYMMDD')
+	</select>
+	
+	<!-- 회의실 예약 선점(마스터) -->
+	<insert id="insertConferenceRoom1" parameterClass="bgabGascsm01">
+		/* Query Id : insertConferenceRoom1 */
+		INSERT INTO BGAB_GASCSM01$corp_cd$(
+			   REGN_CD
+			 , BD_CD
+			 , CORM_FL_CD
+			 , CORM_CD
+			 , DOC_NO
+			 , CNF_EENO
+			 , CNF_DEPT_CODE
+			 , PTT_YMD
+			 , PGS_ST_CD
+			 , INP_YMD
+			 , IPE_EENO
+			 , MDFY_YMD
+			 , UPDR_EENO
+		)VALUES(
+			   #regn_cd#
+			 , #bd_cd#
+			 , #corm_fl_cd#
+			 , #corm_cd#
+			 , #doc_no#
+			 , #cnf_eeno#
+			 , #cnf_dept_code#
+			 , CAST(TO_DATE(SYSDATE,'YYYYMMDD') AS CHAR(8))
+			 , '0'
+			 , SYSDATE
+			 , #ipe_eeno#
+			 , SYSDATE
+			 , #updr_eeno#
+		)
+	</insert>
+
+	<!-- 회의실 예약 선점입력(타임) -->
+	<insert id="insertConferenceRoom2" parameterClass="bgabGascsm01">
+		/* Query Id : insertConferenceRoom2 */
+		INSERT INTO BGAB_GASCSM02$corp_cd$(
+			   DOC_NO
+			 , SEQ_NO
+			 , CNF_FROM_YMD
+			 , CNF_TO_YMD
+			 , CNF_FROM_TIME
+			 , CNF_TO_TIME
+			 , INP_YMD
+			 , IPE_EENO
+			 , MDFY_YMD
+			 , UPDR_EENO
+		)VALUES(
+			   #doc_no#
+			 , (SELECT T.SEQ_NO FROM(
+			 		SELECT NVL(MAX(SEQ_NO), 0) + 1 AS SEQ_NO 
+			 		  FROM BGAB_GASCSM02
+			 		 WHERE DOC_NO = #doc_no#)
+				T)
+			 , #cnf_from_ymd#, 'YYYYMMDD')
+			 , #cnf_to_ymd#, 'YYYYMMDD')
+			 , #cnf_from_time#
+			 , #cnf_to_time#
+			 , SYSDATE
+			 , #ipe_eeno#
+			 , SYSDATE
+			 , #updr_eeno#
+		)
+	</insert>
+	
+	<!-- 회의실 예약 최종입력(마스터) -->
+	<update id="updateConferenceRoom1" parameterClass="bgabGascsm01">
+		/* Query Id : updateConferenceRoom1 */
+		UPDATE BGAB_GASCSM01$corp_cd$
+		   SET CNF_TITLE = #cnf_title#
+		     , CNF_EENO = #cnf_eeno#
+		     , CNF_DEPT_CODE = #cnf_dept_code#
+		     , CNF_ATTDE_EENO = #cnf_attde_eeno#
+		     , CNF_ATTDE_NAME = #cnf_attde_name#
+		     , CNF_ATTDE_CNT = #cnf_attde_cnt#
+		     , CNF_OUT_ATTDE = #cnf_out_attde#
+		     , CNF_OUT_CNT = #cnf_out_cnt#
+		     , CNF_AGENDA = #cnf_agenda#
+		     , CNF_SPE_DAY = #cnf_spe_day#
+		     , CNF_ALR_EMAIL = #cnf_alr_email#
+		     , CNF_ALR_SMS = #cnf_alr_sms#
+		     , CNF_FILE_ID = ''
+		     , PGS_ST_CD = CASE WHEN #isYn# = 'Y' THEN '1' ELSE '2' END
+			 , UPDR_EENO = #updr_eeno#
+			 , MDFY_YMD = SYSDATE
+		 WHERE DOC_NO = #doc_no#
+	</update>
+
+	<!-- 회의실 예약 최종입력(타임) -->
+	<update id="updateConferenceRoom2" parameterClass="bgabGascsm01">
+		/* Query Id : updateConferenceRoom2 */
+		UPDATE BGAB_GASCSM02$corp_cd$
+		   SET CNF_FROM_YMD = #cnf_from_ymd#, 'YYYYMMDD')
+			 , CNF_TO_YMD = #cnf_to_ymd#, 'YYYYMMDD')
+			 , CNF_FROM_TIME = #cnf_from_time#
+			 , CNF_TO_TIME = #cnf_to_time#
+			 , UPDR_EENO = #updr_eeno#
+			 , MDFY_YMD = SYSDATE
+		 WHERE DOC_NO = #doc_no#
+	</update>
+	
+	<!-- 회의실 예약 삭제(타임) -->
+	<update id="deleteConferenceRoom2" parameterClass="bgabGascsm01">
+		/* Query Id : deleteConferenceRoom2 */
+		DELETE FROM BGAB_GASCSM02$corp_cd$
+		 WHERE DOC_NO = #doc_no#
+		   <isNotEmpty property="seq_no">
+		   AND SEQ_NO = #seq_no#
+		   </isNotEmpty>
+	</update>
+	
+	<!-- 회의실 예약 삭제(마스터) -->
+	<update id="deleteConferenceRoom1" parameterClass="bgabGascsm01">
+		/* Query Id : deleteConferenceRoom1 */
+		DELETE FROM BGAB_GASCSM01$corp_cd$
+		 WHERE DOC_NO = #doc_no#
+	</update>
+	
+	<!-- 회의실 예약 정보를 조회한다. -->
+	<select id="searchConferenceReservInfo" parameterClass="bgabGascsm01" resultClass="bgabGascsm01">
+		/* Query Id : searchConferenceReservInfo */
+		SELECT A.DOC_NO
+		     , A.REGN_CD
+		     , A.BD_CD
+		     , A.CORM_FL_CD
+		     , A.CORM_CD
+		     , B.CNF_FROM_YMD
+		     , B.CNF_FROM_TIME
+		     , B.CNF_TO_YMD
+		     , B.CNF_TO_TIME
+		     , A.CNF_TITLE
+		     , A.CNF_EENO AS CNF_EENO
+		     , C.XUSR_NAME AS CNF_EENM
+		     , A.CNF_DEPT_CODE
+		     , D.XORG_ORGA_E AS CNF_DEPT_NAME
+		     , A.CNF_ATTDE_CNT
+		     , A.CNF_ATTDE_EENO
+        	 , A.CNF_ATTDE_NAME
+        	 , A.CNF_OUT_ATTDE
+        	 , A.CNF_AGENDA
+        	 , A.CNF_SPE_DAY
+        	 , A.CNF_ALR_EMAIL
+        	 , A.CNF_ALR_SMS
+        	 , A.CNF_FILE_ID
+        	 , A.PGS_ST_CD
+		  FROM BGAB_GASCSM01$corp_cd$ A
+		 INNER JOIN BGAB_GASCSM02$corp_cd$ B
+		    ON A.DOC_NO = B.DOC_NO
+		  LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ C
+		    ON A.CNF_EENO = C.XUSR_EMPNO
+		  LEFT OUTER JOIN BGAB_GASCZ003$corp_cd$ D
+		    ON A.CNF_DEPT_CODE = D.XORG_ORGA_C
+		 WHERE B.DOC_NO = #doc_no#
+		   <isNotEmpty property="seq_no">
+		   AND B.SEQ_NO = #seq_no#
+		   </isNotEmpty>
+	</select>
+	
+	<!-- 회의실 정보 조회 -->
+	<select id="searchConferenceInfo" parameterClass="bgabGascsm04" resultClass="bgabGascsm04">
+		/* Query Id : searchConferenceInfo */
+		SELECT A.REGN_CD
+			 , C.XSM_HNAME AS REGN_NM
+			 , B.BD_CD
+			 , B.BD_NM
+			 , A.CORM_CD
+			 , A.CORM_NM
+			 , A.CORM_FL_CD
+			 , A.USE_KND
+			 , A.BLNS_CPSN
+			 , A.DESK_QTY
+			 , A.CHAIR_QTY
+			 , A.CONF_YN
+			 , A.ITEM_CD
+			 , A.ITEM_SBC
+			 , A.CORM_LOC_SBC
+			 , A.FILE_ID_1
+      		 , '' AS ORG_FILE_1
+       		 , '' AS ORG_FILE_2
+      		 , '' AS FILE_IMG_1
+       		 , '' AS FILE_IMG_2
+			 , A.REMARK
+			 , A.RES_MAX_MIN
+			 , D.XSM_HNAME AS RES_MAX_MIN_NM 
+		  FROM BGAB_GASCSM04$corp_cd$ A
+		  LEFT OUTER JOIN bgab_GASCSM03$corp_cd$ B
+		    ON B.BD_CD = A.BD_CD
+		   AND A.USE_YN = 'Y'
+		  LEFT OUTER JOIN BGAB_GASCSM05$corp_cd$ C
+		    ON C.XSM_CODE = A.REGN_CD
+		   AND C.XSM_KND = 'SM001'
+		  LEFT OUTER JOIN BGAB_GASCSM05$corp_cd$ D
+		    ON D.XSM_CODE = A.RES_MAX_MIN
+		   AND D.XSM_KND = 'SM004'	   
+		 WHERE A.REGN_CD = #regn_cd#
+		   AND A.BD_CD = #bd_cd#
+		   <isNotEmpty property="corm_fl_cd">
+		   AND A.CORM_FL_CD = #corm_fl_cd#
+		   </isNotEmpty>
+		   AND A.CORM_CD = #corm_cd#
+	</select>
+	
+	<!-- 빠른예약 -->
+	<select id="searchFastReservCormTotalCount" parameterClass="bgabGascsm01" resultClass="String">
+		/* Query Id : searchFastReservCormTotalCount */
+		SELECT COUNT(1) AS TOT_CNT
+		  FROM BGAB_GASCSM04$corp_cd$ Z
+		 INNER JOIN(
+		      SELECT CAST(TO_DATE(TO_DATE,'YYYYMMDD') AS CHAR(8)) AS FROM_YMD
+		        FROM (SELECT ADDDATE(CAST(TO_DATE(#cnf_from_ymd#,'YYYY-MM-DD') AS CHAR(10)), T4*10000 + T3*1000 + T2*100 + T1*10 + T0) TO_DATE FROM
+		       (SELECT 0 T0 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) T0,
+		       (SELECT 0 T1 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) T1,
+		       (SELECT 0 T2 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) T2,
+		       (SELECT 0 T3 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) T3,
+		       (SELECT 0 T4 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) T4) V
+		      WHERE TO_DATE BETWEEN CAST(TO_DATE(#cnf_from_ymd#,'YYYY-MM-DD') AS CHAR(10)) AND CAST(TO_DATE(#cnf_to_ymd#,'YYYY-MM-DD') AS CHAR(10))
+		 )X
+	    WHERE Z.USE_YN = 'Y'
+	  	  <!-- 예약가능시간체크 -->
+	  	  AND (CONCAT(LPAD(TO_CHAR(SYSDATE, 'HH24'),2,0),LPAD(TO_CHAR(SYSDATE, 'MI'),2,0)) <![CDATA[<=]]> NVL(Z.RES_FROM_TIME, '0600')
+		   OR  CONCAT(LPAD(TO_CHAR(SYSDATE, 'HH24'),2,0),LPAD(TO_CHAR(SYSDATE, 'MI'),2,0)) <![CDATA[<=]]> NVL(Z.RES_TO_TIME, '2200'))
+		  <!-- 사용가능시간체크 -->
+		  AND (#cur_fr_tm# <![CDATA[<=]]> NVL(Z.USE_FROM_TIME, '0600')
+		   OR  #cur_to_tm# <![CDATA[<=]]> NVL(Z.USE_TO_TIME, '2200'))
+		  <isNotEmpty property="regn_cd">
+		  AND Z.REGN_CD = #regn_cd#
+		  </isNotEmpty>
+		  <isNotEmpty property="bd_cd">
+		  AND Z.BD_CD = #bd_cd#
+		  </isNotEmpty>
+		  <isNotEmpty property="corm_fl_cd">
+		  AND Z.CORM_FL_CD = #corm_fl_cd#
+		  </isNotEmpty>
+		  <isNotEmpty property="corm_cd">
+		  AND Z.CORM_CD = #corm_cd#
+		  </isNotEmpty>
+		  <isNotEmpty property="from_cpsn">
+		  AND NVL(Z.BLNS_CPSN, 0) BETWEEN #from_cpsn# AND #to_cpsn#
+		  </isNotEmpty>
+		  <isNotEmpty property="item_sbc">
+		  AND LOWER(Z.ITEM_SBC) LIKE '%' || LOWER(#item_sbc#) || '%'
+		  </isNotEmpty>
+		  AND NOT EXISTS (
+		       SELECT A.REGN_CD
+		            , A.BD_CD
+		            , A.CORM_FL_CD
+		            , A.CORM_CD
+		            , A.PTT_YMD
+		            , B.CNF_FROM_YMD
+		            , B.CNF_FROM_TIME
+		            , B.CNF_TO_YMD
+		            , B.CNF_TO_TIME
+		            , A.DOC_NO
+		            , B.SEQ_NO
+		         FROM BGAB_GASCSM01$corp_cd$ A
+		        INNER JOIN BGAB_GASCSM02$corp_cd$ B
+		           ON A.DOC_NO = B.DOC_NO
+		        WHERE A.PGS_ST_CD NOT IN ('3', '4')
+		          AND A.REGN_CD = Z.REGN_CD
+		          AND A.BD_CD = Z.BD_CD
+		          AND A.CORM_CD = Z.CORM_CD
+		          AND (CONCAT(#cnf_from_ymd#,#cur_fr_tm#) <![CDATA[<=]]> CONCAT(TO_CHAR(B.CNF_FROM_YMD, 'YYYYMMDD'),B.CNF_FROM_TIME)
+		           OR  CONCAT(#cnf_from_ymd#,#cur_fr_tm#) <![CDATA[<=]]> CONCAT(TO_CHAR(B.CNF_TO_YMD, 'YYYYMMDD'),B.CNF_TO_TIME))
+		          AND (CONCAT(#cnf_to_ymd#,#cur_to_tm#) <![CDATA[>=]]> CONCAT(TO_CHAR(B.CNF_FROM_YMD, 'YYYYMMDD'),B.CNF_FROM_TIME)
+		           OR  CONCAT(#cnf_to_ymd#,#cur_to_tm#) <![CDATA[>=]]> CONCAT(TO_CHAR(B.CNF_TO_YMD, 'YYYYMMDD'),B.CNF_TO_TIME))
+		  )
+	</select>
+	<select id="searchFastReservCormList" parameterClass="bgabGascsm01" resultClass="bgabGascsm01">
+		/* Query Id : searchFastReservCormList */
+	  	<include refid="pageTop"/>
+		SELECT DISTINCT
+		       Z.REGN_CD
+		     , D.XSM_HNAME AS REGN_NM
+		     , Z.BD_CD
+		     , C.BD_NM
+		     , Z.CORM_FL_CD
+		     , Z.CORM_CD
+		     , Z.CORM_NM
+		     , #cur_fr_tm# AS CNF_FROM_TIME
+		     , #cur_to_tm# AS CNF_TO_TIME
+		     , Z.BLNS_CPSN AS TO_CPSN
+		     , CAST(Z.ITEM_SBC AS VARCHAR(2))
+		     , Z.USE_KND
+		 FROM BGAB_GASCSM04$corp_cd$ Z
+		 INNER JOIN(
+		      SELECT CAST(TO_DATE(TO_DATE,'YYYYMMDD') AS CHAR(8)) AS FROM_YMD
+		        FROM (SELECT ADDDATE(CAST(TO_DATE(#cnf_from_ymd#,'YYYY-MM-DD') AS CHAR(10)), T4*10000 + T3*1000 + T2*100 + T1*10 + T0) TO_DATE FROM
+		       (SELECT 0 T0 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) T0,
+		       (SELECT 0 T1 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) T1,
+		       (SELECT 0 T2 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) T2,
+		       (SELECT 0 T3 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) T3,
+		       (SELECT 0 T4 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) T4) V
+		      WHERE TO_DATE BETWEEN CAST(TO_DATE(#cnf_from_ymd#,'YYYY-MM-DD') AS CHAR(10)) AND CAST(TO_DATE(#cnf_to_ymd#,'YYYY-MM-DD') AS CHAR(10))
+		 )X
+		 LEFT OUTER JOIN BGAB_GASCSM03$corp_cd$ C
+		   ON C.BD_CD = Z.BD_CD
+		  AND C.USE_YN = 'Y'
+		 LEFT OUTER JOIN BGAB_GASCSM05$corp_cd$ D
+		   ON D.XSM_CODE = Z.REGN_CD
+	      AND D.XSM_KND = 'SM001'
+	    WHERE Z.USE_YN = 'Y'
+	  	  <!-- 예약가능시간체크 -->
+	  	  AND (CONCAT(LPAD(TO_CHAR(SYSDATE, 'HH24'),2,0),LPAD(TO_CHAR(SYSDATE, 'MI'),2,0)) <![CDATA[<=]]> NVL(Z.RES_FROM_TIME, '0600')
+		   OR  CONCAT(LPAD(TO_CHAR(SYSDATE, 'HH24'),2,0),LPAD(TO_CHAR(SYSDATE, 'MI'),2,0)) <![CDATA[<=]]> NVL(Z.RES_TO_TIME, '2200'))
+		  <!-- 사용가능시간체크 -->
+		  AND (#cur_fr_tm# <![CDATA[<=]]> NVL(Z.USE_FROM_TIME, '0600')
+		   OR  #cur_to_tm# <![CDATA[<=]]> NVL(Z.USE_TO_TIME, '2200'))
+		  <isNotEmpty property="regn_cd">
+		  AND Z.REGN_CD = #regn_cd#
+		  </isNotEmpty>
+		  <isNotEmpty property="bd_cd">
+		  AND Z.BD_CD = #bd_cd#
+		  </isNotEmpty>
+		  <isNotEmpty property="corm_fl_cd">
+		  AND Z.CORM_FL_CD = #corm_fl_cd#
+		  </isNotEmpty>
+		  <isNotEmpty property="corm_cd">
+		  AND Z.CORM_CD = #corm_cd#
+		  </isNotEmpty>
+		  <isNotEmpty property="from_cpsn">
+		  AND NVL(Z.BLNS_CPSN, 0) BETWEEN #from_cpsn# AND #to_cpsn#
+		  </isNotEmpty>
+		  <isNotEmpty property="item_sbc">
+		  AND LOWER(Z.ITEM_SBC) LIKE '%' || LOWER(#item_sbc#) || '%'
+		  </isNotEmpty>
+		  AND NOT EXISTS (
+			  SELECT A.REGN_CD
+			       , A.BD_CD
+			       , A.CORM_FL_CD
+			       , A.CORM_CD
+			       , A.PTT_YMD
+			       , B.CNF_FROM_YMD
+			       , B.CNF_FROM_TIME
+			       , B.CNF_TO_YMD
+			       , B.CNF_TO_TIME
+			       , A.DOC_NO
+			       , B.SEQ_NO
+			    FROM BGAB_GASCSM01$corp_cd$ A
+			   INNER JOIN BGAB_GASCSM02$corp_cd$ B
+			      ON A.DOC_NO = B.DOC_NO
+			   WHERE A.PGS_ST_CD NOT IN ('3', '4')
+			     AND A.REGN_CD = Z.REGN_CD
+			     AND A.BD_CD = Z.BD_CD
+			     AND A.CORM_CD = Z.CORM_CD
+			     AND (CONCAT(#cnf_from_ymd#,#cur_fr_tm#) <![CDATA[<=]]> CONCAT(B.CNF_FROM_YMD,B.CNF_FROM_TIME)
+			      OR  CONCAT(#cnf_from_ymd#,#cur_fr_tm#) <![CDATA[<=]]> CONCAT(B.CNF_TO_YMD,B.CNF_TO_TIME))
+			     AND (CONCAT(#cnf_to_ymd#,#cur_to_tm#) <![CDATA[>=]]> CONCAT(B.CNF_FROM_YMD,B.CNF_FROM_TIME)
+			      OR  CONCAT(#cnf_to_ymd#,#cur_to_tm#) <![CDATA[>=]]> CONCAT(B.CNF_TO_YMD,B.CNF_TO_TIME))
+		)
+		ORDER BY Z.REGN_CD
+			   , Z.BD_CD
+		   	   , Z.CORM_FL_CD DESC
+		   	   , Z.CORM_CD
+		<include refid="pageBottom"/>
+	</select>
+	
+	<!-- 상세검색 및 예약(일간) -->
+    <select id="searchConferenceRoomList1" parameterClass="bgabGascsm02" resultClass="bgabGascsm02">
+        /* Query Id : searchConferenceRoomList1 */
+		SELECT Z.REGN_CD
+			 , B.XSM_HNAME AS REGN_NM
+			 , C.BD_CD
+			 , C.BD_NM
+		     , Z.CORM_FL_CD
+		     , Z.CORM_CD
+		     , Z.CORM_NM
+		  FROM (
+		  	SELECT DISTINCT
+		           SM04.REGN_CD
+		         , SM04.BD_CD
+		         , SM04.CORM_FL_CD
+		         , SM04.CORM_CD
+		         , SM04.CORM_NM
+		      FROM (
+		      	SELECT A.REGN_CD
+		        	 , A.BD_CD
+		             , A.CORM_CD
+		             , B.CNF_FROM_YMD
+		             , B.CNF_FROM_TIME
+		             , B.CNF_TO_YMD
+		             , B.CNF_TO_TIME
+		             , A.DOC_NO
+		             , B.SEQ_NO
+		      	  FROM BGAB_GASCSM01$corp_cd$ A
+		         INNER JOIN BGAB_GASCSM02$corp_cd$ B
+		            ON A.DOC_NO = B.DOC_NO
+				 WHERE A.PGS_ST_CD NOT IN ('3', '4')
+		      )SM01
+		      RIGHT OUTER JOIN BGAB_GASCSM04$corp_cd$ SM04
+		        ON SM01.REGN_CD = SM04.REGN_CD
+		       AND SM01.BD_CD = SM04.BD_CD
+		       AND SM01.CORM_CD = SM04.CORM_CD
+			  <isEqual property="isYn" compareValue="Y">
+			     <isNotEmpty property="cur_fr_tm">
+			  	  AND (#cur_fr_tm# <![CDATA[<=]]> SM01.CNF_FROM_TIME OR #cur_fr_tm# <![CDATA[<]]> SM01.CNF_TO_TIME)
+			  	  AND (#cur_to_tm# <![CDATA[>]]> SM01.CNF_FROM_TIME OR #cur_to_tm# <![CDATA[>=]]> SM01.CNF_TO_TIME)
+			    </isNotEmpty>
+			  </isEqual>
+			  AND #today# BETWEEN SM01.CNF_FROM_YMD AND SM01.CNF_TO_YMD
+			WHERE SM04.USE_YN = 'Y'
+			  <isNotEmpty property="regn_cd">
+			  AND SM04.REGN_CD = #regn_cd#
+			  </isNotEmpty>
+			  <isNotEmpty property="bd_cd">
+			  AND SM04.BD_CD = #bd_cd#
+			  </isNotEmpty>
+			  <isNotEmpty property="corm_fl_cd">
+			  AND SM04.CORM_FL_CD = #corm_fl_cd#
+			  </isNotEmpty>
+			  <isNotEmpty property="corm_cd">
+			  AND SM04.CORM_CD = #corm_cd#
+			  </isNotEmpty>
+			  <isNotEmpty property="from_cpsn">
+			  AND SM04.BLNS_CPSN BETWEEN #from_cpsn# AND #to_cpsn#
+			  </isNotEmpty>
+			  <isNotEmpty property="item_sbc">
+			  AND SM04.ITEM_SBC LIKE '%' || #item_sbc# || '%'
+			  </isNotEmpty>
+			  <isNotEmpty property="use_knd">
+			  AND SM04.USE_KND = #use_knd#
+			  </isNotEmpty>
+			  <isEqual property="isYn" compareValue="Y">
+			     <isNotEmpty property="cur_fr_tm">
+			  	  AND SM01.CNF_FROM_TIME IS NULL
+			  	  AND SM01.CNF_TO_TIME IS NULL
+			    </isNotEmpty>
+			  </isEqual>
+		  ) Z
+		  LEFT OUTER JOIN BGAB_GASCSM05$corp_cd$ B
+		    ON Z.REGN_CD = B.XSM_CODE
+		   AND B.XSM_KND = 'SM001'
+		  LEFT OUTER JOIN BGAB_GASCSM03$corp_cd$ C
+		    ON Z.BD_CD = C.BD_CD
+		   AND C.USE_YN = 'Y'
+		 ORDER BY Z.REGN_CD, Z.BD_CD, Z.CORM_FL_CD DESC, Z.CORM_CD
+    </select>
+
+    <!-- 회의실 예약 조회 -->
+    <select id="searchConferenceRoomTotalCount" parameterClass="bgabGascsm02" resultClass="String">
+        /* Query Id : searchConferenceRoomTotalCount */
+        SELECT COUNT(1) AS TOT_CNT
+          FROM (
+		  	SELECT SM04.REGN_CD
+	           , SM04.BD_CD
+	           , SM04.CORM_FL_CD
+	           , SM04.CORM_CD
+	           , SM04.CORM_NM
+	           , SM01.CNF_FROM_YMD
+	           , SM01.CNF_FROM_TIME
+	           , SM01.CNF_TO_YMD
+	           , SM01.CNF_TO_TIME
+	           , SM01.CNF_TITLE
+	           , SM01.CNF_EENO
+	           , SM01.DOC_NO
+	           , SM01.SEQ_NO
+	           , SM01.IPE_EENO
+		    FROM (
+		      	SELECT A.REGN_CD
+		        	 , A.BD_CD
+		             , A.CORM_CD
+		             , B.CNF_FROM_YMD
+		             , B.CNF_FROM_TIME
+		             , B.CNF_TO_YMD
+		             , B.CNF_TO_TIME
+					 , A.CNF_TITLE
+		             , A.CNF_EENO
+		             , A.DOC_NO
+		             , B.SEQ_NO
+		             , A.IPE_EENO
+		      	  FROM BGAB_GASCSM01$corp_cd$ A
+		         INNER JOIN BGAB_GASCSM02$corp_cd$ B
+		            ON A.DOC_NO = B.DOC_NO
+		         WHERE A.PGS_ST_CD NOT IN ('3', '4') 
+		    )SM01
+		    RIGHT OUTER JOIN BGAB_GASCSM04$corp_cd$ SM04
+		       ON SM01.REGN_CD = SM04.REGN_CD
+		      AND SM01.BD_CD = SM04.BD_CD
+		      AND SM01.CORM_CD = SM04.CORM_CD       
+			  <isEqual property="isYn" compareValue="Y">
+			  	<isNotEmpty property="cur_fr_tm">
+				AND (#cur_fr_tm# <![CDATA[<=]]> SM01.CNF_FROM_TIME OR #cur_fr_tm# <![CDATA[<]]> SM01.CNF_TO_TIME)
+				AND (#cur_to_tm# <![CDATA[>]]> SM01.CNF_FROM_TIME OR #cur_to_tm# <![CDATA[>=]]> SM01.CNF_TO_TIME)
+				AND SM01.CNF_FROM_TIME IS NULL
+				AND SM01.CNF_TO_TIME IS NULL
+			  	</isNotEmpty>
+			  </isEqual>
+			  AND #today# BETWEEN SM01.CNF_FROM_YMD AND SM01.CNF_TO_YMD
+		    WHERE SM04.USE_YN = 'Y'
+			  <isNotEmpty property="regn_cd">
+			  AND SM04.REGN_CD = #regn_cd#
+			  </isNotEmpty>
+			  <isNotEmpty property="bd_cd">
+			  AND SM04.BD_CD = #bd_cd#
+			  </isNotEmpty>
+			  <isNotEmpty property="corm_fl_cd">
+			  AND SM04.CORM_FL_CD = #corm_fl_cd#
+			  </isNotEmpty>
+			  <isNotEmpty property="corm_cd">
+			  AND SM04.CORM_CD = #corm_cd#
+			  </isNotEmpty>
+			  <isNotEmpty property="from_cpsn">
+			  AND SM04.BLNS_CPSN BETWEEN #from_cpsn# AND #to_cpsn#
+			  </isNotEmpty>
+			  <isNotEmpty property="item_sbc">
+			  AND SM04.ITEM_SBC LIKE '%' || #item_sbc# || '%'
+			  </isNotEmpty>
+			  <isNotEmpty property="use_knd">
+			  AND SM04.USE_KND = #use_knd#
+			  </isNotEmpty>
+			  <isEqual property="isYn" compareValue="Y">
+			     <isNotEmpty property="cur_fr_tm">
+			  	  AND SM01.CNF_FROM_TIME IS NULL
+			  	  AND SM01.CNF_TO_TIME IS NULL
+			    </isNotEmpty>
+			  </isEqual>
+         ) AA
+    </select>
+    <select id="searchConferenceRoomList2" parameterClass="bgabGascsm02" resultClass="bgabGascsm02">
+        /* Query Id : searchConferenceRoomList2 */
+        <include refid="pageTop"/>
+        SELECT MAX(CASE WHEN CONCAT(#today#,'0600') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'0600') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM0600
+        	 , MAX(CASE WHEN CONCAT(#today#,'0630') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'0630') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM0630
+        	 , MAX(CASE WHEN CONCAT(#today#,'0700') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'0700') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM0700
+        	 , MAX(CASE WHEN CONCAT(#today#,'0730') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'0730') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM0730
+        	 , MAX(CASE WHEN CONCAT(#today#,'0800') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'0800') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM0800
+             , MAX(CASE WHEN CONCAT(#today#,'0830') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'0830') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM0830
+             , MAX(CASE WHEN CONCAT(#today#,'0900') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'0900') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM0900
+             , MAX(CASE WHEN CONCAT(#today#,'0930') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'0930') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM0930
+             , MAX(CASE WHEN CONCAT(#today#,'1000') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'1000') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM1000
+             , MAX(CASE WHEN CONCAT(#today#,'1030') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'1030') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM1030
+             , MAX(CASE WHEN CONCAT(#today#,'1100') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'1100') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM1100
+             , MAX(CASE WHEN CONCAT(#today#,'1130') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'1130') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM1130
+             , MAX(CASE WHEN CONCAT(#today#,'1200') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'1200') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM1200
+             , MAX(CASE WHEN CONCAT(#today#,'1230') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'1230') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM1230
+             , MAX(CASE WHEN CONCAT(#today#,'1300') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'1300') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM1300
+             , MAX(CASE WHEN CONCAT(#today#,'1330') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'1330') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM1330
+             , MAX(CASE WHEN CONCAT(#today#,'1400') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'1400') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM1400
+             , MAX(CASE WHEN CONCAT(#today#,'1430') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'1430') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM1430
+             , MAX(CASE WHEN CONCAT(#today#,'1500') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'1500') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM1500
+             , MAX(CASE WHEN CONCAT(#today#,'1530') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'1530') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM1530
+             , MAX(CASE WHEN CONCAT(#today#,'1600') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'1600') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM1600
+             , MAX(CASE WHEN CONCAT(#today#,'1630') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'1630') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM1630
+             , MAX(CASE WHEN CONCAT(#today#,'1700') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'1700') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM1700
+             , MAX(CASE WHEN CONCAT(#today#,'1730') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'1730') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM1730
+             , MAX(CASE WHEN CONCAT(#today#,'1800') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'1800') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM1800
+             , MAX(CASE WHEN CONCAT(#today#,'1830') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'1830') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM1830
+             , MAX(CASE WHEN CONCAT(#today#,'1900') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'1900') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM1900
+             , MAX(CASE WHEN CONCAT(#today#,'1930') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'1930') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM1930
+             , MAX(CASE WHEN CONCAT(#today#,'2000') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'2000') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM2000
+             , MAX(CASE WHEN CONCAT(#today#,'2030') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'2030') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM2030
+             , MAX(CASE WHEN CONCAT(#today#,'2100') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'2100') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM2100
+             , MAX(CASE WHEN CONCAT(#today#,'2130') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'2130') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM2130
+             , MAX(CASE WHEN CONCAT(#today#,'2200') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'2200') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM2200
+             , MAX(CASE WHEN CONCAT(#today#,'2230') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'2230') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM2230
+             , MAX(CASE WHEN CONCAT(#today#,'2300') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'2300') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM2300
+             , MAX(CASE WHEN CONCAT(#today#,'2330') <![CDATA[>=]]> CONCAT(CNF_FROM_YMD,CNF_FROM_TIME) AND CONCAT(#today#,'2330') <![CDATA[<]]> CONCAT(CNF_TO_YMD,CNF_TO_TIME) THEN CASE WHEN AA.CNF_EENO = #cnf_eeno# OR AA.IPE_EENO = #inp_eeno# THEN 1 ELSE '2' || '@' || AA.ROW_IDX END ELSE 0 END) AS TM2330
+	         , AA.REGN_CD
+	         , AA.BD_CD
+	         , AA.CORM_FL_CD
+	         , AA.CORM_CD
+          FROM (
+		  	SELECT CASE WHEN MOD(FLOOR(RAND(2)*10), 3) = 0 THEN 1
+           				WHEN MOD(FLOOR(RAND(2)*10), 3) = 1 THEN 2
+                        ELSE 3
+                   END AS ROW_IDX
+		  		 , SM04.REGN_CD
+	             , SM04.BD_CD
+	             , SM04.CORM_FL_CD
+	             , SM04.CORM_CD
+	             , SM04.CORM_NM
+	             , SM01.CNF_FROM_YMD
+	             , SM01.CNF_FROM_TIME
+	             , SM01.CNF_TO_YMD
+	             , SM01.CNF_TO_TIME
+	             , SM01.CNF_TITLE
+	             , SM01.CNF_EENO
+	             , SM01.DOC_NO
+	             , SM01.SEQ_NO
+	             , SM01.IPE_EENO
+		      FROM (
+		      	SELECT A.REGN_CD
+		        	 , A.BD_CD
+		             , A.CORM_CD
+		             , B.CNF_FROM_YMD
+		             , B.CNF_FROM_TIME
+		             , B.CNF_TO_YMD
+		             , B.CNF_TO_TIME
+					 , A.CNF_TITLE
+		             , A.CNF_EENO
+		             , A.DOC_NO
+		             , B.SEQ_NO
+		             , A.IPE_EENO
+		      	  FROM BGAB_GASCSM01$corp_cd$ A
+		         INNER JOIN BGAB_GASCSM02$corp_cd$ B
+		            ON A.DOC_NO = B.DOC_NO
+		         WHERE A.PGS_ST_CD NOT IN ('3', '4') 
+		    )SM01
+		    RIGHT OUTER JOIN BGAB_GASCSM04$corp_cd$ SM04
+		       ON SM01.REGN_CD = SM04.REGN_CD
+		      AND SM01.BD_CD = SM04.BD_CD
+		      AND SM01.CORM_CD = SM04.CORM_CD       
+			  <isEqual property="isYn" compareValue="Y">
+			  	<isNotEmpty property="cur_fr_tm">
+				AND (#cur_fr_tm# <![CDATA[<=]]> SM01.CNF_FROM_TIME OR #cur_fr_tm# <![CDATA[<]]> SM01.CNF_TO_TIME)
+				AND (#cur_to_tm# <![CDATA[>]]> SM01.CNF_FROM_TIME OR #cur_to_tm# <![CDATA[>=]]> SM01.CNF_TO_TIME)
+				AND SM01.CNF_FROM_TIME IS NULL
+				AND SM01.CNF_TO_TIME IS NULL
+			  	</isNotEmpty>
+			  </isEqual>
+			  AND #today# BETWEEN SM01.CNF_FROM_YMD AND SM01.CNF_TO_YMD
+		    WHERE SM04.USE_YN = 'Y'
+			  <isNotEmpty property="regn_cd">
+			  AND SM04.REGN_CD = #regn_cd#
+			  </isNotEmpty>
+			  <isNotEmpty property="bd_cd">
+			  AND SM04.BD_CD = #bd_cd#
+			  </isNotEmpty>
+			  <isNotEmpty property="corm_fl_cd">
+			  AND SM04.CORM_FL_CD = #corm_fl_cd#
+			  </isNotEmpty>
+			  <isNotEmpty property="corm_cd">
+			  AND SM04.CORM_CD = #corm_cd#
+			  </isNotEmpty>
+			  <isNotEmpty property="from_cpsn">
+			  AND SM04.BLNS_CPSN BETWEEN #from_cpsn# AND #to_cpsn#
+			  </isNotEmpty>
+			  <isNotEmpty property="item_sbc">
+			  AND SM04.ITEM_SBC LIKE '%' || #item_sbc# || '%'
+			  </isNotEmpty>
+			  <isNotEmpty property="use_knd">
+			  AND SM04.USE_KND = #use_knd#
+			  </isNotEmpty>
+			  <isEqual property="isYn" compareValue="Y">
+			     <isNotEmpty property="cur_fr_tm">
+			  	  AND SM01.CNF_FROM_TIME IS NULL
+			  	  AND SM01.CNF_TO_TIME IS NULL
+			    </isNotEmpty>
+			  </isEqual>
+         ) AA
+	     GROUP BY AA.REGN_CD, AA.BD_CD, AA.CORM_FL_CD, AA.CORM_CD
+         ORDER BY AA.REGN_CD, AA.BD_CD, AA.CORM_FL_CD DESC, AA.CORM_CD
+         <include refid="pageBottom"/>
+    </select>
+	
+	<!-- 주간,월간 조회 -->
+	<select id="searchReservationList" parameterClass="bgabGascsm01" resultClass="bgabGascsmDto">
+		/* Query Id : searchReservationList */
+		SELECT A.DOC_NO
+		     , A.CNF_TITLE
+		     , A.CNF_EENO
+		     , C.XUSR_NAME AS CNF_NAME
+		     , C.XUSR_STEP_NAME AS POS_NM
+		     , C.XUSR_DEPT_NAME AS DEPT_NM
+		     , A.PTT_YMD
+		     , CAST(TO_DATE(B.CNF_FROM_YMD, '%Y/%m/%d') AS CHAR(10))  AS CNF_FROM_YMD
+		     , CAST(TO_DATE(B.CNF_TO_YMD, '%Y/%m/%d') AS CHAR(10))  AS CNF_TO_YMD
+		     , B.CNF_FROM_TIME
+		     , TO_DATE(
+		     	DATE_ADD(
+			     	CAST(TO_DATE(B.CNF_FROM_YMD, 'YYYY-MM-DD') AS CHAR(10)) || ' ' || SUBSTR(B.CNF_TO_TIME,1,2) || ':' || SUBSTR(B.CNF_TO_TIME,3,4))
+			     	, INTERVAL +1 MINUTE)
+		     	, "%H%i") AS CNF_TO_TIME
+		     , CASE WHEN MOD(FLOOR(RAND(2)*10), 3) = 0 THEN 1
+       				WHEN MOD(FLOOR(RAND(2)*10), 3) = 1 THEN 2
+                    ELSE 3
+                END AS ROW_IDX
+		  FROM BGAB_GASCSM01$corp_cd$ A
+		  LEFT OUTER JOIN BGAB_GASCSM02$corp_cd$ B
+		    ON A.DOC_NO = B.DOC_NO
+		  LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ C
+		    ON A.CNF_EENO = C.XUSR_EMPNO
+		 WHERE 1=1
+		   AND A.REGN_CD = #regn_cd#
+		   <isNotEmpty property="bd_cd">
+		   AND A.BD_CD = #bd_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="corm_fl_cd">
+		   AND A.CORM_FL_CD = #corm_fl_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="corm_cd">
+		   AND A.CORM_CD = #corm_cd#
+		   </isNotEmpty>
+		   <isEqual property="mode" compareValue="W">
+	       AND (#cnf_from_ymd# <![CDATA[<=]]> B.CNF_FROM_YMD OR #cnf_from_ymd# <![CDATA[<=]]> B.CNF_TO_YMD)
+		   AND (#cnf_to_ymd# <![CDATA[>=]]> B.CNF_FROM_YMD OR #cnf_to_ymd# <![CDATA[>=]]> B.CNF_TO_YMD)
+		   </isEqual>
+		   <isNotEqual property="mode" compareValue="W">
+		   AND SUBSTR(B.CNF_FROM_YMD,1,6) = SUBSTR(#ptt_ymd#,1,6)
+		   </isNotEqual>
+	</select>
+	
+	<!-- 나의 예약현황 조회 -->
+	<select id="searchMyReservationTotalCount" parameterClass="bgabGascsm01" resultClass="String">
+		/* Query Id : searchMyReservationTotalCount */
+		SELECT COUNT(1) AS TOT_CNT
+		  FROM BGAB_GASCSM01$corp_cd$  A
+		  LEFT OUTER JOIN BGAB_GASCSM02$corp_cd$ B
+		    ON A.DOC_NO = B.DOC_NO
+		 WHERE 1=1
+		   <isNotEmpty property="doc_no">
+		   AND A.DOC_NO = #doc_no#
+		   </isNotEmpty>
+		   <isNotEmpty property="regn_cd">
+		   AND A.REGN_CD = #regn_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="bd_cd">
+		   AND A.BD_CD = #bd_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="corm_fl_cd">
+		   AND A.CORM_FL_CD = #corm_fl_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="corm_cd">
+		   AND A.CORM_CD = #corm_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="cnf_from_ymd">
+	       AND (#cnf_from_ymd# <![CDATA[<=]]> B.CNF_FROM_YMD
+	        OR  #cnf_from_ymd# <![CDATA[<=]]> B.CNF_TO_YMD)
+	       AND (#cnf_to_ymd# <![CDATA[>=]]> B.CNF_FROM_YMD
+	        OR  #cnf_to_ymd# <![CDATA[>=]]> B.CNF_TO_YMD)
+		   </isNotEmpty>
+		   <isNotEmpty property="pgs_st_cd">
+		   AND A.PGS_ST_CD = #pgs_st_cd#
+		   </isNotEmpty>
+		   <isEmpty property="gubun">
+			   AND (A.CNF_EENO = #eeno#
+			    OR  A.IPE_EENO = #eeno#
+			    OR  A.CNF_ATTDE_EENO LIKE '%' || #eeno# || '%'
+			   )
+		   </isEmpty>
+		   <isEqual property="gubun" compareValue="1">
+		   AND A.CNF_EENO = #eeno#
+		   </isEqual>
+		   <isEqual property="gubun" compareValue="2">
+		   AND A.INP_EENO = #eeno#
+		   </isEqual>
+		   <isEqual property="gubun" compareValue="3">
+		   AND A.CNF_ATTDE_EENO LIKE '%' || #eeno# || '%'
+		   </isEqual>
+	</select>
+	
+	<sql id="myReservation">
+		SELECT A.DOC_NO
+		     , B.SEQ_NO
+		     , A.REGN_CD
+			 , E.XSM_HNAME AS REGN_NM
+			 , A.BD_CD
+			 , F.BD_NM
+			 , G.CORM_FL_CD
+		     , G.CORM_CD
+		     , G.CORM_NM
+		     , CAST(TO_DATE(B.CNF_FROM_YMD, '%Y/%m/%d') AS CHAR(10)) AS CNF_FROM_YMD
+		     , SUBSTR(B.CNF_FROM_TIME,1,2) || ':' || SUBSTR(B.CNF_FROM_TIME,3,4) AS CNF_FROM_TIME
+		     , CAST(TO_DATE(B.CNF_TO_YMD, '%Y/%m/%d') AS CHAR(10)) AS CNF_TO_YMD
+		     , TO_DATE(
+		     	DATE_ADD(
+			     	CAST(TO_DATE(B.CNF_TO_YMD, 'YYYY-MM-DD') AS CHAR(10)) || ' ' || SUBSTR(B.CNF_TO_TIME,1,2) || ':' || SUBSTR(B.CNF_TO_TIME,3,4))
+			     	, INTERVAL+1 MINUTE)
+			    , '%H:%i') AS CNF_TO_TIME
+			 , SUBSTR(
+			 		TIMEDIFF(
+    					DATE_ADD(CAST(TO_DATE(B.CNF_TO_YMD, 'YYYY-MM-DD') AS CHAR(10)) || ' ' || SUBSTR(B.CNF_TO_TIME,1,2) || ':' || SUBSTR(B.CNF_TO_TIME,3,4)), INTERVAL+1 MINUTE)
+						, CAST(TO_DATE(B.CNF_FROM_YMD, 'YYYY-MM-DD') AS CHAR(10)) || ' ' || SUBSTR(B.CNF_FROM_TIME,1,2) || ':' || SUBSTR(B.CNF_FROM_TIME,3,4),':00')
+    			), 1, 5) AS CNF_PROC_TIME
+		     , A.CNF_TITLE
+		     , A.CNF_EENO
+		     , C.XUSR_NAME || ' ' || C.XUSR_STEP_NAME AS CNF_EENM
+		     , D.XORG_ORGA_E AS CNF_DEPT_NAME
+			 , CAST(A.CNF_ATTDE_CNT AS UNSIGNED)+1 AS CNF_ATTDE_CNT
+		     , A.CNF_ATTDE_EENO
+		     , A.CNF_ATTDE_NAME
+		     , A.CNF_OUT_ATTDE
+			 , CAST(A.CNF_OUT_CNT AS UNSIGNED)+1 AS CNF_OUT_CNT
+		     , A.IPE_EENO
+		     , A.PGS_ST_CD
+		     , H.XSM_HNAME AS PGS_ST_NM
+		     , CASE WHEN CAST(CNF_FROM_YMD || '' || CNF_FROM_TIME AS CHAR(12)) <![CDATA[>]]> CAST(TO_DATE(SYSDATE, 'YYYYMMDD%H%i') AS CHAR(12)) THEN '1'
+		     		WHEN CAST(CNF_TO_YMD || '' || CNF_TO_TIME AS CHAR(12)) <![CDATA[<]]> CAST(TO_DATE(SYSDATE, 'YYYYMMDD%H%i') AS CHAR(12)) THEN '2'
+		            WHEN A.PGS_ST_CD = '3' THEN '3'
+		            WHEN A.PGS_ST_CD = '4' THEN '4'
+		            ELSE '5'
+		        END AS CNF_ST_CD
+		  FROM BGAB_GASCSM01$corp_cd$  A
+		  LEFT OUTER JOIN BGAB_GASCSM02$corp_cd$ B
+		    ON A.DOC_NO = B.DOC_NO
+		  LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ C
+		    ON A.CNF_EENO = C.XUSR_EMPNO
+		  LEFT OUTER JOIN BGAB_GASCZ003$corp_cd$ D
+		    ON A.CNF_DEPT_CODE = D.XORG_ORGA_C
+		  LEFT OUTER JOIN BGAB_GASCSM05$corp_cd$ E
+		    ON A.REGN_CD = E.XSM_CODE
+		   AND E.XSM_KND = 'SM001'
+		  LEFT OUTER JOIN BGAB_GASCSM03$corp_cd$ F
+		  	ON A.REGN_CD = F.REGN_CD
+		   AND A.BD_CD = F.BD_CD
+		  LEFT OUTER JOIN BGAB_GASCSM04$corp_cd$ G
+		  	ON A.REGN_CD = G.REGN_CD
+		   AND A.BD_CD = G.BD_CD
+		   AND A.CORM_CD = G.CORM_CD
+		  LEFT OUTER JOIN BGAB_GASCSM05$corp_cd$ H
+		    ON A.PGS_ST_CD = H.XSM_CODE
+		   AND H.XSM_KND = 'SM008'
+		 WHERE 1=1
+		   <isNotEmpty property="doc_no">
+		   AND A.DOC_NO = #doc_no#
+		   </isNotEmpty>
+		   <isNotEmpty property="regn_cd">
+		   AND A.REGN_CD = #regn_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="bd_cd">
+		   AND A.BD_CD = #bd_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="corm_fl_cd">
+		   AND A.CORM_FL_CD = #corm_fl_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="corm_cd">
+		   AND A.CORM_CD = #corm_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="cnf_from_ymd">
+	       AND (#cnf_from_ymd# <![CDATA[<=]]> B.CNF_FROM_YMD
+	        OR  #cnf_from_ymd# <![CDATA[<=]]> B.CNF_TO_YMD)
+	       AND (#cnf_to_ymd# <![CDATA[>=]]> B.CNF_FROM_YMD
+	        OR  #cnf_to_ymd# <![CDATA[>=]]> B.CNF_TO_YMD)
+		   </isNotEmpty>
+		   <isNotEmpty property="pgs_st_cd">
+		   AND A.PGS_ST_CD = #pgs_st_cd#
+		   </isNotEmpty>
+		   <isEmpty property="gubun">
+			   AND (A.CNF_EENO = #eeno#
+			    OR  A.IPE_EENO = #eeno#
+			    OR  A.CNF_ATTDE_EENO LIKE '%' || #eeno# || '%'
+			   )
+		   </isEmpty>
+		   <isEqual property="gubun" compareValue="1">
+		   AND A.CNF_EENO = #eeno#
+		   </isEqual>
+		   <isEqual property="gubun" compareValue="2">
+		   AND A.INP_EENO = #eeno#
+		   </isEqual>
+		   <isEqual property="gubun" compareValue="3">
+		   AND A.CNF_ATTDE_EENO LIKE '%' || #eeno# || '%'
+		   </isEqual>
+		 ORDER BY CORM_CD
+		 		, CNF_TITLE
+		 		, CNF_FROM_YMD
+		 		, CNF_FROM_TIME
+	</sql>
+	
+	<!-- 나의 예약현황 -->
+	<select id="searchMyReservationList" parameterClass="bgabGascsm01" resultClass="bgabGascsm01">
+		/* Query Id : searchMyReservationList */
+		<include refid="pageTop"/>
+		<include refid="myReservation"/>
+		<include refid="pageBottom"/>
+	</select>
+	
+	<!-- 나의 예약현황 엑셀 -->
+	<select id="searchMyReservationExcel" parameterClass="bgabGascsm01" resultClass="bgabGascsm01">
+		/* Query Id : searchMyReservationExcel */
+		<include refid="myReservation"/>
+	</select>
+	
+	<!-- 예약현황 총건수 조회 -->
+	<select id="searchCountByXsm04" parameterClass="bgabGascsm01" resultClass="String">
+		/* Query Id : searchCountByXsm04 */
+		SELECT COUNT(A.DOC_NO) AS TOT_CNT
+		  FROM BGAB_GASCSM01$corp_cd$  A
+		  LEFT OUTER JOIN BGAB_GASCSM02$corp_cd$ B
+		    ON A.DOC_NO = B.DOC_NO
+		 WHERE 1=1
+		   <isEqual property="isAuth" compareValue="N">
+		   AND A.REGN_CD || A.BD_CD || A.CORM_FL_CD || A.CORM_CD REGEXP CONCAT(#gubun#)
+		   </isEqual>
+		   <isNotEmpty property="doc_no">
+		   AND A.DOC_NO = #doc_no#
+		   </isNotEmpty>
+		   <isNotEmpty property="regn_cd">
+		   AND A.REGN_CD = #regn_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="bd_cd">
+		   AND A.BD_CD = #bd_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="corm_fl_cd">
+		   AND A.CORM_FL_CD = #corm_fl_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="corm_cd">
+		   AND A.CORM_CD = #corm_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="cnf_from_ymd">
+	       AND (#cnf_from_ymd# <![CDATA[<=]]> B.CNF_FROM_YMD
+	        OR  #cnf_from_ymd# <![CDATA[<=]]> B.CNF_TO_YMD)
+	       AND (#cnf_to_ymd# <![CDATA[>=]]> B.CNF_FROM_YMD
+	        OR  #cnf_to_ymd# <![CDATA[>=]]> B.CNF_TO_YMD)
+		   </isNotEmpty>
+		   <isNotEmpty property="pgs_st_cd">
+		   AND A.PGS_ST_CD = #pgs_st_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="cnf_st_cd">
+		   AND CASE WHEN CAST(B.CNF_FROM_YMD || '' || B.CNF_FROM_TIME) AS CHAR(12)) <![CDATA[>]]> CAST(TO_DATE(SYSDATE, 'YYYYMMDD%H%i') AS CHAR(12)) THEN '1'
+		     		WHEN CAST(B.CNF_TO_YMD || '' || B.CNF_TO_TIME) AS CHAR(12)) <![CDATA[<]]> CAST(TO_DATE(SYSDATE, 'YYYYMMDD%H%i') AS CHAR(12)) THEN '2'
+		            ELSE '5'
+		        END = #cnf_st_cd#
+		   </isNotEmpty>
+		   <isEmpty property="gubun">
+			   <isNotEmpty property="cnf_eeno">
+			   AND (A.CNF_EENO = #cnf_eeno#
+				OR  A.IPE_EENO = #cnf_eeno#
+				OR  A.CNF_ATTDE_EENO LIKE '%' || #cnf_eeno# || '%'
+			   )
+			   </isNotEmpty>
+		   </isEmpty>
+		   <isNotEmpty property="cnf_eeno">
+			   <isEqual property="gubun" compareValue="1">
+			   AND A.CNF_EENO = #cnf_eeno#
+			   </isEqual>
+			   <isEqual property="gubun" compareValue="2">
+			   AND A.INP_EENO = #cnf_eeno#
+			   </isEqual>
+			   <isEqual property="gubun" compareValue="3">
+			   AND A.CNF_ATTDE_EENO LIKE '%' || #cnf_eeno# || '%'
+			   </isEqual>
+		   </isNotEmpty>
+		   <isNotEmpty property="cnf_dept_code">
+		   AND A.CNF_DEPT_CODE = #cnf_dept_code#
+		   </isNotEmpty>
+	</select>
+	
+	<!-- 예약현황 조회 -->
+	<sql id="xsm04List">
+		SELECT A.DOC_NO
+		     , B.SEQ_NO
+		     , A.REGN_CD
+			 , A.BD_CD
+			 , G.CORM_FL_CD
+		     , G.CORM_CD
+		     , E.XSM_HNAME || '/' || F.BD_NM || '/' || G.CORM_FL_CD || '/' || G.CORM_NM AS CORM_NM
+		     , CAST(TO_DATE(B.CNF_FROM_YMD, '%Y/%m/%d') AS CHAR(10)) AS CNF_FROM_YMD
+		     , SUBSTR(B.CNF_FROM_TIME,1,2) || ':' || SUBSTR(B.CNF_FROM_TIME,3,4) AS CNF_FROM_TIME
+		     , CAST(TO_DATE(B.CNF_TO_YMD, '%Y/%m/%d') AS CHAR(10)) AS CNF_TO_YMD
+		     , TO_DATE(
+		     	DATE_ADD(
+			     	CAST(TO_DATE(B.CNF_TO_YMD, 'YYYY-MM-DD') AS CHAR(10)) || ' ' || SUBSTR(B.CNF_TO_TIME,1,2) || ':' || SUBSTR(B.CNF_TO_TIME,3,4))
+			     	, INTERVAL+1 MINUTE)
+			    , '%H:%i') AS CNF_TO_TIME 
+			 , SUBSTR(
+			 		TIMEDIFF(
+    					DATE_ADD(CAST(TO_DATE(B.CNF_TO_YMD, 'YYYY-MM-DD') AS CHAR(10)) || ' ' || SUBSTR(B.CNF_TO_TIME,1,2) || ':' || SUBSTR(B.CNF_TO_TIME,3,4)), INTERVAL+1 MINUTE)
+						, CAST(TO_DATE(B.CNF_FROM_YMD, 'YYYY-MM-DD') AS CHAR(10)) || ' ' || SUBSTR(B.CNF_FROM_TIME,1,2) || ':' || SUBSTR(B.CNF_FROM_TIME,3,4),':00')
+    			), 1, 5) AS CNF_PROC_TIME
+		     , A.CNF_TITLE
+		     , A.CNF_EENO
+		     , C.XUSR_NAME || ' ' || C.XUSR_STEP_NAME AS CNF_EENM
+		     , D.XORG_ORGA_E AS CNF_DEPT_NAME
+			 , CAST(A.CNF_ATTDE_CNT AS UNSIGNED)+1 AS CNF_ATTDE_CNT
+		     , A.CNF_ATTDE_EENO
+		     , A.CNF_ATTDE_NAME
+		     , A.CNF_OUT_ATTDE
+			 , CAST(A.CNF_OUT_CNT AS UNSIGNED)+1 AS CNF_OUT_CNT
+		     , A.IPE_EENO
+		     , A.PGS_ST_CD
+		     , H.XSM_HNAME AS PGS_ST_NM
+		     , CASE WHEN CAST(CNF_FROM_YMD || '' || CNF_FROM_TIME AS CHAR(12)) <![CDATA[>]]> CAST(TO_DATE(SYSDATE, 'YYYYMMDD%H%i') AS CHAR(12)) THEN '1'
+		     		WHEN CAST(CNF_TO_YMD | '' || CNF_TO_TIME AS CHAR(12)) <![CDATA[<]]> CAST(TO_DATE(SYSDATE, 'YYYYMMDD%H%i') AS CHAR(12)) THEN '2'
+		            WHEN A.PGS_ST_CD = '3' THEN '3'
+		            WHEN A.PGS_ST_CD = '4' THEN '4'
+		            ELSE '5'
+		        END AS CNF_ST_CD
+		  FROM BGAB_GASCSM01$corp_cd$  A
+		  LEFT OUTER JOIN BGAB_GASCSM02$corp_cd$ B
+		    ON A.DOC_NO = B.DOC_NO
+		  LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ C
+		    ON A.CNF_EENO = C.XUSR_EMPNO
+		  LEFT OUTER JOIN BGAB_GASCZ003$corp_cd$ D
+		    ON A.CNF_DEPT_CODE = D.XORG_ORGA_C
+		  LEFT OUTER JOIN BGAB_GASCSM05$corp_cd$ E
+		    ON A.REGN_CD = E.XSM_CODE
+		   AND E.XSM_KND = 'SM001'
+		  LEFT OUTER JOIN BGAB_GASCSM03$corp_cd$ F
+		  	ON A.REGN_CD = F.REGN_CD
+		   AND A.BD_CD = F.BD_CD
+		  LEFT OUTER JOIN BGAB_GASCSM04$corp_cd$ G
+		  	ON A.REGN_CD = G.REGN_CD
+		   AND A.BD_CD = G.BD_CD
+		   AND A.CORM_CD = G.CORM_CD
+		  LEFT OUTER JOIN BGAB_GASCSM05$corp_cd$ H
+		    ON A.PGS_ST_CD = H.XSM_CODE
+		   AND H.XSM_KND = 'SM008'
+		 WHERE 1=1
+		   <isEqual property="isAuth" compareValue="N">
+		   AND A.REGN_CD || A.BD_CD || A.CORM_FL_CD || A.CORM_CD REGEXP CONCAT(#gubun#)
+		   </isEqual>
+		   <isNotEmpty property="doc_no">
+		   AND A.DOC_NO = #doc_no#
+		   </isNotEmpty>
+		   <isNotEmpty property="regn_cd">
+		   AND A.REGN_CD = #regn_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="bd_cd">
+		   AND A.BD_CD = #bd_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="corm_fl_cd">
+		   AND A.CORM_FL_CD = #corm_fl_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="corm_cd">
+		   AND A.CORM_CD = #corm_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="cnf_from_ymd">
+	       AND (#cnf_from_ymd# <![CDATA[<=]]> B.CNF_FROM_YMD
+	        OR  #cnf_from_ymd# <![CDATA[<=]]> B.CNF_TO_YMD)
+	       AND (#cnf_to_ymd# <![CDATA[>=]]> B.CNF_FROM_YMD
+	        OR  #cnf_to_ymd# <![CDATA[>=]]> B.CNF_TO_YMD)
+		   </isNotEmpty>
+		   <isNotEmpty property="pgs_st_cd">
+		   AND A.PGS_ST_CD = #pgs_st_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="cnf_st_cd">
+		   AND CASE WHEN CAST(B.CNF_FROM_YMD || '' || B.CNF_FROM_TIME AS CHAR(12)) <![CDATA[>]]> CAST(TO_DATE(SYSDATE, 'YYYYMMDD%H%i') AS CHAR(12)) THEN '1'
+		     		WHEN CAST(B.CNF_TO_YMD || '' || B.CNF_TO_TIME AS CHAR(12)) <![CDATA[<]]> CAST(TO_DATE(SYSDATE, 'YYYYMMDD%H%i') AS CHAR(12)) THEN '2'
+		            ELSE '5'
+		        END = #cnf_st_cd#
+		   </isNotEmpty>
+		   <isEmpty property="gubun">
+			   <isNotEmpty property="cnf_eeno">
+			      AND (A.CNF_EENO = #cnf_eeno#
+			       OR  A.IPE_EENO = #cnf_eeno#
+			       OR  A.CNF_ATTDE_EENO LIKE '%' || #cnf_eeno# || '%'
+			      )
+			   </isNotEmpty>
+		   </isEmpty>
+		   <isNotEmpty property="cnf_eeno">
+			   <isEqual property="gubun" compareValue="1">
+			   AND A.CNF_EENO = #cnf_eeno#
+			   </isEqual>
+			   <isEqual property="gubun" compareValue="2">
+			   AND A.INP_EENO = #cnf_eeno#
+			   </isEqual>
+			   <isEqual property="gubun" compareValue="3">
+			   AND A.CNF_ATTDE_EENO LIKE '%' || #cnf_eeno# || '%'
+			   </isEqual>
+		   </isNotEmpty>
+		   <isNotEmpty property="cnf_dept_code">
+		   AND A.CNF_DEPT_CODE = #cnf_dept_code#
+		   </isNotEmpty>
+		 ORDER BY CNF_TITLE
+		 		, CNF_FROM_YMD
+		 		, CNF_FROM_TIME
+	</sql>
+	
+	<!-- 예약현황 -->
+	<select id="searchByXsm04" parameterClass="bgabGascsm01" resultClass="bgabGascsm01">
+		/* Query Id : searchByXsm04 */
+		<include refid="jqGridPageTop"/>
+		<include refid="xsm04List"/>
+		<include refid="jqGridPageBottom"/>
+	</select>
+	
+	<!-- 예약현황 엑셀 -->
+	<select id="searchExcelByXsm04" parameterClass="bgabGascsm01" resultClass="bgabGascsm01">
+		/* Query Id : searchExcelByXsm04 */
+		<include refid="xsm04List"/>
+	</select>
+	
+	<!-- 승인 -->
+	<update id="updateUseApproveByXsm04" parameterClass="bgabGascsm01">
+		/* Query Id : updateUseApproveByXsm04 */
+		UPDATE BGAB_GASCSM01$corp_cd$  
+		   SET PGS_ST_CD = '2'
+			 , UPDR_EENO = #updr_eeno#
+		   	 , MDFY_YMD = SYSDATE
+		 WHERE DOC_NO = #doc_no#
+	</update>
+	
+	<!-- 승인 취소 -->
+	<update id="updateNotUseApproveByXsm04" parameterClass="bgabGascsm01">
+		/* Query Id : updateNotUseApproveByXsm04 */
+		UPDATE BGAB_GASCSM01$corp_cd$  
+		   SET PGS_ST_CD = '4'
+		   	 , UPDR_EENO = #updr_eeno#
+		   	 , MDFY_YMD = SYSDATE
+		 WHERE DOC_NO = #doc_no#
+	</update>
+	
+	<!-- 승인담당자 조회 -->
+	<select id="searchXsmConfirmDamdang" parameterClass="bgabGascsm01" resultClass="bgabGascsmDto">
+		/* Query Id : searchXsmConfirmDamdang */
+		SELECT B.REGN_CD || B.BD_CD || B.CORM_FL_CD || B.CORM_CD AS AUTH_CD
+	      FROM BGAB_GASCSM06$corp_cd$ A
+             , BGAB_GASCSM04$corp_cd$ B 
+	     WHERE A.CORM_CD = B.CORM_CD
+           AND A.AUTH_CD = 'A'
+	       AND EENO = #ipe_eeno#
+	</select>
+			
+	<!-- 건물 콤보 -->
+	<select id="searchBuildingComboByXsm05" parameterClass="bgabGascsm03" resultClass="commonCode">
+		/* Query Id : searchBuildingComboByXsm05 */
+		SELECT BD_CD AS VALUE
+			 , BD_NM AS NAME
+			 , REGN_CD AS KEY
+		  FROM BGAB_GASCSM03$corp_cd$
+		 WHERE USE_YN = 'Y'
+		   AND REGN_CD = #regn_cd#
+	</select>
+	
+	<!-- 건물 관리 조회 -->
+	<select id="searchBuildingMgmtCountByXsm05" parameterClass="bgabGascsm03" resultClass="String">
+		/* Query Id : searchBuildingMgmtCountByXsm05 */
+		SELECT COUNT(BD_CD) AS TOT_CNT
+		  FROM BGAB_GASCSM03$corp_cd$
+		 WHERE 1=1
+		   <isNotEmpty property="regn_cd">
+		   AND REGN_CD = #regn_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="use_yn">
+		   AND USE_YN = #use_yn#
+		   </isNotEmpty>
+	</select>
+	<select id="searchBuildingMgmtByXsm05" parameterClass="bgabGascsm03" resultClass="bgabGascsm03">
+		/* Query Id : searchBuildingMgmtByXsm05 */
+		SELECT Z.*
+		  FROM (
+	  		SELECT rownum rnum, X.*
+			FROM(
+				SELECT A.REGN_CD
+					 , B.XSM_HNAME AS REGN_NM
+					 , A.BD_CD
+					 , A.REGN_CD AS OLD_REGN_CD
+					 , A.BD_CD AS OLD_BD_CD
+					 , A.BD_NM
+					 , A.REMARK
+					 , A.SORT_NO
+					 , A.USE_YN
+					 , A.INP_YMD
+					 , A.IPE_EENO
+					 , A.MDFY_YMD
+					 , A.UPDR_EENO
+				  FROM BGAB_GASCSM03$corp_cd$ A
+				  LEFT OUTER JOIN BGAB_GASCSM05$corp_cd$ B
+				    ON B.XSM_CODE = A.REGN_CD
+				   AND B.XSM_KND = 'SM001'
+				 WHERE 1=1
+				   <isNotEmpty property="regn_cd">
+				   AND A.REGN_CD = #regn_cd#
+				   </isNotEmpty>
+				   <isNotEmpty property="use_yn">
+				   AND A.USE_YN = #use_yn#
+				   </isNotEmpty>
+			) X
+			ORDER BY X.REGN_CD, X.SORT_NO
+		) Z
+		WHERE RNUM between #startRow# AND #endRow#
+		ORDER BY RNUM
+	</select>
+	
+	<!-- 건물 관리 입력 -->
+	<insert id="insertBuildingMgmtByXsm05" parameterClass="bgabGascsm03">
+		/* Query Id : insertBuildingMgmtByXsm05 */
+		INSERT INTO BGAB_GASCSM03$corp_cd$(
+			   REGN_CD
+			 , BD_CD
+			 , BD_NM
+			 , REMARK
+			 , SORT_NO
+			 , USE_YN
+			 , INP_YMD
+			 , IPE_EENO
+			 , MDFY_YMD
+			 , UPDR_EENO
+		)VALUES(
+			   #regn_cd#
+			 , (SELECT T.BD_CD FROM(
+			 		SELECT LPAD(NVL(MAX(CAST(BD_CD AS UNSIGNED)), 0) + 1, 5, 0) AS BD_CD 
+			 		  FROM BGAB_GASCSM03)
+				T)
+			 , #bd_nm#
+			 , #remark#
+			 , #sort_no#
+			 , #use_yn#
+			 , SYSDATE
+			 , #ipe_eeno#
+			 , SYSDATE
+			 , #updr_eeno#
+		)
+	</insert>
+	
+	<!-- 건물 관리 수정 -->
+	<update id="updateBuildingMgmtByXsm05" parameterClass="bgabGascsm03">
+		/* Query Id : updateBuildingMgmtByXsm05 */
+		UPDATE BGAB_GASCSM03$corp_cd$
+		   SET REGN_CD = #regn_cd#
+			 , BD_CD = #regn_cd#
+			 , BD_NM = #bd_nm#
+			 , REMARK = #remark#
+			 , SORT_NO = #sort_no#
+			 , USE_YN = #use_yn#
+			 , MDFY_YMD = SYSDATE
+			 , UPDR_EENO = #updr_eeno#
+		 WHERE REGN_CD = #old_regn_cd#
+		   AND BD_CD = #old_bd_cd#
+	</update>
+	
+	<!-- 건물 관리 삭제 -->
+	<update id="deleteBuildingMgmtByXsm05" parameterClass="bgabGascsm03">
+		/* Query Id : deleteBuildingMgmtByXsm05 */
+		DELETE FROM BGAB_GASCSM03$corp_cd$
+		 WHERE REGN_CD = #old_regn_cd#
+		   AND BD_CD = #old_bd_cd#
+	</update>
+	
+	<!-- 회의실 층수 콤보 -->
+	<select id="searchConferenceFlComboByXsm06" parameterClass="bgabGascsm04" resultClass="commonCode">
+		/* Query Id : searchConferenceFlComboByXsm06 */
+		SELECT CORM_FL_CD AS VALUE
+			 , CORM_FL_CD AS NAME
+		  FROM BGAB_GASCSM04$corp_cd$
+		 WHERE USE_YN = 'Y'
+		   AND REGN_CD = #regn_cd#
+		   AND BD_CD = #bd_cd#
+	     GROUP BY CORM_FL_CD
+	     ORDER BY CORM_FL_CD DESC
+	</select>
+	
+	<!-- 회의실 콤보 -->
+	<select id="searchConferenceComboByXsm06" parameterClass="bgabGascsm04" resultClass="commonCode">
+		/* Query Id : searchConferenceComboByXsm06 */
+		SELECT CORM_CD AS VALUE
+			 , CORM_NM AS NAME
+		  FROM BGAB_GASCSM04$corp_cd$
+		 WHERE USE_YN = 'Y'
+		   AND REGN_CD = #regn_cd#
+		   AND BD_CD = #bd_cd#
+		   AND CORM_FL_CD = #corm_fl_cd#
+	     GROUP BY CORM_CD
+	     ORDER BY CORM_CD
+	</select>
+	
+	<!-- 회의실 관리 조회 -->
+	<select id="searchConferenceRoomMgmtCountByXsm06" parameterClass="bgabGascsm04" resultClass="String">
+		/* Query Id : searchConferenceRoomMgmtCountByXsm06 */
+		SELECT COUNT(BD_CD) AS TOT_CNT
+		  FROM BGAB_GASCSM04$corp_cd$ A
+		 WHERE 1=1
+		   <isNotEmpty property="regn_cd">
+		   AND A.REGN_CD = #regn_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="regn_cd">
+		   AND A.BD_CD = #bd_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="use_yn">
+		   AND A.USE_YN = #use_yn#
+		   </isNotEmpty>
+	</select>
+	<select id="searchConferenceRoomMgmtByXsm06" parameterClass="bgabGascsm04" resultClass="bgabGascsm04">
+		/* Query Id : searchConferenceRoomMgmtByXsm06 */
+		SELECT Z.*
+		  FROM (
+	  		SELECT rownum rnum, X.*
+			FROM(
+				SELECT A.REGN_CD
+					 , A.BD_CD
+					 , A.CORM_CD
+					 , A.CORM_NM
+					 , A.CORM_FL_CD
+					 , A.USE_KND
+					 , A.BLNS_CPSN
+					 , A.DESK_QTY
+					 , A.CHAIR_QTY
+					 , A.CONF_YN
+					 , A.ITEM_SBC
+					 , A.CORM_LOC_SBC
+					 , A.FILE_ID_1
+					 , A.REMARK
+					 , A.USE_YN
+					 , A.RES_FROM_TIME
+					 , A.RES_TO_TIME
+					 , A.RES_LMT_CNT
+					 , A.RES_MAX_MIN
+					 , A.INP_YMD
+					 , A.IPE_EENO
+					 , A.MDFY_YMD
+					 , A.UPDR_EENO
+				  FROM BGAB_GASCSM04$corp_cd$ A
+				 WHERE 1=1
+				   <isNotEmpty property="regn_cd">
+				   AND A.REGN_CD = #regn_cd#
+				   </isNotEmpty>
+				   <isNotEmpty property="regn_cd">
+				   AND A.BD_CD = #bd_cd#
+				   </isNotEmpty>
+				   <isNotEmpty property="use_yn">
+				   AND A.USE_YN = #use_yn#
+				   </isNotEmpty>
+			) X
+			ORDER BY X.REGN_CD, X.BD_CD, X.CORM_CD
+		) Z
+		WHERE RNUM between #startRow# AND #endRow#
+		ORDER BY RNUM
+	</select>
+	
+	<!-- 회의실 관리 입력 -->
+	<insert id="insertConferenceRoomMgmtByXsm06" parameterClass="bgabGascsm04">
+		/* Query Id : insertConferenceRoomMgmtByXsm06 */
+		INSERT INTO BGAB_GASCSM04$corp_cd$(
+			   REGN_CD
+			 , BD_CD
+			 , CORM_CD
+			 , CORM_NM
+			 , CORM_FL_CD
+			 , USE_KND
+			 , BLNS_CPSN
+			 , DESK_QTY
+			 , CHAIR_QTY
+			 , CONF_YN
+			 , ITEM_SBC
+			 , CORM_LOC_SBC
+			 , FILE_ID_1
+			 , REMARK
+			 , USE_YN
+			 , INP_YMD
+			 , IPE_EENO
+			 , MDFY_YMD
+			 , UPDR_EENO
+		)VALUES(
+			   #regn_cd#
+			 , #bd_cd#
+			 , (SELECT T.CORM_CD FROM(
+			 		SELECT LPAD(NVL(MAX(CORM_CD), 0) + 1, 5, 0) AS CORM_CD 
+			 		  FROM BGAB_GASCSM04)
+				T)
+			 , #corm_nm#
+			 , #corm_fl_cd#
+			 , #use_knd#
+			 , NVL(#blns_cpsn#, 0)
+			 , NVL(#desk_qty#, 0)
+			 , NVL(#chair_qty#, 0)
+			 , #conf_yn#
+			 , #item_sbc#
+			 , #corm_loc_sbc#
+			 , #file_id_1#
+			 , #remark#
+			 , #use_yn#
+			 , SYSDATE
+			 , #ipe_eeno#
+			 , SYSDATE
+			 , #updr_eeno#
+		)
+	</insert>
+	
+	<!-- 회의실 관리 수정 -->
+	<update id="updateConferenceRoomMgmtByXsm06" parameterClass="bgabGascsm04">
+		/* Query Id : updateConferenceRoomMgmtByXsm06 */
+		UPDATE BGAB_GASCSM04$corp_cd$
+		   SET CORM_NM = #corm_nm#
+			 , CORM_FL_CD = #corm_fl_cd#
+			 , USE_KND = #use_knd#
+			 , BLNS_CPSN = NVL(#blns_cpsn#, 0)
+			 , DESK_QTY = NVL(#desk_qty#, 0)
+			 , CHAIR_QTY = NVL(#chair_qty#, 0)
+			 , CONF_YN = #conf_yn#
+			 , ITEM_SBC = #item_sbc#
+			 , CORM_LOC_SBC = #corm_loc_sbc#
+			 , FILE_ID_1 = #file_id_1#
+			 , REMARK = #remark#
+			 , USE_YN = #use_yn#
+			 , MDFY_YMD = SYSDATE
+			 , UPDR_EENO = #updr_eeno#
+		 WHERE REGN_CD = #regn_cd#
+		   AND BD_CD = #bd_cd#
+		   AND CORM_CD = #corm_cd#
+	</update>
+	
+	<!-- 회의실 관리 삭제 -->
+	<update id="deleteConferenceRoomMgmtByXsm06" parameterClass="bgabGascsm04">
+		/* Query Id : deleteConferenceRoomMgmtByXsm06 */
+		DELETE FROM BGAB_GASCSM04$corp_cd$
+		 WHERE REGN_CD = #regn_cd#
+		   AND BD_CD = #bd_cd#
+		   AND CORM_CD = #corm_cd#
+	</update>
+	
+	<!-- 회의실 관리 정책 수정 -->
+	<update id="updateConferenceRoomMgmtPolicyByXsm06" parameterClass="bgabGascsm04">
+		/* Query Id : updateConferenceRoomMgmtPolicyByXsm06 */
+		UPDATE BGAB_GASCSM04$corp_cd$
+		   SET RES_FROM_TIME = #res_from_time#
+			 , RES_TO_TIME = #res_to_time#
+			 , RES_LMT_CNT = #res_lmt_cnt#
+			 , RES_MAX_MIN = #res_max_min#
+			 , MDFY_YMD = SYSDATE
+			 , UPDR_EENO = #updr_eeno#
+		 WHERE REGN_CD = #regn_cd#
+		   AND BD_CD = #bd_cd#
+		   AND CORM_CD = #corm_cd#
+	</update>
+	
+	<!-- 회의실 코드 관리 조회 -->
+	<select id="searchConferenceRoomCodeMgmtCountByXsm07" parameterClass="bgabGascsm05" resultClass="String">
+		/* Query Id : searchConferenceRoomCodeMgmtCountByXsm07 */
+		SELECT COUNT(*)
+		  FROM BGAB_GASCSM05$corp_cd$
+		 WHERE 1=1
+		<isNotEmpty property="xsm_knd" prepend="and">
+		XSM_KND = #xsm_knd#
+		</isNotEmpty>
+		<isNotEmpty property="xsm_code" prepend="and">
+		XSM_CODE = #xsm_code#
+		</isNotEmpty>
+		<isNotEmpty property="xsm_hname" prepend="and">
+		XSM_HNAME LIKE '%' || #xsm_hname# || '%'
+		</isNotEmpty>
+	</select>
+	<select id="searchConferenceRoomCodeMgmtByXsm07" parameterClass="bgabGascsm05" resultClass="bgabGascsm05">
+		/* Query Id : searchConferenceRoomCodeMgmtByXsm07 */
+		SELECT *
+		FROM(
+			SELECT rownum rnum, t.*
+			FROM(
+				SELECT XSM_KND
+					 , XSM_KND AS XSM_KND_OLD
+					 , XSM_CODE
+					 , XSM_CODE AS XSM_CODE_OLD
+					 , XSM_HNAME
+					 , XSM_ENAME
+					 , XSM_REMARK
+					 , XSM_SORT_NO
+					 , XSM_USE_YN
+				 FROM BGAB_GASCSM05$corp_cd$
+				 WHERE 1 = 1
+				<isNotEmpty property="xsm_knd" prepend="AND">
+				XSM_KND = #xsm_knd#
+				</isNotEmpty>
+				<isNotEmpty property="xsm_code" prepend="AND">
+				XSM_CODE = #xsm_code#
+				</isNotEmpty>
+				<isNotEmpty property="xsm_hname" prepend="AND">
+				XSM_HNAME LIKE '%' || #xsm_hname# || '%'
+				</isNotEmpty>
+				ORDER BY XSM_SORT_NO
+			)t
+		) u 
+		WHERE RNUM BETWEEN #startRow# AND #endRow#
+	</select>
+	
+	<!-- 회의실 코드 관리 입력 -->
+	<insert id="insertConferenceRoomCodeMgmtByXsm07" parameterClass="bgabGascsm05">
+		/* Query Id : insertConferenceRoomCodeMgmtByXsm07 */
+		INSERT INTO BGAB_GASCSM05$corp_cd$(
+			   XSM_KND
+			 , XSM_CODE
+			 , XSM_HNAME
+			 , XSM_ENAME
+			 , XSM_REMARK
+			 , XSM_SORT_NO
+			 , XSM_USE_YN
+			 , INP_YMD
+			 , IPE_EENO
+			 , MDFY_YMD
+			 , UPDR_EENO
+		)VALUES(
+			   #xsm_knd#
+			 , #xsm_code#
+			 , #xsm_hname#
+			 , #xsm_ename#
+			 , #xsm_remark#
+			 , #xsm_sort_no#
+			 , #xsm_use_yn#
+			 , SYSDATE
+			 , #ipe_eeno#
+			 , SYSDATE
+			 , #updr_eeno#
+		)
+	</insert>
+	
+	<!-- 회의실 코드 관리 수정 -->
+	<update id="updateConferenceRoomCodeMgmtByXsm07" parameterClass="bgabGascsm05">
+		/* Query Id : updateConferenceRoomCodeMgmtByXsm07 */
+		UPDATE BGAB_GASCSM05$corp_cd$
+		   SET XSM_KND = #xsm_knd#
+			 , XSM_CODE = #xsm_code#
+			 , XSM_HNAME = #xsm_hname#
+			 , XSM_ENAME = #xsm_ename#
+			 , XSM_REMARK = #xsm_remark#
+			 , XSM_SORT_NO = #xsm_sort_no#
+			 , XSM_USE_YN = #xsm_use_yn#
+			 , MDFY_YMD = SYSDATE
+			 , UPDR_EENO = #updr_eeno#
+		 WHERE XSM_KND = #xsm_knd_old#
+   		   AND XSM_CODE = #xsm_code_old#
+	</update>
+	
+	<!-- 회의실 코드 관리 삭제 -->
+	<update id="deleteConferenceRoomCodeMgmtByXsm07" parameterClass="bgabGascsm05">
+		/* Query Id : deleteConferenceRoomCodeMgmtByXsm07 */
+		DELETE FROM BGAB_GASCSM05$corp_cd$
+   		 WHERE XSM_KND = #xsm_knd#
+   		   AND XSM_CODE = #xsm_code#
+	</update>
+	<select id="searchCodeKndCombo" parameterClass="bgabGascsm05" resultClass="bgabGascsm05">
+		/* Query Id : searchCodeKndCombo */
+		SELECT XSM_CODE
+			 , XSM_HNAME
+		  FROM BGAB_GASCSM05$corp_cd$
+		 WHERE XSM_KND = '00000'
+		   AND XSM_USE_YN = 'Y'
+	</select>
+	
+	<!-- 상용구 총건수 -->
+	<select id="searchTitleCountByXsm" parameterClass="bgabGascsm01" resultClass="String">
+		/* Query Id : searchTitleCountByXsm */
+		SELECT COUNT(1) AS TOT_CNT
+		  FROM BGAB_GASCSM05$corp_cd$
+		 WHERE XSM_KND = 'SM010'
+		   AND XSM_USE_YN = 'Y'
+	</select>
+	
+	<!-- 상용구 조회 -->
+	<select id="searchTitleByXsm" parameterClass="bgabGascsm01" resultClass="bgabGascsm01">
+		/* Query Id : searchTitleByXsm */
+		<include refid="jqGridPageTop"/>
+		SELECT XSM_HNAME AS CNF_TITLE
+		  FROM BGAB_GASCSM05$corp_cd$
+		 WHERE XSM_KND = 'SM010'
+		   AND XSM_USE_YN = 'Y'
+		 ORDER BY CAST(XSM_SORT_NO AS UNSIGNED)
+		<include refid="jqGridPageBottom"/>
+	</select>
+	
+	<!-- 승인 회의실 조회 -->
+	<select id="searchAuthCormComboByXsm10" parameterClass="bgabGascsm05" resultClass="bgabGascsm05">
+		/* Query Id : searchAuthCormComboByXsm10 */
+		SELECT Z.CORM_CD AS XSM_CODE
+		     , Z.CORM_NM AS XSM_HNAME
+		  FROM (
+			SELECT A.CORM_CD
+				 , C.XSM_HNAME || '/' || B.BD_NM || '/' || REPLACE(A.CORM_FL_CD,'-','B') || '층/' || A.CORM_NM AS CORM_NM
+			  FROM BGAB_GASCSM04$corp_cd$ A
+			 INNER JOIN BGAB_GASCSM03$corp_cd$ B
+			    ON A.REGN_CD = B.REGN_CD
+			   AND A.BD_CD = B.BD_CD
+			   AND A.CONF_YN = 'Y'
+			   AND A.USE_YN = 'Y'
+			  LEFT OUTER JOIN BGAB_GASCSM05$corp_cd$ C
+			    ON A.REGN_CD = C.XSM_CODE
+			   AND C.XSM_KND = 'SM001'
+			 ORDER BY A.REGN_CD
+			 	    , A.BD_CD
+			 	    , A.CORM_FL_CD
+			 	    , A.CORM_CD 
+		)Z
+	</select>
+	
+	<!-- 권한 총건수 조회 -->
+	<select id="searchAuthMgmtCountByXsm10" parameterClass="bgabGascsm06" resultClass="String">
+		/* Query Id : searchAuthMgmtCountByXsm10 */
+		SELECT COUNT(1) AS TOT_CNT
+		  FROM BGAB_GASCSM06$corp_cd$ A
+		 INNER JOIN BGAB_GASCZ002$corp_cd$ B
+		    ON A.EENO = B.XUSR_EMPNO
+		 WHERE CAST(SYSDATE AS CHAR(8)) BETWEEN A.FROM_YMD AND A.TO_YMD
+		   <isNotEmpty property="auth_cd">
+		   AND A.AUTH_CD = #auth_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="eenm">
+		   AND B.XUSR_NAME LIKE '%' || #eenm# || '%')
+		   </isNotEmpty>
+	</select>
+	
+	<!-- 권한 조회 -->
+	<select id="searchAuthMgmtByXsm10" parameterClass="bgabGascsm06" resultClass="bgabGascsm06">
+		/* Query Id : searchAuthMgmtByXsm10 */
+		<include refid="jqGridPageTop"/>
+		SELECT A.AUTH_CD
+			 , A.SEQ_NO
+			 , A.EENO
+			 , B.XUSR_NAME AS EENM
+			 , B.XUSR_STEP_NAME AS STEP_NAME
+			 , B.XUSR_DEPT_NAME AS DEPT_NAME
+			 , CAST(TO_DATE(A.FROM_YMD, '%Y/%m/%d') AS CHAR(10)) AS FROM_YMD
+			 , CAST(TO_DATE(A.TO_YMD, '%Y/%m/%d') AS CHAR(10)) AS TO_YMD
+			 , A.CORM_CD
+			 , A.REMARK
+		  FROM BGAB_GASCSM06$corp_cd$ A
+		 INNER JOIN BGAB_GASCZ002$corp_cd$ B
+		    ON A.EENO = B.XUSR_EMPNO
+		 WHERE CAST(SYSDATE AS CHAR(8)) BETWEEN A.FROM_YMD AND A.TO_YMD
+		   <isNotEmpty property="auth_cd">
+		   AND A.AUTH_CD = #auth_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="eenm">
+		   AND B.XUSR_NAME LIKE '%' || #eenm# || '%'
+		   </isNotEmpty>
+		 ORDER BY A.AUTH_CD
+		 		, A.EENO 
+		<include refid="jqGridPageBottom"/>
+	</select>
+	
+	<!-- 권한 입력 -->
+	<insert id="insertAuthMgmtByXsm10" parameterClass="bgabGascsm06">
+		/* Query Id : insertAuthMgmtByXsm10 */
+		INSERT INTO BGAB_GASCSM06$corp_cd$(
+			   AUTH_CD
+			 , EENO
+			 , SEQ_NO
+			 , FROM_YMD
+			 , TO_YMD
+			 , CORM_CD
+			 , REMARK
+			 , IPE_EENO
+			 , INP_YMD
+			 , UPDR_EENO
+			 , MDFY_YMD
+		)VALUES(
+			   #auth_cd#
+			 , #eeno#
+	 		 , (SELECT T.SEQ_NO FROM(
+			 		SELECT NVL(MAX(SEQ_NO), 0)+1 AS SEQ_NO 
+			 		  FROM BGAB_GASCSM06$corp_cd$)
+				T)
+			 , #from_ymd#
+			 , #to_ymd#
+			 , #corm_cd#
+			 , #remark#
+			 , #ipe_eeno#
+			 , SYSDATE
+			 , #updr_eeno#
+			 , SYSDATE					
+		)
+	</insert>
+	
+	<!-- 권한 수정 -->
+	<update id="updateAuthMgmtByXsm10" parameterClass="bgabGascsm06">
+		/* Query Id : updateAuthMgmtByXsm10 */
+		UPDATE BGAB_GASCSM06$corp_cd$
+		   SET CORM_CD = #corm_cd#
+		   	 , FROM_YMD = #from_ymd#
+		   	 , TO_YMD = #to_ymd#
+		     , MDFY_YMD = SYSDATE
+		     , UPDR_EENO = #updr_eeno#
+		 WHERE SEQ_NO = #seq_no#
+	</update>
+	
+	<!-- 권한 삭제 -->
+	<delete id="deleteAuthMgmtByXsm10" parameterClass="bgabGascsm06">
+		/* Query Id : deleteAuthMgmtByXsm10 */
+		DELETE FROM BGAB_GASCSM06$corp_cd$
+		 WHERE SEQ_NO = #seq_no#
+	</delete>
+	
+	<!-- 통계현황(회의실장소명칭) -->
+	<select id="searchConferenceRoomListByXsm11" parameterClass="bgabGascsm07" resultClass="bgabGascsm07">
+		/* Query Id : searchConferenceRoomListByXsm11 */
+		SELECT   B.REGN_CD
+			   , C.XSM_HNAME AS REGN_NM
+               , A.BD_CD
+               , A.BD_NM
+               , B.CORM_FL_CD
+               , B.CORM_CD
+               , B.CORM_NM
+          FROM   BGAB_GASCSM03 A
+		       , BGAB_GASCSM04 B
+		       , BGAB_GASCSM05 C
+		 WHERE A.REGN_CD = B.REGN_CD
+           AND A.BD_CD = B.BD_CD
+           AND B.REGN_CD = C.XSM_CODE
+           AND C.XSM_KND = 'SM001'
+		   AND A.USE_YN = 'Y'
+		   AND B.USE_YN = 'Y'
+           <isNotEmpty property="regn_cd">
+		   AND B.REGN_CD = #regn_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="bd_cd">
+		   AND B.BD_CD = #bd_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="corm_fl_cd">
+		   AND B.CORM_FL_CD = #corm_fl_cd#
+		   </isNotEmpty>
+		   <isNotEmpty property="corm_cd">
+		   AND B.CORM_CD = #corm_cd#
+		   </isNotEmpty>
+		 ORDER BY B.REGN_CD
+		 		, B.BD_CD
+		 		, CAST(B.CORM_FL_CD AS UNSIGNED) DESC
+		 		, B.CORM_CD DESC
+	</select>
+	
+	<!-- 통계현황 -->
+	<select id="searchListByXsm11" parameterClass="bgabGascsm07" resultClass="bgabGascsm07">
+		/* Query Id : searchListByXsm11 */
+		SELECT AAAA.FROM_YMD
+		     , AAAA.REGN_CD
+		     , AAAA.BD_CD
+		     , AAAA.CORM_FL_CD
+		     , AAAA.CORM_CD
+             , SUM(AAAA.RES_CNT)                                       	 					   AS RES_CNT
+		     , SUM(AAAA.USED_TIME)             					  		 					   AS USE_TIME
+		     , NVL(AAAA.RES_TIME, 0) - NVL(SUM(AAAA.USED_TIME), 0) 					   AS NO_USE_TIME
+		     , NVL(TRUNCATE(((SUM(AAAA.USED_TIME) / NVL(AAAA.RES_TIME, 0)) *100), 0), 0) AS USE_RATE
+             , SUM(AAAA.CANCLE_CNT)															   AS CANCLE_CNT 
+		  FROM (
+			SELECT AAA.FROM_YMD
+			     , AAA.REGN_CD
+			     , AAA.BD_CD
+			     , AAA.CORM_FL_CD
+			     , AAA.CORM_CD
+	             , NVL(SUM(AAA.RES_CNT), 0) AS RES_CNT
+	             , NVL(SUM(AAA.RES_TIME), 0) AS RES_TIME
+				 , CASE WHEN NVL(SUM(AAA.USED_TIME), 0) <![CDATA[>]]> NVL(AAA.RES_TIME, 0) 
+               	   		THEN NVL(AAA.RES_TIME, 0)
+               			ELSE NVL(SUM(AAA.USED_TIME), 0)
+               	   END AS USED_TIME
+	             , NVL(SUM(AAA.CANCLE_CNT), 0) AS CANCLE_CNT
+			  FROM (
+			  		  SELECT AA.REGN_CD
+			               , AA.BD_CD
+			               , AA.CORM_FL_CD
+			               , AA.CORM_CD
+			               , AA.FROM_YMD
+			               , AA.RES_TIME
+			               , BB.USED_TIME
+			               , BB.RES_CNT
+			               , BB.CANCLE_CNT
+			            FROM (
+			            		SELECT B.FROM_YMD
+			                         , A.REGN_CD
+			                         , A.BD_CD
+			                         , A.CORM_FL_CD
+			                         , A.CORM_CD
+									 , ROUND(TIME_TO_SEC(TO_DATE(TIMEDIFF(
+	                                       CAST(TO_DATE(SYSDATE, 'YYYY-MM-DD') AS CHAR(10)) || ' ' || SUBSTR(A.USE_TO_TIME,1,2) || ':' || SUBSTR(A.USE_TO_TIME,3,4) || ':00'
+	                                 	 , CAST(TO_DATE(SYSDATE, 'YYYY-MM-DD') AS CHAR(10)) || ' ' || SUBSTR(A.USE_FROM_TIME,1,2) || ':' || SUBSTR(A.USE_FROM_TIME,3,4) || ':00'
+	                                   ), 'YYYY-MM-DD %H:%i'))/60/60, 1)
+	                                   AS RES_TIME
+			                      FROM BGAB_GASCSM04 A
+			                         , (
+	                                    SELECT CAST(TO_DATE(TO_DATE,'YYYYMMDD') AS CHAR(8)) AS FROM_YMD
+	                                      FROM (SELECT ADDDATE(CAST(TO_DATE(#cnf_from_ymd#,'YYYY-MM-DD') AS CHAR(10)), T4*10000 + T3*1000 + T2*100 + T1*10 + T0) TO_DATE FROM
+	                                     (SELECT 0 T0 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) T0,
+	                                     (SELECT 0 T1 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) T1,
+	                                     (SELECT 0 T2 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) T2,
+	                                     (SELECT 0 T3 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) T3,
+	                                     (SELECT 0 T4 UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) T4) V
+	                                    WHERE TO_DATE BETWEEN CAST(TO_DATE(#cnf_from_ymd#,'YYYY-MM-DD') AS CHAR(10)) AND CAST(TO_DATE(#cnf_to_ymd#,'YYYY-MM-DD') AS CHAR(10))
+			                            ) B
+			                         , BGAB_GASCSM03 C
+			                     WHERE A.REGN_CD = C.REGN_CD
+			                       AND A.BD_CD = C.BD_CD
+								   AND A.USE_YN = 'Y'
+								   AND C.USE_YN = 'Y'
+			                       <isNotEmpty property="regn_cd">
+			                       AND A.REGN_CD = #regn_cd#
+			                       </isNotEmpty>
+			                       <isNotEmpty property="bd_cd">
+			                       AND A.BD_CD = #bd_cd#
+			                       </isNotEmpty>
+			                       <isNotEmpty property="corm_fl_cd">
+			                       AND A.CORM_FL_CD = #corm_fl_cd#
+			                       </isNotEmpty>
+			                       <isNotEmpty property="corm_cd">
+			                       AND A.CORM_CD = #corm_cd#
+			                       </isNotEmpty>
+							) AA
+	                        LEFT OUTER JOIN(
+	                        	SELECT CASE WHEN B.PGS_ST_CD = '2'
+			                 				THEN ROUND(TIME_TO_SEC(TO_DATE(TIMEDIFF(
+	                                                 DATE_ADD(CAST(TO_DATE(A.CNF_TO_YMD, 'YYYY-MM-DD') AS CHAR(10)) || ' ' || SUBSTR(A.CNF_TO_TIME,1,2) || ':' || SUBSTR(A.CNF_TO_TIME,3,4), INTERVAL+1 MINUTE)
+	                                        	   , CAST(TO_DATE(A.CNF_FROM_YMD, 'YYYY-MM-DD') AS CHAR(10)) || ' ' || SUBSTR(A.CNF_FROM_TIME,1,2) || ':' || SUBSTR(A.CNF_FROM_TIME,3,4),':00'
+	                                        	 ),'YYYY-MM-DD %H:%i'))/60/60,1)
+			                                ELSE 0
+			                           END AS USED_TIME
+			                         , CASE WHEN B.PGS_ST_CD = '2' THEN 1 END AS RES_CNT
+			                         , CASE WHEN B.PGS_ST_CD = '4' THEN 1 END AS CANCLE_CNT
+			                         , B.PGS_ST_CD
+			                         , B.REGN_CD
+			                         , B.BD_CD
+			                         , B.CORM_FL_CD
+			                         , B.CORM_CD
+			                         , A.CNF_FROM_YMD
+			                         , A.CNF_TO_YMD
+			                      FROM BGAB_GASCSM02 A
+			                         , BGAB_GASCSM01 B
+			                     WHERE A.DOC_NO = B.DOC_NO
+			                       AND B.PGS_ST_CD IN ('2')
+			                       AND A.CNF_FROM_YMD <![CDATA[>=]]> #cnf_from_ymd#
+			                       AND A.CNF_TO_YMD   <![CDATA[<=]]> #cnf_to_ymd#
+						  ) BB
+			              ON AA.REGN_CD    = BB.REGN_CD
+			             AND AA.BD_CD      = BB.BD_CD
+			             AND AA.CORM_FL_CD = BB.CORM_FL_CD
+			             AND AA.CORM_CD    = BB.CORM_CD
+			             AND AA.FROM_YMD <![CDATA[>=]]> BB.CNF_FROM_YMD
+			             AND AA.FROM_YMD <![CDATA[<=]]> BB.CNF_TO_YMD 
+			         ) AAA
+			 GROUP BY AAA.FROM_YMD, AAA.REGN_CD, AAA.BD_CD, AAA.CORM_FL_CD, AAA.CORM_CD, AAA.RES_TIME
+			 ORDER BY AAA.FROM_YMD, AAA.REGN_CD, AAA.BD_CD, CAST(AAA.CORM_FL_CD AS UNSIGNED) DESC, AAA.CORM_CD DESC
+			)AAAA
+		GROUP BY AAAA.FROM_YMD, AAAA.REGN_CD, AAAA.BD_CD, AAAA.CORM_FL_CD, AAAA.CORM_CD, AAAA.RES_TIME
+		ORDER BY AAAA.FROM_YMD, AAAA.REGN_CD, AAAA.BD_CD, CAST(AAAA.CORM_FL_CD AS UNSIGNED) DESC, AAAA.CORM_CD DESC
+	</select>
+</sqlMap>
+ 

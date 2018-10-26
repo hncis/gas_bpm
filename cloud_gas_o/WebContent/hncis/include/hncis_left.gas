@@ -1,0 +1,91 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@page import="com.hncis.common.application.SessionInfo"%>
+<%@page import="com.hncis.common.application.CommonGasc"%>
+<%@page import="com.hncis.system.vo.BgabGascz004Dto"%>
+<%@page import="java.util.List"%>
+<%
+String mstuGubb1 = SessionInfo.getSess_mstu_gubb(request);
+List<BgabGascz004Dto> leftList = CommonGasc.getLeftMenuList(menuId, request);
+String title = "";
+String title_name = "";
+String welfare = JSPMessageSource.getMessage("welfare", locale);
+String spt = JSPMessageSource.getMessage("spt",locale);
+String tr_car = JSPMessageSource.getMessage("tr_car",locale);
+String gnrl = JSPMessageSource.getMessage("gnrl",locale);
+String system = JSPMessageSource.getMessage("system",locale);
+
+if("M2".equals(leftList.get(0).getMenu_lgrp_cd())){
+	title = "lnb_tit01";
+	title_name = welfare;
+}else if("M3".equals(leftList.get(0).getMenu_lgrp_cd())){
+	title = "lnb_tit02";
+	title_name = spt;
+}else if("M4".equals(leftList.get(0).getMenu_lgrp_cd())){
+	title = "lnb_tit03 tline";
+	title_name = tr_car;
+}else if("M5".equals(leftList.get(0).getMenu_lgrp_cd())){
+	title = "lnb_tit04";
+	title_name = gnrl;
+}else if("M9".equals(leftList.get(0).getMenu_lgrp_cd())){
+	title = "lnb_tit05";
+	title_name = system;
+}
+%>
+<div id="lnb_wrap">
+    <h2><%=title_name %></h2>
+    <ul class="lnb">
+		<%
+			int z = 0;
+			String helpUrl = "";
+			for(int i=0; i<leftList.size(); i++){
+				if(i == leftList.size()-1){
+					String str = leftList.get(i).getMenu_img_path_adr();
+					if(!"".equals(str)){
+						String[] tempUrl = str.split("/");
+						helpUrl = "/"+tempUrl[1]+"/"+tempUrl[2]+"/"+tempUrl[3].substring(0,3)+"_help.gas";
+					}
+				}
+
+				if(leftList.get(i).getScrn_id() == null || leftList.get(i).getScrn_id().equals("")){
+		%>
+		    	<li>
+					<a href="#" class="main_menu this_page"><%=leftList.get(i).getScrn_nm()%></a>
+					<ul class="sub_menu">
+		<%
+				}else{
+					if(!"M".equals(mstuGubb1)){
+						if("XTM01".equals(leftList.get(i).getScrn_id()) && !"5".equals(leftList.get(i).getGrantCd())){
+							continue;
+						}else if("XTM04".equals(leftList.get(i).getScrn_id()) && !"5".equals(leftList.get(i).getGrantCd())){
+							continue;
+						}else if(("XUF03".equals(leftList.get(i).getScrn_id())||"XUF04".equals(leftList.get(i).getScrn_id())
+								||"XUF05".equals(leftList.get(i).getScrn_id())||"XUF06".equals(leftList.get(i).getScrn_id()))
+								&& !"5".equals(leftList.get(i).getGrantCd())){
+							continue;
+						}
+
+					}
+					if(menuId.equals(leftList.get(i).getScrn_id())){
+		%>
+					<li><a href="javascript:pageLocationHref('<%=ctxPath%>','<%=leftList.get(i).getMenu_img_path_adr() %>');" class="on"><%=leftList.get(i).getScrn_nm()%></a></li>
+		<%
+					}else{
+		%>
+					<li><a href="javascript:pageLocationHref('<%=ctxPath%>','<%=leftList.get(i).getMenu_img_path_adr() %>');"><%=leftList.get(i).getScrn_nm()%></a></li>
+		<%
+					}
+				}
+			}
+		%>
+		<%
+					if(menuId != null && !"".equals(menuId) && !menuId.substring(0, 3).contains("XST") && !sess_locale.equals("cn")){
+		%>
+						<li><a href="javascript:pageHelpPopup('<%=helpUrl%>');"><fmt:message key="help"/></a></li>
+		<%
+					}
+		%>
+			</ul>
+        </li>
+    </ul>
+    <div class="lnb_b_bg"></div>
+</div>

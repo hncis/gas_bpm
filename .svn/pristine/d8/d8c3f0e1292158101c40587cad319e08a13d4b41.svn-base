@@ -1,0 +1,1061 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="roomsMeals"> 
+	
+	<select id="selectRmToMultiComboPlant" parameterClass="bgabGascrm03Dto" resultClass="bgabGascrm03Dto">
+	/*selectRmToMultiComboPlant*/
+		SELECT   ROOM_CODE
+				,ROOM_PLACE
+		FROM	BGAB_GASCRM03$corp_cd$
+		WHERE	ROOM_PLANT = #room_plant#
+		AND  	USE_YN = 'Y'
+		<isNotEqual property="auth_type" compareValue="Y">
+			<isEqual property="auth_type" compareValue="N">
+				AND VIP_YN = 'N'
+			</isEqual>
+			<isNotEqual property="auth_type" compareValue="N">
+				AND (VIP_YN = 'N' OR ROOM_CODE IN (SELECT ROOM_CODE FROM BGAB_GASCRM03$corp_cd$ WHERE ADMIN_ID = #admin_id#))
+			</isNotEqual>
+		</isNotEqual>
+	</select>
+	
+	<select id="selectRmToMultiComboMeal" resultClass="bgabGascrm04Dto">
+	/*selectRmToMultiComboMeal*/
+		SELECT   MEAL_CODE
+				,MEAL_NAME
+				,MEAL_PRICE
+		FROM	BGAB_GASCRM04$corp_cd$
+		WHERE	USE_YN = 'Y'
+		ORDER BY SORT ASC
+	</select>
+	
+	<select id="selectRmToRoomAuthInfo" parameterClass="bgabGascrm03Dto" resultClass="bgabGascrm03Dto">
+	/*selectRmToRoomAuthInfo*/
+		SELECT  ROOM_CODE
+		FROM	BGAB_GASCRM03$corp_cd$
+		WHERE	ADMIN_ID = #admin_id#
+	</select>
+	
+	<select id="selectRmToCheckUseTime" parameterClass="bgabGascrm01Dto" resultClass="String">
+	/*selectRmToCheckUseTime*/
+		SELECT  SUBSTR(TIM_INFO_SBC,#btisSt#,#btisEd#)  
+		FROM  BGAB_GASCRM02$corp_cd$ RM02 , BGAB_GASCRM01$corp_cd$ RM01
+		  WHERE  RM02.DOC_NO = RM01.DOC_NO
+		  AND	 RM01.PGS_ST_CD IN ('0','A','Z','3')
+		  AND    RM01.ROOM_PLANT = #room_plant#
+		  AND    RM01.ROOM_PLACE = #room_place#
+		  AND    RM02.SPLY_YMD = #sply_ymd#
+   		<isEqual property="mode" compareValue="update" prepend="AND">
+			RM02.DOC_NO != #doc_no#  
+		</isEqual>  
+	</select>
+	<select id="selectRmToCheckUseTime2" parameterClass="bgabGascrm01Dto" resultClass="String">
+	/*selectRmToCheckUseTime*/
+		SELECT  SUBSTR(TIM_INFO_SBC,#btisSt#,#btisEd#)  
+		FROM  BGAB_GASCRM02$corp_cd$ RM02 , BGAB_GASCRM01$corp_cd$ RM01
+		  WHERE  RM02.DOC_NO = RM01.DOC_NO
+		  AND	 RM01.PGS_ST_CD IN ('0','A','Z','3')
+		  AND    RM01.ROOM_PLANT = #room_plant#
+		  AND    RM01.ROOM_PLACE = #room_place#
+		  AND    RM02.SPLY_YMD BETWEEN #fr_ymd# AND #to_ymd# 
+   		<isEqual property="mode" compareValue="update" prepend="AND">
+			RM02.DOC_NO != #doc_no#  
+		</isEqual>  
+	</select>
+	
+	<update id="insertRmToRequest" parameterClass="bgabGascrm01Dto">
+		/*insertRmToRequest*/
+     	INSERT INTO BGAB_GASCRM01$corp_cd$(
+			   DOC_NO
+			 , ROOM_PLANT
+			 , ROOM_PLACE
+			 , PTT_YMD
+			 , PTT_HHMM
+			 , FR_YMD
+			 , TO_YMD
+			 , FR_TIME
+			 , TO_TIME
+			 , TIM_INFO_SBC
+			 , ROOM_QTY
+			 , ROOM_MEAL
+			 , COST_CD
+			 , BUDGET_TYPE
+			 , BUDGET_NO
+			 , BUDG_TEXT
+			 , NOTE
+			 , PGS_ST_CD
+			 , INP_YMD
+			 , IPE_EENO
+			 , MDFY_YMD
+			 , UPDR_EENO
+			 , REQ_EENO
+			 , PGS_ST_CD2
+			 , TOT
+			 , RSVT_DAY
+			 , IF_ID
+		) VALUES (
+			   #doc_no#
+			 , #room_plant#
+			 , #room_place#
+			 , #ptt_ymd#
+			 , DATE_FORMAT(SYSDATE(),'HH:MM:SS')
+			 , #fr_ymd#
+			 , #to_ymd#
+			 , #fr_time#
+			 , #to_time#
+			 , #tim_info_sbc#
+			 , REPLACE(#room_qty#,'',0)
+			 , #room_meal#
+			 , #cost_cd#
+			 , #budget_type# 
+			 , #budget_no#
+			 , #budg_text#
+			 , #note#
+			 , #pgs_st_cd#
+			 , DATE_FORMAT(SYSDATE(),'%Y%m%d')
+			 , #ipe_eeno# 
+			 , DATE_FORMAT(SYSDATE(),'%Y%m%d')   
+			 , #updr_eeno#
+			 , #req_eeno#
+			 , 'A'
+			 , #tot#
+			 , #rsvt_day#
+			 , #if_id#
+		)	
+     	ON DUPLICATE KEY
+     	UPDATE  ROOM_PLANT          = #room_plant#, 
+				ROOM_PLACE          = #room_place#, 
+				FR_YMD           	= #fr_ymd#, 
+				TO_YMD          	= #to_ymd#, 
+				FR_TIME           	= #fr_time#, 
+				TO_TIME           	= #to_time#, 
+				TIM_INFO_SBC        = #tim_info_sbc#, 
+				ROOM_QTY           	= REPLACE(#room_qty#,'',0), 
+				ROOM_MEAL           = #room_meal#, 
+				COST_CD            	= #cost_cd#, 
+				BUDGET_TYPE        	= #budget_type#, 
+				BUDGET_NO         	= #budget_no#, 
+				BUDG_TEXT			= #budg_text#,
+				NOTE                = #note#, 
+				UPDR_EENO        	= #updr_eeno#,  
+				MDFY_YMD 			= DATE_FORMAT(SYSDATE(),'%Y%m%d'),
+				TOT					= #tot#,
+				RSVT_DAY			= #rsvt_day# 
+   </update>
+   <delete id="deleteRmToReqList" parameterClass="bgabGascrm01Dto">
+   /*deleteRmToReqList*/
+   	DELETE	FROM BGAB_GASCRM02$corp_cd$
+   	WHERE	DOC_NO = #doc_no#
+   </delete>
+   <insert id="insertRmToReqList" parameterClass="bgabGascrm02Dto">
+   	/*insertRmToReqList*/
+   	INSERT INTO BGAB_GASCRM02$corp_cd$(
+			DOC_NO
+			,SPLY_YMD
+			,INP_YMD
+			,IPE_EENO
+			,MDFY_YMD
+			,UPDR_EENO
+		) VALUES (
+			#doc_no#
+			,#sply_ymd#
+			,DATE_FORMAT( SYSDATE(),'%Y%m%d' )    
+			,#ipe_eeno# 
+			,DATE_FORMAT( SYSDATE(),'%Y%m%d' )   
+			,#updr_eeno#
+		)
+   </insert>
+   
+	<select id="selectInfoRmToRequest" parameterClass="bgabGascrm01Dto" resultClass="bgabGascrm01Dto">
+	/*selectInfoRmToRequest*/
+		SELECT	RM01.DOC_NO
+				,RM01.ROOM_PLANT
+				,RM01.ROOM_PLACE
+				,DATE_FORMAT( CAST( RM01.PTT_YMD AS DATE ), '%Y-%m-%d' ) AS PTT_YMD
+				,DATE_FORMAT( CAST( RM01.FR_YMD AS DATE ), '%Y-%m-%d' ) AS FR_YMD
+				,DATE_FORMAT( CAST( RM01.TO_YMD AS DATE ), '%Y-%m-%d' ) AS TO_YMD
+				,RM01.FR_YMD AS FR_YMD_H
+				,RM01.TO_YMD AS TO_YMD_H
+				,RM01.FR_TIME
+				,RM01.TO_TIME
+				,RM01.TIM_INFO_SBC
+				,RM01.ROOM_QTY
+				,RM01.ROOM_MEAL
+				,RM01.COST_CD
+				,RM01.BUDGET_TYPE
+				,RM01.BUDGET_NO
+				,RM01.BUDG_TEXT
+				,RM01.NOTE
+				,RM01.INP_YMD
+				,RM01.IPE_EENO
+				,RM01.MDFY_YMD
+				,RM01.UPDR_EENO
+				,RM01.PGS_ST_CD
+				,RM01.REQ_EENO
+				,RM01.SNB_RSON_SBC
+	   			,RM01.IF_ID
+	   			,RM01.PGS_ST_CD
+	   			,RM01.RDCS_EENO 
+	   			,RM01.RDCS_YMD
+	   			,RM01.ACPC_EENO
+	   			,RM01.ACPC_YMD
+	   			,RM01.RPTS_EENO
+	   			,RM01.RPTS_YMD
+				,Z002.XUSR_NAME AS REQ_EENO_NM
+				,Z002.XUSR_DEPT_NAME AS REQ_DEPT_NM
+				,Z002.XUSR_STEP_NAME AS REQ_STEP_NM
+				,Z002.XUSR_TEL_NO  AS REQ_TEL_NO
+				,Z005.XCOD_HNAME AS PGS_ST_NM
+				,RM01.ROOM_PLACE AS ROOM_PLACE_H
+				,RM01.ROOM_MEAL AS ROOM_MEAL_H
+				,RM01.PO_NO
+				,RM01.TOT
+				,RM01.RSVT_DAY
+				,(SELECT COUNT(*) FROM BGAB_GASCRM03$corp_cd$ WHERE ROOM_CODE = RM01.ROOM_PLACE AND VIP_YN = 'Y' AND ADMIN_ID = #eeno#) AS ROOM_ADMIN_FLAG
+		FROM 	BGAB_GASCRM01$corp_cd$ RM01
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON	RM01.REQ_EENO = Z002.XUSR_EMPNO
+		LEFT OUTER JOIN 
+		(
+			SELECT * FROM BGAB_GASCZ005$corp_cd$ WHERE XCOD_KND='RM01' AND LOCALE = #loc_cd#
+		) Z005
+		ON RM01.PGS_ST_CD = Z005.XCOD_CODE
+		WHERE	1=1
+		<isNotEmpty property="doc_no" prepend="and">
+		DOC_NO = #doc_no#
+		</isNotEmpty>
+		<isNotEmpty property="if_id" prepend="and">
+		IF_ID = #if_id#
+		</isNotEmpty>
+	</select>
+	<delete id="deleteRmToRequest" parameterClass="bgabGascrm01Dto">
+	/*deleteRmToRequest*/
+		DELETE	BGAB_GASCRM01$corp_cd$
+		WHERE	DOC_NO = #doc_no#
+	</delete>
+	
+	<select id="selectInfoRmToPlaceList" parameterClass="bgabGascrm01Dto" resultClass="bgabGascrm01Dto">
+	/*selectInfoRmToPlaceList*/
+		SELECT	ROOM_CODE
+				,ROOM_PLANT
+				,ROOM_PLACE
+				,VIP_YN
+				,USE_YN
+		FROM 	BGAB_GASCRM03$corp_cd$
+		WHERE	USE_YN = 'Y'
+		AND     ROOM_PLANT = #room_plant#
+		<isNotEqual property="auth_type" compareValue="Y">
+<!-- 			<isEqual property="auth_type" compareValue="N"> -->
+<!-- 				AND VIP_YN = 'N' -->
+<!-- 			</isEqual> -->
+<!-- 			<isNotEqual property="auth_type" compareValue="N"> -->
+<!-- 				AND (VIP_YN = 'N' OR ROOM_CODE IN (SELECT ROOM_CODE FROM BGAB_GASCRM03$corp_cd$ WHERE ADMIN_ID = #admin_id#)) -->
+<!-- 			</isNotEqual> -->
+		</isNotEqual>
+	</select>
+	
+	<select id="selectInfoRmToReqList" parameterClass="bgabGascrm01Dto" resultClass="bgabGascrm01Dto">
+	/*selectInfoRmToReqList*/
+		SELECT	RM02.DOC_NO
+				,RM02.SPLY_YMD
+				,RM01.ROOM_PLANT
+				,RM01.ROOM_PLACE
+				,RM01.PTT_YMD
+				,RM01.FR_YMD
+				,RM01.TO_YMD
+				,RM01.FR_TIME
+				,RM01.TO_TIME
+				,RM01.TIM_INFO_SBC
+				,RM01.ROOM_QTY
+				,RM01.ROOM_MEAL
+				,RM01.COST_CD
+				,RM01.NOTE
+				,RM02.INP_YMD
+				,RM02.IPE_EENO
+				,RM02.MDFY_YMD
+				,RM02.UPDR_EENO
+				,RM01.PGS_ST_CD
+				,RM01.REQ_EENO
+				,Z002.XUSR_NAME AS REQ_EENO_NM
+				,Z002.XUSR_DEPT_NAME AS REQ_DEPT_NM
+		FROM
+		(		
+			SELECT	*
+			FROM	BGAB_GASCRM02$corp_cd$
+			WHERE	1 = 1
+			AND   SPLY_YMD = #sply_ymd#
+		) RM02
+		INNER JOIN (
+			SELECT	*
+			FROM	BGAB_GASCRM01$corp_cd$
+			WHERE	1 = 1
+			AND 	PGS_ST_CD IN ('0','A','Z','3')
+			AND FR_YMD <![CDATA[<=]]> #sply_ymd#
+			AND TO_YMD <![CDATA[>=]]> #sply_ymd#
+		) RM01
+		ON	RM02.DOC_NO = RM01.DOC_NO
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON	RM01.REQ_EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		AND RM01.ROOM_PLANT = #room_plant#
+	</select>
+	
+	<update id="updateRmToRequestForConfirm" parameterClass="bgabGascrm01Dto">
+	/*updateRmToRequestForConfirm*/
+		UPDATE	BGAB_GASCRM01$corp_cd$
+		SET		PGS_ST_CD = #pgs_st_cd#
+				,ACPC_EENO = #acpc_eeno#
+				,ACPC_YMD = DATE_FORMAT(SYSDATE(),'%Y%m%d')
+		WHERE	1 = 1
+		AND		DOC_NO = #doc_no#
+	</update>
+	
+	<select id="selectRmToApproveForVipRoomCheck" parameterClass="bgabGascrm01Dto" resultClass="String">
+		SELECT RM03.VIP_YN
+		FROM BGAB_GASCRM01$corp_cd$ RM01
+		LEFT OUTER JOIN BGAB_GASCRM03$corp_cd$ RM03
+		 ON RM01.ROOM_PLACE = RM03.ROOM_CODE
+		WHERE IF_ID = #if_id#
+	</select>
+	
+	<update id="updateRmToApproveForConfirm" parameterClass="bgabGascrm01Dto">
+	/* updateRmToApproveForConfirm */
+		UPDATE	BGAB_GASCRM01$corp_cd$
+		SET		PGS_ST_CD = #pgs_st_cd#
+		WHERE	1 = 1
+		AND		IF_ID = #if_id#
+	</update>
+	
+	<update id="updateRmToRequestForConfirmCancel" parameterClass="bgabGascrm01Dto">
+	/*updateRmToRequestForConfirmCancel*/
+		UPDATE	BGAB_GASCRM01$corp_cd$
+		SET		PGS_ST_CD  = #pgs_st_cd#
+				,IF_ID     = ''
+				,RPTS_EENO = ''
+				,RPTS_YMD  = ''
+				,RDCS_EENO = ''
+				,RDCS_YMD  = ''
+				,ACPC_EENO = ''
+				,ACPC_YMD  = ''
+				,SNB_RSON_SBC = #snb_rson_sbc#
+				,UPDR_EENO = #updr_eeno#
+				,MDFY_YMD  = DATE_FORMAT( SYSDATE(),'%Y%m%d' )
+		WHERE	1 = 1
+		AND		DOC_NO = #doc_no#
+	</update>
+	
+	<select id="selectInfoRmToListForMon" parameterClass="bgabGascrm01Dto" resultClass="bgabGascrm01Dto">
+	/*selectInfoRmToListForMon*/
+		SELECT	RM01.DOC_NO
+				,RM01.ROOM_PLANT
+				,RM01.ROOM_PLACE
+				,RM01.PTT_YMD
+				,RM01.FR_YMD
+				,RM01.TO_YMD
+				,RM01.FR_TIME
+				,RM01.TO_TIME
+				,RM01.TIM_INFO_SBC
+				,RM01.ROOM_QTY
+				,RM01.ROOM_MEAL
+				,RM01.COST_CD
+				,RM01.NOTE
+				,RM01.INP_YMD
+				,RM01.IPE_EENO
+				,RM01.MDFY_YMD
+				,RM01.UPDR_EENO
+				,RM01.PGS_ST_CD
+				,RM01.REQ_EENO
+				,RM02.SPLY_YMD
+				,Z002.XUSR_NAME AS REQ_EENO_NM
+				,Z002.XUSR_DEPT_NAME AS REQ_DEPT_NM
+		FROM
+		(		
+			SELECT	* 
+			FROM	BGAB_GASCRM02$corp_cd$
+			WHERE	1 = 1
+			AND		SUBSTR(SPLY_YMD,1,6) = #sply_ymd#
+		) RM02
+		INNER JOIN (
+			SELECT	*
+			FROM	BGAB_GASCRM01$corp_cd$
+			WHERE	PGS_ST_CD IN ('0','A','Z','3')
+			AND SUBSTR(FR_YMD,1,6) <![CDATA[<=]]> #sply_ymd#
+			AND SUBSTR(TO_YMD,1,6) <![CDATA[>=]]> #sply_ymd#
+		) RM01
+		ON	RM02.DOC_NO = RM01.DOC_NO
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON	RM01.REQ_EENO = Z002.XUSR_EMPNO
+		WHERE 1 = 1
+		<isNotEmpty property="room_plant" prepend="and">
+			RM01.ROOM_PLANT = #room_plant#
+		</isNotEmpty>
+		<isNotEmpty property="room_place" prepend="and">
+			RM01.ROOM_PLACE = #room_place#
+		</isNotEmpty>
+	</select>
+	
+	<select id="selectCountRmToListDaily" parameterClass="bgabGascrm01Dto" resultClass="java.lang.String">
+	/*selectCountRmToListDaily*/
+		SELECT COUNT(*) TOT_CNT
+		FROM	BGAB_GASCRM01$corp_cd$ RM01
+		LEFT OUTER JOIN BGAB_GASCRM03$corp_cd$ RM03
+		ON RM01.ROOM_PLACE = RM03.ROOM_CODE
+		AND RM01.ROOM_PLANT = RM03.ROOM_PLANT
+		LEFT OUTER JOIN BGAB_GASCRM04$corp_cd$ RM04
+		ON RM01.ROOM_MEAL = RM04.MEAL_CODE
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON RM01.REQ_EENO = Z002.XUSR_EMPNO
+		LEFT OUTER JOIN(
+			SELECT XCOD_CODE, XCOD_HNAME
+			FROM BGAB_GASCZ005$corp_cd$
+			WHERE XCOD_KND = 'RM01'
+			AND LOCALE = #loc_cd#) Z005
+		ON Z005.XCOD_CODE = RM01.PGS_ST_CD
+		WHERE	1 = 1
+		<isNotEmpty property="req_eeno_nm" prepend="and">
+			Z002.XUSR_NAME LIKE CONCAT('%', #req_eeno_nm#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="req_eeno" prepend="and">
+			RM01.REQ_EENO = #req_eeno#
+		</isNotEmpty>
+		<isNotEmpty property="pgs_st_cd" prepend="and">
+			RM01.PGS_ST_CD = #pgs_st_cd#
+		</isNotEmpty>
+		<isNotEmpty property="room_plant" prepend="and">
+			RM01.ROOM_PLANT = #room_plant#
+		</isNotEmpty>
+		<isNotEmpty property="req_dept_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #req_dept_cd#
+		</isNotEmpty>
+		AND RM01.FR_YMD BETWEEN #fr_ymd# and #to_ymd#
+	</select>
+	<select id="selectListRmToListDaily" parameterClass="bgabGascrm01Dto" resultClass="bgabGascrm01Dto">
+	/*selectListRmToListDaily*/
+		SELECT * FROM (
+	  		SELECT @ROWNUM := @ROWNUM + 1 AS rnum, K.*
+			FROM
+			(
+				SELECT	RM01.DOC_NO
+						,RM01.ROOM_PLANT
+						,RM01.PTT_YMD
+						,RM01.FR_YMD
+						,RM01.TO_YMD
+						,RM01.FR_TIME
+						,RM01.TO_TIME
+						,RM01.TIM_INFO_SBC
+						,RM01.ROOM_QTY
+						,RM01.COST_CD
+						,RM01.NOTE
+						,RM01.PGS_ST_CD
+						,RM01.REQ_EENO
+						,CONCAT(DATE_FORMAT( CAST( RM01.FR_YMD AS DATE ), '%Y-%m-%d' ), ' ', SUBSTR(RM01.FR_TIME, 1, 2), ':', SUBSTR(RM01.FR_TIME, 3, 2), ' ~ ' ||
+						 DATE_FORMAT( CAST( RM01.TO_YMD AS DATE ), '%Y-%m-%d' ), ' ', SUBSTR(RM01.TO_TIME, 1, 2), ':', SUBSTR(RM01.TO_TIME, 3, 2)) AS REQ_INFO
+						,RM03.ROOM_PLACE AS ROOM_PLACE
+						,RM04.MEAL_NAME AS ROOM_MEAL
+						,RM01.ROOM_QTY * RM04.MEAL_PRICE AS TOT_AMT
+						,Z005.XCOD_HNAME PGS_ST_NM
+						,Z002.XUSR_NAME AS REQ_EENO_NM
+						,IFNULL(RM01.RSVT_DAY,'0') AS RSVT_DAY
+						,RM01.PO_NO
+				FROM BGAB_GASCRM01$corp_cd$ RM01 
+				LEFT OUTER JOIN BGAB_GASCRM03$corp_cd$ RM03
+				ON RM01.ROOM_PLACE = RM03.ROOM_CODE
+				AND RM01.ROOM_PLANT = RM03.ROOM_PLANT
+				LEFT OUTER JOIN BGAB_GASCRM04$corp_cd$ RM04
+				ON RM01.ROOM_MEAL = RM04.MEAL_CODE
+				LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+				ON RM01.REQ_EENO = Z002.XUSR_EMPNO
+				LEFT OUTER JOIN(
+					SELECT XCOD_CODE, XCOD_HNAME
+					FROM BGAB_GASCZ005$corp_cd$
+					WHERE XCOD_KND = 'RM01' 
+					AND LOCALE = #loc_cd#) Z005
+				ON Z005.XCOD_CODE = RM01.PGS_ST_CD
+				WHERE	1 = 1
+				<isNotEmpty property="req_eeno_nm" prepend="and">
+					Z002.XUSR_NAME LIKE CONCAT('%', #req_eeno_nm#, '%')
+				</isNotEmpty>
+				<isNotEmpty property="req_eeno" prepend="and">
+					RM01.REQ_EENO = #req_eeno#
+				</isNotEmpty>
+				<isNotEmpty property="pgs_st_cd" prepend="and">
+					RM01.PGS_ST_CD = #pgs_st_cd#
+				</isNotEmpty>
+				<isNotEmpty property="room_plant" prepend="and">
+					RM01.ROOM_PLANT = #room_plant#
+				</isNotEmpty>
+				<isNotEmpty property="req_dept_cd" prepend="and">
+					Z002.XUSR_DEPT_CODE = #req_dept_cd#
+				</isNotEmpty>
+				AND RM01.FR_YMD BETWEEN #fr_ymd# and #to_ymd#
+				ORDER BY RM01.DOC_NO DESC
+			) k,
+			(SELECT @ROWNUM := 0) r
+		) j
+		WHERE rnum between #startRow# AND #endRow#
+	</select>
+	<update id="updateRmToListDailyForDone" parameterClass="bgabGascrm01Dto">
+	/*updateRmToListDailyForDone*/
+		UPDATE 	BGAB_GASCRM01$corp_cd$
+		SET	   	PGS_ST_CD = #pgs_st_cd#
+		WHERE 	DOC_NO = #doc_no#
+	</update>
+	<update id="updateRmToListDailyForCancel" parameterClass="bgabGascrm01Dto">
+	/*updateRmToListDailyForCancel*/
+		UPDATE 	BGAB_GASCRM01$corp_cd$
+		SET	   	PGS_ST_CD = #pgs_st_cd#
+		WHERE 	DOC_NO = #doc_no#
+	</update>
+	<select id="selectCountRmToRoomsManagement" parameterClass="bgabGascrm03Dto" resultClass="java.lang.String">
+	/*selectCountRmToRoomsManagement*/
+		SELECT COUNT(*) TOT_CNT
+		FROM	BGAB_GASCRM03$corp_cd$
+		WHERE	1 = 1
+		<isNotEmpty property="room_plant" prepend="and">
+			room_plant = #room_plant#
+		</isNotEmpty>
+		<isNotEmpty property="room_place" prepend="and">
+			room_place LIKE CONCAT('%', #room_place#, '%')
+		</isNotEmpty>
+	</select>
+	<select id="selectListRmToRoomsManagement" parameterClass="bgabGascrm03Dto" resultClass="bgabGascrm03Dto">
+	/*selectListRmToRoomsManagement*/
+		SELECT * FROM (
+	  		SELECT @ROWNUM := @ROWNUM + 1 AS rnum, K.*
+			FROM
+			(
+				SELECT	RM03.ROOM_CODE
+						,RM03.ROOM_PLANT
+						,RM03.ROOM_PLACE
+						,RM03.VIP_YN
+						,RM03.USE_YN
+						,RM03.INP_YMD
+						,RM03.IPE_EENO
+						,RM03.MDFY_YMD
+						,RM03.UPDR_EENO
+						,RM03.ROOM_CODE AS ROOM_CODE_OLD
+						,RM03.ADMIN_ID
+						,Z002.XUSR_NAME AS ADMIN_NM
+						,Z002.XUSR_DEPT_NAME AS ADMIN_DEPT
+				FROM BGAB_GASCRM03$corp_cd$ RM03
+				LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+				ON RM03.ADMIN_ID = Z002.XUSR_EMPNO
+				WHERE	1 = 1
+				<isNotEmpty property="room_plant" prepend="and">
+					room_plant = #room_plant#
+				</isNotEmpty>
+				<isNotEmpty property="room_place" prepend="and">
+					room_place LIKE CONCAT('%', #room_place#, '%')
+				</isNotEmpty>
+				ORDER BY RM03.ROOM_CODE ASC
+			) k,
+			(SELECT @ROWNUM := 0) r
+		) j
+		WHERE rnum between #startRow# AND #endRow#
+	</select>
+	<insert id="insertRmToRoomsManagement" parameterClass="bgabGascrm03Dto">
+	/*insertRmToRoomsManagement*/
+		INSERT INTO BGAB_GASCRM03$corp_cd$
+		(
+			ROOM_CODE
+			,ROOM_PLANT
+			,ROOM_PLACE
+			,VIP_YN
+			,USE_YN
+			,INP_YMD
+			,IPE_EENO
+			,MDFY_YMD
+			,UPDR_EENO
+			,ADMIN_ID
+		)
+		VALUES
+		(
+			#room_code#
+			,#room_plant#
+			,#room_place#
+			,#vip_yn#
+			,#use_yn#
+			,DATE_FORMAT(SYSDATE(),'%Y%m%d')
+			,#ipe_eeno#
+			,#mdfy_ymd#
+			,DATE_FORMAT(SYSDATE(),'%Y%m%d')
+			,#admin_id#
+		)
+	</insert>
+	<update id="updateRmToRoomsManagement" parameterClass="bgabGascrm03Dto">
+	/*updateRmToRoomsManagement*/
+		UPDATE 	BGAB_GASCRM03$corp_cd$
+		SET	   	ROOM_CODE = #room_code#
+				,ROOM_PLANT = #room_plant#
+				,ROOM_PLACE = #room_place#
+				,VIP_YN = #vip_yn#
+				,USE_YN = #use_yn#
+				,ADMIN_ID = #admin_id#
+		WHERE 	ROOM_CODE = #room_code_old#
+	</update>
+	<delete id="deleteRmToRoomsManagement" parameterClass="bgabGascrm03Dto">
+	/*deleteRmToRoomsManagement*/
+		DELETE	BGAB_GASCRM03$corp_cd$
+		WHERE 	ROOM_CODE = #room_code_old#
+	</delete>
+	
+	
+	<select id="selectCountRmToMealsManagement" parameterClass="bgabGascrm04Dto" resultClass="java.lang.String">
+	/*selectCountRmToMealsManagement*/
+		SELECT COUNT(*) TOT_CNT
+		FROM	BGAB_GASCRM04$corp_cd$
+		WHERE	1 = 1
+		<isNotEmpty property="meal_name" prepend="and">
+			meal_name LIKE CONCAT('%', #meal_name#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="meal_code" prepend="and">
+			meal_code = #meal_code#
+		</isNotEmpty>
+		<isNotEmpty property="use_yn" prepend="and">
+			use_yn = #use_yn#
+		</isNotEmpty>
+	</select>
+	<select id="selectListRmToMealsManagement" parameterClass="bgabGascrm04Dto" resultClass="bgabGascrm04Dto">
+	/*selectListRmToMealsManagement*/
+		SELECT * FROM (
+	  		SELECT @ROWNUM := @ROWNUM + 1 AS rnum, K.*
+			FROM
+			(
+				SELECT	MEAL_CODE
+						,MEAL_NAME
+						,MEAL_PRICE
+						,USE_YN
+						,INP_YMD
+						,IPE_EENO
+						,MDFY_YMD
+						,UPDR_EENO
+						,MEAL_CODE AS MEAL_CODE_OLD
+						,SORT
+				FROM BGAB_GASCRM04$corp_cd$
+				WHERE	1 = 1
+				<isNotEmpty property="meal_name" prepend="and">
+					meal_name LIKE CONCAT('%', #meal_name#, '%')
+				</isNotEmpty>
+				<isNotEmpty property="meal_code" prepend="and">
+					meal_code = #meal_code#
+				</isNotEmpty>
+				<isNotEmpty property="use_yn" prepend="and">
+					use_yn = #use_yn#
+				</isNotEmpty>
+				ORDER BY TO_NUMBER(SORT)
+			) k,
+			(SELECT @ROWNUM := 0) r
+		) j
+		WHERE rnum between #startRow# AND #endRow#
+	</select>
+	<insert id="insertRmToMealsManagement" parameterClass="bgabGascrm04Dto">
+	/*insertRmToMealsManagement*/
+		INSERT INTO BGAB_GASCRM04$corp_cd$
+		(
+			MEAL_CODE
+			,MEAL_NAME
+			,MEAL_PRICE
+			,USE_YN
+			,INP_YMD
+			,IPE_EENO
+			,MDFY_YMD
+			,UPDR_EENO
+			,SORT
+		)
+		VALUES
+		(
+			#meal_code#
+			,#meal_name#
+			,#meal_price#
+			,#use_yn#
+			,DATE_FORMAT(SYSDATE(),'%Y%m%d')
+			,#ipe_eeno#
+			,#mdfy_ymd#
+			,DATE_FORMAT(SYSDATE(),'%Y%m%d')
+			,#sort#
+		)
+	</insert>
+	<update id="updateRmToMealsManagement" parameterClass="bgabGascrm04Dto">
+	/*updateRmToMealsManagement*/
+		UPDATE 	BGAB_GASCRM04$corp_cd$
+		SET	   	MEAL_CODE = #meal_code#
+				,MEAL_NAME = #meal_name#
+				,MEAL_PRICE = #meal_price#
+				,USE_YN = #use_yn#
+				,SORT = #sort#
+		WHERE 	MEAL_CODE = #meal_code_old#
+	</update>
+	<delete id="deleteRmToMealsManagement" parameterClass="bgabGascrm04Dto">
+	/*deleteRmToMealsManagement*/
+		DELETE	BGAB_GASCRM04$corp_cd$
+		WHERE 	MEAL_CODE = #meal_code_old#
+	</delete>
+	
+	
+	<select id="selectCountRmToMealsMgmtList" parameterClass="bgabGascrm01Dto" resultClass="java.lang.String">
+	/*selectCountRmToMealsMgmtList*/
+		SELECT COUNT(*) TOT_CNT
+		FROM	BGAB_GASCRM01$corp_cd$ RM01
+		LEFT OUTER JOIN BGAB_GASCRM03$corp_cd$ RM03
+		ON RM01.ROOM_PLACE = RM03.ROOM_CODE
+		AND RM01.ROOM_PLANT = RM03.ROOM_PLANT
+		LEFT OUTER JOIN BGAB_GASCRM04$corp_cd$ RM04
+		ON RM01.ROOM_MEAL = RM04.MEAL_CODE
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON RM01.REQ_EENO = Z002.XUSR_EMPNO
+		LEFT OUTER JOIN(
+			SELECT XCOD_CODE, XCOD_HNAME
+			FROM BGAB_GASCZ005$corp_cd$
+			WHERE XCOD_KND = 'RM02'
+			AND LOCALE = #loc_cd#) Z005
+		ON Z005.XCOD_CODE = RM01.PGS_ST_CD
+		WHERE	1 = 1
+		<isNotEmpty property="req_eeno_nm" prepend="and">
+			Z002.XUSR_NAME LIKE CONCAT('%', #req_eeno_nm#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="req_eeno" prepend="and">
+			RM01.REQ_EENO = #req_eeno#
+		</isNotEmpty>
+		<isNotEmpty property="pgs_st_cd" prepend="and">
+			RM01.PGS_ST_CD = #pgs_st_cd#
+		</isNotEmpty>
+		<isNotEmpty property="pgs_st_cd2" prepend="and">
+			RM01.PGS_ST_CD2 = #pgs_st_cd2#
+		</isNotEmpty>
+		<isNotEmpty property="room_plant" prepend="and">
+			RM01.ROOM_PLANT = #room_plant#
+		</isNotEmpty>
+		<isNotEmpty property="req_dept_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #req_dept_cd#
+		</isNotEmpty>
+		AND RM01.FR_YMD BETWEEN #fr_ymd# and #to_ymd#
+	</select>
+	<select id="selectListRmToMealsMgmtList" parameterClass="bgabGascrm01Dto" resultClass="bgabGascrm01Dto">
+	/*selectListRmToMealsMgmtList*/
+		SELECT * FROM (
+	  		SELECT @ROWNUM := @ROWNUM + 1 AS rnum, K.*
+			FROM
+			(
+				SELECT	RM01.DOC_NO
+						,RM01.ROOM_PLANT
+						,DBO.CONVERT_DATE(RM01.PTT_YMD) + ' ' + IFNULL(ptt_hhmm, '') AS PTT_YMD
+						,RM01.FR_YMD
+						,RM01.TO_YMD
+						,RM01.FR_TIME
+						,RM01.TO_TIME
+						,RM01.TIM_INFO_SBC
+						,RM01.ROOM_QTY
+						,RM01.COST_CD
+						,RM01.NOTE
+						,RM01.PGS_ST_CD
+						,RM01.PGS_ST_CD2
+						,RM01.REQ_EENO
+						,CONCAT(DATE_FORMAT( CAST( RM01.FR_YMD AS DATE ), '%Y-%m-%d' ), ' ', SUBSTR(RM01.FR_TIME, 1, 2), ':', SUBSTR(RM01.FR_TIME, 3, 2), ' ~ ' ||
+						 DATE_FORMAT( CAST( RM01.TO_YMD AS DATE), '%Y-%m-%d' ), ' ', SUBSTR(RM01.TO_TIME, 1, 2), ':', SUBSTR(RM01.TO_TIME, 3, 2)) AS REQ_INFO
+						,RM03.ROOM_PLACE AS ROOM_PLACE
+						,RM04.MEAL_NAME AS ROOM_MEAL
+						,RM01.ROOM_QTY * RM04.MEAL_PRICE AS TOT_AMT
+						,Z005.XCOD_HNAME PGS_ST_NM
+						,Z002.XUSR_NAME AS REQ_EENO_NM
+						,CD01.XCOD_HNAME AS TOT
+						,RM01.PO_NO
+				FROM BGAB_GASCRM01$corp_cd$ RM01 
+				LEFT OUTER JOIN BGAB_GASCRM03$corp_cd$ RM03
+				ON RM01.ROOM_PLACE = RM03.ROOM_CODE
+				AND RM01.ROOM_PLANT = RM03.ROOM_PLANT
+				LEFT OUTER JOIN BGAB_GASCRM04$corp_cd$ RM04
+				ON RM01.ROOM_MEAL = RM04.MEAL_CODE
+				LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+				ON RM01.REQ_EENO = Z002.XUSR_EMPNO
+				LEFT OUTER JOIN(
+					SELECT XCOD_CODE, XCOD_HNAME
+					FROM BGAB_GASCZ005$corp_cd$
+					WHERE XCOD_KND = 'RM02'
+					AND LOCALE = #loc_cd#) Z005
+				ON Z005.XCOD_CODE = RM01.PGS_ST_CD2
+				LEFT OUTER JOIN(
+					SELECT XCOD_CODE, XCOD_HNAME
+					FROM BGAB_GASCZ005$corp_cd$
+					WHERE XCOD_KND = 'X3020'
+					AND LOCALE = #loc_cd#) CD01
+				ON CD01.XCOD_CODE = RM01.TOT
+				WHERE	1 = 1
+				<isNotEmpty property="req_eeno_nm" prepend="and">
+					Z002.XUSR_NAME LIKE CONCAT('%', #req_eeno_nm#, '%')
+				</isNotEmpty>
+				<isNotEmpty property="req_eeno" prepend="and">
+					RM01.REQ_EENO = #req_eeno#
+				</isNotEmpty>
+				<isNotEmpty property="pgs_st_cd" prepend="and">
+					RM01.PGS_ST_CD = #pgs_st_cd#
+				</isNotEmpty>
+				<isNotEmpty property="pgs_st_cd2" prepend="and">
+					RM01.PGS_ST_CD2 = #pgs_st_cd2#
+				</isNotEmpty>
+				<isNotEmpty property="room_plant" prepend="and">
+					RM01.ROOM_PLANT = #room_plant#
+				</isNotEmpty>
+				<isNotEmpty property="req_dept_cd" prepend="and">
+					Z002.XUSR_DEPT_CODE = #req_dept_cd#
+				</isNotEmpty>
+				AND RM01.FR_YMD BETWEEN #fr_ymd# and #to_ymd#
+				ORDER BY DOC_NO DESC
+			) k,
+			(SELECT @ROWNUM := 0) r
+		) j
+		WHERE rnum between #startRow# AND #endRow#
+	</select>
+	
+	<update id="updateRmToMealsMgmtStatus" parameterClass="bgabGascrm01Dto">
+	/*updateRmToMealsMgmtStatus*/
+		UPDATE	BGAB_GASCRM01$corp_cd$
+		SET		PGS_ST_CD2 = #pgs_st_cd2#
+		WHERE	1 = 1
+		AND		DOC_NO = #doc_no#
+	</update>
+	
+	<select id="selectCountRmToConfirmList" parameterClass="bgabGascrm01Dto" resultClass="java.lang.String">
+	/*selectCountRmToConfirmList*/
+		SELECT COUNT(*) TOT_CNT
+		FROM	BGAB_GASCRM01$corp_cd$ RM01
+		LEFT OUTER JOIN BGAB_GASCRM03$corp_cd$ RM03
+		ON RM01.ROOM_PLACE = RM03.ROOM_CODE
+		AND RM01.ROOM_PLANT = RM03.ROOM_PLANT
+		LEFT OUTER JOIN BGAB_GASCRM04$corp_cd$ RM04
+		ON RM01.ROOM_MEAL = RM04.MEAL_CODE
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON RM01.REQ_EENO = Z002.XUSR_EMPNO
+		LEFT OUTER JOIN(
+			SELECT XCOD_CODE, XCOD_HNAME
+			FROM BGAB_GASCZ005$corp_cd$
+			WHERE XCOD_KND = 'RM01'
+			AND LOCALE = #loc_cd#) Z005
+		ON Z005.XCOD_CODE = RM01.PGS_ST_CD
+		WHERE	1 = 1
+		<isNotEmpty property="req_eeno_nm" prepend="and">
+			Z002.XUSR_NAME LIKE CONCAT('%', #req_eeno_nm#, '%')
+		</isNotEmpty>
+		<isNotEmpty property="req_eeno" prepend="and">
+			RM01.REQ_EENO = #req_eeno#
+		</isNotEmpty>
+		<isNotEmpty property="pgs_st_cd" prepend="and">
+			RM01.PGS_ST_CD = #pgs_st_cd#
+		</isNotEmpty>
+		<isNotEmpty property="room_plant" prepend="and">
+			RM01.ROOM_PLANT = #room_plant#
+		</isNotEmpty>
+		<isNotEmpty property="req_dept_cd" prepend="and">
+			Z002.XUSR_DEPT_CODE = #req_dept_cd#
+		</isNotEmpty>
+		AND RM01.FR_YMD BETWEEN #fr_ymd# and #to_ymd#
+	</select>
+	<select id="selectListRmToConfirmList" parameterClass="bgabGascrm01Dto" resultClass="bgabGascrm01Dto">
+	/*selectListRmToConfirmList*/
+		SELECT * FROM (
+	  		SELECT @ROWNUM := @ROWNUM + 1 AS rnum, K.*
+			FROM
+			(
+				SELECT	RM01.DOC_NO
+						,RM01.ROOM_PLANT
+						,RM01.PTT_YMD
+						,RM01.FR_YMD
+						,RM01.TO_YMD
+						,RM01.FR_TIME
+						,RM01.TO_TIME
+						,RM01.TIM_INFO_SBC
+						,RM01.ROOM_QTY
+						,RM01.COST_CD
+						,RM01.NOTE
+						,RM01.PGS_ST_CD
+						,RM01.REQ_EENO
+						,CONCAT(DATE_FORMAT( CAST( RM01.FR_YMD AS DATE ), '%Y-%m-%d' ), ' ', SUBSTR(RM01.FR_TIME, 1, 2), ':', SUBSTR(RM01.FR_TIME, 3, 2), ' ~ ' ||
+						 DATE_FORMAT( CAST( RM01.TO_YMD AS DATE ), '%Y-%m-%d' ), ' ', SUBSTR(RM01.TO_TIME, 1, 2), ':', SUBSTR(RM01.TO_TIME, 3, 2)) AS REQ_INFO
+						,RM03.ROOM_PLACE AS ROOM_PLACE
+						,RM04.MEAL_NAME AS ROOM_MEAL
+						,RM01.ROOM_QTY * RM04.MEAL_PRICE AS TOT_AMT
+						,Z005.XCOD_HNAME PGS_ST_NM
+						,Z002.XUSR_NAME AS REQ_EENO_NM
+						,Z0052.XCOD_HNAME PGS_ST_NM2
+						,IFNULL(RM01.RSVT_DAY, '0') AS RSVT_DAY
+						,RM01.PO_NO
+				FROM BGAB_GASCRM01$corp_cd$ RM01 
+				LEFT OUTER JOIN BGAB_GASCRM03$corp_cd$ RM03
+				ON RM01.ROOM_PLACE = RM03.ROOM_CODE
+				AND RM01.ROOM_PLANT = RM03.ROOM_PLANT
+				LEFT OUTER JOIN BGAB_GASCRM04$corp_cd$ RM04
+				ON RM01.ROOM_MEAL = RM04.MEAL_CODE
+				LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+				ON RM01.REQ_EENO = Z002.XUSR_EMPNO
+				LEFT OUTER JOIN(
+					SELECT XCOD_CODE, XCOD_HNAME
+					FROM BGAB_GASCZ005$corp_cd$
+					WHERE XCOD_KND = 'RM01'
+					AND LOCALE = #loc_cd#) Z005
+				ON Z005.XCOD_CODE = RM01.PGS_ST_CD
+				LEFT OUTER JOIN(
+					SELECT XCOD_CODE, XCOD_HNAME
+					FROM BGAB_GASCZ005$corp_cd$
+					WHERE XCOD_KND = 'RM02'
+					AND LOCALE = #loc_cd#) Z0052
+				ON Z0052.XCOD_CODE = RM01.PGS_ST_CD2
+				WHERE	1 = 1
+				<isNotEmpty property="req_eeno_nm" prepend="and">
+					Z002.XUSR_NAME LIKE CONCAT('%', #req_eeno_nm#, '%')
+				</isNotEmpty>
+				<isNotEmpty property="req_eeno" prepend="and">
+					RM01.REQ_EENO = #req_eeno#
+				</isNotEmpty>
+				<isNotEmpty property="pgs_st_cd" prepend="and">
+					RM01.PGS_ST_CD = #pgs_st_cd#
+				</isNotEmpty>
+				<isNotEmpty property="room_plant" prepend="and">
+					RM01.ROOM_PLANT = #room_plant#
+				</isNotEmpty>
+				<isNotEmpty property="req_dept_cd" prepend="and">
+					Z002.XUSR_DEPT_CODE = #req_dept_cd#
+				</isNotEmpty>
+				AND RM01.FR_YMD BETWEEN #fr_ymd# and #to_ymd#
+				ORDER BY DOC_NO DESC
+			) k,
+			(SELECT @ROWNUM := 0) r
+		) j WHERE rnum between #startRow# AND #endRow#
+	</select>
+	<update id="updateRmToConfirmList" parameterClass="bgabGascrm01Dto">
+	/*updateRmToConfirmList*/
+		UPDATE 	BGAB_GASCRM01$corp_cd$
+		SET	   	PGS_ST_CD = #pgs_st_cd#
+		WHERE 	DOC_NO = #doc_no#
+	</update>
+	<update id="updateRmToConfirmCancelList" parameterClass="bgabGascrm01Dto">
+	/*updateRmToConfirmCancelList*/
+		UPDATE 	BGAB_GASCRM01$corp_cd$
+		SET	   	PGS_ST_CD = #pgs_st_cd#
+		WHERE 	DOC_NO = #doc_no#
+	</update>
+	
+	<select id="selectInfoRmToRequestForAprv" parameterClass="bgabGascrm01Dto" resultClass="bgabGascrm01Dto">
+	/*selectInfoRmToRequest*/
+		SELECT	RM01.DOC_NO
+				,RM01.ROOM_PLANT
+				,RM03.ROOM_PLACE AS ROOM_PLACE
+				,DATE_FORMAT( CAST( RM01.PTT_YMD AS DATE ), '%Y-%m-%d' ) AS PTT_YMD
+				,DATE_FORMAT( CAST( RM01.FR_YMD AS DATE ), '%Y-%m-%d' ) AS FR_YMD
+				,DATE_FORMAT( CAST( RM01.TO_YMD AS DATE ), '%Y-%m-%d' ) AS TO_YMD
+				,RM01.FR_YMD AS FR_YMD_H
+				,RM01.TO_YMD AS TO_YMD_H
+				,RM01.FR_TIME
+				,RM01.TO_TIME
+				,RM01.TIM_INFO_SBC
+				,RM01.ROOM_QTY
+				,RM04.MEAL_PRICE * RM01.ROOM_QTY AS AMOUNT
+				,RM04.MEAL_NAME AS ROOM_MEAL
+				,RM01.COST_CD
+				,RM01.BUDGET_TYPE
+				,RM01.BUDGET_NO
+				,RM01.BUDG_TEXT
+				,RM01.NOTE
+				,RM01.INP_YMD
+				,RM01.IPE_EENO
+				,RM01.MDFY_YMD
+				,RM01.UPDR_EENO
+				,RM01.PGS_ST_CD
+				,RM01.REQ_EENO
+				,RM01.SNB_RSON_SBC
+	   			,RM01.IF_ID
+	   			,RM01.PGS_ST_CD
+	   			,RM01.RDCS_EENO 
+	   			,RM01.RDCS_YMD
+	   			,RM01.ACPC_EENO
+	   			,RM01.ACPC_YMD
+	   			,RM01.RPTS_EENO
+	   			,RM01.RPTS_YMD
+				,Z002.XUSR_NAME AS REQ_EENO_NM
+				,Z002.XUSR_DEPT_NAME AS REQ_DEPT_NM
+				,Z002.XUSR_STEP_NAME AS REQ_STEP_NM
+				,Z002.XUSR_TEL_NO  AS REQ_TEL_NO
+				,Z005.XCOD_HNAME AS PGS_ST_NM
+				,RM01.ROOM_PLACE AS ROOM_PLACE_H
+				,RM01.ROOM_MEAL AS ROOM_MEAL_H
+				,RM01.PO_NO
+				,RM01.TOT
+				,RM01.RSVT_DAY
+		FROM 	BGAB_GASCRM01$corp_cd$ RM01
+		LEFT OUTER JOIN BGAB_GASCZ002$corp_cd$ Z002
+		ON	RM01.REQ_EENO = Z002.XUSR_EMPNO
+		LEFT OUTER JOIN 
+		(
+			SELECT * FROM BGAB_GASCZ005$corp_cd$ WHERE XCOD_KND='RM01' AND LOCALE = #loc_cd#
+		) Z005
+		ON RM01.PGS_ST_CD = Z005.XCOD_CODE
+		LEFT OUTER JOIN BGAB_GASCRM03$corp_cd$ RM03
+		ON	RM01.ROOM_PLANT = RM03.ROOM_PLANT
+		AND RM01.ROOM_PLACE = RM03.ROOM_CODE
+		LEFT OUTER JOIN BGAB_GASCRM04$corp_cd$ RM04
+		ON	RM01.ROOM_MEAL = RM04.MEAL_CODE
+		WHERE	IF_ID = #if_id#
+	</select>
+	
+	<update id="updateRoomsMealsPoInfo" parameterClass="bgabGascrm01Dto">
+		/* updateRoomsMealsPoInfo */
+		UPDATE BGAB_GASCRM01$corp_cd$
+		   SET PO_NO = #po_no#
+		 WHERE DOC_NO = #doc_no#
+	</update>
+	
+	<select id="selectRoomsMaterialManagement" parameterClass="bgabGascz016Dto" resultClass="bgabGascz016Dto">
+		/* selectRoomsMaterialManagement */
+		SELECT MATERIAL_CODE
+   			 , MATERIAL_DESC
+   			 , MATERIAL_GROUP
+   		  FROM BGAB_GASCRM04$corp_cd$ A
+		  JOIN BGAB_GASCZ016 B
+		    ON A.MEAL_NAME = B.MATERIAL_DESC
+		   AND B.JOB = #key_job#
+		 WHERE A.MEAL_CODE = #key_name#
+	</select>
+	
+	<update id="updateInfoRmToReject" parameterClass="bgabGascrm01Dto">
+		/* updateInfoRmToReject */
+   		UPDATE	BGAB_GASCRM01$corp_cd$
+		SET 	PGS_ST_CD  = #pgs_st_cd#
+				,IF_ID     = ''
+				,RPTS_EENO = ''
+				,RPTS_YMD  = ''
+				,RDCS_EENO = ''
+				,RDCS_YMD  = ''
+				,ACPC_EENO = ''
+				,ACPC_YMD  = ''
+				,SNB_RSON_SBC = #snb_rson_sbc#
+				,UPDR_EENO = #updr_eeno#
+				,MDFY_YMD  = DATE_FORMAT(SYSDATE(),'%Y%m%d')
+		WHERE	1 = 1
+		AND		DOC_NO = #doc_no#
+   		
+	</update>
+	
+	<update id="updateInfoRmToDirectConfirm" parameterClass="bgabGascrm01Dto">
+		/* updateInfoRmToDirectConfirm */
+   		UPDATE	BGAB_GASCRM01$corp_cd$
+		SET 	PGS_ST_CD  = #pgs_st_cd#
+				,IF_ID     = #if_id#
+				,UPDR_EENO = #updr_eeno#
+				,MDFY_YMD  = DATE_FORMAT(SYSDATE(),'%Y%m%d')
+		WHERE	1 = 1
+		AND		DOC_NO = #doc_no#
+   		
+	</update>
+	
+	<update id="updateRmToApprveInfo" parameterClass="bgabGascrm01Dto">
+		/* updateRmToApprveInfo */
+		UPDATE BGAB_GASCRM01$corp_cd$
+		   SET PGS_ST_CD  = #pgs_st_cd#
+				,UPDR_EENO = #updr_eeno#
+				,MDFY_YMD  = DATE_FORMAT(SYSDATE(),'%Y%m%d')
+		 WHERE DOC_NO = #doc_no#
+	</update>
+</sqlMap>
+ 

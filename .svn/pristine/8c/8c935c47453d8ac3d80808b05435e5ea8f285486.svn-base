@@ -1,0 +1,120 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="com.hncis.common.message.JSPMessageSource"%>
+<div class="main_calendar">
+	<div class="dChoice">
+		<p class="cal_btn prv" onClick='fPrevMonth()'><img src='images/main/main_pre.gif' alt='prexious button' /></p>
+		<select id='tbSelYear' name='tbSelYear' class='year' onChange='retrieve(testForm.tbSelYear.value, testForm.tbSelMonth.value)'>
+		<%
+			String[] gMonths = new String[]{JSPMessageSource.getMessage("jan",locale),JSPMessageSource.getMessage("feb",locale),JSPMessageSource.getMessage("mar",locale),JSPMessageSource.getMessage("apr",locale)
+											,JSPMessageSource.getMessage("may",locale),JSPMessageSource.getMessage("jun",locale),JSPMessageSource.getMessage("jul",locale),JSPMessageSource.getMessage("aug",locale)
+											,JSPMessageSource.getMessage("sep",locale),JSPMessageSource.getMessage("oct",locale),JSPMessageSource.getMessage("nov",locale),JSPMessageSource.getMessage("dec",locale)}; 
+			for(int i=1970;i<2030;i++){
+		%>
+			<option value='<%=i %>'><%=i %></option>
+		<%} %>
+		</select>
+		<select id='tbSelMonth' name='tbSelMonth' class='month' onChange='retrieve(testForm.tbSelYear.value, testForm.tbSelMonth.value)'>
+		<%
+			for (int i=0; i<12; i++){
+		%>
+			<option value='<%=(i+1) %>'><%=gMonths[i]%></option>
+		<%} %>
+		</select>
+		<p class="cal_btn next" onclick='fNextMonth()'><img src='images/main/main_next.gif' alt='next button' /></p>
+	</div>
+	<div class='calendar_form'>
+		<table class="bor_collapse">
+			<thead>
+				<tr>
+					<th class="sunday"><fmt:message key="sun"/></th>
+					<th><fmt:message key="mon"/></th>
+					<th><fmt:message key="tue"/></th>
+					<th><fmt:message key="wed"/></th>
+					<th><fmt:message key="thu"/></th>
+					<th><fmt:message key="fri"/></tdh>
+					<th class="saturday"><fmt:message key="sat"/></th>
+				</tr>
+			</thead>
+			<tbody>
+		<%
+			for(int w = 1; w < 7; w++) {
+		%>
+			<tr>
+				<%
+					for(int d = 0; d < 7; d++) { 
+				%>
+					<td id='calCell' onMouseOver='this.bgColor=gcToggle' onMouseOut='this.bgColor=gcBG' >
+						<font id='cellText'></font>
+					</td>
+				<%
+					}
+				%>
+			</tr>
+		<%
+			}
+		%>
+			</tbody>
+		</table>
+	</div>
+</div>
+<%-- <div class='main_calendar'>
+	<dl><dt><span><img src="images/main/main_title_calendar.gif" alt="Calendar" /></span></dt>
+		<dd>
+			<ul>
+				<li>
+					<span onClick='fPrevMonth()' style='cursor:pointer;width:20px'><img src='images/main/main_pre.gif' alt='prexious button' /></span>
+					<span class='dChoice'>
+						<select id='tbSelYear' name='tbSelYear' class='year' onChange='retrieve(testForm.tbSelYear.value, testForm.tbSelMonth.value)'>
+						<%
+							String[] gMonths = new String[]{"Jan ","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"}; 
+							for(int i=1970;i<2030;i++){
+						%>
+							<option value='<%=i %>'><%=i %></option>
+						<%} %>
+						</select>
+						<select id='tbSelMonth' name='tbSelMonth' class='month' onChange='retrieve(testForm.tbSelYear.value, testForm.tbSelMonth.value)'>
+						<%
+							for (int i=0; i<12; i++){
+						%>
+							<option value='<%=(i+1) %>'><%=gMonths[i]%></option>
+						<%} %>
+						</select>
+					</span>
+					<span class='next' onclick='fNextMonth()' style='cursor:pointer;width:20px'><img src='images/main/main_next.gif' alt='next button' /></span>
+				</li>
+				<li class='calendar_form'>
+						<table width='240px'>
+							<tr bgcolor='#ecf6f8' bordercolor='#ecf6f8'>
+								<td><font size="1px">MON</font></td>
+								<td><font size="1px">TUE</font></td>
+								<td><font size="1px">WEN</font></td>
+								<td><font size="1px">THU</font></td>
+								<td><font size="1px">FRI</font></td>
+								<td class="saturday"><font size="1px">SAT</font></td>
+								<td class="sunday"><font size="1px">SUN</font></td>
+							</tr>
+						<%
+							String styleTD = " bgcolor='#ffffff' width='19px' bordercolor='#ffffff' valign='middle' align='center' style='cursor:hand' ";
+							for(int w = 1; w < 7; w++) {
+						%>
+							<tr>
+								<%
+									for(int d = 0; d < 7; d++) { 
+								%>
+<!-- 									<td id='calCell' <%=styleTD %> onMouseOver='this.bgColor=gcToggle' onMouseOut='this.bgColor=gcBG' > -->
+									<td id='calCell' onMouseOver='this.bgColor=gcToggle' onMouseOut='this.bgColor=gcBG' >
+										<b><font id='cellText'></font></b>
+									</td>
+								<%
+									}
+								%>
+							</tr>
+						<%
+							}
+						%>
+						</table>
+				</li>
+			</ul>
+		</dd>
+	</dl>
+</div> --%>

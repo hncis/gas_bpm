@@ -1,0 +1,289 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String hid_bod_indx = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_bod_indx")));
+	String hid_page = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_page")));
+	
+	String strWrt = JSPMessageSource.getMessage("BUTTON.WRITE", locale);
+	String strRpy = JSPMessageSource.getMessage("BUTTON.REPLY", locale);
+	String strEdt = JSPMessageSource.getMessage("BUTTON.EDIT", locale);
+	String strDel = JSPMessageSource.getMessage("BUTTON.DELETE", locale);
+	String strLst = JSPMessageSource.getMessage("BUTTON.LIST", locale);
+	
+	String strBtn = "";
+	
+	strBtn = strWrt+"/write@"+strEdt+"/edit@"+strDel+"/delete@"+strRpy+"/reply@"+strLst+"/list";
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Q&A</title>
+		<link rel="stylesheet" type="text/css" media="screen" href="../../script/css/pop_up.css" />
+	</head>
+	<body>
+		<div class="pop_wrap">
+			<div class="pop_header">
+	        	<div class="pop_title">
+	            	<h1><fmt:message key="qa_dt"/></h1>
+	                <a href="javascript:selfClose();" class="pop_close"></a>
+	            </div>
+	        </div>
+	        <div class="pop_header_shadow"></div>
+	        <div class="pop_content">
+	        	<div class="div_box pop_con">
+					<form name="testForm" id="testForm" method="post" enctype="multipart/form-data">
+						<input type="hidden" id="key_bod_indx"  name="key_bod_indx" value="<%=hid_bod_indx %>">
+						<!-- N(Notice), Q(Qna) -->
+						<input type="hidden" id="bod_type"  name="bod_type" value="Q">
+						<input type="hidden" id="bod_eeno"  name="bod_eeno" >
+						<input type="hidden" id="bod_group" name="bod_group" >
+						<input type="hidden" id="bod_step" name="bod_step" >
+						<input type="hidden" id="bod_level" name="bod_level" >
+						<div id="contents_wrap" class="any_page">
+							<div id="contents">
+								<%=CommonGasc.getButtonOnly(
+									sess_empno
+									,"XBD06"
+									//,"작성/write@수정/edit@삭제/delete@댓글/reply@목록/list"
+									,strBtn
+									,request)
+								%>
+								<div class="pop_tbl">
+									<table>
+										<colgroup>
+				                        	<col style="width:120px;" />
+				                            <col style="width:auto;" />
+			                        	</colgroup>
+										<tbody>
+											<tr>
+												<th scope="row"><fmt:message key="title"/></th>
+												<td colspan="5">
+													<div id="bod_title" style="z-index:100;width:99%"></div>
+												</td>
+											</tr>
+											<tr>
+												<th scope="row"><fmt:message key="type"/></th>
+												<td colspan="5">
+													<div id="bod_jgbnnm" style="z-index:100;width:99%"></div>
+												</td>
+											</tr>
+											<tr>
+												<th scope="row"><fmt:message key="eenm"/></th>
+												<td colspan="5">
+													<div id="bod_eenm" style="z-index:100;width:99%"></div>
+												</td>
+											</tr>
+											<tr>
+												<th scope="row"><fmt:message key="contents"/></th>
+												<td colspan="3" style="height:346px;">
+													<!-- <textarea id="bod_content" class="sub_textarea" rows="" cols="0" style="height: 330px" readonly></textarea> -->
+													<div name="tx_editor_div_1" id="tx_editor_div_1" style="height:343px;">
+					                                 	<iframe name="frm_editVeiw" id="frm_editVeiw" frameBorder="0" style="width:100%; height:100%" allowTransparency="true"></iframe>
+					                             	</div>
+												  </td>
+											</tr>
+										</tbody>	
+									</table>
+								</div>
+								<div class="jq_tbl">
+				                	<table id="htmlTable" class="scroll"></table>
+									<div id="htmlPager" class="scroll"></div>
+								</div>
+			                <%@ include file="../include/hncis_message.gas"%>
+			            	</div>
+			            	<div class="clear"></div>
+			        	</div>
+					</form>
+					<form id="hideForm" name="hideForm">
+						<input type="hidden" id="hid_bod_indx" name="hid_bod_indx">
+						<input type="hidden" id="hid_gubun" name="hid_gubun">
+						<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+						<input type="hidden" id="hid_page" name="hid_page" value="<%=hid_page %>">
+					</form>
+					<div class="box_corner box_lt"></div>
+	                <div class="box_corner box_rt"></div>
+	                <div class="box_corner box_lb"></div>
+	                <div class="box_corner box_rb"></div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
+		<script type="text/javascript">
+		function fnSetDocumentReady(){
+			initMenus();
+			$('#BD').slideDown('fast');
+			$("#bod_content").val("");
+			init();
+			sess_auth = $("#work_auth").val();
+			
+			if(!(sess_dsm_yn == "Y" || sess_mstu == "M")){
+				document.getElementById("reply").style.display = "none"; 
+			}
+		}
+
+		function init(){
+			initAfterMenus();
+			if($("#key_bod_indx").val() == ""){
+			}else{
+				doSearch();
+			}
+		}
+
+		function retrieve(gubun){
+			switch(gubun){
+				case "write" : 
+					doMoveAction("write");
+					break;
+				case "edit" : 
+					doMoveAction("edit");
+					break;
+				case "delete" : 
+					doDelete();
+					break;
+				case "reply" : 
+					doMoveAction("reply");
+					break;
+				case "list" : 
+					doMoveAction("list");
+					break;
+			}
+		}
+
+		function doSearch(){
+			var params = {
+				key_bod_indx : $("#key_bod_indx").val(),
+				corp_cd		 : sess_corp_cd
+			};
+			
+			var paramData = {
+				paramJson : util.jsonToString(params)
+			};
+				
+			doCommonAjax("doSearchDetailBDToQna.do", paramData, "loadCallBack(jsonData.sendResult);");
+		}
+
+		function doMoveAction(gubn){
+			var url = "";
+			if(gubn == "write"){
+				$("#hid_bod_indx").val("");
+				url = "xbd05.gas";
+			}else if(gubn == "edit" || gubn == "reply"){
+				if(gubn == "edit"){
+					if(sess_auth < 5 && sess_mstu != "M"){
+						if($("#bod_eeno").val() != sess_empno){
+							alertUI('<fmt:message key="MSG.STAT.0038"/>');
+							return;
+						}
+					}
+				}
+				$("#hid_gubun").val(gubn);
+				$("#hid_bod_indx").val($("#key_bod_indx").val());
+				url = "xbd05.gas";
+			}else if(gubn == "list"){
+				url = "xbd04.gas";
+			}
+			
+			if(url != ""){
+				hideForm.hid_csrfToken.value = $("#csrfToken").val();
+				hideForm.method = "post";
+				hideForm.action = url;
+				hideForm.submit();
+			}
+		}
+
+		function doDelete(){
+			
+			if(sess_auth < 5 && sess_mstu != "M"){
+				if($("#bod_eeno").val() != sess_empno){
+					alertUI('<fmt:message key="MSG.STAT.0038"/>');
+					return;
+				}
+			}
+
+			if($("#key_bod_indx").val() == ""){
+				alertUI('<fmt:message key="MSG.VAL.0030"/>');
+				return;
+			}
+				
+			var bsicInfo = {
+				bod_indx : $("#key_bod_indx").val(),
+				bod_group : $("#bod_group").val(),
+				bod_step : $("#bod_step").val(),
+				bod_level : $("#bod_level").val(),
+				corp_cd	  : sess_corp_cd
+			};
+			
+			confirmUI('<fmt:message key="MSG.CNF.0002"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								bsicInfo : util.jsonToString(bsicInfo)
+							};
+							doCommonAjax("doDeleteBDToQna.do", paramData, "deleteCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		/**
+		 * callBack
+		 */
+
+		function writeCallBack(result){
+			setBottomMsg(result.message, true);
+			$("#key_bod_indx").val(result.code);
+			doSearch();
+		}
+
+		function modifyCallBack(result){
+			setBottomMsg(result.message, true);
+			doSearch();
+		}
+
+		/**
+		 * callBack
+		 */
+		function loadCallBack(result){
+			
+			setBottomMsg(result.message, false);
+			document.getElementById("bod_jgbnnm").innerText = result.bod_jgbnnm;
+			setComboName(testForm, "bod_qgbn", result.bod_qgbn);
+			document.getElementById("bod_title").innerText = htmlDecode(result.bod_title);
+			//document.getElementById("bod_content").value = result.bod_content;
+			document.getElementById("bod_eenm").innerText = result.bod_eenm;
+			
+			$("#bod_eeno").val(result.bod_eeno);
+			$("#bod_group").val(result.bod_group);
+			$("#bod_step").val(result.bod_step);
+			$("#bod_level").val(result.bod_level);
+			
+			frm_editVeiw.document.open();
+		    frm_editVeiw.document.write(editViewHtmlSt()+decodeURIComponent(result.bod_content)+editViewHtmlEnd());
+		    frm_editVeiw.document.close();
+
+		    if(sess_auth < 5 && sess_mstu != "M"){
+				if(result.bod_eeno != sess_empno){
+					document.getElementById("write").style.display = "none"; 
+					document.getElementById("edit").style.display = "none"; 
+					document.getElementById("delete").style.display = "none"; 
+				}
+			}
+		}
+
+		function deleteCallBack(result){
+			//setBottomMsg(result.message, true);
+			doMoveAction("list");
+		}
+
+		/**
+		 * technical method
+		 */
+		function setComboName(frm, name, val){
+			if(typeof(val) == "undefined"){
+				val = "SELECT";
+			}
+			var formName = eval("frm."+name);
+		}
+		</script>

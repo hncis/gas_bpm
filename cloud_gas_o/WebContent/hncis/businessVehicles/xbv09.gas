@@ -1,0 +1,110 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas" %>
+<%
+	String menuId = "XBV09";
+	String hid_eeno  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_eeno")));
+	String hid_cond  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_cond")));
+	String fdate = CurrentDateTime.getDate(CurrentDateTime.getDate(),-14);
+	String fyy = fdate.substring(0,4);
+	String fmm = fdate.substring(4,6);
+	String fdd = fdate.substring(6,8);
+	String yy = CurrentDateTime.getYear();
+	String mm = CurrentDateTime.getMonth();
+	String dd = CurrentDateTime.getDay();
+	
+	String fromDay = fyy + "/" + fmm + "/" + fdd;
+	String toDay   = yy + "/" + mm + "/" + dd;
+	
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH", locale);
+	String strCfm = JSPMessageSource.getMessage("BUTTON.CONFIRM", locale);
+	String strCfc = JSPMessageSource.getMessage("BUTTON.CONFIRMCANCEL", locale);
+	String strExl = JSPMessageSource.getMessage("BUTTON.EXCEL", locale);
+	
+	String strBtn = "";
+	strBtn = strSch+"/search@"+strCfm+"/confirm@"+strCfc+"/reject@"+strExl+"/excel";
+%>
+<html>
+	<head>
+		<title>GeneralService - Request</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<script type="text/javascript" src="./js/xbv09.js"></script>
+	</head>
+	<body>
+		<div id="wrap">
+			<form name="mainForm" id="mainForm">
+				<input type="hidden" id="nSource" name="nSource">
+				<input type="hidden" id="hid_eeno" name="hid_eeno" value="<%=hid_eeno%>">
+				<input type="hidden" id="hid_cond" name="hid_cond" value="<%=hid_cond%>">
+				<input type="hidden" id="menu_id" name="menu_id" value="<%=menuId.toLowerCase()%>">
+				<%@ include file="../include/hncis_header.gas"%>
+				<div id="contents_wrap">
+					<%@ include file="../include/hncis_left.gas"%>
+					<div id="contents">
+						<%=CommonGasc.getTitleAndButtonNew(sess_empno
+							,menuId
+							//,"search/search@confirm/confirm@reject/reject@excel/excel"
+							,strBtn
+							,null
+							,null
+							,null
+							,request)
+						%>
+		                <div class="search_area">
+		                	<table>
+								<colgroup>
+									<col style="width:50px;" />
+		                            <col style="width:100px;" />
+		                            <col style="width:60px;" />
+		                            <col style="width:150px;" />
+		                            <col style="width:50px;" />
+		                            <col style="width:200px;" />
+		                            <col style="width:60px;" />
+		                            <col style="width:130px;" />
+		                            <col style="width:60px;" />
+		                            <col style="width:auto;" />
+								</colgroup>
+								<tr>
+									<th>사번</th>
+									<td><input type="text" id="key_eeno" name="key_eeno" style="width:75px" onkeyup="setInsaInfo();clearInsa();"></td>
+									<th>이름</th>
+									<td><input type="text" id="key_eenm" name="key_eenm" style="width:130px"></td>
+									<th>Date</th>
+									<td>
+										<input type="text" id="key_from_ymd" name="key_from_ymd" style="width:80px" value="<%=CurrentDateTime.getDateFormatEn(fromDay)%>">~
+										<input type="text" id="key_to_ymd" name="key_to_ymd" style="width:80px" value="<%=CurrentDateTime.getDateFormatEn(toDay) %>">
+									</td>
+									<th>진행상태</th>
+									<td>
+										<select id="key_pgs_st_cd" style="width:120px">
+											<option value=""><fmt:message key="total"/></option>
+										</select>
+									</td>
+									<th>Region</th>
+									<td>
+										<SELECT NAME="key_regn_cd" ID="key_regn_cd" style="width:100px"></SELECT>
+									</td>
+								</tr>
+							</table>
+		                </div>
+		                <div class="jq_tbl">
+		                	<table id="htmlTable" class="scroll"></table>
+		                	<div id="htmlPager" class="scroll"></div>
+		                </div>
+	                	<%@ include file="../include/hncis_message.gas"%>
+	            	</div>
+	            	<div class="clear"></div>
+				</div>
+			</form>
+			<form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>	
+			<form id="fileForm" name="fileForm">
+				<input type="hidden" id="file_doc_no" name="file_doc_no">
+				<input type="hidden" id="hid_use_yn"  name="hid_use_yn">
+				<input type="hidden" id="file_status"  name="file_status">
+				<input type="hidden" id="file_eeno" name="file_eeno">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+		</div>			
+	</body>
+</html>

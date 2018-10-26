@@ -1,0 +1,639 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<%
+	String menuId = "XPD07";
+	String hid_cond  = StringUtil.replaceParameter(StringUtil.isNullToString(request.getParameter("hid_cond")));
+
+	String yy = CurrentDateTime.getYear();
+	String mm = CurrentDateTime.getMonth();
+	String byy = CurrentDateTime.getYearByAddMonth(CurrentDateTime.getDate(),-1);
+	String bmm = CurrentDateTime.addMonth(CurrentDateTime.getDate(),-1);
+	String tdd = Integer.toString( CurrentDateTime.getMaxday(yy+mm));
+	
+	String fromDay = byy + "-" + bmm + "-" + "01";
+	String toDay = yy + "-" + mm + "-" + tdd; 
+	
+	String strSch = JSPMessageSource.getMessage("BUTTON.SEARCH", locale);
+	String strRqc = JSPMessageSource.getMessage("BUTTON.REQUESTCANCEL", locale);
+	String strRnt = JSPMessageSource.getMessage("BUTTON.RENT", locale);
+	String strRtn = JSPMessageSource.getMessage("BUTTON.RETURN", locale);
+	String strRjt = JSPMessageSource.getMessage("BUTTON.REJECT", locale);
+	String strExl = JSPMessageSource.getMessage("BUTTON.EXCEL",locale);
+
+	String strBtn = "";
+	strBtn = strSch+"/search@"+strRqc+"/requestCancel@"+strRnt+"/rent@"+strRtn+"/return@"+strRjt+"/cancel@"+strExl+"/excel";
+	
+	String tempPath     = request.getServletPath().toString();
+	String stepHelpUrl  = StringUtil.getStepHelp(tempPath);
+%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title><fmt:message key="req"/></title>
+	</head>
+	<body>
+		<div id="wrap">
+		<form name="frm" id="frm">
+			<input type="hidden" id="menu_id" name="menu_id" value="<%=menuId.toLowerCase() %>">
+			<input type="hidden" id="hid_cond" name="hid_cond" value="<%=hid_cond %>">
+			<input type="hidden" id="hid_page" name="hid_page">
+			<input type="hidden" id="help_url" name="help_url" value="<%=stepHelpUrl%>">
+			
+			<%@ include file="../include/hncis_header.gas"%>
+			<div id="contents_wrap">
+				<%@ include file="../include/hncis_left.gas"%>
+				<div id="contents">
+					<%=CommonGasc.getTitleAndButtonNew(sess_empno
+						,"XPD07"
+						//,"조회/search@신청취소/requestCancel@대여/rent@반납/return@반려/cancel"
+						,strBtn
+						,null
+						,null
+						,null
+						,request)
+					%>
+					<div class="search_area">
+						<table>
+							<colgroup>
+								<col style="width:60px;" />
+	                            <col style="width:250px;" />
+								<col style="width:70px;" />
+	                            <col style="width:200px;" />
+	                            <col style="width:60px;" />
+	                            <col style="width:auto;" />
+							</colgroup>
+							<tr>
+                            	<th><fmt:message key="dept_nm"/></th> 
+								<td>
+									<input type="text" name="key_ops_cd" id="key_ops_cd" style="ime-mode:disabled;width:60px" onkeyup="deptSearch();">
+									<input id="key_ops_nm" type="text" style="width:145px" class="disabled" readonly>
+									<img id="deptBtn" name="img_ignm_pop" src="<%=ctxPath %>/images/hncis_common/find-f.png" style="cursor:hand;filter:alpha(opacity=100)" class='button' onMouseOver="na_change_img_src('img_ignm_pop','document', '<%=ctxPath %>/images/hncis_common/find-n.png');" onMouseOut="na_restore_img_src('img_ignm_pop');" onclick="deptFind()" align="absmiddle">
+								</td>
+								<th><fmt:message key="eeno"/></th>
+								<td>
+									<input type="text" id="key_eeno" style="width:150px">
+								</td>
+								<th><fmt:message key="eenm"/></th>
+								<td>
+									<input type="text" id="key_eeno_nm" style="width:150px" maxlength="20">
+								</td>
+							</tr>
+							<tr>
+								<th><fmt:message key="req_ymd"/></th>
+								<td>
+									<input id="key_fr_ymd" type="text" style="width:80px" value="<%=fromDay%>" readonly> ~
+									<input id="key_to_ymd" type="text" style="width:80px"  value="<%=toDay%>" readonly>
+								</td>
+								<th><fmt:message key="pgs_st_nm"/></th>
+								<td colspan="3">
+									<select id="key_pd_sts" style="width:130px"></select>
+								</td>
+							</tr>
+						</table>
+					</div>
+					<div class="jq_tbl">
+		                <table id="htmlTable" class="scroll"></table>
+		                <div id="htmlPager" class="scroll"></div>
+		            </div>
+                	<%@ include file="../include/hncis_message.gas"%>
+				</div>
+			</div>
+		</form>
+		</div>
+	</body>
+</html>
+		<script type="text/javascript">
+
+		var initYn = "N";
+		function fnSetDocumentReady(){
+			initMenus();
+			
+			$("#key_fr_ymd").datepicker({ dateFormat: "yy-mm-dd" });
+			$("#key_to_ymd").datepicker({ dateFormat: "yy-mm-dd" }); 
+			
+			sess_auth = $("#work_auth").val();
+			
+			getCommonCode("key_pd_sts:XPD01:A;", "N", "init();");
+		}
+
+
+		function setCondition(){
+			if($("#hid_cond").val() != ""){
+				var hidCond = $("#hid_cond").val().split("|");
+				if(hidCond[0] != "") $("#key_eeno").val(hidCond[0]);
+				if(hidCond[1] != "") $("#key_ops_cd").val(hidCond[1]);
+				if(hidCond[2] != "") $("#key_ops_nm").val(hidCond[2]);
+				if(hidCond[3] != "") $("#key_from_date").val(hidCond[3]);
+				if(hidCond[4] != "") $("#key_to_date").val(hidCond[4]);
+				if(hidCond[5] != "") $("#key_pgs_st_cd").val(hidCond[5]);
+				if(hidCond[6] != "") $("#hid_page").val(hidCond[6]);
+			}else{
+				$("#key_pgs_st_cd").val("Z");
+			}
+			
+			setInsaInfo();
+		}
+
+		function setInsaInfo(){
+			if($("#work_auth").val() !=5 && sess_mstu != "M"){
+				$("#key_eeno").val(sess_empno);
+				var keyData = { xusr_empno : sess_empno,
+								corp_cd	   : sess_corp_cd
+				};
+				paramData = {
+					paramJson : util.jsonToString(keyData)
+				};
+				doCommonAjax("/doSearchToUserInfo.do", paramData, "insaCallBack(jsonData.sendResult);");
+			}
+			else{
+				init();
+			}
+		}
+
+		function insaCallBack(result){
+			$("#key_ops_cd").val(result.xusr_dept_code);
+			$("#key_ops_nm").val(result.xusr_dept_name);
+			
+			init();
+		}
+
+		/**
+		 * process init() loading
+		 */
+		var fnMerge;
+		var gridParam;
+		var gridName1 = "htmlTable";
+		var excelCn   = ['<fmt:message key="req_ymd"/>' // "신청일자"
+				          ,'<fmt:message key="rent_ymd"/>' // "대여일자"
+				          ,'<fmt:message key="return_ymd"/>' // "반납일"
+				          ,'<fmt:message key="state"/>' // "상태"
+				          ,'<fmt:message key="rent_eeno"/>' // "대여자 사번"
+				          ,'<fmt:message key="rent_eenm"/>' // "대여자"
+				          ,'<fmt:message key="lrg_cd"/>' // "대분류"
+				          ,'<fmt:message key="mdl_cd"/>' // "중분류"
+				          ,'<fmt:message key="prdt_nm"/>' // "물품명"
+				          ,'<fmt:message key="model_nm"/>' // "모델명"
+				          ,'<fmt:message key="srl_no"/>' // "시리얼번호"
+		    		];
+   		var excelCm   = ['req_ymd','rent_ymd','return_ymd','eeno','eenm','pgs_st_nm','lrg_nm','mrg_nm','prdt_nm','model_nm','srl_no'];
+   		var excelFm   = ['string','string','string','string','string','string','string','string','string','string','string'];
+
+// 		var cn = ["신청일자","대여일자", "반납일자", "상태", "대여자사번", "대여자", "대분류", "중분류", "물품명" , "모델명", "시리얼번호", "", "","", "",""];
+		var cn = ['<fmt:message key="req_ymd"/>' // "신청일자"
+		          ,'<fmt:message key="rent_ymd"/>' // "대여일자"
+				  ,'<fmt:message key="return_ymd"/>' // "반납일"
+				  ,'<fmt:message key="state"/>' // "상태"
+				  ,'<fmt:message key="rent_eeno"/>' // "대여자 사번"
+				  ,'<fmt:message key="rent_eenm"/>' // "대여자"
+				  ,'<fmt:message key="lrg_cd"/>' // "대분류"
+				  ,'<fmt:message key="mdl_cd"/>' // "중분류"
+				  ,'<fmt:message key="prdt_nm"/>' // "물품명"
+				  ,'<fmt:message key="model_nm"/>' // "모델명"
+				  ,'<fmt:message key="srl_no"/>' // "시리얼번호"
+		          ,'' // "" 
+		          ,'' // "" 
+		          ,'' // "" 
+		          ,'' // "" 
+		          ];
+		var datarow = {req_ymd:"",rent_ymd:"", eeno:"", eenm:"", pgs_st_cd:"", pgs_st_nm:"", lrg_nm:"", mrg_nm:"", prdt_nm:"", model_nm:"", slr_no:"", reg_ymd:"", pd_seq:"", pd_rent_yn:"", doc_no:"", return_ymd:""};
+		var cm =
+		[
+			{name:"req_ymd",		index:"req_ymd"		, sortable:false,		formatter:"string",		width:70,	align:"center",	editable:false,	frozen : false},
+			{name:"rent_ymd",		index:"rent_ymd"	, sortable:false,		formatter:"string",		width:70,	align:"center",	editable:false,	frozen : false},
+			{name:"return_ymd",		index:"return_ymd"	, sortable:false,		formatter:"string",		width:70,	align:"center",	editable:false,	frozen : false},
+			{name:"pgs_st_nm", 		index:"pgs_st_nm"	, sortable:false, 		formatter:"string", 	width:60, 	align:"center", editable:false, frozen : false},
+			{name:"eeno",			index:"eeno"		, sortable:false,		formatter:"string",		width:70,	align:"center",	editable:false,	frozen : false},
+			{name:"eenm",			index:"eenm"		, sortable:false,		formatter:"string",		width:70,	align:"center",	editable:false,	frozen : false},
+			{name:"lrg_nm",			index:"lrg_nm"		, sortable:false,		formatter:"string",		width:130,	align:"left",	editable:false,	frozen : false},
+			{name:"mrg_nm",			index:"mrg_nm"		, sortable:false,		formatter:"string",		width:200,	align:"left",	editable:false,	frozen : false},
+			{name:"prdt_nm",		index:"prdt_nm"		, sortable:false,		formatter:"string",		width:100,	align:"left",	editable:false,	frozen : false},
+			{name:"model_nm",		index:"model_nm"	, sortable:false,		formatter:"string",		width:80,	align:"center",	editable:false,	frozen : false},
+			{name:"slr_no",			index:"slr_no"		, sortable:false,		formatter:"string",		width:80,	align:"center",	editable:false,	frozen : false},
+			{name:"pgs_st_cd",		index:"pgs_st_cd"	, sortable:false,		formatter:"string",		width:80,	align:"left",	editable:false,	frozen : false,	hidden: true},
+			{name:"pd_seq",			index:"pd_seq"		, sortable:false,		formatter:"string",		width:80,	align:"left",	editable:false,	frozen : false,	hidden: true},
+			{name:"pd_rent_yn",		index:"pd_rent_yn"	, sortable:false,		formatter:"string",		width:80,	align:"left",	editable:false,	frozen : false,	hidden: true},
+			{name:"doc_no",			index:"doc_no"		, sortable:false,		formatter:"string",		width:80,	align:"left",	editable:false,	frozen : false,	hidden: true}
+		];
+
+		function init(){
+			var params = {
+				fr_ymd			: selectNum($("#key_fr_ymd").val()),
+				to_ymd			: selectNum($("#key_to_ymd").val()),
+				pd_sts			: $("#key_pd_sts").val(),
+				search_ops_cd	: $("#key_ops_cd").val(),
+				search_eeno		: $("#key_eeno").val(),
+				search_eenm		: $("#key_eeno_nm").val(),
+				corp_cd			: sess_corp_cd,
+				locale			: $("#lo").val()
+			};
+			
+			//set grid parameter
+			gridParam = {
+				viewEdit : [{
+					gridName     : gridName1,
+					url          : "doSearchPdToProductRentList.do",
+					colNames     : cn,
+					colModel     : cm,
+					height       : "100%",
+					sortname     : "rnum",
+					sortorder    : "desc",
+					rownumbers   : true,
+					multiselect  : true,
+					cellEdit     : false,
+					fnMerge      : false,
+					pager		 : "htmlPager",
+					page		 : $("#hid_page").val(),
+					paramJson    : params,
+					completeFc   : "addGridRow();initAfterMenus();loadCallBack();"
+// 					,
+// 					dblClickRowFc : "celldbClickAction(rowId,iRow,iCol,e);"
+				}]
+			};
+			
+			//core jqGrid call...
+			commonJqGridInit(gridParam);
+			
+			//method overliding
+			jQuery("#"+gridName1).jqGrid("setFrozenColumns");
+			jQuery("#"+gridName1).jqGrid("navGrid","#htmlPager",{edit:false,add:false,del:false,search:false,refresh:false});
+			
+			
+		}
+
+		function celldbClickAction(rowId,iRow,iCol,e){
+		    var form = $("<form/>");
+		    form.attr("method" , "post");
+		    form.attr("id"     , "hideForm");
+		    form.attr("action" , "xpd02.gas");
+		    var inp1 = $("<input type='hidden' id='pd_seq' name='pd_seq'/>").val(getColValue("pd_seq",rowId, gridName1));
+		    var inp2 = $("<input type='hidden' id='hid_view_nm' name='hid_view_nm'/>").val($("#menu_id").val());
+		    var cond = "";
+		    var inp3 = $("<input type='hidden' id='hid_cond' name='hid_cond'/>").val(cond);
+		    var inp4 = $("<input type='hidden' id='hid_page' name='hid_page'/>").val($("#hid_page").val());
+		    var mType = "V";
+		    if(getColValue("pd_rent_yn",rowId, gridName1) == 'Y'){
+		    	mType = "R";
+		    }
+		    var inp5 = $("<input type='hidden' id='m_type' name='m_type'/>").val(mType);
+		    var inp6 = $("<input type='hidden' id='doc_no' name='doc_no'/>").val(getColValue("doc_no",rowId, gridName1));
+		    var token = $("<input type='hidden' id='hid_csrfToken' name='hid_csrfToken'/>").val($("#csrfToken").val());
+		    form.append(inp1, inp2, inp3, inp4, inp5, inp6, token);
+		    $("body").append(form);
+		    form.submit();
+		    form.remove();
+		}
+
+		function retrieve(gubn){
+			switch(gubn){
+				case "search" :
+					doSearch();
+					break;
+				case "requestCancel" :
+					doRequestCancel();
+					break;
+				case "rent" :
+					doRent();
+					break;
+				case "cancel" :
+					doCancel();
+					break;
+				case "return" :
+					doReturn();
+					break;
+				case "excel" :
+					doExcel();
+					break;
+			}
+		}
+
+
+		function doSearch(msgFlag){
+			var params = {
+				fr_ymd			: selectNum($("#key_fr_ymd").val()),
+				to_ymd			: selectNum($("#key_to_ymd").val()),
+				pd_sts			: $("#key_pd_sts").val(),
+				search_ops_cd	: $("#key_ops_cd").val(),
+				search_eeno		: $("#key_eeno").val(),
+				search_eenm		: $("#key_eeno_nm").val(),
+				corp_cd			: sess_corp_cd,
+				locale			: $("#lo").val()
+			};
+
+			doCommonSearch("doSearchPdToProductRentList.do", util.jsonToString(params), "loadCallBack();", gridName1, msgFlag);
+		}
+
+		/**
+		 * callback
+		 */
+		function loadCallBack(){
+			if(fnMerge !== ""){
+				eval(fnMerge);
+			}
+
+			$("#hid_page").val($("#page_htmlPager").val());
+			addGridRow();
+		}
+
+		function doRequestCancel(){
+			var data;
+			var iParams = [];
+			
+			var selectRow = $("#"+gridName1).jqGrid("getGridParam", "selarrrow");
+			
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+			
+			for(var i=0; i<selectRow.length; i++){
+				
+				var rowId = selectRow[i];
+				
+				if(selectRow[i]){
+//					if(!fnValidationChk(selectRow[i])){ return; }
+					
+					if(getColValue("doc_no", rowId, gridName1) == ""){
+						alertUI(rowId + ' <fmt:message key="MSG.ROW.0055"/>');
+						return;
+					}
+					
+					data = {
+						doc_no : getColValue("doc_no", selectRow[i], gridName1),
+						pd_seq    : getColValue("pd_seq", rowId, gridName1),
+						slr_no    : getColValue("slr_no", rowId, gridName1),
+						pd_rent	  : "N",
+						updr_eeno			: sess_empno,
+						corp_cd	: sess_corp_cd
+					};
+					
+					iParams.push(data);
+				}
+			}
+			
+			if(iParams.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}
+			
+			confirmUI('<fmt:message key="MSG.CNF.0006"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var params = {
+								iParams : util.jsonToList(iParams)
+						};
+						doCommonAjax("doRentListToRequestCancel.do", params, "doRequestCancelCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function fnValidationChk(rowId){
+			if(getColValue("pgs_st_cd", rowId, gridName1) != "A"){
+				alertUI('<fmt:message key="MSG.STAT.0033"/>');
+				return false;
+			}
+			
+			return true;
+		}
+
+		function doRequestCancelCallBack(result){
+			alertUI(result.message);
+			doSearch("N");
+		}
+
+		function doRent(){
+			var params = [];
+			var selectRow = jQuery("#"+gridName1).jqGrid("getGridParam", "selarrrow");
+			
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}else{
+				for(var i = 0; i < selectRow.length; i++){
+					var rowId = selectRow[i];
+					if(getColValue("doc_no", rowId, gridName1) == ""){
+						alertUI(rowId + ' <fmt:message key="MSG.ROW.0055"/>');
+						return;
+					}
+					if(getColValue("pgs_st_cd", rowId, gridName1) != "A"){
+						alertUI('<fmt:message key="MSG.VAL.0018"/>');
+						return;
+					}
+					if(rowId){
+						list ={
+							doc_no    : getColValue("doc_no", rowId, gridName1),
+							pd_seq    : getColValue("pd_seq", rowId, gridName1),
+							slr_no    : getColValue("slr_no", rowId, gridName1),
+							pgs_st_cd : "B",
+							pd_rent	  : "Y",
+							updr_eeno : sess_empno,
+							corp_cd	  : sess_corp_cd,
+							locale	  : $("#lo").val()
+						};
+						params.push(list);
+					}
+				}
+			}
+			
+			confirmUI('<fmt:message key="MSG.CNF.0018"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramJson : util.jsonToList(params)
+						};
+						doCommonAjax("doRentPdToProductList.do", paramData, "rentCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function rentCallBack(result){
+			setBottomMsg(result.message, true);
+			doSearch("N");
+		}
+
+		function doCancel(){
+			var params = [];
+			var selectRow = jQuery("#"+gridName1).jqGrid("getGridParam", "selarrrow");
+			
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}else{
+				for(var i = 0; i < selectRow.length; i++){
+					var rowId = selectRow[i];
+					if(getColValue("doc_no", rowId, gridName1) == ""){
+						alertUI(rowId + ' <fmt:message key="MSG.ROW.0055"/>');
+						return;
+					}
+					if(getColValue("pgs_st_cd", rowId, gridName1) != "A"){
+						alertUI('<fmt:message key="MSG.VAL.0019"/>');
+						return;
+					}
+					if(rowId){
+						list ={
+							doc_no    : getColValue("doc_no", rowId, gridName1),
+							pgs_st_cd : "D",
+							pd_seq    : getColValue("pd_seq", rowId, gridName1),
+							slr_no    : getColValue("slr_no", rowId, gridName1),
+							pd_rent	  : "N",
+							updr_eeno : sess_empno,
+							corp_cd	  : sess_corp_cd
+						};
+						params.push(list);
+					}
+				}
+			}
+			
+			confirmUI('<fmt:message key="MSG.CNF.0010"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramJson : util.jsonToList(params)
+						};
+						doCommonAjax("doRentCancelPdToProductList.do", paramData, "cancelCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+
+		function cancelCallBack(result){
+			setBottomMsg(result.message, true);
+			doSearch("N");
+		}
+
+		function doReturn(){
+			
+			var params = [];
+			var selectRow = jQuery("#"+gridName1).jqGrid("getGridParam", "selarrrow");
+			
+			if(selectRow.length == 0){
+				alertUI('<fmt:message key="MSG.SEL.0011"/>');
+				return;
+			}else{
+				for(var i = 0; i < selectRow.length; i++){
+					var rowId = selectRow[i];
+					if(getColValue("doc_no", rowId, gridName1) == ""){
+						alertUI(rowId + ' <fmt:message key="MSG.ROW.0055"/>');
+						return;
+					}
+					if(getColValue("pgs_st_cd", rowId, gridName1) != "B"){
+						alertUI('<fmt:message key="MSG.VAL.0020"/>');
+						return;
+					}
+					if(rowId){
+						list ={
+							doc_no    : getColValue("doc_no", rowId, gridName1),
+							pd_seq    : getColValue("pd_seq", rowId, gridName1),
+							slr_no    : getColValue("slr_no", rowId, gridName1),
+							pgs_st_cd : "C",
+							pd_rent	  : "N",
+							corp_cd	  : sess_corp_cd
+						};
+						params.push(list);
+					}
+				}
+			}
+			
+			confirmUI('<fmt:message key="MSG.CNF.0019"/>');
+			$("#pop_yes").click(function(){
+				$.unblockUI({
+					onUnblock: function(){
+						var paramData = {
+								paramJson : util.jsonToList(params)
+						};
+						doCommonAjax("doReturnPdToProductList.do", paramData, "returnCallBack(jsonData.sendResult);");
+					}
+				});
+			});
+		}
+		function returnCallBack(result){
+			setBottomMsg(result.message, true);
+			doSearch("N");
+		}
+
+		function deptSearch(){
+			if($("#key_ops_cd").val() != ""){
+				var keyData = { xorg_orga_c : $("#key_ops_cd").val(),
+								corp_cd		: sess_corp_cd
+				};
+				paramData = {
+					paramJson : util.jsonToString(keyData)
+				};
+				doCommonAjax("/doSearchToDeptInfo.do", paramData, "deptCallBack(jsonData.sendResult)");
+			}else{
+				$("#key_ops_nm").val("");
+			}
+		}
+
+		function deptCallBack(result){
+			$("#key_ops_nm").val(result.xorg_orga_e);
+		}
+
+		function setInsaInfo(){
+			if($("#key_eeno").val() != ""){
+				var keyData = { 
+						xusr_empno : $("#key_eeno").val(),
+						corp_cd	   : sess_corp_cd
+				};
+				paramData = {
+					paramJson : util.jsonToString(keyData)
+				};
+				doCommonAjax("/doSearchToUserInfo.do", paramData, "insaCallBack(jsonData.sendResult)");
+			}
+		}
+
+		function insaCallBack(result){
+			setBottomMsg(result.message, false);
+			$("#key_eeno_nm").val(result.xusr_name);
+		}
+
+		function clearInsa(){
+			if($("#key_eeno").val() == ""){
+				$("#key_eeno_nm").val("");
+			}
+		}
+
+		function deptFind(){
+			var param = "?dcd=key_ops_cd&dcdNm=key_ops_nm&callBackYn=Y&csrfToken="+$("#csrfToken").val();
+			newPopWin(ctxPath+"/hncis/popup/deptPopup.gas"+param, "440", "510", "pop_dept");
+		}
+
+		function deptFindCallBack(){
+		}
+		
+		function pageStepHelpPopup(){
+			if(popup != null ){
+				popup.close();
+			}
+			
+			popup = popUpWindow3($("#help_url").val());
+		}
+		
+		function doExcel(){
+			var keyData = {
+					fr_ymd			: selectNum($("#key_fr_ymd").val()),
+					to_ymd			: selectNum($("#key_to_ymd").val()),
+					pd_sts			: $("#key_pd_sts").val(),
+					search_ops_cd	: $("#key_ops_cd").val(),
+					search_eeno		: $("#key_eeno").val(),
+					search_eenm		: $("#key_eeno_nm").val(),
+					corp_cd			: sess_corp_cd,
+					locale			: $("#lo").val()
+			};
+
+			var params = [
+				{name : "fileName",		value : "Product_service_confirm" },
+				{name : "header",		value : util.jsonToArray(excelCn)},
+				{name : "headerName",	value : util.jsonToArray(excelCm)},
+				{name : "fomatter",		value : util.jsonToArray(excelFm)},
+				{name : "paramJson",	value : util.jsonToString(keyData)},
+				{name : "firstUseYn",	value : "Y"}
+			];
+
+			gridToExcel("#"+gridName1, "doExcelproductList.excel", params);
+		}
+		</script>

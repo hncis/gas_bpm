@@ -1,0 +1,349 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/hncis/include/common_main.gas" %>
+<%@ page import="com.hncis.board.vo.BgabGasc01DtlDto" %>
+<%@page import="com.hncis.system.vo.BgabGascz004Dto"%>
+<%@ page import="java.util.Locale" %>
+<%@ page import="com.hncis.common.message.JSPMessageSource"%>
+<%@ page import="org.springframework.web.servlet.i18n.SessionLocaleResolver" %>
+<%@ page import="org.springframework.context.i18n.LocaleContextHolder" %>
+<%@ page import="com.hncis.system.vo.BgabGascz033Dto" %>
+<%@ page errorPage = "/WEB-INF/view/sessionError.gas" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<!DOCTYPE html>
+<%
+	String scrnId = "ALL"; //화면아이디 request 받아서 넘겨준다.
+	String corp_cd = SessionInfo.getSess_corp_cd(request);
+	String popNotice = CommonGasc.getNoticePopup(scrnId, corp_cd, request);
+	String bkImg = CommonGasc.getSelectBackgroundImage(corp_cd);
+	List<BgabGasc01DtlDto> noticeList = CommonGasc.getSelectMainNotice(corp_cd);
+// 	List<BgabGasc01DtlDto> qnaList    = CommonGasc.getSelectMainQna(corp_cd);
+// 	List<BgabGasc01DtlDto> faqList    = CommonGasc.getSelectMainFaq(corp_cd);
+// 	List<BgabGasc01DtlDto> claimList  = CommonGasc.getSelectMainClaim(corp_cd);
+	String mstuGubb = SessionInfo.getSess_mstu_gubb(request);
+	int myApprovalCount = CommonGasc.getSelectMyApproval(sess_empno, corp_cd, request);
+	String approvalStr = "";
+	String imgName = CommonGasc.getSelectBackgroundImage(corp_cd);
+	List<BgabGascz004Dto> topList = CommonGasc.getTopMenu(request);
+// 	List<BgabGascz004Dto> btSubList = CommonGasc.getBusinessTravelTopMenu(request);
+	Locale locale = (Locale)request.getSession().getAttribute("reqLocale");
+	String my_aprv = JSPMessageSource.getMessage("my_aprv", locale);
+
+	if(myApprovalCount > 0){
+	approvalStr = "<span style='font-weight:600;'>"+my_aprv+"</span> <span style='color:#357ac7;'>&#60;"+myApprovalCount+"&#62;</span>";
+}else{
+	approvalStr = my_aprv;
+}
+	
+	String yy = CurrentDateTime.getDate().substring(0, 4);
+	String mm = CurrentDateTime.getDate().substring(4, 6);
+	String dd = CurrentDateTime.getDate().substring(6, 8);
+	String yymmdd = yy + mm + dd;
+	
+	
+	String corp_cd_temp = SessionInfo.getSess_corp_cd(request);
+	BgabGascz033Dto imgDto = CommonGasc.getSelectLogoImage(corp_cd_temp);
+	
+	String defLogoPath = "../../images/main/gas_logo.png";
+	
+	if(imgDto != null){
+		defLogoPath = "../../upload/logo/"+imgDto.getCorp_cd()+"/"+imgDto.getOgc_fil_nm();
+	}
+%>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>General Affairs Support Center</title>
+<script type="text/javascript" src="<%=ctxPath%>/script/main/main.js"></script>
+<script type="text/javascript" src="<%=ctxPath%>/script/main/calendar.js"></script>
+<script type="text/javascript">
+	var d = new Date(); 
+	var dteGetTime = d.getTime();
+</script>
+<link href="<%=ctxPath%>/script/css/hncis_main.css" rel="stylesheet" />
+</head>
+<body class="main_page">
+	<div id="main_wrap">
+	<form name="testForm" id="testForm">
+      	<input type='hidden' id='gubun' name='gubun' value='holySearch'/>
+		<input type='hidden' id='odu_regn_cd' name='odu_regn_cd'/>
+		<input type='hidden' id='ymd' name='ymd'/>
+		<input type='hidden' id='returnValue' name='returnValue'/>
+		<input type='hidden' id='year' name='year' value="<%=yy %>"/>
+		<input type='hidden' id='month' name='month' value="<%=mm %>"/>
+		<input type='hidden' id='flag' name='flag' value="N"/>
+    	<div id="main_header">
+        	<h1 class="logo"><a href="javascript:pageLocationHref('<%=ctxPath%>', '/main.gas');" style="background-image: url('<%=defLogoPath%>')">GAS SOLUTION</a>
+        		<script>
+					var url = window.location.href.indexOf("main.gas");					
+					function pageLocationHref(pageNm, param1){
+						
+						var f = document.tokenForm;
+						f.action = pageNm+param1;
+						f.submit();
+					}
+				</script>
+        	</h1>
+            <ul class="util_nav">
+            	<li>
+				     <input type="hidden" id="lo" name="lo" value="${reqLocale}">
+				     <span id="_headerDeptName"></span> <span id="_headerEmpName" class="mem_name"></span> <span id="_headerEmpNo"></span>
+				</li>
+            	<li class="mem_info"><%=sess_dept_name %> <span class="mem_name"><%=sess_name %></span>(<%=sess_empno %>)</li>
+                <li><a href="javascript:myApprovalPopup();"><%=approvalStr%></a></li>
+                <li>
+                	<select id="loc" onchange="fn_changeLoc();" style="margin-top: -3px">
+				    	<option value="en"><fmt:message key="en"/></option>
+				    	<option value="ko"><fmt:message key="ko"/></option>
+				    </select>
+                </li>
+                <% 
+	              if(mstuGubb.equals("M")){
+	              %>
+	              	<li><a href="javascript:goSystem();"><fmt:message key="system"/></a></li>
+<!-- 	              	<li><a href="javascript:goMenuSetting();"><fmt:message key="set_menu"/></a></li> -->
+	              <%
+	              }
+	            %>
+                <li class="last"><a href="javascript:logOut();"><fmt:message key="logout"/></a></li>
+            </ul>
+        </div>
+        <div id="main_content_wrap">
+        	<div class="div_box main_menu_area">
+            	<div class="visual_area <%=bkImg %>"></div>
+                <div class="main_gnb_lite_area">
+                	<div class="main_gnb_lite">
+                        <ul>
+                        	<li class="div_box first">
+                        		<a href="javascript:pageLocationHref('','/hncis/businessTravel/xbt01.jsp');"><span class="menu_lite_ico b_m01"></span><span>출장</span></a>
+                        		<div class="box_corner box_lt"></div>
+                        		<div class="box_corner box_rt"></div>
+                        		<div class="box_corner box_lb"></div>
+                        		<div class="box_corner box_rb"></div>
+                        	</li>
+                        	<li class="div_box">
+                        		<a href="javascript:pageLocationHref('','/hncis/businessVehicles/xbv04.jsp');"><span class="menu_lite_ico c_m02"></span><span>차량관리</span></a>
+                        		<div class="box_corner box_lt"></div>  
+                        		<div class="box_corner box_rt"></div>
+                        		<div class="box_corner box_lb"></div>
+                        		<div class="box_corner box_rb"></div>
+                        	</li>
+                        	<li class="div_box">
+                        		<a href="javascript:pageLocationHref('','/hncis/certificate/xce03.jsp');"><span class="menu_lite_ico s_m06"></span><span>각종 증명서</span></a>
+                        		<div class="box_corner box_lt"></div>
+                        		<div class="box_corner box_rt"></div>
+                        		<div class="box_corner box_lb"></div>
+                        		<div class="box_corner box_rb"></div>
+                        	</li>
+                        	<li class="div_box first sec_line">
+                        		<a href="javascript:pageLocationHref('','/hncis/businessCard/xbc02.jsp');"><span class="menu_lite_ico s_m02"></span><span>명함신청</span></a>
+                        		<div class="box_corner box_lt"></div>
+                        		<div class="box_corner box_rt"></div>
+                        		<div class="box_corner box_lb"></div>
+                        		<div class="box_corner box_rb"></div>
+                        	</li>
+                        	<li class="div_box sec_line">
+                        		<a href="javascript:pageLocationHref('','/hncis/officeSupplies/xos03.jsp');"><span class="menu_lite_ico s_m05"></span><span>사무용품</span></a>
+                        		<div class="box_corner box_lt"></div>
+                        		<div class="box_corner box_rt"></div>
+                        		<div class="box_corner box_lb"></div>
+                        		<div class="box_corner box_rb"></div>
+                        	</li>
+                        	<li class="div_box sec_line">
+                        		<a href="javascript:pageLocationHref('','/hncis/leave/xlv02.jsp');"><span class="menu_lite_ico g_m03"></span><span>연차</span></a>
+                        		<div class="box_corner box_lt"></div>
+                        		<div class="box_corner box_rt"></div> 
+                        		<div class="box_corner box_lb"></div>
+                        		<div class="box_corner box_rb"></div>
+                        	</li>
+                        </ul>
+                        <!--  <ul>
+                            <li>
+                                <h2 class="menu_ico m_icon01">복지</h2>
+                                <span class="tit_line"></span>
+                                <ul class="main_menu">
+                                	<% for(int i=0; i<topList.size(); i++){
+									if(topList.get(i).getMenu_lgrp_cd().equals("M2")){
+									%>
+													<li><a href="javascript:pageLocationHref('<%=ctxPath%>','<%=topList.get(i).getMenu_img_path_adr() %>');"><span><%=topList.get(i).getScrn_nm()%></span></a></li>
+									<%
+											}
+										}
+									%>
+                                </ul>
+                            </li>
+                            <li>
+                                <h2 class="menu_ico m_icon02">지원</h2>
+                                <span class="tit_line"></span>
+                                <ul class="main_menu">
+                                	<% for(int i=0; i<topList.size(); i++){
+									if(topList.get(i).getMenu_lgrp_cd().equals("M3")){
+									%>
+													<li><a href="javascript:pageLocationHref('<%=ctxPath%>','<%=topList.get(i).getMenu_img_path_adr() %>');"><span><%=topList.get(i).getScrn_nm()%></span></a></li>
+									<%
+											}
+										}
+									%>
+                                </ul>
+                            </li>
+                            <li>
+                                <h2 class="menu_ico m_icon03">출장/차량</h2>
+                                <span class="tit_line"></span>
+                                <ul class="main_menu">
+                                	<% for(int i=0; i<topList.size(); i++){
+									if(topList.get(i).getMenu_lgrp_cd().equals("M4")){
+									%>
+													<li><a href="javascript:pageLocationHref('<%=ctxPath%>','<%=topList.get(i).getMenu_img_path_adr() %>');"><span><%=topList.get(i).getScrn_nm()%></span></a></li>
+									<%
+											}
+										}
+									%>
+                                </ul>
+                            </li>
+                            <li>
+                                <h2 class="menu_ico m_icon04">일반</h2>
+                                <span class="tit_line"></span>
+                                <ul class="main_menu">
+                                	<% for(int i=0; i<topList.size(); i++){
+									if(topList.get(i).getMenu_lgrp_cd().equals("M5")){
+									%>
+													<li><a href="javascript:pageLocationHref('<%=ctxPath%>','<%=topList.get(i).getMenu_img_path_adr() %>');"><span><%=topList.get(i).getScrn_nm()%></span></a></li>
+									<%
+											}
+										}
+									%>
+                                </ul>
+                            </li>
+                        </ul>  -->
+                        <!-- <div class="m_menu_box m_box_rt"></div>
+                        <div class="m_menu_box m_box_rb"></div> -->
+                     </div>
+                </div>
+                <div class="box_corner box_lt"></div>
+                <div class="box_corner main_box_rt"></div>
+                <div class="box_corner box_lb"></div>
+                <div class="box_corner main_box_rb"></div>
+            </div>
+            <div class="info_area">
+           	  <div class="div_box notice fl">
+                    <h2><fmt:message key="notice"/></h2>
+                    <!-- <ul class="sec_tab">
+                        <li class="on" rel="not_tab01" id="not_tab01_head"><h2 onclick="fnChangeTabMainBoard('1');">Notice</h2>
+                        	<p class="box_corner box_lt"></p>
+                    		<p class="box_corner box_rt"></p>
+                        </li>
+                        <li rel="not_tab02" id="not_tab02_head"><h2 onclick="fnChangeTabMainBoard('2');">Q&amp;A</h2>
+                        	<p class="box_corner box_lt"></p>
+                    		<p class="box_corner box_rt"></p>
+                        </li>
+                        <li rel="not_tab03" id="not_tab03_head"><h2 onclick="fnChangeTabMainBoard('3');">FAQ</h2>
+                        	<p class="box_corner box_lt"></p>
+                    		<p class="box_corner box_rt"></p>
+                        </li>
+                        <li rel="not_tab04" id="not_tab04_head"><h2 onclick="fnChangeTabMainBoard('4');">Claim</h2>
+                        	<p class="box_corner box_lt"></p>
+                    		<p class="box_corner box_rt"></p>
+                        </li>
+                    </ul> -->
+                    <ul>
+                        <%for(BgabGasc01DtlDto notice : noticeList){ %>
+                        <li><a href="javascript:readBoard('<%=notice.getBod_indx()%>')"><%=notice.getBod_title() %></a><span><%=notice.getInp_ymd() %></span></li>
+                        <%} %>
+                    </ul>
+                    <%-- <ul id="not_tab02" class="sec_tab_con">
+                        <%for(BgabGasc01DtlDto qna : qnaList){ %>
+                        <li><a href="javascript:readBoard('<%=qna.getBod_indx()%>')"><%=qna.getBod_title() %></a><span><%=qna.getInp_ymd() %></span></li>
+                        <%} %>
+                    </ul>
+                    <ul id="not_tab03" class="sec_tab_con">
+                        <%for(BgabGasc01DtlDto faq : faqList){ %>
+                        <li><a href="javascript:readBoard('<%=faq.getBod_indx()%>')"><%=faq.getBod_title() %></a><span><%=faq.getInp_ymd() %></span></li>
+                        <%} %>
+                    </ul>
+                    <ul id="not_tab04" class="sec_tab_con">
+                        <%for(BgabGasc01DtlDto claim : claimList){ %>
+                        <li><a href="javascript:readBoard('<%=claim.getBod_indx()%>')"><%=claim.getBod_title() %></a><span><%=claim.getInp_ymd() %></span></li>
+                        <%} %>
+                    </ul> --%>
+                    <a href="javascript:readBoard();" class="more_btn">more</a>
+                	<div class="box_corner box_lt"></div>
+                    <div class="box_corner box_rt"></div>
+                    <div class="box_corner box_lb"></div>
+                    <div class="box_corner box_rb"></div>
+                </div>
+                <div class="div_box calendar fl">
+                	<%@ include file="calendar.html"%>
+           	    	<div class="box_corner box_lt"></div>
+                    <div class="box_corner box_rt"></div>
+                    <div class="box_corner box_lb"></div>
+                    <div class="box_corner box_rb"></div>
+                </div>
+                <div class="per_cha fr">
+                	<a href="javascript:jobMgmtPop();" class="per">Person in charge item</a>
+<!--                 	<a href="javascript:fnOzTest();" class="per">Person in charge item</a> -->
+                	<div class="rBan_b">
+	                    <a href="javascript:openBoard('qna');" class="qa_ban fl">Q&A</a>
+	                    <a href="javascript:openBoard('faq');" class="faq_ban fr">FAQ</a>
+	                </div>
+	                <div class="clear"></div>
+                </div>
+            </div>
+            <div class="clear"></div>
+            <!-- 
+            <div class="div_box ban_area">
+            	<div class="ban_frame">
+                	<input type="button" value="previous" class="move_btn ban_prv"/>
+	                <ul class="assort_ban">
+	                    <li class="as_ban01"><a href="http://www.forcs.com/" target="_blank"><img src="images/main/ban01.jpg" alt="" /></a></li>
+	                    <li class="as_ban02"><a href="http://www.forcs.com/?lang=ja" target="_blank"><img src="images/main/ban02.jpg" alt="" /></a></li>
+	                    <li class="as_ban03"><a href="http://www.forcs.com/?lang=en" target="_blank"><img src="images/main/ban03.jpg" alt="" /></a></li>
+	                    <li class="as_ban04"><a href="http://www.apple.com/kr/" target="_blank"><img src="images/main/ban04.jpg" alt="" /></a></li>
+	                    <li class="as_ban05"><a href="http://www.hncis.co.kr/" target="_blank"><img src="images/main/ban05.jpg" alt="" /></a></li>
+	                </ul>
+	                <input type="button" value="next" class="move_btn ban_next"/>
+                </div>
+                <div class="box_corner not_box_lt"></div>
+                <div class="box_corner box_rt"></div>
+                <div class="box_corner box_lb"></div>
+                <div class="box_corner box_rb"></div>
+            </div>
+             -->
+        </div>
+    </form>
+    </div>
+    <div id="footer">COPYRIGHT HUMANN-CIS COMPANY ALL RIGHT RESERVED.</div>
+    <form id="hideForm" name="hideForm" method="post">
+  	  <input type="hidden" id="hid_bod_indx" name="hid_bod_indx"/>
+  	  <input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+  	  
+  	  <input type="hidden" id="OZR_FILE" name="OZR_FILE">
+  	  <input type="hidden" id="hid_cond" name="hid_cond">
+    </form>
+    <form id="approvalForm" name="approvalForm">
+    	<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+    </form>
+    <%=popNotice%>
+    <div id="confirm_pop" style="display:none">
+		<div class="msgBox">
+			<div class="msgBoxIn">
+			    <strong><fmt:message key="msg_cont"/></strong>
+			    <hr> 
+			    <ul>
+			        <li id="confirm_msg" style="height:auto"><fmt:message key="msg_cont"/></li>
+			        <li>
+						<div class="btn_area">
+                           <a href="#" id="pop_yes" class="white_btn22"><span><fmt:message key="conf"/></span></a>
+                           <a href="#" id="pop_no" class="white_btn22"><span><fmt:message key="cncl"/></span></a>
+                       	</div>
+					</li>
+			    </ul>
+			    <div class="boxRound01"><img src="../../images/msgbox/layer_pop_topLeft.gif" alt="" /></div>
+			    <div class="boxRound02"><img src="../../images/msgbox/layer_pop_topRight.gif" alt="" /></div>
+			    <div class="boxRound03"><img src="../../images/msgbox/layer_pop_bottomLeft.gif" alt="" /></div>
+			    <div class="boxRound04"><img src="../../images/msgbox/layer_pop_bottomRight.gif" alt="" /></div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

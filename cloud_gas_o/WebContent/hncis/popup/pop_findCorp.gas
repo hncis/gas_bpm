@@ -1,0 +1,177 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@page import="org.jsoup.safety.Whitelist"%>
+<%@page import="org.jsoup.Jsoup"%>
+<%
+	String ctxPath = request.getContextPath();
+%>
+<!DOCTYPE html>
+<html>
+	<head>
+			<title><fmt:message key="comp_sch"/></title>
+			<meta http-equiv="Content-Type" content="text/html; charset=utf-8">    
+			<meta http-equiv="X-UA-Compatible" content="IE=edge">
+			<script type="text/javascript">
+				var ctxPath = "<%=ctxPath%>";
+			</script>
+			<link rel="stylesheet" type="text/css" media="screen" href="<%=ctxPath%>/script/css/jquery-ui-1.8.18.custom.css" />
+			<link rel="stylesheet" type="text/css" media="screen" href="<%=ctxPath%>/script/css/ui.jqgrid.css" />
+			<link rel="stylesheet" type="text/css" media="screen" href="<%=ctxPath%>/script/css/hncis_common.css" />
+			<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery-1.7.2.min.js"></script>
+			<script type="text/javascript" src="<%=ctxPath%>/script/js/i18n/grid.locale-en.js"></script>
+			<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery.jqGrid.min.js"></script> 
+			<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery-groupTable.js"></script> 
+			<link rel="stylesheet" type="text/css" media="screen" href="<%=ctxPath%>/script/css/jquery.ui.datepicker.css" />
+			<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery.ui.datepicker.js"></script>
+			<script type="text/javascript" src="<%=ctxPath%>/script/js/gas-menu.js"></script>
+			<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery.numeric.min.js"></script>
+			<script type="text/javascript" src="<%=ctxPath%>/script/js/jsonUtil.js"></script>
+			<script type="text/javascript" src="<%=ctxPath%>/script/js/common.js"></script>
+			<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery.blockUI.js"></script>
+			<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery.poshytip.js"></script> 
+			<script type="text/javascript" src="<%=ctxPath%>/script/js/jquery.i18n.properties-1.0.9.js"></script>
+			<link rel="stylesheet" type="text/css" media="screen" href="<%=ctxPath%>/script/tooltip/tip-darkgray.css"/>
+			<link rel="stylesheet" type="text/css" media="screen" href="../../script/css/pop_up.css" />
+	</head>
+	
+	<body>
+		<fmt:setLocale value="${reqLocale}"/>
+		<fmt:setBundle basename="com.hncis.common.message.messages"/>
+		<div class="pop_wrap">
+	    	<div class="pop_header">
+	        	<div class="pop_title">
+	            	<h1><fmt:message key="comp_sch"/></h1>
+	                <a href="javascript:selfClose();" class="pop_close"></a>
+	            </div>
+	        </div>
+	        <div class="pop_header_shadow"></div>
+	        <div class="pop_content">
+	        	<div class="div_box pop_con">
+	            	<form name="testForm" id="testForm">
+			        <div id="contents_wrap" class="any_page">
+			            <div id="contents">
+			            	<div class="btn_area"> 
+								<ul class="btns"> 
+									<li><a href="javascript:doSearch();"><fmt:message key="search"/><span></span></a></li>
+								</ul> 
+							</div> 
+			                <div class="search_area">
+			                	<table>
+			                        <colgroup>
+			                        	<col style="width:60px;" />
+			                            <col style="width:auto;" />
+			                        </colgroup>
+			                        <tbody>
+			                            <tr>
+											<th><fmt:message key="comp_nm"/></th>
+											<td>
+												<input id="key_corp_name" type="text" style="width:200px" onkeyup="enterKey();">
+											</td>
+										</tr>
+			                        </tbody>
+			                    </table>
+			                </div>
+			                <div class="jq_tbl">
+				                <table id="htmlTable" class="scroll"></table>
+								<div id="htmlPager" class="scroll"></div>
+							</div>
+			                <%@ include file="../include/hncis_message.gas"%>
+			            </div>
+			            <div class="clear"></div>
+			        </div>
+			        </form>
+	                <div class="box_corner box_lt"></div>
+	                <div class="box_corner box_rt"></div>
+	                <div class="box_corner box_lb"></div>
+	                <div class="box_corner box_rb"></div>
+	            </div>
+	        </div>
+	    </div>
+	</body>
+</html>
+
+<script type="text/javascript">
+	var params,
+		comboVal,
+		lastsel,
+		fnMerge,
+		gridParam,
+		gridName1 = "htmlTable";
+	var cn = [ '<fmt:message key="comp_nm"/>' // "회사명"
+		      ,'<fmt:message key="comp_code"/>' // "회사코드"
+		      ];
+	var datarow   = {corp_nm:"",corp_cd:""};
+	var cm = [
+		{name:"corp_nm",	index:"corp_nm"	, sortable:false,			formatter:"string",	width:393,	align:"left",	editable:false,	frozen:false},
+		{name:"corp_cd",	index:"corp_cd"	, sortable:false,			formatter:"string",	width:215,	align:"left",	editable:false,	frozen:false, hidden: true}
+	];
+
+	$(document).ready(function(){
+		init();
+	});
+	function init(){
+		var params = {};
+		gridParam = {
+			viewEdit : [{
+				gridName     : gridName1,
+				url          : "/doSearchToEmpty.do",
+				colNames     : cn,
+				colModel     : cm,
+				height       : 230,
+				width		 : 440,
+				rowNum       : 15,
+				rownumbers   : true,
+				multiselect  : false,
+				cellEdit     : false,
+				fnMerge      : false,
+				pager		 : "htmlPager",
+				completeFc   : "fnGridInitCallBack1()",
+				paramJson    : params
+			}]
+		};
+		//common jqGrid call...
+		commonJqGridInit(gridParam);
+		
+		jQuery("#"+gridName1).jqGrid("setGridParam",{
+			ondblClickRow : function(rowid, iRow, iCol, e){
+				if(getColValue("corp_cd", rowid, gridName1) != ""){
+					var corpCd = getColValue("corp_cd", rowid, gridName1);
+					var corpNm = getColValue("corp_nm", rowid, gridName1);
+					
+					opener.corpFindCallBack(corpCd, corpNm);
+					selfClose();
+				}
+			}
+		}).trigger('reloadGrid');
+	}
+	
+	function fnGridInitCallBack1(){
+		addGridRow(15);
+	}
+	
+	function doSearch(){
+		if($("#key_dept_name").val() == ""){
+			alertUI('<fmt:message key="req_ymd"/>');
+			$("#key_dept_name").focus();
+			return;
+		}
+		
+		var params = {
+			corp_nm       : $("#key_corp_name").val()
+		};
+		
+		doCommonSearch("/doSearchCorpNameList.do", util.jsonToString(params), "loadCallBack();", gridName1);
+	}
+	
+	function loadCallBack(){
+		addGridRow();
+	}
+	
+	function retrieve(gubn){
+		switch(gubn){
+			case "search" :
+				doSearch();
+				break;
+		}
+	}
+</script>

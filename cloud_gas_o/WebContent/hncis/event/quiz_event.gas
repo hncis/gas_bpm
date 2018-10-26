@@ -1,0 +1,69 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ page import="com.hncis.common.util.*"%>
+<%@ include file="/hncis/include/common_sub.gas"%>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>QUIZ EVENT</title>
+		<script>
+			function fnSetDocumentReady(){}
+		</script>
+		<!-- <script type="text/javascript" src="./js/xbv01.js"></script>  -->
+		<style type="text/css">
+			.event_wrap{padding-top:182px; padding-bottom:30px !important; background:#67921d url(../../images/hncis_event/comment_bg.png) 0 0 no-repeat;}
+			.event_wrap.quiz_event{background:#67921d url(../../images/hncis_event/quiz_bg.png) 0 0 no-repeat;}
+			.event_wrap h2{position:absolute; left:-9999px; width:0; height:0; font-size:0;}
+			.event_wrap .event_info{margin-left:89px; font-size:16px; color:#fff;}
+			.event_con{width:1096px; margin: 35px auto 0;}
+			.event_con .quiz_header{width:1056px; height:35px; padding-left:40px; padding-top:16px; background: url(../../images/hncis_event/quiz_header_bg.png) 0 0 no-repeat; font-size:18px;}
+			.event_con .quiz_con{width:100%; background: url(../../images/hncis_event/quiz_box_bg.png) 0 100% no-repeat;}
+			.event_con .quiz_con>li{position:relative; margin:0 40px; padding:26px 0 40px; background: url(../../images/hncis_event/quiz_dot.gif) 0 0 repeat-x;}
+			.event_con .quiz_con>li:first-child{padding:26px 0 30px; background:none;}
+			.event_con .quiz_con>li span{display:inline-block; font-size:19px; color:#222;}
+			.event_con .quiz_con>li span.quiz_num{position:absolute; top:23px; left:0; margin-right:10px; font-size:23px; color:#67921d;}
+			.event_con .quiz_con>li span.quiz_txt{margin-left:45px;}
+			.event_con .quiz_con>li ul{padding:0 45px; margin-top:20px; font-size:18px; overflow:hidden;}
+			.event_con .quiz_con>li ul>li{float:left; width:33%;}
+			.event_con .quiz_con>li ul>li input,.event_con .quiz_con>li ul>li span{vertical-align:middle;}
+			.event_con .quiz_con>li ul>li span{font-family:hmcL, 'ModernH-EcoLight', Verdana, sans-serif; font-size:15px; word-spacing: -1px;}
+			.event_con .quiz_btn_area {text-align:center; margin-top:20px;}
+			.event_con .quiz_btn{width:260px; height:66px; border:none; background: url(../../images/hncis_event/quiz_btn_bg.png) 0 0 no-repeat; font-size:30px; font-family:hmcM, 'ModernH-Medium', Verdana, sans-serif;}
+		</style>
+		<script type="text/javascript" src='./js/quiz_event.js'></script>
+	</head>
+	<body>
+		<div id="wrap">
+			<%@ include file="../include/hncis_header.gas"%>
+	        <div id="contents_wrap" class="event_wrap quiz_event">
+	            <h2>General affairs support center open celebration GASC Quiz Event</h2>
+	        	<p class="event_info">Deixe seu comentário sobre o GASC e concorra a uma Brinde.</p>
+	            <div class="event_con">
+	            	<p class="quiz_header">Responda corretamente a pergunta abaixo:</p>
+	                <ul class="quiz_con" id="quiz_area">
+<!-- 	                	<li> -->
+<!-- 	                    	<span class="quiz_num">Q1.</span><span class="quiz_txt">Qual departamento você deve procurar para alterar os seus dados cadastrais (endereço, nome, etc.)?</span> -->
+<!-- 	                        <ul> -->
+<!-- 	                        	<li><label><input type="radio" name="quiz1" /> <span>General Affairs – Segurança Patrimonial</span></label></li> -->
+<!-- 	                            <li><label><input type="radio" name="quiz1" /> <span>Recursos Humanos</span></label></li> -->
+<!-- 	                            <li><label><input type="radio" name="quiz1" /> <span>General Affairs</span></label></li> -->
+<!-- 	                        </ul> -->
+<!-- 	                    </li> -->
+<!-- 	                    <li> -->
+<!-- 	                    	<span class="quiz_num">Q2.</span><span class="quiz_txt">Qual é tempo de reposta do departamento de General Affairs para as informações/alterações solicitadas para o serviço de Transporte Fretado?</span> -->
+<!-- 	                        <ul> -->
+<!-- 	                        	<li><label><input type="radio" name="quiz2" /> <span>30 dias de antecedência</span></label></li> -->
+<!-- 	                            <li><label><input type="radio" name="quiz2" /> <span>30 dias de antecedência</span></label></li> -->
+<!-- 	                            <li><label><input type="radio" name="quiz2" /> <span>30 dias de antecedência</span></label></li> -->
+<!-- 	                        </ul> -->
+<!-- 	                    </li> -->
+	                </ul>
+	                <p class="quiz_btn_area"><input type="button" class="quiz_btn" value="Submit" onclick="doSave();"/></p>
+	          </div>
+	        </div>
+	        <form id="hideForm" name="hideForm" method="post">
+				<input type="hidden" id="hid_csrfToken" name="hid_csrfToken">
+			</form>
+	    </div>
+	</body>
+</html>
