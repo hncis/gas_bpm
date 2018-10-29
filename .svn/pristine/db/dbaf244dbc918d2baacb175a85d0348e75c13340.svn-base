@@ -1,5 +1,0 @@
-#TEST(MSSQL)
-jdbc.driverClassName=core.log.jdbc.driver.Mssql2005Driver
-jdbc.url=jdbc:sqlserver://10.127.3.101:1433;database=gasc
-jdbc.username=Z2FzY3dhcw==
-jdbc.password=UEBzc3cwcmQ=
