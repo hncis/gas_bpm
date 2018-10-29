@@ -1,0 +1,26 @@
+.portlet-font { color:black; font-size:12px; }
+.portlet-font-dim { color:#aaaaaa; font-size:12px; }
+
+.portlet-msg-status { }
+.portlet-msg-info { }
+.portlet-msg-error { }
+.portlet-msg-alert { }
+.portlet-msg-success { }
+
+.portlet-section-header { font-size:32px;font-weight:normal;background-color:#752b19;color:#ffd3c8;padding:6; }
+.portlet-section-body { background-color:f2f2f2; }
+.portlet-section-alternate { }
+.portlet-section-selected { }
+.portlet-section-subheader { background-color:#2b4719;font-family:verdana;font-size:32;font-weight:bold;color:#ffff66;padding:6; } 
+.portlet-section-footer { }
+.portlet-section-text { color:#333333; font-size:12px;background-color:white; }
+
+.portlet-menu { }
+.portlet-menu-item { }
+.portlet-menu-item-selected { }
+.portlet-menu-item-hover { }
+.portlet-menu-item-hover-selected { }
+.portlet-menu-cascade-item { }
+.portlet-menu-cascade-item-selected { }
+.portlet-menu-description { }
+.portlet-menu-caption { }

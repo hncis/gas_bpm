@@ -1,0 +1,100 @@
+@font-face {
+  font-family: 'linecons';
+  src: url('../fonts/linecons.eot?74014693');
+  src: url('../fonts/linecons.eot?74014693#iefix') format('embedded-opentype'),
+       url('../fonts/linecons.woff?74014693') format('woff'),
+       url('../fonts/linecons.ttf?74014693') format('truetype'),
+       url('../fonts/linecons.svg?74014693#linecons') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'linecons';
+    src: url('../font/linecons.svg?74014693#linecons') format('svg');
+  }
+}
+*/
+ 
+ [class^="icon-"]:before, [class*=" icon-"]:before {
+  font-family: "linecons";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+ 
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  margin-right: .2em;
+  text-align: center;
+  /* opacity: .8; */
+ 
+  /* For safety - reset parent styles, that can break glyph codes*/
+  font-variant: normal;
+  text-transform: none;
+     
+  /* fix buttons height, for twitter bootstrap */
+  line-height: 1em;
+ 
+  /* Animation center compensation - margins should be symmetric */
+  /* remove if not needed */
+  margin-left: .2em;
+ 
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
+ 
+  /* Uncomment for 3D effect */
+  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+}
+ 
+.icon-music:before { content: '\e800'; } /* '' */
+.icon-search:before { content: '\e801'; } /* '' */
+.icon-mail:before { content: '\e802'; } /* '' */
+.icon-heart:before { content: '\e803'; } /* '' */
+.icon-star:before { content: '\e804'; } /* '' */
+.icon-user:before { content: '\e805'; } /* '' */
+.icon-videocam:before { content: '\e806'; } /* '' */
+.icon-camera:before { content: '\e807'; } /* '' */
+.icon-photo:before { content: '\e808'; } /* '' */
+.icon-attach:before { content: '\e809'; } /* '' */
+.icon-lock:before { content: '\e80a'; } /* '' */
+.icon-eye:before { content: '\e80b'; } /* '' */
+.icon-tag:before { content: '\e80c'; } /* '' */
+.icon-thumbs-up:before { content: '\e80d'; } /* '' */
+.icon-pencil:before { content: '\e80e'; } /* '' */
+.icon-comment:before { content: '\e80f'; } /* '' */
+.icon-location:before { content: '\e810'; } /* '' */
+.icon-cup:before { content: '\e811'; } /* '' */
+.icon-trash:before { content: '\e812'; } /* '' */
+.icon-doc:before { content: '\e813'; } /* '' */
+.icon-database:before { content: '\e814'; } /* '' */
+.icon-key:before { content: '\e815'; } /* '' */
+.icon-megaphone:before { content: '\e816'; } /* '' */
+.icon-graduation-cap:before { content: '\e817'; } /* '' */
+.icon-fire:before { content: '\e818'; } /* '' */
+.icon-paper-plane:before { content: '\e819'; } /* '' */
+.icon-cloud:before { content: '\e81a'; } /* '' */
+.icon-globe:before { content: '\e81b'; } /* '' */
+.icon-inbox:before { content: '\e81c'; } /* '' */
+.icon-cd:before { content: '\e81d'; } /* '' */
+.icon-mobile:before { content: '\e81e'; } /* '' */
+.icon-desktop:before { content: '\e81f'; } /* '' */
+.icon-tv:before { content: '\e820'; } /* '' */
+.icon-lightbulb:before { content: '\e821'; } /* '' */
+.icon-clock:before { content: '\e822'; } /* '' */
+.icon-sound:before { content: '\e823'; } /* '' */
+.icon-calendar:before { content: '\e824'; } /* '' */
+.icon-params:before { content: '\e825'; } /* '' */
+.icon-cog:before { content: '\e826'; } /* '' */
+.icon-note:before { content: '\e827'; } /* '' */
+.icon-beaker:before { content: '\e828'; } /* '' */
+.icon-truck:before { content: '\e829'; } /* '' */
+.icon-money:before { content: '\e82a'; } /* '' */
+.icon-food:before { content: '\e82b'; } /* '' */
+.icon-shop:before { content: '\e82c'; } /* '' */
+.icon-diamond:before { content: '\e82d'; } /* '' */
+.icon-t-shirt:before { content: '\e82e'; } /* '' */
+.icon-wallet:before { content: '\e82f'; } /* '' */

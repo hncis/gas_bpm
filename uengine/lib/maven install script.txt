@@ -1,0 +1,20 @@
+
+- 리눅스 계열 mvn 명령어 -
+mvn install:install-file -Dfile=metaworks.jar -DgroupId=org.uengine -DartifactId=metaworks -Dversion=1.0 -Dpackaging=jar
+mvn install:install-file -Dfile=bpel.jar -DgroupId=bpel -DartifactId=bpel -Dversion=1.0 -Dpackaging=jar
+mvn install:install-file -Dfile=j_uds_lib.jar -DgroupId=j_uds_lib -DartifactId=j_uds_lib -Dversion=1.0 -Dpackaging=jar
+mvn install:install-file -Dfile=kandula_for_uengine.jar -DgroupId=org.uengine -DartifactId=kandula_for_uengine -Dversion=1.0 -Dpackaging=jar
+mvn install:install-file -Dfile=wsif.jar -DgroupId=wsif -DartifactId=wsif -Dversion=1.0 -Dpackaging=jar
+mvn install:install-file -Dfile=twister-engine.jar -DgroupId=twister-engine -DartifactId=twister-engine -Dversion=1.0 -Dpackaging=jar
+mvn install:install-file -Dfile=jazzlib.jar -DgroupId=jazzlib -DartifactId=jazzlib -Dversion=1.0 -Dpackaging=jar
+mvn install:install-file -Dfile=ojdbc7.jar -DgroupId=com.oracle -DartifactId=ojdbc7 -Dversion=12.1.0.1 -Dpackaging=jar
+
+- windows 계열 mvn 명령어 -
+mvn install:install-file "-Dfile=metaworks.jar" "-DgroupId=org.uengine" "-DartifactId=metaworks" "-Dversion=1.0" "-Dpackaging=jar"
+mvn install:install-file "-Dfile=bpel.jar" "-DgroupId=bpel" "-DartifactId=bpel" "-Dversion=1.0" "-Dpackaging=jar"
+mvn install:install-file "-Dfile=j_uds_lib.jar" "-DgroupId=j_uds_lib" "-DartifactId=j_uds_lib" "-Dversion=1.0" "-Dpackaging=jar"
+mvn install:install-file "-Dfile=kandula_for_uengine.jar" "-DgroupId=org.uengine" "-DartifactId=kandula_for_uengine" "-Dversion=1.0" "-Dpackaging=jar"
+mvn install:install-file "-Dfile=wsif.jar" "-DgroupId=wsif" "-DartifactId=wsif" "-Dversion=1.0" "-Dpackaging=jar"
+mvn install:install-file "-Dfile=twister-engine.jar" "-DgroupId=twister-engine" "-DartifactId=twister-engine" "-Dversion=1.0" "-Dpackaging=jar"
+mvn install:install-file "-Dfile=jazzlib.jar" "-DgroupId=jazzlib" "-DartifactId=jazzlib" "-Dversion=1.0" "-Dpackaging=jar"
+mvn install:install-file "-Dfile=ojdbc7.jar" "-DgroupId=com.oracle" "-DartifactId=ojdbc7" "-Dversion=12.1.0.1" "-Dpackaging=jar"

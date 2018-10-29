@@ -1,0 +1,190 @@
+A:LINK		{text-decoration:none; color:#003471}
+A:ALINK		{text-decoration:none; color:#003471}
+A:visited	{text-decoration:none; color:#003471} 
+A:hover		{text-decoration:underline ;}
+
+BODY{
+    SCROLLBAR-FACE-COLOR: #E8E8E8; 
+ 	SCROLLBAR-HIGHLIGHT-COLOR: #ffffff; 
+ 	SCROLLBAR-SHADOW-COLOR: #ffffff; 
+ 	SCROLLBAR-3DLIGHT-COLOR: #D4D4D4; 
+ 	SCROLLBAR-ARROW-COLOR: #8D8D8D; 
+ 	SCROLLBAR-TRACK-COLOR: #F2F2F2; 
+ 	SCROLLBAR-DARKSHADOW-COLOR: #8D8D8D
+}
+
+td,input,textarea,select { font-size: 9pt; }
+
+
+img { border:0px; }
+
+.input_w01 { border:#cccccc 1px solid; font:12px #666666; color: #3d3d3d; background-color: #ffffff; }
+.input_blue { color: #003399; background-color:white; border:#777777 1px solid; font:11px;}
+
+
+.font_small { font-size: 8pt; }
+.font_weight { font-weight: bold }
+.font_large_weight { font-size: 10pt;font-weight: bold }
+.font_panel_title { font-size: 10pt;font-weight: bold }
+ 
+ 
+.bgcolor_none { background-color :#FFFFFF }
+.bgcolor_light_gray { background-color :#F7F7F7 }
+.bgcolor_gray { background-color :#c7c7c7 }
+.bgcolor_dark_gray { background-color :#a7a7a7 }
+
+.bgcolor_subhead { background-color :#EFEFEF }
+.bgcolor_dark_blue { background-color :#8AB874 }
+.bgcolor_blue { background-color :#D8EFF7 }
+.bgcolor_head { background-color :#DDE6DC;}
+.bgcolor_head_upperline { background-color :#CCCCCC;}
+.bgcolor_head_underline { background-color :#D9D9D9;}
+.bgcolor_paging { background-color :#F1F1F1;}
+
+.bgcolor_table_grid { background-color :#afafaf;}
+
+.border_scroll_panel_outer { border-top:1px solid #f0f0f0;
+							border-left:1px solid #f0f0f0;
+							border-right:1px solid #999999;
+							border-bottom:1px solid #999999; }
+
+.border_scroll_panel_inner { border-top:1px solid #999999;
+							border-left:1px solid #999999;
+							border-right:1px solid #f0f0f0;
+							border-bottom:1px solid #f0f0f0; }
+							
+.path_underline { background-color :#E7E7E7; height:1px }
+.popup_upperline { background-color :#0E8AB8; height:1px }
+.popup_underline { background-color :#B7B7B7; height:1px }
+
+.color_basic { color:#393939 }
+.color_light_basic { color:#3D3D3D }
+.color_weight { color:#5A5A5A }
+.color_head{ color:#003399 }
+.color_dark_blue { color:#CCFFFF }
+.color_choiceness { color:#999999 }
+
+/*****************************************
+	portal
+	
+******************************************/
+.portal_bar_box {border: solid; border-color: #c4c4c4 #c4c4c4 #DEDEDE; border-width: 1px 1px 1px 1px}
+
+.portal_title {background-repeat: repeat-x; border-color: C6C6C6; height:20px;}
+
+.portal_bar_title {font-weight: bold; color: #007FB2;}
+
+/******************************************
+   Calendar
+*******************************************/
+.calendar_back {background-color: #DCECCD}
+.input_calendar {BORDER-RIGHT: #777777 1px solid; BORDER-TOP: #777777 1px solid; FONT: 11px; BORDER-LEFT: #777777 1px solid; COLOR: #4c4c4c; BORDER-BOTTOM: #777777 1px solid; BACKGROUND-COLOR: #ffffff}
+.calendar_button {color: #8AB874}
+.calendar_txt {color: #003399; font-size: 9pt}
+.calendar_c_txt {font-size: 8pt; color: #003471;}
+.calendar_txt_sun {color: #B0585B; font-size: 8pt}
+.calendar_txt_mon {color: #656565; font-size: 8pt}
+.calendar_goToday {color: #4A4A4A}
+.calendar_today {color: #000000; font-weight:bold; }
+.calendar_box_top {background-color: #CFCFCF}
+.calendar_box_bottom {color: #3d3d3d; background-color: #F2F2F2}
+.calendar_box_txt {color: #3D3D3D; background-color: #Ffffff}
+
+/***************************************
+	Menu
+****************************************/
+
+.color_gw_menu_bg {color:#3D3D3D;}
+.color_gw_menu_bg_mouseover { text-decoration: underline; color:#3D3D3D;}
+.color_gw_menu_child_bg {background-image: url(/html/uengine-web/images/img_menuback_dot_g.gif); background-repeat: repeat; height: auto } 
+.color_gw_menu_border { background-color:#D9D9D9; }
+.border_menu_child {border-top:1px solid #dadada; border-bottom:0px solid #dadada;}
+
+/***************************************
+	GroupBinder
+****************************************/
+.groupbinder { background-color:#c4d4e2; }
+.groupbinder_head { border:1px ridge ;cursor:hand;background-color:#c4d4e2; }
+.groupbinder_head_msover { background-color:#d4e4f2; font-weight:bold;
+							border-top:1px solid #f0f0f0;
+							border-left:1px solid #f0f0f0;
+							border-right:1px solid #999999;
+							border-bottom:1px solid #999999;cursor:hand; }
+.groupbinder_head_msdown { border-top:1px solid #999999;
+							border-left:1px solid #999999;
+							border-right:1px solid #f0f0f0;
+							border-bottom:1px solid #f0f0f0;cursor:hand; }
+
+.groupbinder_body { background-color:#ffffff;
+							border-top:1px solid #999999;
+							border-left:1px solid #999999;
+							border-right:1px solid #f0f0f0;
+							border-bottom:1px solid #f0f0f0; }
+
+
+/***************************************
+	Form Editor
+****************************************/
+.tab_container { padding-left:1px;vertical-align:bottom;height:20px; }
+.tab_title { padding:4px;padding-bottom:0px; }
+.tab_selected { color:#005093;cursor:default; }
+.tab_unselected , .tab_mouseover { }
+.tab_unselected { color:#636363;cursor:hand; }
+.tab_mouseover { text-decoration:underline;cursor:hand; }
+
+
+/***************************************
+	Form
+****************************************/
+.form_sheet { background-color:#ffffff; padding:20px;margin:20px;
+		border:1px solid #cecece;border-bottom:2px solid #9e9e9e;border-right:2px solid #9e9e9e;}
+.form_sheet_print { background-color:#ffffff; padding:20px;margin:20px;
+		border:1px solid #cecece;border-bottom:2px solid #9e9e9e;border-right:2px solid #9e9e9e;}
+.form_title { font-size:24px;font-weight:bold;text-align:center; }
+
+.field_title { font-weight:bold;text-align:center;color:black; }
+.field_name { font-weight:bold;color:#666699;font-family:verdana;width:150px; }
+.field_attriute { font-weight:bold;color:#666699;font-family:verdana;width:70px; }
+.field_label { width:100px; }
+.color_grid_border { border-color:#aeaebe; } 
+.grid_table { background-color:#aeaebe; }
+.grid_table TD { background-color:white; }
+
+.simpleText { border:1px solid #afafdd; }
+.largeText { border:1px solid #afafdd;width:100%; }
+.readOnlyField { color:#999999; }
+
+.body_field_name { font-weight:bold;color:#666699;font-family:verdana;border:0px;width:120px;cursor:default; }
+
+.color_1 { color:#cc7500; }
+
+
+.label { color:#454545;font-weight:bold; }
+.label_2 { color:#000000;font-size:14px;font-weight:bold;line-height:30px; }
+
+
+/***************************************
+	Form Flow
+****************************************/
+.appr_flow_edit_pane { padding:6px; background-color:#ffffff; }
+.appr_flow_pane { background-color:#ffffff;text-align:center;padding:10px; }
+.appr_flow_parallelFlow 
+.appr_flow_parallelCell { padding:4px; }
+.appr_flow_parallelLane { background-color:#ffffff;padding:4px; }
+
+.appr_flow_signer_head { background-color:#efefef;border-bottom:1px solid #a2a2aa; }
+.appr_flow_signer { cursor:default;border:1px solid #a2a2aa; }
+.appr_flow_signer TD { padding:2px;text-align:center; }
+.appr_flow_signer_selected { background-color:orange;cursor:default;border:2px solid red; }
+.appr_flow_signer_selected TD { padding:2px;text-align:center; }
+.appr_flow_date { font-size:11px;color:#696969;height:20px; }
+
+.appr_flow_transition , .appr_flow_transition_over , .appr_flow_transition_down { cursor:default;color:#aeaeff; }
+.appr_flow_transition { border:0px solid #ffffff;background-color:transparent; }
+.appr_flow_transition_over { border:0px solid #fade00;background-color:#fade00; }
+.appr_flow_transition_down { border:2px solid orange;background-color:#fade00; }
+.appr_flow_transition_selected { border:2px solid red;background-color:#ffae00; }
+
+.appr_flow_box { border:1px dotted #AEAEAE; }
+.appr_flow_box_cell { padding:0px; }
+.appr_flow_box_lane { padding-top:4px; }

@@ -1,0 +1,288 @@
+<list>
+<!-- flowControl -->
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.flowcontrol</group>
+    <activityTypeClass>org.uengine.kernel.SequenceActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.flowcontrol</group>
+    <activityTypeClass>org.uengine.kernel.AllActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.flowcontrol</group>
+    <activityTypeClass>org.uengine.kernel.LoopActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>  
+    <group>$activitytypes.groups.flowcontrol</group>
+    <activityTypeClass>org.uengine.kernel.SwitchActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+    <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.flowcontrol</group>
+    <activityTypeClass>org.uengine.kernel.ScopeActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>  
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.flowcontrol</group>
+    <activityTypeClass>org.uengine.kernel.ReferenceBlockActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>  
+  
+<!-- humanwork -->
+  <org.uengine.processdesigner.ActivityTypeDescriptor>  
+    <group>$activitytypes.groups.humanwork</group>
+    <activityTypeClass>org.uengine.kernel.HumanActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.humanwork</group>
+    <activityTypeClass>org.uengine.kernel.FormActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+  <!-- 
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.humanwork</group>
+    <activityTypeClass>org.uengine.kernel.CirculationFormActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.humanwork</group>
+    <activityTypeClass>org.uengine.kernel.OfficeDocumentActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+     -->
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.humanwork</group>
+    <activityTypeClass>org.uengine.kernel.URLActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+<!-- control -->
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.control</group>
+    <activityTypeClass>org.uengine.kernel.SubProcessActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.control</group>
+    <activityTypeClass>org.uengine.kernel.EndActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.control</group>
+    <activityTypeClass>org.uengine.kernel.WaitActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.control</group>
+    <activityTypeClass>org.uengine.kernel.BackActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.control</group>
+    <activityTypeClass>org.uengine.kernel.EmptyActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.control</group>
+    <activityTypeClass>org.uengine.kernel.ScriptActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.control</group>
+    <activityTypeClass>org.uengine.kernel.AssignActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+    <org.uengine.processdesigner.ActivityTypeDescriptor>  
+    <group>$activitytypes.groups.control</group>
+    <activityTypeClass>org.uengine.kernel.StatusReportActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+    <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.control</group>
+    <activityTypeClass>org.uengine.kernel.MappingActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.control</group>
+    <activityTypeClass>org.uengine.kernel.FlagActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.control</group>
+    <activityTypeClass>org.uengine.kernel.ExternalAppInvocationActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.control</group>
+	<name>System Wait</name>
+    <activityTypeClass>org.uengine.kernel.SystemActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.control</group>
+	<name>Cancelling Discriminator</name>
+    <activityTypeClass>kr.go.nyj.components.activity.CancellingDiscriminatorActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.control</group>
+	<name>SubProcess Attatch Event Handler</name>
+    <activityTypeClass>kr.go.nyj.components.activity.SubProcessAttatchEventHandler</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.control</group>
+	<name>SplitCommaVariable</name>
+    <activityTypeClass>kr.go.nyj.components.activity.SplitCommaVariable</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+<!-- approval -->  
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.approval</group>
+    <activityTypeClass>org.uengine.kernel.FormApprovalLineActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+ <!--
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.approval</group>
+    <activityTypeClass>org.uengine.kernel.HumanApprovalLineActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+    --> 
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.approval</group>
+    <activityTypeClass>org.uengine.kernel.FormApprovalActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+
+<!-- messaging -->
+  <!--  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.messaging</group>
+    <activityTypeClass>org.uengine.kernel.LocalEMailActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.messaging</group>
+    <activityTypeClass>org.uengine.kernel.UrgeEMailActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.messaging</group>
+    <activityTypeClass>org.uengine.kernel.LocalSMSActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  -->
+<!-- database -->
+  <!--
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.database</group>
+    <activityTypeClass>org.uengine.kernel.MetaworksActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  --> 
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.database</group>
+    <activityTypeClass>org.uengine.kernel.SQLActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+    <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.database</group>
+    <activityTypeClass>org.uengine.kernel.DatabaseMappingActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  <!-- 
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.database</group>
+    <activityTypeClass>org.uengine.kernel.TelnetNormalActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+   --> 
+<!-- webService -->
+    <!--  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.webservices</group>
+    <activityTypeClass>org.uengine.kernel.HTTPInvocationActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.webservices</group>
+    <activityTypeClass>org.uengine.kernel.JMSQueueActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.webservices</group>
+    <activityTypeClass>org.uengine.kernel.DiscoverActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.webservices</group>
+    <activityTypeClass>org.uengine.kernel.WebServiceActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.webservices</group>
+    <activityTypeClass>org.uengine.kernel.ReceiveActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  --> 
+<!-- filehandling -->
+
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.filehandling</group>
+    <activityTypeClass>org.uengine.kernel.FTPActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.filehandling</group>
+    <activityTypeClass>org.uengine.kernel.FileGenerateActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+
+ <!-- automation 
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>Automation</group>
+    <activityTypeClass>org.uengine.kernel.SoundPlayActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>Automation</group>
+    <activityTypeClass>org.uengine.kernel.ExtSoundPlayActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+-->
+
+  <!-- Kriss Activities -->  
+<!--   <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.krisshumanwork</group>
+    <activityTypeClass>com.kriss.activity.KrissHumanActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.krisshumanwork</group>
+    <activityTypeClass>com.kriss.activity.KrissApprovalLineActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.krisssystem</group>
+    <activityTypeClass>com.kriss.activity.KrissFindOrgRoleActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.krisssystem</group>
+    <activityTypeClass>com.kriss.activity.KrissFindUserNameByRoleActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.krissevent</group>
+    <activityTypeClass>com.kriss.activity.KrissEventHandlerActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.krissevent</group>
+    <activityTypeClass>com.kriss.activity.KrissEventHumanActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor> -->
+	
+  <!-- Hncis Activities -->    
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.hncishumanwork</group>
+    <activityTypeClass>kr.co.hncis.components.activity.HncisHumanActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  <org.uengine.processdesigner.ActivityTypeDescriptor>
+    <group>$activitytypes.groups.hncishumanwork</group>
+    <activityTypeClass>kr.co.hncis.components.activity.HncisApprovalLineActivity</activityTypeClass>
+  </org.uengine.processdesigner.ActivityTypeDescriptor>
+  
+</list>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<list>
+	<!-- SequenceGeneraterTransformer -->
+	<com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+		<group>Database</group>
+		<transformerTypeClass>org.uengine.processdesigner.mapper.transformers.SequenceGeneratorTransformer</transformerTypeClass>
+	</com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+
+	<!-- NumberTransformer -->
+	<com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+		<group>Math</group>
+		<transformerTypeClass>org.uengine.processdesigner.mapper.transformers.NumberTransformer</transformerTypeClass>
+	</com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+
+	<!-- MaxMinTransformer -->
+	<com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+		<group>Math</group>
+		<transformerTypeClass>org.uengine.processdesigner.mapper.transformers.MaxTransformer</transformerTypeClass>
+	</com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+	
+	<com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+		<group>Math</group>
+		<transformerTypeClass>org.uengine.processdesigner.mapper.transformers.MinTransformer</transformerTypeClass>
+	</com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+
+	<com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+		<group>Math</group>
+		<transformerTypeClass>org.uengine.processdesigner.mapper.transformers.SumTransformer</transformerTypeClass>
+	</com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+
+	<com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+		<group>Math</group>
+		<transformerTypeClass>org.uengine.processdesigner.mapper.transformers.FloorTransformer</transformerTypeClass>
+	</com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+
+	<com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+		<group>Math</group>
+		<transformerTypeClass>org.uengine.processdesigner.mapper.transformers.RoundTransformer</transformerTypeClass>
+	</com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+
+	<com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+		<group>Math</group>
+		<transformerTypeClass>org.uengine.processdesigner.mapper.transformers.CeilTransformer</transformerTypeClass>
+	</com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+
+	<com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+		<group>Math</group>
+		<transformerTypeClass>org.uengine.processdesigner.mapper.transformers.AbsTransformer</transformerTypeClass>
+	</com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+	
+	<!-- StringTransformer -->
+	<com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+		<group>String</group>
+		<transformerTypeClass>org.uengine.processdesigner.mapper.transformers.ConcatTransformer</transformerTypeClass>
+	</com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+	
+	<!-- StringTransformer -->
+	<com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+		<group>String</group>
+		<transformerTypeClass>org.uengine.processdesigner.mapper.transformers.ReplaceTransformer</transformerTypeClass>
+	</com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+
+	<!-- StringTransformer -->
+	<com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+		<group>String</group>
+		<transformerTypeClass>org.uengine.processdesigner.mapper.transformers.NumberFormatTransformer</transformerTypeClass>
+	</com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+
+	<!-- ValidatorTransformer -->
+	<com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+		<group>Validator</group>
+		<transformerTypeClass>org.uengine.processdesigner.mapper.transformers.NotNullValidatorTransformer</transformerTypeClass>
+	</com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+
+	<!-- ValidatorTransformer -->
+	<com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+		<group>Validator</group>
+		<transformerTypeClass>org.uengine.processdesigner.mapper.transformers.SizeValidatorTransformer</transformerTypeClass>
+	</com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+
+	<!-- ValidatorTransformer -->
+	<com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+		<group>Validator</group>
+		<transformerTypeClass>org.uengine.processdesigner.mapper.transformers.RegularExpValidatorTransformer</transformerTypeClass>
+	</com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+	
+	<com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+		<group>Resolver</group>
+		<transformerTypeClass>org.uengine.processdesigner.mapper.transformers.BeanValueTransformer</transformerTypeClass>
+	</com.webdeninteractive.xbotts.Mapping.maptool.TransformerTypeDescriptor>
+	
+</list>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<settings>
+		<setting name="cacheEnabled" value="true" />
+		<setting name="lazyLoadingEnabled" value="true" />
+		<setting name="multipleResultSetsEnabled" value="true" />
+		<setting name="useColumnLabel" value="true" />
+		<setting name="useGeneratedKeys" value="false" />
+		<setting name="autoMappingBehavior" value="PARTIAL" />
+		<setting name="autoMappingUnknownColumnBehavior" value="WARNING" />
+		<setting name="defaultExecutorType" value="SIMPLE" />
+		<setting name="defaultStatementTimeout" value="25" />
+		<setting name="defaultFetchSize" value="100" />
+		<setting name="safeRowBoundsEnabled" value="false" />
+		<setting name="mapUnderscoreToCamelCase" value="false" />
+		<setting name="localCacheScope" value="SESSION" />
+		<setting name="jdbcTypeForNull" value="OTHER" />
+		<setting name="lazyLoadTriggerMethods" value="equals,clone,hashCode,toString" />
+	</settings>
+
+	<typeAliases>
+	<!-- global -->
+		<typeAlias type="java.lang.String" alias="String" />
+		<typeAlias type="java.lang.Integer" alias="Integer" />
+		<typeAlias type="org.uengine.web.service.vo.DefaultVO" alias="DefaultVO" />
+	<!-- login -->
+		<typeAlias type="org.uengine.web.login.vo.LoginVO" alias="LoginVO" />
+	<!-- monitoring -->
+		<typeAlias type="org.uengine.web.monitoring.vo.MonitoringVO" alias="MonitoringVO" />
+	<!-- organization -->
+		<typeAlias type="org.uengine.kernel.RoleMapping" alias="RoleMapping" />
+		<typeAlias type="org.uengine.web.organization.vo.RoleVO" alias="RoleVO" />
+		<typeAlias type="org.uengine.web.organization.vo.OrganizationVO" alias="OrganizationVO" />
+		<typeAlias type="org.uengine.web.organization.vo.UserVO" alias="UserVO" />
+	<!-- processmanager -->
+		<typeAlias type="org.uengine.web.processmanager.vo.ProcessDefinitionVO" alias="ProcessDefinitionVO" />
+		<typeAlias type="org.uengine.web.processmanager.vo.ProcessInstanceVO" alias="ProcessInstanceVO" />
+	<!-- bpmservice -->
+		<typeAlias type="org.uengine.web.worklist.vo.MyWorkVO" alias="MyWorkVO" />
+	<!-- tree -->
+		<typeAlias type="org.uengine.web.process.vo.TreeVO" alias="TreeVO" />
+	</typeAliases>
+
+
+</configuration>  

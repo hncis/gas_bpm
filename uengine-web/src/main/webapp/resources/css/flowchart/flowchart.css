@@ -1,0 +1,200 @@
+.flowchart-drawarea {
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: -1;
+}
+
+.flowchart-subprocess-cover {
+	margin: 20px 0px;
+	padding: 5px 0px;
+	border: 2px solid #555555;
+	text-align: center;
+}
+
+.flowchart-activity-complex {
+	border:1px dotted #dddddd;
+}
+
+.flowchart-activity-condition {}
+
+.flowchart-complex-box {
+	margin:0px;
+	padding:0px;
+}
+
+.flowchart-line-vertical {
+	width: 2px;
+	background-color: #959595;
+	height: 100%;
+	margin: 0px;
+	padding: 0px;
+}
+
+.flowchart-line-horizontal {
+	background-color: #959595;
+	height: 2px;
+	margin: 0px;
+	padding: 0px;
+}
+
+.flowchart-box-vertical {
+	padding: 30px 0px;
+	text-align: center;
+}
+
+.flowchart-box-horizontal {
+	padding: 0px 30px;
+}
+
+.flowchart-activity-sideimg {
+	width: 3px;
+	height: 0px;
+}
+
+.flowchart-condition-title {
+	height: 15px;
+	vertical-align: middle;
+	color: gray;
+	font-size: -2;
+	white-space: nowrap;
+}
+
+.flowchart-activity-cover-vertical {
+	float:inherit;
+	margin:0;
+	padding:0;
+}
+.flowchart-activity-cover-horizontal {
+	float:left;
+	margin:0;
+	padding:0;
+}
+
+.flowchart-activity-tl {
+	background-image: url(../../images/flowchart/images/card_tl.gif);
+	background-repeat: no-repeat;
+	height: 3px;
+	width: 3px;
+}
+
+.flowchart-activity-t {
+	background-image: url(../../images/flowchart/images/card_top.gif);
+	background-repeat: repeat-x;
+	height: 3px;
+}
+
+.flowchart-activity-tr {
+	background-image: url(../../images/flowchart/images/card_tr.gif);
+	background-repeat: no-repeat;
+	height: 3px;
+	width: 3px;
+}
+
+.flowchart-activity-l {
+	background-image: url(../../images/flowchart/images/card_left.gif);
+	background-repeat: repeat-y;
+	width: 3px;
+}
+
+.flowchart-activity-r {
+	background-image: url(../../images/flowchart/images/card_right.gif);
+	background-repeat: repeat-y;
+	background-position: top left;
+	width: 3px;
+}
+
+.flowchart-activity-bl {
+	background-image: url(../../images/flowchart/images/card_bl.gif);
+	background-repeat: no-repeat;
+	height: 3px;
+	width: 3px;
+}
+
+.flowchart-activity-b {
+	background-image: url(../../images/flowchart/images/card_bot.gif);
+	background-repeat: repeat-x;
+	height: 3px;
+}
+
+.flowchart-activity-br {
+	background-image: url(../../images/flowchart/images/card_br.gif);
+	background-repeat: no-repeat;
+	height: 3px;
+	width: 3px;
+}
+
+.flowchart-activity-c {
+	padding: 3px;
+	text-align: center;
+	background-repeat: no-repeat;
+}
+
+.flowchart-activity-status- {
+	background-image: url(../../images/flowchart/images/card_bg.gif);
+	background-color: #C2DCEA;
+}
+
+.flowchart-activity-status-AllCommit {
+	background-image: url(../../images/flowchart/images/card_bg_AllCommit.gif);
+	background-color: #A9DC90;
+}
+
+.flowchart-activity-status-Cancelled {
+	background-image: url(../../images/flowchart/images/card_bg_Cancelled.gif);
+	background-color: #FA96AF;
+}
+
+.flowchart-activity-status-Completed {
+	background-image: url(../../images/flowchart/images/card_bg_Completed.gif);
+	background-color: #E0E0E0;
+}
+
+.flowchart-activity-status-Failed {
+	background-image: url(../../images/flowchart/images/card_bg_Failed.gif);
+	background-color: #F6AAC6;
+}
+
+.flowchart-activity-status-Fault {
+	background-image: url(../../images/flowchart/images/card_bg_Fault.gif);
+	background-color: #F6AAC6;
+}
+
+.flowchart-activity-status-Ready {
+	background-image: url(../../images/flowchart/images/card_bg_Ready.gif);
+	background-color: #D6E9F2;
+}
+
+.flowchart-activity-status-Retrying {
+	background-image: url(../../images/flowchart/images/card_bg_Retrying.gif);
+	background-color: #F6AAC6;
+}
+
+.flowchart-activity-status-Running {
+	background-image: url(../../images/flowchart/images/card_bg_Running.gif);
+	background-color: #A1DDE3;
+}
+
+.flowchart-activity-status-Skipped {
+	background-image: url(../../images/flowchart/images/card_bg_Skipped.gif);
+	background-color: #AFEAFC;
+}
+
+.flowchart-activity-status-Stopped {
+	background-image: url(../../images/flowchart/images/card_bg_Stopped.gif);
+	background-color: #FFBD8D;
+}
+
+.flowchart-activity-status-Suspended {
+	background-image: url(../../images/flowchart/images/card_bg_Suspended.gif);
+	background-color: #6AD7D0;
+}
+
+.flowchart-activity-status-Timeout {
+	background-image: url(../../images/flowchart/images/card_bg_Timeout.gif);
+	background-color: #C1E799;
+}
+
+.flowchart-activity-detail {
+	display: none;
+}

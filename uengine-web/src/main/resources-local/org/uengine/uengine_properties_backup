@@ -1,0 +1,84 @@
+###############			role mapping and resolutioncontexts	 	###############
+rolemapping.class=com.defaultcompany.organization.DefaultCompanyRoleMapping
+roleresolutioncontexts=org.uengine.kernel.DirectRoleResolutionContext,com.defaultcompany.organization.DefaultCompanyRoleResolutionContext
+
+
+###############			database connection			 			###############
+defaultconnectionfactory.class=org.uengine.util.dao.DefaultConnectionFactory
+
+###############			deployfilters							###############	
+deployfilters=com.defaultcompany.deployfilter.DefaultDeployFilter
+
+###############			etc							 			###############
+use.ejb=false
+use.managedtransaction=false
+aclmanager.class=org.uengine.security.NoneAclManager
+formactivity.save.html=false
+
+################        login cookies                          ################ 
+web.cookie.use=true
+web.cookie.expires=1
+
+
+################        site dependencies                     ################
+#database connectionfactory
+daofactory.class=org.uengine.persistence.dao.OracleDAOFactory
+#daofactory.class=org.uengine.persistence.dao.CubridDAOFactory
+#daofactory.class=org.uengine.persistence.dao.MySQLDAOFactory
+
+jdbc.driverClassName=oracle.jdbc.driver.OracleDriver
+#jdbc.driverClassName=cubrid.jdbc.driver.CUBRIDDriver
+#jdbc.driverClassName=com.mysql.jdbc.Driver
+
+#dbms.product.name=mysql
+dbms.product.name=oracle
+
+#email server
+emailactivity.smtp.ip=211.49.99.14
+emailactivity.smtp.userid=emailuser
+emailactivity.smtp.password=emailuser
+ 
+#tomcat
+datasource.jndiname=java:/comp/env/jdbc/uEngineDS
+#nawas
+#datasource.jndiname=java:/comp/env/jdbc/cubridDS
+
+#tomcat-server
+#bpm_host=cloud.opencloudengine.org
+#bpm_port=23819
+#tomcat-local
+bpm_host=172.22.1.83
+bpm_port=8080
+
+###############			settings for activity filters 			###############
+#defaultactivityfilters=org.uengine.components.activityfilters.InstanceDataAppendingActivityFilter,com.kriss.component.activityfilters.KrissHumanActivityAutoCompleteFilter,com.kriss.component.activityfilters.KrissInstanceAppendingFilter
+#defaultactivityfilters=org.uengine.components.activityfilters.InstanceDataAppendingActivityFilter,kr.go.nyj.components.activityfilters.NYJRoleBindingActivityFilter
+defaultactivityfilters=org.uengine.components.activityfilters.InstanceDataAppendingActivityFilter
+
+###############			web applicaton				 			###############
+web.context.root=/bpm
+default.locale=ko
+wih.display.thread=false
+login.session.attr.name=loggedUser
+portrait.path=/resources/images/portraits/
+default.portrait.filename=no_image.gif
+portrait.extentions=gif,png,jpg
+
+###############			setting for mail 			            ###############
+#tomcat-server
+#alarmactivityfilter.wih.host=cloud.opencloudengine.org
+#alarmactivityfilter.wih.port=23819
+#tomcat-local
+alarmactivityfilter.wih.host=172.22.1.83
+alarmactivityfilter.wih.port=8080
+
+###############			definition and filesystem path			###############
+#centos7
+#server.definition.path=/home/centos/bpm_data/definition/
+#filesystem.path=/home/centos/bpm_data/fileSystem/
+#local (samba)
+server.definition.path=C:/tempuengine/bpm_data/definition/
+filesystem.path=C:/tempuengine/bpm_data/definition/
+
+#uegine kernel debug setting
+log.level.debug=true

@@ -1,0 +1,39 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, maximum-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<title>uEngine BPMS 4.0</title>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %> 
+<script type="text/javascript">
+var contextPath = "${pageContext.request.contextPath}";
+</script>
+
+<!-- Bootstrap & jquery -->
+<script type="text/javascript" src="<c:url value='/resources/libs/jquery/jquery-1.12.3.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/libs/jquery-ui-1.12.1.custom/jquery-ui.js'/>"></script>
+<link href="<c:url value='/resources/libs/jquery-ui-1.12.1.custom/jquery-ui.css'/>" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="<c:url value='/resources/libs/jquery/datepicker-kr.js'/>"></script>
+
+<!-- Bootstrap css-->
+<script type="text/javascript" src="<c:url value='/resources/libs/bootstrap-3.3.2-dist/js/bootstrap.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/libs/bootstrap-datetimepicker-4.17.42/js/moment.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/libs/bootstrap-datetimepicker-4.17.42/js/bootstrap-datetimepicker.min.js'/>"></script>
+<link href="<c:url value='/resources/libs/bootstrap-3.3.2-dist/css/bootstrap.css'/>" rel="stylesheet" type="text/css" />
+<link href="<c:url value='/resources/css/layout.css'/>" rel="stylesheet" type="text/css" />
+<link href="<c:url value='/resources/libs/bootstrap-datetimepicker-4.17.42/css/bootstrap-datetimepicker.min.css'/>" rel="stylesheet" type="text/css" />
+
+<!-- JSTree -->
+<link href="<c:url value='/resources/libs/jstree-3.3.1.0/dist/themes/default/style.min.css'/>" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="<c:url value='/resources/libs/jstree-3.3.1.0/dist/jstree.min.js'/>"></script>
+
+<!-- JQGrid -->
+<script type="text/javascript" src="<c:url value='/resources/libs/Guriddo_jqGrid_JS_5.1.1/js/i18n/grid.locale-kr.js'/>"></script>
+<link href="<c:url value='/resources/libs/Guriddo_jqGrid_JS_5.1.1/css/ui.jqgrid.css'/>" rel="stylesheet" type="text/css" media="screen" />
+<script type="text/javascript" src="<c:url value='/resources/libs/Guriddo_jqGrid_JS_5.1.1/src/jquery.jqGrid.js'/>"></script>
+
+<!--  common -->
+<script type="text/javascript" src="<c:url value='/resources/js/common.js'/>"></script>
+<link href="<c:url value='/resources/css/common.css'/>" rel="stylesheet" type="text/css" />

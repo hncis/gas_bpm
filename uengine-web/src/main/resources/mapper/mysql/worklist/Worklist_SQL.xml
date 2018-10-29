@@ -1,0 +1,1058 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="worklist">
+     
+    <select id="selectKrissWorklist" parameterType="MyWorkVO" resultType="MyWorkVO">
+        <![CDATA[
+        	SELECT   *
+			  FROM   (SELECT   ROWNUM AS rnum,
+			                   TASKID,
+			                   PROCESSCODE,
+			                   INSTANCENAME,
+			                   STATUSCODE,
+			                   FOLDERNAME,
+			                   DEFNAME,
+			                   INFO,
+			                   STARTDATE,
+			                   DUEDATE,
+			                   STATUS,
+			                   ISEMERGENCY
+			            FROM   (  SELECT   *
+						              FROM   (SELECT   DISTINCT
+						                               work.id AS TASKID,
+						                               work.process_id AS PROCESSCODE,
+						                               pi.inst_id AS INSTANCENAME,
+						                               work.activity AS STATUSCODE,
+						                               SUBSTR (process.parent_folder,
+						                                       2,
+						                                       LENGTH (process.parent_folder))
+						                                  AS FOLDERNAME,
+						                               process.pname AS DEFNAME,
+													   (CASE
+						                                      WHEN pi.keyword1 = ''
+						                                           OR pi.keyword1 IS NULL
+						                                      THEN
+						                                         '미지정'
+						                                      ELSE
+						                                         pi.keyword1
+						                               END)
+						                                  AS INFO,
+						                               TO_CHAR(work.created_date, 'YYYY-MM-DD HH24:MI') AS STARTDATE,
+						                               TO_CHAR(work.due_date, 'YYYY-MM-DD HH24:MI') AS DUEDATE,
+						                               (CASE
+						                                   WHEN work.work_state = '4' THEN 'CONFIRMED'
+						                                   ELSE 'NEW'
+						                                END)
+						                                  AS STATUS,
+						                               (CASE
+						                                   WHEN work.emergency_level > 0 THEN 1
+						                                   ELSE 0
+						                                END)
+						                                  AS ISEMERGENCY
+						                        FROM   (SELECT   *
+						                                  FROM   bizmaster.wf4_work
+						                                 WHERE   work_state = 4 AND performer = #{userId}
+						                                UNION ALL
+						                                SELECT                   /*+ USE_NL ( B A ) */
+						                                      a  .*
+						                                  FROM   bizmaster.wf4_work a,
+						                                         (SELECT   work_id
+						                                            FROM   (SELECT   ra.work_id
+						                                                                AS work_id
+						                                                      FROM   bizmaster.wf4_resolved_actor ra
+						                                                     WHERE   ra.and_group_number =
+						                                                                -1
+						                                                             AND ra.resolution_level =
+						                                                                   2
+						                                                             AND ra.actor = #{userId}
+						                                                    UNION ALL
+						                                                    SELECT   ra.work_id
+						                                                                AS work_id
+						                                                      FROM   bizmaster.wf4_resolved_actor ra,
+						                                                             bizmaster.wf4_absence_setting abset
+						                                                     WHERE   ra.and_group_number =
+						                                                                -1
+						                                                             AND ra.resolution_level =
+						                                                                   2
+						                                                             AND abset.uzer =
+						                                                                   ra.actor
+						                                                             AND abset.is_active =
+						                                                                   1
+						                                                             AND abset.invalid =
+						                                                                   0
+						                                                             AND abset.substituter =
+						                                                                   #{userId}
+						                                                    UNION ALL
+						                                                    SELECT   ra.work_id
+						                                                                AS work_id
+						                                                      FROM   bizmaster.wf4_resolved_actor ra,
+						                                                             bizmaster.wf4_role_element rh
+						                                                     WHERE   ra.and_group_number =
+						                                                                -1
+						                                                             AND ra.resolution_level =
+						                                                                   1
+						                                                             AND ra.actor =
+						                                                                   rh.human_role
+						                                                             AND rh.is_active =
+						                                                                   1
+						                                                             AND rh.invalid = 0
+						                                                             AND rh.human_user =
+						                                                                   #{userId}
+						                                                    UNION ALL
+						                                                    SELECT   ra.work_id
+						                                                                AS work_id
+						                                                      FROM   bizmaster.wf4_resolved_actor ra,
+						                                                             bizmaster.wf4_role_element rh
+						                                                     WHERE   ra.and_group_number =
+						                                                                -1
+						                                                             AND ra.resolution_level =
+						                                                                   1
+						                                                             AND ra.actor =
+						                                                                   rh.human_role
+						                                                             AND rh.is_active =
+						                                                                   1
+						                                                             AND rh.invalid = 0
+						                                                             AND EXISTS
+						                                                                   (SELECT   abset.uzer
+						                                                                      FROM   bizmaster.wf4_absence_setting abset
+						                                                                     WHERE   abset.substituter =
+						                                                                                #{userId}
+						                                                                             AND abset.is_active =
+						                                                                                   1
+						                                                                             AND abset.invalid =
+						                                                                                   0
+						                                                                             AND rh.human_user =
+						                                                                                   abset.uzer)
+						                                                    UNION ALL
+						                                                    SELECT   ra.work_id
+						                                                                AS work_id
+						                                                      FROM   bizmaster.wf4_resolved_actor ra
+						                                                     WHERE   ra.and_group_number =
+						                                                                -1
+						                                                             AND ra.resolution_level =
+						                                                                   1
+						                                                             AND ra.actor IS NULL
+						                                                    UNION ALL
+						                                                    SELECT   ra.work_id
+						                                                                AS work_id
+						                                                      FROM   bizmaster.wf4_resolved_actor ra,
+						                                                             bizmaster.wf4_user_relation ur
+						                                                     WHERE   ra.and_group_number =
+						                                                                -1
+						                                                             AND ra.resolution_level =
+						                                                                   3
+						                                                             AND ra.actor =
+						                                                                   ur.parent
+						                                                             AND ur.child = #{userId}
+						                                                    UNION ALL
+						                                                    SELECT   ra.work_id
+						                                                                AS work_id
+						                                                      FROM   bizmaster.wf4_resolved_actor ra,
+						                                                             bizmaster.wf4_user_relation ur
+						                                                     WHERE   ra.and_group_number =
+						                                                                -1
+						                                                             AND ra.resolution_level =
+						                                                                   3
+						                                                             AND ra.actor =
+						                                                                   ur.parent
+						                                                             AND EXISTS
+						                                                                   (SELECT   abset.uzer
+						                                                                      FROM   bizmaster.wf4_absence_setting abset
+						                                                                     WHERE   abset.substituter =
+						                                                                                #{userId}
+						                                                                             AND abset.is_active =
+						                                                                                   1
+						                                                                             AND abset.invalid =
+						                                                                                   0
+						                                                                             AND ur.child =
+						                                                                                   abset.uzer)
+						                                                    UNION ALL
+						                                                    SELECT   work.id AS work_id
+						                                                      FROM   bizmaster.wf4_work WORK,
+						                                                             bizmaster.wf4_resolved_and_user ru
+						                                                     WHERE   ru.work_id =
+						                                                                work.id
+						                                                             AND ru.exclusion =
+						                                                                   0
+						                                                             AND ru.actor = #{userId}
+						                                                    UNION ALL
+						                                                    SELECT   work.id AS work_id
+						                                                      FROM   bizmaster.wf4_work WORK,
+						                                                             bizmaster.wf4_resolved_and_user ru,
+						                                                             bizmaster.wf4_absence_setting abset
+						                                                     WHERE   ru.work_id =
+						                                                                work.id
+						                                                             AND ru.exclusion =
+						                                                                   0
+						                                                             AND ru.actor =
+						                                                                   abset.uzer
+						                                                             AND abset.substituter =
+						                                                                   #{userId}
+						                                                             AND abset.is_active =
+						                                                                   1
+						                                                             AND abset.invalid =
+						                                                                   0) a
+						                                           WHERE   NOT EXISTS
+						                                                      (SELECT   ra2.actor
+						                                                         FROM   bizmaster.wf4_resolved_actor ra2
+						                                                        WHERE   ra2.resolution_level =
+						                                                                   5
+						                                                                AND ra2.work_id =
+						                                                                      a.work_id
+						                                                                AND ra2.and_group_number =
+						                                                                      -1
+						                                                                AND ra2.actor =
+						                                                                      #{userId})
+						                                                   AND NOT EXISTS
+						                                                         (SELECT   rh.human_user
+						                                                            FROM   bizmaster.wf4_role_element rh,
+						                                                                   bizmaster.wf4_resolved_actor ra2
+						                                                           WHERE   ra2.resolution_level =
+						                                                                      4
+						                                                                   AND rh.human_role =
+						                                                                         ra2.actor
+						                                                                   AND ra2.work_id =
+						                                                                         a.work_id
+						                                                                   AND ra2.and_group_number =
+						                                                                         -1
+						                                                                   AND rh.is_active =
+						                                                                         1
+						                                                                   AND rh.invalid =
+						                                                                         0
+						                                                                   AND rh.human_user =
+						                                                                         #{userId})
+						                                                   AND NOT EXISTS
+						                                                         (SELECT   ur.child
+						                                                            FROM   bizmaster.wf4_user_relation ur,
+						                                                                   bizmaster.wf4_resolved_actor ra2
+						                                                           WHERE   ra2.resolution_level =
+						                                                                      6
+						                                                                   AND ur.parent =
+						                                                                         ra2.actor
+						                                                                   AND ra2.and_group_number =
+						                                                                         -1
+						                                                                   AND ra2.work_id =
+						                                                                         a.work_id
+						                                                                   AND ur.child =
+						                                                                         #{userId})
+						                                                   AND NOT EXISTS
+						                                                         (SELECT   ru.actor
+						                                                            FROM   bizmaster.wf4_resolved_and_user ru
+						                                                           WHERE   ru.exclusion =
+						                                                                      1
+						                                                                   AND ru.work_id =
+						                                                                         a.work_id
+						                                                                   AND ru.actor =
+						                                                                         #{userId}))
+						                                         b
+						                                 WHERE   a.id = b.work_id AND a.work_state = 3
+						                                         AND NOT EXISTS
+						                                               (SELECT   multiinsta17_.perf_work
+						                                                  FROM   bizmaster.wf4_mi_work multiinsta17_,
+						                                                         bizmaster.wf4_mi_work multiinsta18_
+						                                                 WHERE   (multiinsta18_.loop_type =
+						                                                             528
+						                                                          OR multiinsta18_.loop_type =
+						                                                               272)
+						                                                         AND multiinsta18_.process_id =
+						                                                               a.process_id
+						                                                         AND multiinsta18_.activity_id =
+						                                                               a.activity
+						                                                         AND (multiinsta18_.performer =
+						                                                                 #{userId}
+						                                                              OR (multiinsta18_.performer IN
+						                                                                        (SELECT   ABS.uzer
+						                                                                           FROM   bizmaster.wf4_absence_setting ABS
+						                                                                          WHERE   ABS.substituter =
+						                                                                                     #{userId}
+						                                                                                  AND ABS.is_active =
+						                                                                                        1
+						                                                                                  AND ABS.invalid =
+						                                                                                        0)
+						                                                                  AND (multiinsta18_.delegated IS NULL
+						                                                                       OR multiinsta18_.delegated =
+						                                                                            '')))
+						                                                         AND multiinsta18_.cont_work =
+						                                                               multiinsta17_.cont_work
+						                                                         AND multiinsta17_.elem_work =
+						                                                               multiinsta17_.perf_work
+						                                                         AND multiinsta17_.perf_work =
+						                                                               b.work_id)
+						                                         AND NOT EXISTS
+						                                               (SELECT   multiinsta19_.perf_work
+						                                                  FROM   bizmaster.wf4_mi_org_work multiinsta19_,
+						                                                         bizmaster.wf4_mi_org_work multiinsta20_,
+						                                                         bizmaster.wf4_user_relation us21_
+						                                                 WHERE   (multiinsta20_.loop_type =
+						                                                             560
+						                                                          OR multiinsta20_.loop_type =
+						                                                               304)
+						                                                         AND multiinsta20_.org_id <>
+						                                                               '---'
+						                                                         AND multiinsta20_.org_id =
+						                                                               us21_.parent
+						                                                         AND (us21_.child = #{userId}
+						                                                              OR (us21_.child IN
+						                                                                        (SELECT   ABS.uzer
+						                                                                           FROM   bizmaster.wf4_absence_setting ABS
+						                                                                          WHERE   ABS.substituter =
+						                                                                                     #{userId}
+						                                                                                  AND ABS.is_active =
+						                                                                                        1
+						                                                                                  AND ABS.invalid =
+						                                                                                        0)))
+						                                                         AND multiinsta20_.cont_work =
+						                                                               multiinsta19_.cont_work
+						                                                         AND multiinsta19_.perf_work =
+						                                                               b.work_id)) WORK,
+						                               bizmaster.wf4_process_instance pi,
+						                               bizmaster.wf4_activity activity,
+						                               bizmaster.wf4_process process,
+						                               bizmaster.wf4_user u,
+						                               bizmaster.wf4_work_delegation_history delegation
+						                       WHERE       work.pid = pi.inst_id
+						                               AND pi.process_state <> 2
+						                               AND pi.process_state <> 6
+						                               AND work.activity = activity.activity_id
+						                               AND work.process_id = activity.process_id
+						                               AND work.process_id = process.process_id
+						                               AND work.performer = u.user_id(+)
+						                               AND work.id = delegation.work_instance_id(+)
+						                               AND process.status = 0
+						                               AND process.invalid = 0
+						                               AND process.deleted = 0
+						                               ]]>
+						                               <if test="folderName != 'all'">
+						                               AND process.parent_folder = '/'||#{folderName}
+						                               </if>
+						                               <if test="searchKeyword != null and searchKeyword !=''">
+						                               <if test="searchOption == 'defName'">
+						                               AND process.pname like '%'||#{searchKeyword}||'%'
+						                               </if>
+						                               <if test="searchOption == 'info'">
+						                               AND pi.keyword1 like '%'||#{searchKeyword}||'%'
+						                               </if>
+						                               </if>
+						                               <if test="strFromDate != null and strFromDate !=''">
+						                               AND work.created_date >=
+							                                 TO_TIMESTAMP (#{strFromDate}, 'YYYY-MM-DD')
+							                           </if>
+							                           <if test="strToDate != null and strToDate !=''">
+							                           <![CDATA[
+							                           AND work.created_date <=
+							                           		 TO_TIMESTAMP (#{strToDate}||' 235959', 'YYYY-MM-DD HH24MISS')
+							                           ]]>
+							                           </if>
+							                           <if test="status != 'all' and status=='CONFIRMED'">
+							                           AND work.work_state='4'
+							                           </if>
+							                           <if test="status != 'all' and status=='NEW'">
+						                               <![CDATA[
+							                           AND work.work_state<>'4'
+							                           ]]>
+							                           </if>
+						                               <![CDATA[
+						                      UNION ALL
+						                      SELECT   DISTINCT
+						                               WL.TASKID AS TASKID,
+						                               DEF.ALIAS AS PROCESSCODE,
+						                               INST.NAME AS INSTANCENAME,
+						                               WL.EXT1 AS STATUSCODE,
+						                               P_FOLDER.NAME AS FOLDERNAME,
+						                               DEFVER.DEFNAME AS DEFNAME,
+						                               INST.INFO AS INFO,
+						                               TO_CHAR(WL.STARTDATE, 'YYYY-MM-DD HH24:MI') AS STARTDATE,
+						                               TO_CHAR(WL.DUEDATE, 'YYYY-MM-DD HH24:MI') AS DUEDATE,
+						                               WL.STATUS AS STATUS,
+						                               (CASE
+						                                   WHEN INST.ISEMERGENCY IS NULL THEN 0
+						                                   ELSE INST.ISEMERGENCY
+						                                END)
+						                                  AS ISEMERGENCY
+						                        FROM   BPM_WORKLIST WL,
+						                               (SELECT   WL.TASKID, WL.INSTID, WL.TRCTAG
+						                                  FROM      BPM_WORKLIST WL
+						                                         INNER JOIN
+						                                            BPM_PROCINST INST
+						                                         ON     WL.INSTID = INST.INSTID
+						                                            AND INST.ISDELETED = '0'
+						                                            AND INST.STATUS = 'Running'
+						                                 WHERE   WL.STATUS IN
+						                                               ('NEW', 'CONFIRMED', 'DRAFT'))
+						                               ALL_WL,
+						                               BPM_ROLEMAPPING RM,
+						                               BPM_PROCINST INST,
+						                               BPM_PROCDEF DEF,
+						                               BPM_PROCDEFVER DEFVER,
+						                               BPM_PROCDEF P_FOLDER,
+						                               BPM_PROCINST ROOTINST,
+						                               BPM_PROCINST MAININST
+						                       WHERE   WL.INSTID = ALL_WL.INSTID
+						                               AND WL.TRCTAG = ALL_WL.TRCTAG
+						                               AND WL.STATUS IN
+						                                        ('NEW',
+						                                         'CONFIRMED',
+						                                         'DRAFT',
+						                                         'DELEGATED')
+						                               AND WL.INSTID = RM.INSTID
+						                               AND WL.ROLENAME = RM.ROLENAME
+						                               AND (WL.ENDPOINT = #{userId}
+						                                    OR RM.ENDPOINT = #{userId})
+						                               AND WL.INSTID = INST.INSTID
+						                               AND INST.DEFID = DEF.DEFID
+						                               AND INST.DEFVERID = DEFVER.DEFVERID
+						                               AND INST.ROOTINSTID = ROOTINST.INSTID
+						                               AND INST.MAININSTID = MAININST.INSTID(+)
+						                               AND DEF.PARENTFOLDER = P_FOLDER.DEFID(+)
+						                               ]]>
+						                               <if test="folderName != 'all'">
+						                               AND P_FOLDER.NAME = #{folderName}
+						                               </if>
+						                               <if test="searchKeyword != null and searchKeyword !=''">
+						                               <if test="searchOption == 'defName'">
+						                               AND DEFVER.DEFNAME like '%'||#{searchKeyword}||'%'
+						                               </if>
+						                               <if test="searchOption == 'info'">
+						                               AND INST.INFO like '%'||#{searchKeyword}||'%'
+						                               </if>
+						                               </if>
+						                               <if test="strFromDate != null and strFromDate !=''">
+						                               AND WL.STARTDATE >=
+							                                 TO_TIMESTAMP (#{strFromDate}, 'YYYY-MM-DD')
+							                           </if>
+							                           <if test="strToDate != null and strToDate !=''">
+							                           <![CDATA[
+							                           AND WL.STARTDATE <=
+							                           		 TO_TIMESTAMP (#{strToDate}||' 235959', 'YYYY-MM-DD HH24MISS')
+							                           ]]>
+							                           </if>
+							                           <if test="status != 'all'">
+							                           AND WL.STATUS=#{status}
+							                           </if>
+						                               <![CDATA[
+						                               )
+						          ORDER BY   ISEMERGENCY DESC, STARTDATE DESC)) a
+ 								WHERE   a.rnum >= ${startRow} AND a.rnum <= ${endRow}
+		]]>
+    </select>
+
+    <select id="selectCountKrissWorklist" parameterType="MyWorkVO" resultType="Integer">
+        <![CDATA[
+        	SELECT   COUNT ( * ) AS TOTALCOUNT
+			  FROM   (SELECT   DISTINCT
+			                   work.id AS TASKID
+			            FROM   (SELECT   *
+			                      FROM   bizmaster.wf4_work
+			                     WHERE   work_state = 4 AND performer = #{userId}
+			                    UNION ALL
+			                    SELECT                               /*+ USE_NL ( B A ) */
+			                          a  .*
+			                      FROM   bizmaster.wf4_work a,
+			                             (SELECT   work_id
+			                                FROM   (SELECT   ra.work_id AS work_id
+			                                          FROM   bizmaster.wf4_resolved_actor ra
+			                                         WHERE       ra.and_group_number = -1
+			                                                 AND ra.resolution_level = 2
+			                                                 AND ra.actor = #{userId}
+			                                        UNION ALL
+			                                        SELECT   ra.work_id AS work_id
+			                                          FROM   bizmaster.wf4_resolved_actor ra,
+			                                                 bizmaster.wf4_absence_setting abset
+			                                         WHERE       ra.and_group_number = -1
+			                                                 AND ra.resolution_level = 2
+			                                                 AND abset.uzer = ra.actor
+			                                                 AND abset.is_active = 1
+			                                                 AND abset.invalid = 0
+			                                                 AND abset.substituter = #{userId}
+			                                        UNION ALL
+			                                        SELECT   ra.work_id AS work_id
+			                                          FROM   bizmaster.wf4_resolved_actor ra,
+			                                                 bizmaster.wf4_role_element rh
+			                                         WHERE       ra.and_group_number = -1
+			                                                 AND ra.resolution_level = 1
+			                                                 AND ra.actor = rh.human_role
+			                                                 AND rh.is_active = 1
+			                                                 AND rh.invalid = 0
+			                                                 AND rh.human_user = #{userId}
+			                                        UNION ALL
+			                                        SELECT   ra.work_id AS work_id
+			                                          FROM   bizmaster.wf4_resolved_actor ra,
+			                                                 bizmaster.wf4_role_element rh
+			                                         WHERE       ra.and_group_number = -1
+			                                                 AND ra.resolution_level = 1
+			                                                 AND ra.actor = rh.human_role
+			                                                 AND rh.is_active = 1
+			                                                 AND rh.invalid = 0
+			                                                 AND EXISTS
+			                                                       (SELECT   abset.uzer
+			                                                          FROM   bizmaster.wf4_absence_setting abset
+			                                                         WHERE   abset.substituter =
+			                                                                    #{userId}
+			                                                                 AND abset.is_active =
+			                                                                       1
+			                                                                 AND abset.invalid =
+			                                                                       0
+			                                                                 AND rh.human_user =
+			                                                                       abset.uzer)
+			                                        UNION ALL
+			                                        SELECT   ra.work_id AS work_id
+			                                          FROM   bizmaster.wf4_resolved_actor ra
+			                                         WHERE       ra.and_group_number = -1
+			                                                 AND ra.resolution_level = 1
+			                                                 AND ra.actor IS NULL
+			                                        UNION ALL
+			                                        SELECT   ra.work_id AS work_id
+			                                          FROM   bizmaster.wf4_resolved_actor ra,
+			                                                 bizmaster.wf4_user_relation ur
+			                                         WHERE       ra.and_group_number = -1
+			                                                 AND ra.resolution_level = 3
+			                                                 AND ra.actor = ur.parent
+			                                                 AND ur.child = #{userId}
+			                                        UNION ALL
+			                                        SELECT   ra.work_id AS work_id
+			                                          FROM   bizmaster.wf4_resolved_actor ra,
+			                                                 bizmaster.wf4_user_relation ur
+			                                         WHERE       ra.and_group_number = -1
+			                                                 AND ra.resolution_level = 3
+			                                                 AND ra.actor = ur.parent
+			                                                 AND EXISTS
+			                                                       (SELECT   abset.uzer
+			                                                          FROM   bizmaster.wf4_absence_setting abset
+			                                                         WHERE   abset.substituter =
+			                                                                    #{userId}
+			                                                                 AND abset.is_active =
+			                                                                       1
+			                                                                 AND abset.invalid =
+			                                                                       0
+			                                                                 AND ur.child =
+			                                                                       abset.uzer)
+			                                        UNION ALL
+			                                        SELECT   work.id AS work_id
+			                                          FROM   bizmaster.wf4_work WORK,
+			                                                 bizmaster.wf4_resolved_and_user ru
+			                                         WHERE       ru.work_id = work.id
+			                                                 AND ru.exclusion = 0
+			                                                 AND ru.actor = #{userId}
+			                                        UNION ALL
+			                                        SELECT   work.id AS work_id
+			                                          FROM   bizmaster.wf4_work WORK,
+			                                                 bizmaster.wf4_resolved_and_user ru,
+			                                                 bizmaster.wf4_absence_setting abset
+			                                         WHERE       ru.work_id = work.id
+			                                                 AND ru.exclusion = 0
+			                                                 AND ru.actor = abset.uzer
+			                                                 AND abset.substituter = #{userId}
+			                                                 AND abset.is_active = 1
+			                                                 AND abset.invalid = 0) a
+			                               WHERE   NOT EXISTS
+			                                          (SELECT   ra2.actor
+			                                             FROM   bizmaster.wf4_resolved_actor ra2
+			                                            WHERE   ra2.resolution_level = 5
+			                                                    AND ra2.work_id =
+			                                                          a.work_id
+			                                                    AND ra2.and_group_number =
+			                                                          -1
+			                                                    AND ra2.actor = #{userId})
+			                                       AND NOT EXISTS
+			                                             (SELECT   rh.human_user
+			                                                FROM   bizmaster.wf4_role_element rh,
+			                                                       bizmaster.wf4_resolved_actor ra2
+			                                               WHERE   ra2.resolution_level =
+			                                                          4
+			                                                       AND rh.human_role =
+			                                                             ra2.actor
+			                                                       AND ra2.work_id =
+			                                                             a.work_id
+			                                                       AND ra2.and_group_number =
+			                                                             -1
+			                                                       AND rh.is_active = 1
+			                                                       AND rh.invalid = 0
+			                                                       AND rh.human_user =
+			                                                             #{userId})
+			                                       AND NOT EXISTS
+			                                             (SELECT   ur.child
+			                                                FROM   bizmaster.wf4_user_relation ur,
+			                                                       bizmaster.wf4_resolved_actor ra2
+			                                               WHERE   ra2.resolution_level =
+			                                                          6
+			                                                       AND ur.parent =
+			                                                             ra2.actor
+			                                                       AND ra2.and_group_number =
+			                                                             -1
+			                                                       AND ra2.work_id =
+			                                                             a.work_id
+			                                                       AND ur.child = #{userId})
+			                                       AND NOT EXISTS
+			                                             (SELECT   ru.actor
+			                                                FROM   bizmaster.wf4_resolved_and_user ru
+			                                               WHERE   ru.exclusion = 1
+			                                                       AND ru.work_id =
+			                                                             a.work_id
+			                                                       AND ru.actor = #{userId})) b
+			                     WHERE   a.id = b.work_id AND a.work_state = 3
+			                             AND NOT EXISTS
+			                                   (SELECT   multiinsta17_.perf_work
+			                                      FROM   bizmaster.wf4_mi_work multiinsta17_,
+			                                             bizmaster.wf4_mi_work multiinsta18_
+			                                     WHERE   (multiinsta18_.loop_type = 528
+			                                              OR multiinsta18_.loop_type =
+			                                                   272)
+			                                             AND multiinsta18_.process_id =
+			                                                   a.process_id
+			                                             AND multiinsta18_.activity_id =
+			                                                   a.activity
+			                                             AND (multiinsta18_.performer =
+			                                                     #{userId}
+			                                                  OR (multiinsta18_.performer IN
+			                                                            (SELECT   ABS.uzer
+			                                                               FROM   bizmaster.wf4_absence_setting ABS
+			                                                              WHERE   ABS.substituter =
+			                                                                         #{userId}
+			                                                                      AND ABS.is_active =
+			                                                                            1
+			                                                                      AND ABS.invalid =
+			                                                                            0)
+			                                                      AND (multiinsta18_.delegated IS NULL
+			                                                           OR multiinsta18_.delegated =
+			                                                                '')))
+			                                             AND multiinsta18_.cont_work =
+			                                                   multiinsta17_.cont_work
+			                                             AND multiinsta17_.elem_work =
+			                                                   multiinsta17_.perf_work
+			                                             AND multiinsta17_.perf_work =
+			                                                   b.work_id)
+			                             AND NOT EXISTS
+			                                   (SELECT   multiinsta19_.perf_work
+			                                      FROM   bizmaster.wf4_mi_org_work multiinsta19_,
+			                                             bizmaster.wf4_mi_org_work multiinsta20_,
+			                                             bizmaster.wf4_user_relation us21_
+			                                     WHERE   (multiinsta20_.loop_type = 560
+			                                              OR multiinsta20_.loop_type =
+			                                                   304)
+			                                             AND multiinsta20_.org_id <>
+			                                                   '---'
+			                                             AND multiinsta20_.org_id =
+			                                                   us21_.parent
+			                                             AND (us21_.child = #{userId}
+			                                                  OR (us21_.child IN
+			                                                            (SELECT   ABS.uzer
+			                                                               FROM   bizmaster.wf4_absence_setting ABS
+			                                                              WHERE   ABS.substituter =
+			                                                                         #{userId}
+			                                                                      AND ABS.is_active =
+			                                                                            1
+			                                                                      AND ABS.invalid =
+			                                                                            0)))
+			                                             AND multiinsta20_.cont_work =
+			                                                   multiinsta19_.cont_work
+			                                             AND multiinsta19_.perf_work =
+			                                                   b.work_id)) WORK,
+			                   bizmaster.wf4_process_instance pi,
+			                   bizmaster.wf4_activity activity,
+			                   bizmaster.wf4_process process,
+			                   bizmaster.wf4_user u,
+			                   bizmaster.wf4_work_delegation_history delegation
+			           WHERE       work.pid = pi.inst_id
+			                   AND pi.process_state <> 2
+			                   AND pi.process_state <> 6
+			                   AND work.activity = activity.activity_id
+			                   AND work.process_id = activity.process_id
+			                   AND work.process_id = process.process_id
+			                   AND work.performer = u.user_id(+)
+			                   AND work.id = delegation.work_instance_id(+)
+			                   AND process.status = 0
+			                   AND process.invalid = 0
+			                   AND process.deleted = 0
+			                   ]]>
+                               <if test="folderName != 'all'">
+                               AND process.parent_folder = '/'||#{folderName}
+                               </if>
+                               <if test="searchKeyword != null and searchKeyword !=''">
+                               <if test="searchOption == 'defName'">
+                               AND process.pname like '%'||#{searchKeyword}||'%'
+                               </if>
+                               <if test="searchOption == 'info'">
+                               AND pi.keyword1 like '%'||#{searchKeyword}||'%'
+                               </if>
+                               </if>
+                               <if test="strFromDate != null and strFromDate !=''">
+                               AND work.created_date >=
+	                                 TO_TIMESTAMP (#{strFromDate}, 'YYYY-MM-DD')
+	                           </if>
+	                           <if test="strToDate != null and strToDate !=''">
+	                           <![CDATA[
+	                           AND work.created_date <=
+	                           		 TO_TIMESTAMP (#{strToDate}||' 235959', 'YYYY-MM-DD HH24MISS')
+	                           ]]>
+	                           </if>
+	                           <if test="status != 'all' and status=='CONFIRMED'">
+	                           AND work.work_state='4'
+	                           </if>
+	                           <if test="status != 'all' and status=='NEW'">
+                               <![CDATA[
+	                           AND work.work_state<>'4'
+	                           ]]>
+	                           </if>
+                               <![CDATA[
+			          UNION ALL
+			          SELECT   DISTINCT
+			                   WL.TASKID
+			            FROM   BPM_WORKLIST WL,
+			                   (SELECT   WL.TASKID, WL.INSTID, WL.TRCTAG
+			                      FROM      BPM_WORKLIST WL
+			                             INNER JOIN
+			                                BPM_PROCINST INST
+			                             ON     WL.INSTID = INST.INSTID
+			                                AND INST.ISDELETED = '0'
+			                                AND INST.STATUS = 'Running'
+			                     WHERE   WL.STATUS IN ('NEW', 'CONFIRMED', 'DRAFT'))
+			                   ALL_WL,
+			                   BPM_ROLEMAPPING RM,
+			                   BPM_PROCINST INST,
+			                   BPM_PROCDEF DEF,
+			                   BPM_PROCDEFVER DEFVER,
+			                   BPM_PROCDEF P_FOLDER,
+			                   BPM_PROCINST ROOTINST,
+			                   BPM_PROCINST MAININST
+			           WHERE   WL.INSTID = ALL_WL.INSTID AND WL.TRCTAG = ALL_WL.TRCTAG
+			                   AND WL.STATUS IN
+			                            ('NEW', 'CONFIRMED', 'DRAFT', 'DELEGATED')
+			                   AND WL.INSTID = RM.INSTID
+			                   AND WL.ROLENAME = RM.ROLENAME
+			                   AND (WL.ENDPOINT = #{userId} OR RM.ENDPOINT = #{userId})
+			                   AND WL.INSTID = INST.INSTID
+			                   AND INST.DEFID = DEF.DEFID
+			                   AND INST.DEFVERID = DEFVER.DEFVERID
+			                   AND INST.ROOTINSTID = ROOTINST.INSTID
+			                   AND INST.MAININSTID = MAININST.INSTID(+)
+			                   AND DEF.PARENTFOLDER = P_FOLDER.DEFID(+)
+			                   ]]>
+                               <if test="folderName != 'all'">
+                               AND p_FOLDER.NAME = #{folderName}
+                               </if>
+                               <if test="searchKeyword != null and searchKeyword !=''">
+                               <if test="searchOption == 'defName'">
+                               AND DEFVER.DEFNAME like '%'||#{searchKeyword}||'%'
+                               </if>
+                               <if test="searchOption == 'info'">
+                               AND INST.INFO like '%'||#{searchKeyword}||'%'
+                               </if>
+                               </if>
+                               <if test="strFromDate != null and strFromDate !=''">
+                               AND WL.STARTDATE >=
+	                                 TO_TIMESTAMP (#{strFromDate}, 'YYYY-MM-DD')
+	                           </if>
+	                           <if test="strToDate != null and strToDate !=''">
+	                           <![CDATA[
+	                           AND WL.STARTDATE <=
+	                           		 TO_TIMESTAMP (#{strToDate}||' 235959', 'YYYY-MM-DD HH24MISS')
+	                           ]]>
+	                           </if>
+	                           <if test="status != 'all'">
+	                           AND WL.STATUS=#{status}
+	                           </if>
+                               <![CDATA[
+			                   )
+		]]>
+    </select>
+    
+    <select id="selectKrissFolderList" resultType="ProcessDefinitionVO">
+    	SELECT   FOLDER_NAME AS DEFID, FOLDER_NAME AS DEFNAME
+		  FROM   BIZMASTER.WF4_PROCESS_FOLDER
+		UNION ALL
+		SELECT   NAME AS DEFID, NAME AS DEFNAME
+		  FROM   BPM_PROCDEF
+		 WHERE   OBJTYPE = 'folder'
+		         AND PARENTFOLDER = (SELECT   DEFID
+		                               FROM   BPM_PROCDEF
+		                              WHERE   NAME = 'KRISS' AND OBJTYPE = 'folder')
+		ORDER BY   DEFNAME
+    </select>
+
+    <select id="selectKrissWorklistGroup" resultType="MyWorkVO">
+    <![CDATA[
+		  SELECT   PROCESS_ID AS PROCESSCODE,
+		           ACTIVITY AS STATUSCODE,
+		           (CASE WHEN ACTIVITY=SHARE_CONDITION THEN NULL ELSE SHARE_CONDITION END)     AS INSTANCEKEYWORD,
+		           MIN (PARENT_FOLDER) AS FOLDERNAME,
+		           MIN (PNAME) AS DEFNAME,
+		           MIN (ACTIVITY_NAME) AS TITLE,
+		           COUNT ( * ) AS GROUPCOUNT
+		    FROM   (SELECT   DISTINCT
+		                     work.id,
+		                     work.process_id,
+		                     work.activity,
+		                     work.share_condition,
+		                     activity.activity_name,
+		                     process.pname,
+		                     SUBSTR (PARENT_FOLDER, 2, LENGTH (PARENT_FOLDER))
+		                        AS PARENT_FOLDER
+		              FROM   (SELECT   *
+		                        FROM   bizmaster.wf4_work
+		                       WHERE   work_state = 4 AND performer = #{userId}
+		                      UNION ALL
+		                      SELECT                             /*+ USE_NL ( B A ) */
+		                            a  .*
+		                        FROM   bizmaster.wf4_work a,
+		                               (SELECT   work_id
+		                                  FROM   (SELECT   ra.work_id AS work_id
+		                                            FROM   bizmaster.wf4_resolved_actor ra
+		                                           WHERE       ra.and_group_number = -1
+		                                                   AND ra.resolution_level = 2
+		                                                   AND ra.actor = #{userId}
+		                                          UNION ALL
+		                                          SELECT   ra.work_id AS work_id
+		                                            FROM   bizmaster.wf4_resolved_actor ra,
+		                                                   bizmaster.wf4_absence_setting abset
+		                                           WHERE       ra.and_group_number = -1
+		                                                   AND ra.resolution_level = 2
+		                                                   AND abset.uzer = ra.actor
+		                                                   AND abset.is_active = 1
+		                                                   AND abset.invalid = 0
+		                                                   AND abset.substituter = #{userId}
+		                                          UNION ALL
+		                                          SELECT   ra.work_id AS work_id
+		                                            FROM   bizmaster.wf4_resolved_actor ra,
+		                                                   bizmaster.wf4_role_element rh
+		                                           WHERE       ra.and_group_number = -1
+		                                                   AND ra.resolution_level = 1
+		                                                   AND ra.actor = rh.human_role
+		                                                   AND rh.is_active = 1
+		                                                   AND rh.invalid = 0
+		                                                   AND rh.human_user = #{userId}
+		                                          UNION ALL
+		                                          SELECT   ra.work_id AS work_id
+		                                            FROM   bizmaster.wf4_resolved_actor ra,
+		                                                   bizmaster.wf4_role_element rh
+		                                           WHERE       ra.and_group_number = -1
+		                                                   AND ra.resolution_level = 1
+		                                                   AND ra.actor = rh.human_role
+		                                                   AND rh.is_active = 1
+		                                                   AND rh.invalid = 0
+		                                                   AND EXISTS
+		                                                         (SELECT   abset.uzer
+		                                                            FROM   bizmaster.wf4_absence_setting abset
+		                                                           WHERE   abset.substituter =
+		                                                                      #{userId}
+		                                                                   AND abset.is_active =
+		                                                                         1
+		                                                                   AND abset.invalid =
+		                                                                         0
+		                                                                   AND rh.human_user =
+		                                                                         abset.uzer)
+		                                          UNION ALL
+		                                          SELECT   ra.work_id AS work_id
+		                                            FROM   bizmaster.wf4_resolved_actor ra
+		                                           WHERE       ra.and_group_number = -1
+		                                                   AND ra.resolution_level = 1
+		                                                   AND ra.actor IS NULL
+		                                          UNION ALL
+		                                          SELECT   ra.work_id AS work_id
+		                                            FROM   bizmaster.wf4_resolved_actor ra,
+		                                                   bizmaster.wf4_user_relation ur
+		                                           WHERE       ra.and_group_number = -1
+		                                                   AND ra.resolution_level = 3
+		                                                   AND ra.actor = ur.parent
+		                                                   AND ur.child = #{userId}
+		                                          UNION ALL
+		                                          SELECT   ra.work_id AS work_id
+		                                            FROM   bizmaster.wf4_resolved_actor ra,
+		                                                   bizmaster.wf4_user_relation ur
+		                                           WHERE       ra.and_group_number = -1
+		                                                   AND ra.resolution_level = 3
+		                                                   AND ra.actor = ur.parent
+		                                                   AND EXISTS
+		                                                         (SELECT   abset.uzer
+		                                                            FROM   bizmaster.wf4_absence_setting abset
+		                                                           WHERE   abset.substituter =
+		                                                                      #{userId}
+		                                                                   AND abset.is_active =
+		                                                                         1
+		                                                                   AND abset.invalid =
+		                                                                         0
+		                                                                   AND ur.child =
+		                                                                         abset.uzer)
+		                                          UNION ALL
+		                                          SELECT   work.id AS work_id
+		                                            FROM   bizmaster.wf4_work WORK,
+		                                                   bizmaster.wf4_resolved_and_user ru
+		                                           WHERE       ru.work_id = work.id
+		                                                   AND ru.exclusion = 0
+		                                                   AND ru.actor = #{userId}
+		                                          UNION ALL
+		                                          SELECT   work.id AS work_id
+		                                            FROM   bizmaster.wf4_work WORK,
+		                                                   bizmaster.wf4_resolved_and_user ru,
+		                                                   bizmaster.wf4_absence_setting abset
+		                                           WHERE       ru.work_id = work.id
+		                                                   AND ru.exclusion = 0
+		                                                   AND ru.actor = abset.uzer
+		                                                   AND abset.substituter = #{userId}
+		                                                   AND abset.is_active = 1
+		                                                   AND abset.invalid = 0) a
+		                                 WHERE   NOT EXISTS
+		                                            (SELECT   ra2.actor
+		                                               FROM   bizmaster.wf4_resolved_actor ra2
+		                                              WHERE   ra2.resolution_level = 5
+		                                                      AND ra2.work_id =
+		                                                            a.work_id
+		                                                      AND ra2.and_group_number =
+		                                                            -1
+		                                                      AND ra2.actor = #{userId})
+		                                         AND NOT EXISTS
+		                                               (SELECT   rh.human_user
+		                                                  FROM   bizmaster.wf4_role_element rh,
+		                                                         bizmaster.wf4_resolved_actor ra2
+		                                                 WHERE   ra2.resolution_level =
+		                                                            4
+		                                                         AND rh.human_role =
+		                                                               ra2.actor
+		                                                         AND ra2.work_id =
+		                                                               a.work_id
+		                                                         AND ra2.and_group_number =
+		                                                               -1
+		                                                         AND rh.is_active = 1
+		                                                         AND rh.invalid = 0
+		                                                         AND rh.human_user =
+		                                                               #{userId})
+		                                         AND NOT EXISTS
+		                                               (SELECT   ur.child
+		                                                  FROM   bizmaster.wf4_user_relation ur,
+		                                                         bizmaster.wf4_resolved_actor ra2
+		                                                 WHERE   ra2.resolution_level =
+		                                                            6
+		                                                         AND ur.parent =
+		                                                               ra2.actor
+		                                                         AND ra2.and_group_number =
+		                                                               -1
+		                                                         AND ra2.work_id =
+		                                                               a.work_id
+		                                                         AND ur.child = #{userId})
+		                                         AND NOT EXISTS
+		                                               (SELECT   ru.actor
+		                                                  FROM   bizmaster.wf4_resolved_and_user ru
+		                                                 WHERE   ru.exclusion = 1
+		                                                         AND ru.work_id =
+		                                                               a.work_id
+		                                                         AND ru.actor = #{userId})) b
+		                       WHERE   a.id = b.work_id AND a.work_state = 3
+		                               AND NOT EXISTS
+		                                     (SELECT   multiinsta17_.perf_work
+		                                        FROM   bizmaster.wf4_mi_work multiinsta17_,
+		                                               bizmaster.wf4_mi_work multiinsta18_
+		                                       WHERE   (multiinsta18_.loop_type = 528
+		                                                OR multiinsta18_.loop_type =
+		                                                     272)
+		                                               AND multiinsta18_.process_id =
+		                                                     a.process_id
+		                                               AND multiinsta18_.activity_id =
+		                                                     a.activity
+		                                               AND (multiinsta18_.performer =
+		                                                       #{userId}
+		                                                    OR (multiinsta18_.performer IN
+		                                                              (SELECT   ABS.uzer
+		                                                                 FROM   bizmaster.wf4_absence_setting ABS
+		                                                                WHERE   ABS.substituter =
+		                                                                           #{userId}
+		                                                                        AND ABS.is_active =
+		                                                                              1
+		                                                                        AND ABS.invalid =
+		                                                                              0)
+		                                                        AND (multiinsta18_.delegated IS NULL
+		                                                             OR multiinsta18_.delegated =
+		                                                                  '')))
+		                                               AND multiinsta18_.cont_work =
+		                                                     multiinsta17_.cont_work
+		                                               AND multiinsta17_.elem_work =
+		                                                     multiinsta17_.perf_work
+		                                               AND multiinsta17_.perf_work =
+		                                                     b.work_id)
+		                               AND NOT EXISTS
+		                                     (SELECT   multiinsta19_.perf_work
+		                                        FROM   bizmaster.wf4_mi_org_work multiinsta19_,
+		                                               bizmaster.wf4_mi_org_work multiinsta20_,
+		                                               bizmaster.wf4_user_relation us21_
+		                                       WHERE   (multiinsta20_.loop_type = 560
+		                                                OR multiinsta20_.loop_type =
+		                                                     304)
+		                                               AND multiinsta20_.org_id <>
+		                                                     '---'
+		                                               AND multiinsta20_.org_id =
+		                                                     us21_.parent
+		                                               AND (us21_.child = #{userId}
+		                                                    OR (us21_.child IN
+		                                                              (SELECT   ABS.uzer
+		                                                                 FROM   bizmaster.wf4_absence_setting ABS
+		                                                                WHERE   ABS.substituter =
+		                                                                           #{userId}
+		                                                                        AND ABS.is_active =
+		                                                                              1
+		                                                                        AND ABS.invalid =
+		                                                                              0)))
+		                                               AND multiinsta20_.cont_work =
+		                                                     multiinsta19_.cont_work
+		                                               AND multiinsta19_.perf_work =
+		                                                     b.work_id)) WORK,
+		                     bizmaster.wf4_process_instance pi,
+		                     bizmaster.wf4_activity activity,
+		                     bizmaster.wf4_process process,
+		                     bizmaster.wf4_user u,
+		                     bizmaster.wf4_work_delegation_history delegation
+		             WHERE       work.pid = pi.inst_id
+		                     AND pi.process_state <> 2
+		                     AND pi.process_state <> 6
+		                     AND work.activity = activity.activity_id
+		                     AND work.process_id = activity.process_id
+		                     AND work.process_id = process.process_id
+		                     AND work.performer = u.user_id(+)
+		                     AND work.id = delegation.work_instance_id(+)
+		                     AND process.status = 0
+		                     AND process.invalid = 0
+		                     AND process.deleted = 0
+		                     AND WORK.share_condition IS NOT NULL
+		            UNION ALL
+		            SELECT   DISTINCT WL.TASKID AS ID,
+		                              DEF.ALIAS AS PROCESS_ID,
+		                              WL.EXT1 AS ACTIVITY,
+		                              INST.EXT1 AS KEYWORD2,
+		                              WL.TITLE AS ACTIVITY_NAME,
+		                              DEF.NAME AS PNAME,
+		                              P_FOLDER.NAME AS PARENT_FOLDER
+		              FROM   BPM_WORKLIST WL,
+		                     (SELECT   WL.TASKID, WL.INSTID, WL.TRCTAG
+		                        FROM      BPM_WORKLIST WL
+		                               INNER JOIN
+		                                  BPM_PROCINST INST
+		                               ON     WL.INSTID = INST.INSTID
+		                                  AND INST.ISDELETED = '0'
+		                                  AND INST.STATUS = 'Running'
+		                       WHERE   WL.STATUS IN ('NEW', 'CONFIRMED', 'DRAFT'))
+		                     ALL_WL,
+		                     BPM_ROLEMAPPING RM,
+		                     BPM_PROCINST INST,
+		                     BPM_PROCDEF DEF,
+		                     BPM_PROCDEF P_FOLDER,
+		                     BPM_PROCINST ROOTINST,
+		                     BPM_PROCINST MAININST
+		             WHERE       WL.INSTID = ALL_WL.INSTID
+		                     AND WL.EXT3 = 'Y'
+		                     AND WL.TRCTAG = ALL_WL.TRCTAG
+		                     AND WL.STATUS IN
+		                              ('NEW', 'CONFIRMED', 'DRAFT', 'DELEGATED')
+		                     AND WL.INSTID = RM.INSTID
+		                     AND WL.ROLENAME = RM.ROLENAME
+		                     AND (WL.ENDPOINT = #{userId} OR RM.ENDPOINT = #{userId})
+		                     AND WL.INSTID = INST.INSTID
+		                     AND INST.DEFID = DEF.DEFID
+		                     AND INST.ROOTINSTID = ROOTINST.INSTID
+		                     AND INST.MAININSTID = MAININST.INSTID(+)
+		                     AND DEF.PARENTFOLDER = P_FOLDER.DEFID(+)) A
+		GROUP BY   PROCESS_ID, ACTIVITY, SHARE_CONDITION
+		ORDER BY   FOLDERNAME,
+		           DEFNAME,
+		           TITLE,
+		           INSTANCEKEYWORD
+	]]>
+    </select>
+</mapper>

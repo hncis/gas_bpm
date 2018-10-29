@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="service">
+     
+    <select id="selectMyWorkListByUserId" parameterType="MyWorkVO" resultType="MyWorkVO">
+        <![CDATA[
+        	SELECT 
+        		DEFVER.DEFNAME AS PROCESSNAME,
+        		DEF.ALIAS AS PROCESSCODE,                                               				
+				WL.TITLE,        
+				WL.STATUS,       
+				INST.INFO,         
+				INST.NAME AS INSTANCENAME,  
+				TO_CHAR(WL.STARTDATE, 'YYYY-MM-DD HH24:MI') AS STARTDATE,    
+				TO_CHAR(WL.ENDDATE, 'YYYY-MM-DD HH24:MI') AS ENDDATE,    
+				TO_CHAR(WL.DUEDATE, 'YYYY-MM-DD HH24:MI') AS DUEDATE,    
+				INST.CURREP,       
+				INST.CURRSTATUSNAMES CURRSTATUSNAMES,
+				INST.CURRSTATUSCODES CURRSTATUSCODES,   
+				INST.CURRRSNM AS CURRRSNM,  
+				INST.INITEP,
+				INST.INITRSNM,
+				INST.INSTID AS INSTANCEID,   
+				WL.TRCTAG AS TRACINGTAG,   
+				WL.TASKID AS TASKID,       
+				WL.EXT1 AS EXT1,       
+				WL.EXT2 AS EXT2,       
+				WL.EXT3 AS EXT3,       
+				WL.EXT4 AS EXT4,       
+				WL.EXT5 AS EXT5,       
+				WL.EXT6 AS EXT6,       
+				WL.EXT7 AS EXT7,       
+				WL.EXT8 AS EXT8,       
+				WL.EXT9 AS EXT9,       
+				WL.EXT10 AS EXT10       
+			FROM BPM_WORKLIST WL                                                          
+			INNER JOIN BPM_PROCINST INST                                                  
+			ON WL.INSTID      =INST.INSTID                                                
+			AND INST.ISDELETED='0'                                                        
+			AND INST.STATUS   ='Running'                                                  
+			INNER JOIN BPM_WORKLIST INITWL                                                
+			ON INST.INITTASKID=INITWL.TASKID                                              
+			INNER JOIN BPM_PROCDEFVER DEFVER                                              
+			ON WL.DEFID            =DEFVER.DEFVERID                                       
+			INNER JOIN BPM_PROCDEF DEF                                                    
+			ON DEFVER.DEFID     =DEF.DEFID                                                
+			INNER JOIN BPM_ROLEMAPPING RM                                                 
+			ON INST.INSTID   =RM.INSTID                                                   
+			AND WL.ROLENAME  =RM.ROLENAME  
+			WHERE 1=1
+		]]>
+		<if test="status=='NEW'">
+        <![CDATA[                                               
+			AND WL.STATUS IN ('NEW','CONFIRMED','DRAFT')                                
+		]]>
+		</if>
+		<if test="status=='CONFIRMED'">
+        <![CDATA[                                               
+			AND WL.STATUS IN ('CONFIRMED')                                
+		]]>
+        </if>
+		<if test="status=='COMPLETED'">
+        <![CDATA[                                               
+			AND WL.STATUS IN ('COMPLETED')                                
+		]]>
+        </if>
+		<if test="status=='DELEGATED'">
+        <![CDATA[                                               
+			AND WL.STATUS IN ('DELEGATED')                                
+		]]>
+        </if>
+		<if test="status=='DELAYED'">
+        <![CDATA[                                               
+			AND WL.STATUS IN ('NEW','CONFIRMED','DRAFT')                                
+			AND WL.DUEDATE < SYSDATE                                
+		]]>
+        </if>
+		<![CDATA[                                     
+			AND (WL.ENDPOINT = #{userId}  -- 아이디 입력                                               
+			OR RM.ENDPOINT   = #{userId}) -- 아이디 입력             
+			ORDER BY WL.STARTDATE DESC                                                    
+        ]]>
+    </select>
+
+    <select id="selectMyInstanceListByUserId" parameterType="MyWorkVO" resultType="MyWorkVO">
+        <![CDATA[
+        	SELECT DISTINCT INST.INSTID AS INSTANCEID,
+			  DEFVER.DEFNAME            AS PROCESSNAME,
+			  INST.INITRSNM,
+			  INST.NAME                                       AS INSTANCENAME,
+			  TO_CHAR(INST.STARTEDDATE,'YYYY-MM-DD HH24:MI')  AS STARTDATE,
+			  TO_CHAR(INST.FINISHEDDATE,'YYYY-MM-DD HH24:MI') AS ENDDATE
+			FROM BPM_PROCINST INST
+			INNER JOIN BPM_WORKLIST WL
+			ON INST.INSTID=WL.INSTID
+			INNER JOIN BPM_PROCDEFVER DEFVER
+			ON DEFVER.DEFVERID=INST.DEFVERID
+			INNER JOIN BPM_WORKLIST INITTASK ON INITTASK.TASKID=INST.INITTASKID
+			WHERE 1=1
+		]]>
+		<if test="status!='Requested'">
+        <![CDATA[
+			AND INST.STATUS =#{status}
+        ]]>
+        </if>
+        <![CDATA[
+			AND INST.ISDELETED='0'
+			AND WL.STATUS    IN ('NEW','CONFIRMED','DRAFT','COMPLETED','DELEGATED')
+			AND WL.ENDPOINT   =#{userId}
+		]]>
+		<if test="status=='Requested'">
+        <![CDATA[
+        	AND INITTASK.ENDPOINT=#{userId}
+        ]]>
+        </if>
+        <![CDATA[
+			ORDER BY STARTDATE DESC                                                   
+        ]]>
+    </select>
+
+    <select id="selectMyWorkListCountByUserId" parameterType="String" resultType="MyWorkVO">
+        <![CDATA[
+        	SELECT STATUS,
+				  COUNT(TASKID) AS TOTALCOUNT
+				FROM
+				  (SELECT DISTINCT TASKID,
+				    WL.STATUS
+				  FROM BPM_WORKLIST WL
+				  INNER JOIN BPM_ROLEMAPPING RM
+				  ON WL.INSTID   =RM.INSTID
+				  AND WL.ROLENAME=RM.ROLENAME
+				  INNER JOIN BPM_PROCINST INST
+				  ON WL.INSTID      =INST.INSTID
+				  WHERE 1           =1
+				  AND (WL.ENDPOINT  =#{userId}
+				  OR RM.ENDPOINT    =#{userId})
+				  AND INST.STATUS  IN ('Running','Completed')
+				  AND INST.ISDELETED=0
+	        UNION
+	        SELECT DISTINCT TASKID,
+				    'DELAYED' AS STATUS
+				  FROM BPM_WORKLIST WL
+				  INNER JOIN BPM_ROLEMAPPING RM
+				  ON WL.INSTID   =RM.INSTID
+				  AND WL.ROLENAME=RM.ROLENAME
+				  INNER JOIN BPM_PROCINST INST
+				  ON WL.INSTID      =INST.INSTID
+				  WHERE 1           =1
+				  AND (WL.ENDPOINT  =#{userId}
+				  OR RM.ENDPOINT    =#{userId})
+				  AND INST.STATUS  IN ('Running','Completed')
+				  AND INST.ISDELETED=0
+	        AND WL.STATUS IN ('NEW','CONFIRMED','DRAFT')
+	        AND WL.DUEDATE<SYSDATE
+				  )
+				GROUP BY STATUS
+		]]>
+    </select>
+
+    <select id="selectMyInstanceListCountByUserId" parameterType="String" resultType="MyWorkVO">
+        <![CDATA[
+        	SELECT INST.STATUS,
+			  COUNT(DISTINCT(INST.INSTID)) AS TOTALCOUNT
+			FROM BPM_PROCINST INST
+			INNER JOIN BPM_WORKLIST WL
+			ON INST.INSTID     =WL.INSTID
+			WHERE 1            =1
+			AND INST.ISDELETED ='0'
+			AND WL.STATUS     IN ('NEW','CONFIRMED','DRAFT','COMPLETED','DELEGATED')
+			AND WL.ENDPOINT    =#{userId}
+			GROUP BY INST.STATUS
+			UNION ALL
+			SELECT 'Requested',
+			  COUNT(INST.INSTID) AS TOTALCOUNT
+			FROM BPM_PROCINST INST
+			WHERE 1            =1
+			AND INST.ISDELETED ='0'
+			AND INST.INITEP    =#{userId}
+		]]>
+    </select>
+
+    <select id="selectProcessTreeByComCode" parameterType="String" resultType="TreeVO">
+        <![CDATA[
+        	SELECT DEF.DEFID AS ID,
+        	  DEF.PRODVERID,
+			  (
+			  CASE
+			    WHEN DEF.PARENTFOLDER=-1
+			    THEN '#'
+			    ELSE TO_CHAR(DEF.PARENTFOLDER)
+			  END) AS PARENT,
+			  (
+			  CASE
+			    WHEN VER.DEFNAME IS NULL
+			    THEN DEF.NAME
+			    ELSE VER.DEFNAME
+			  END) AS TEXT,
+			  DEF.OBJTYPE AS TYPE
+			FROM BPM_PROCDEF DEF
+			LEFT JOIN BPM_PROCDEFVER VER
+			ON DEF.PRODVERID=VER.DEFVERID
+			WHERE 1=1 AND 
+			DEF.OBJTYPE  IN ( 'folder','process' )
+			AND DEF.COMCODE=#{comCode}
+			AND DEF.ISDELETED='0'
+		]]>
+    </select>
+    
+    <select id="selecUserVOByUserId" parameterType="String" resultType="LoginVO">
+        <![CDATA[
+            SELECT EMP.EMPCODE AS USERID,
+			       EMP.EMPNAME AS USERNAME,
+			       EMP.ISADMIN AS ISADMIN,
+			       EMP.EMAIL AS EMAIL,
+			       EMP.PARTCODE AS PARTCODE,
+			       PART.PARTNAME AS PARTNAME,
+			       EMP.GLOBALCOM AS COMCODE,
+			       COM.COMNAME AS COMNAME,
+			       EMP.MOBILENO AS MOBILENO,
+			       EMP.LOCALE AS LOCALE,
+			       EMP.JIKNAME AS JIKNAME
+			FROM EMPTABLE EMP
+			  LEFT JOIN PARTTABLE PART ON EMP.PARTCODE = PART.PARTCODE
+			  LEFT JOIN COMTABLE COM ON EMP.GLOBALCOM = COM.COMCODE
+			WHERE EMP.EMPCODE = #{userId}
+			AND   EMP.ISDELETED = 0
+        ]]>
+    </select>
+
+</mapper>
