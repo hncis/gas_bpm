@@ -1,0 +1,1035 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="instancelist">
+     
+    <select id="selectKrissRunningInstanceList" parameterType="DefaultVO" resultType="ProcessInstanceVO">
+        <![CDATA[
+        	SELECT   *
+			  FROM   (SELECT   ROWNUM AS RNUM,
+			                   INSTID,
+			                   FOLDERNAME,
+			                   DEFNAME,
+			                   INFO,
+			                   CURRSTATUSNAMES,
+			                   CURRRSNM,
+			                   STARTEDDATE,
+			                   COLLECTACTIVITYNAME,
+			                   ISEMERGENCY
+			            FROM   (SELECT   PI.INST_ID AS INSTID,
+			                             SUBSTR (PROCESS.PARENT_FOLDER,
+			                                     2,
+			                                     LENGTH (PROCESS.PARENT_FOLDER))
+			                                AS FOLDERNAME,
+			                             PROCESS.PNAME AS DEFNAME,
+			                             PI.KEYWORD1 AS INFO,
+			                             ACTIVITY.ACTIVITY_NAME AS CURRSTATUSNAMES,
+			                             U.USER_NAME AS CURRRSNM,
+			                             PI.CREATED_DATE AS STARTEDDATE,
+			                             C_ACTIVITY.ACTIVITY_NAME AS COLLECTACTIVITYNAME,
+			                             (CASE
+			                                 WHEN PI.EMERGENCY_LEVEL > 0 THEN 1
+			                                 ELSE 0
+			                              END)
+			                                AS ISEMERGENCY
+			                      FROM                     (SELECT /*+ LEADING(B A) USE_HASH(B A) INDEX(A(performer)) */
+			                                                      A  .INST_ID,
+			                                                         A.PROCESS_ID,
+			                                                         A.PERFORMER,
+			                                                         A.PERFORMER_ORG,
+			                                                         A.OWNER,
+			                                                         A.PROCESS_STATE,
+			                                                         A.PROCESS_RESULT,
+			                                                         A.INIT_PID,
+			                                                         A.PARENT_PID,
+			                                                         A.START_ACTIVITY_ID,
+			                                                         A.EMERGENCY_LEVEL,
+			                                                         A.FIRST_WORK,
+			                                                         A.PARENT_WORK,
+			                                                         A.CREATED_DATE,
+			                                                         A.DUE_DATE,
+			                                                         A.FINISHED_DATE,
+			                                                         A.FAULT_NAME,
+			                                                         A.SUB_PATTERN,
+			                                                         A.KEYWORD1,
+			                                                         A.KEYWORD2,
+			                                                         A.KEYWORD3,
+			                                                         A.KEYWORD4,
+			                                                         A.KEYWORD5,
+			                                                         A.KEYWORD6,
+			                                                         A.KEYWORD7,
+			                                                         A.KEYWORD8,
+			                                                         A.KEYWORD9,
+			                                                         A.KEYWORD10,
+			                                                         B.USER_ID,
+			                                                         B.USER_NAME,
+			                                                         B.BIZ_CODE,
+			                                                         B.DEFAULT_PARENT_ID,
+			                                                         B.USER_TYPE,
+			                                                         B.LOGIN_ID,
+			                                                         B.PASSWORD,
+			                                                         B.EMAIL,
+			                                                         B.RESERVED1,
+			                                                         B.RESERVED2,
+			                                                         B.RESERVED3,
+			                                                         B.INVALID,
+			                                                         B.VALID_FROM,
+			                                                         B.VALID_TO,
+			                                                         B.DESCRIPTION,
+			                                                         B.CREATED_DATE
+			                                                            AS USER_CREATED_DATE,
+			                                                         B.CREATOR,
+			                                                         B.MODIFIED_DATE,
+			                                                         B.MODIFIER,
+			                                                         B.HOLDED,
+			                                                         B.DELETED,
+			                                                         B.DELETED_DATE,
+			                                                         B.LOCKED,
+			                                                         B.REMOVER
+			                                                  FROM   BIZMASTER.WF4_PROCESS_INSTANCE A,
+			                                                         BIZMASTER.WF4_USER B
+			                                                 WHERE   A.PERFORMER =
+			                                                            B.USER_ID
+			                                                         AND A.PERFORMER = #{userId}
+			                                                         AND B.USER_ID = #{userId}
+			                                                         AND (A.PROCESS_STATE =
+			                                                                 1
+			                                                              OR A.PROCESS_STATE =
+			                                                                   4)
+			                                                UNION
+			                                                SELECT /*+ LEADING(AA A) NO_MERGE(AA) USE_NL(A B) */
+			                                                      A  .INST_ID,
+			                                                         A.PROCESS_ID,
+			                                                         A.PERFORMER,
+			                                                         A.PERFORMER_ORG,
+			                                                         A.OWNER,
+			                                                         A.PROCESS_STATE,
+			                                                         A.PROCESS_RESULT,
+			                                                         A.INIT_PID,
+			                                                         A.PARENT_PID,
+			                                                         A.START_ACTIVITY_ID,
+			                                                         A.EMERGENCY_LEVEL,
+			                                                         A.FIRST_WORK,
+			                                                         A.PARENT_WORK,
+			                                                         A.CREATED_DATE,
+			                                                         A.DUE_DATE,
+			                                                         A.FINISHED_DATE,
+			                                                         A.FAULT_NAME,
+			                                                         A.SUB_PATTERN,
+			                                                         A.KEYWORD1,
+			                                                         A.KEYWORD2,
+			                                                         A.KEYWORD3,
+			                                                         A.KEYWORD4,
+			                                                         A.KEYWORD5,
+			                                                         A.KEYWORD6,
+			                                                         A.KEYWORD7,
+			                                                         A.KEYWORD8,
+			                                                         A.KEYWORD9,
+			                                                         A.KEYWORD10,
+			                                                         B.USER_ID,
+			                                                         B.USER_NAME,
+			                                                         B.BIZ_CODE,
+			                                                         B.DEFAULT_PARENT_ID,
+			                                                         B.USER_TYPE,
+			                                                         B.LOGIN_ID,
+			                                                         B.PASSWORD,
+			                                                         B.EMAIL,
+			                                                         B.RESERVED1,
+			                                                         B.RESERVED2,
+			                                                         B.RESERVED3,
+			                                                         B.INVALID,
+			                                                         B.VALID_FROM,
+			                                                         B.VALID_TO,
+			                                                         B.DESCRIPTION,
+			                                                         B.CREATED_DATE
+			                                                            AS USER_CREATED_DATE,
+			                                                         B.CREATOR,
+			                                                         B.MODIFIED_DATE,
+			                                                         B.MODIFIER,
+			                                                         B.HOLDED,
+			                                                         B.DELETED,
+			                                                         B.DELETED_DATE,
+			                                                         B.LOCKED,
+			                                                         B.REMOVER
+			                                                  FROM   (SELECT /*+ LEADING(B) USE_HASH(B A) INDEX(A(process_state)) */
+			                                                                A  .ROWID
+			                                                                      RID
+			                                                            FROM   BIZMASTER.WF4_PROCESS_INSTANCE A,
+			                                                                   (SELECT   PID
+			                                                                      FROM   BIZMASTER.WF4_WORK_LOG
+			                                                                     WHERE   WORK_RESULT <>
+			                                                                                3
+			                                                                             AND PERFORMER =
+			                                                                                   #{userId}
+			                                                                    UNION ALL
+			                                                                    SELECT   PID
+			                                                                      FROM   BIZMASTER.WF4_WORK_LOG
+			                                                                     WHERE   WORK_RESULT <>
+			                                                                                3
+			                                                                             AND DELEGATOR =
+			                                                                                   #{userId})
+			                                                                   B
+			                                                           WHERE   (A.PROCESS_STATE =
+			                                                                       1
+			                                                                    OR A.PROCESS_STATE =
+			                                                                         4)
+			                                                                   AND A.INST_ID =
+			                                                                         B.PID)
+			                                                         AA,
+			                                                         BIZMASTER.WF4_PROCESS_INSTANCE A,
+			                                                         BIZMASTER.WF4_USER B
+			                                                 WHERE   AA.RID = A.ROWID
+			                                                         AND A.PERFORMER =
+			                                                               B.USER_ID(+))
+			                                               PI
+			                                            INNER JOIN
+			                                               BIZMASTER.WF4_PROCESS PROCESS
+			                                            ON PI.PROCESS_ID =
+			                                                  PROCESS.PROCESS_ID
+			                                               AND PROCESS.STATUS = 0
+			                                               AND PROCESS.INVALID = 0
+			                                               AND PROCESS.DELETED = 0
+			                                         LEFT JOIN
+			                                            BIZMASTER.WF4_WORK_LOG LOG
+			                                         ON     LOG.PID = PI.INST_ID
+			                                            AND LOG.WORK_RESULT = 0
+			                                            AND LOG.WORK_STATE <> 0
+			                                            AND LOG.WORK_STATE <> 1
+			                                            AND LOG.WORK_STATE <> 8
+			                                            AND LOG.WORK_STATE <> 9
+			                                            AND (LOG.ACTIVITY_LOOP_TYPE = 0
+			                                                 OR LOG.ACTIVITY_LOOP_TYPE =
+			                                                      1
+			                                                 OR LOG.MI_SEQ <> '000')
+			                                      LEFT JOIN
+			                                         BIZMASTER.WF4_ACTIVITY ACTIVITY
+			                                      ON LOG.PROCESS_ID = ACTIVITY.PROCESS_ID
+			                                         AND LOG.ACTIVITY =
+			                                               ACTIVITY.ACTIVITY_ID
+			                                   LEFT JOIN
+			                                      BIZMASTER.WF4_USER U
+			                                   ON LOG.PERFORMER = U.USER_ID
+			                                LEFT JOIN
+			                                   BIZMASTER.WF4_WORK_LOG C_LOG
+			                                ON     PI.INST_ID = C_LOG.PID
+			                                   AND C_LOG.CANCELABLE = 1
+			                                   AND C_LOG.PERFORMER = #{userId}
+			                                   AND C_LOG.ACTIVITY_ACTIVITY_TYPE = 16
+			                             LEFT JOIN
+			                                BIZMASTER.WF4_ACTIVITY C_ACTIVITY
+			                             ON C_LOG.PROCESS_ID = C_ACTIVITY.PROCESS_ID
+			                                AND C_LOG.ACTIVITY = C_ACTIVITY.ACTIVITY_ID
+			                    UNION ALL
+			                    SELECT   DISTINCT
+			                             TO_CHAR (INST.INSTID),
+			                             PARENT.NAME,
+			                             DEFVER.DEFNAME,
+			                             INST.INFO,
+			                             INST.CURRSTATUSNAMES,
+			                             INST.CURRRSNM,
+			                             INST.STARTEDDATE,
+			                             '',
+			                             (CASE
+			                                 WHEN INST.ISEMERGENCY IS NULL THEN 0
+			                                 ELSE ISEMERGENCY
+			                              END)
+			                      FROM               BPM_PROCINST INST
+			                                      INNER JOIN
+			                                         BPM_WORKLIST WL
+			                                      ON INST.INSTID = WL.INSTID
+			                                         AND WL.STATUS IN
+			                                                  ('DELEGATED', 'COMPLETED')
+			                                         AND WL.ENDPOINT = #{userId}
+			                                   INNER JOIN
+			                                      BPM_PROCDEF DEF
+			                                   ON DEF.DEFID = INST.DEFID
+			                                INNER JOIN
+			                                   BPM_PROCDEF PARENT
+			                                ON DEF.PARENTFOLDER = PARENT.DEFID
+			                             INNER JOIN
+			                                BPM_PROCDEFVER DEFVER
+			                             ON INST.DEFVERID = DEFVER.DEFVERID
+			                     WHERE   INST.ISDELETED = '0'
+			                             AND INST.STATUS IN ('Running', 'Completed')
+			                    ORDER BY   ISEMERGENCY DESC, STARTEDDATE DESC))
+			 WHERE   RNUM >= ${startRow} AND RNUM <= ${endRow}
+		]]>
+    </select>
+     
+    <select id="selectCountKrissRunningInstanceList" parameterType="DefaultVO" resultType="Integer">
+        <![CDATA[
+			SELECT   COUNT ( * ) AS TOTALCOUNT
+			  FROM   (SELECT   PI.INST_ID AS INSTID
+			            FROM                     (SELECT /*+ LEADING(B A) USE_HASH(B A) INDEX(A(performer)) */
+			                                            A  .INST_ID,
+			                                               A.PROCESS_ID,
+			                                               A.PERFORMER,
+			                                               A.PERFORMER_ORG,
+			                                               A.OWNER,
+			                                               A.PROCESS_STATE,
+			                                               A.PROCESS_RESULT,
+			                                               A.INIT_PID,
+			                                               A.PARENT_PID,
+			                                               A.START_ACTIVITY_ID,
+			                                               A.EMERGENCY_LEVEL,
+			                                               A.FIRST_WORK,
+			                                               A.PARENT_WORK,
+			                                               A.CREATED_DATE,
+			                                               A.DUE_DATE,
+			                                               A.FINISHED_DATE,
+			                                               A.FAULT_NAME,
+			                                               A.SUB_PATTERN,
+			                                               A.KEYWORD1,
+			                                               A.KEYWORD2,
+			                                               A.KEYWORD3,
+			                                               A.KEYWORD4,
+			                                               A.KEYWORD5,
+			                                               A.KEYWORD6,
+			                                               A.KEYWORD7,
+			                                               A.KEYWORD8,
+			                                               A.KEYWORD9,
+			                                               A.KEYWORD10,
+			                                               B.USER_ID,
+			                                               B.USER_NAME,
+			                                               B.BIZ_CODE,
+			                                               B.DEFAULT_PARENT_ID,
+			                                               B.USER_TYPE,
+			                                               B.LOGIN_ID,
+			                                               B.PASSWORD,
+			                                               B.EMAIL,
+			                                               B.RESERVED1,
+			                                               B.RESERVED2,
+			                                               B.RESERVED3,
+			                                               B.INVALID,
+			                                               B.VALID_FROM,
+			                                               B.VALID_TO,
+			                                               B.DESCRIPTION,
+			                                               B.CREATED_DATE
+			                                                  AS USER_CREATED_DATE,
+			                                               B.CREATOR,
+			                                               B.MODIFIED_DATE,
+			                                               B.MODIFIER,
+			                                               B.HOLDED,
+			                                               B.DELETED,
+			                                               B.DELETED_DATE,
+			                                               B.LOCKED,
+			                                               B.REMOVER
+			                                        FROM   BIZMASTER.WF4_PROCESS_INSTANCE A,
+			                                               BIZMASTER.WF4_USER B
+			                                       WHERE       A.PERFORMER = B.USER_ID
+			                                               AND A.PERFORMER = #{userId}
+			                                               AND B.USER_ID = #{userId}
+			                                               AND (A.PROCESS_STATE = 1
+			                                                    OR A.PROCESS_STATE = 4)
+			                                      UNION
+			                                      SELECT /*+ LEADING(AA A) NO_MERGE(AA) USE_NL(A B) */
+			                                            A  .INST_ID,
+			                                               A.PROCESS_ID,
+			                                               A.PERFORMER,
+			                                               A.PERFORMER_ORG,
+			                                               A.OWNER,
+			                                               A.PROCESS_STATE,
+			                                               A.PROCESS_RESULT,
+			                                               A.INIT_PID,
+			                                               A.PARENT_PID,
+			                                               A.START_ACTIVITY_ID,
+			                                               A.EMERGENCY_LEVEL,
+			                                               A.FIRST_WORK,
+			                                               A.PARENT_WORK,
+			                                               A.CREATED_DATE,
+			                                               A.DUE_DATE,
+			                                               A.FINISHED_DATE,
+			                                               A.FAULT_NAME,
+			                                               A.SUB_PATTERN,
+			                                               A.KEYWORD1,
+			                                               A.KEYWORD2,
+			                                               A.KEYWORD3,
+			                                               A.KEYWORD4,
+			                                               A.KEYWORD5,
+			                                               A.KEYWORD6,
+			                                               A.KEYWORD7,
+			                                               A.KEYWORD8,
+			                                               A.KEYWORD9,
+			                                               A.KEYWORD10,
+			                                               B.USER_ID,
+			                                               B.USER_NAME,
+			                                               B.BIZ_CODE,
+			                                               B.DEFAULT_PARENT_ID,
+			                                               B.USER_TYPE,
+			                                               B.LOGIN_ID,
+			                                               B.PASSWORD,
+			                                               B.EMAIL,
+			                                               B.RESERVED1,
+			                                               B.RESERVED2,
+			                                               B.RESERVED3,
+			                                               B.INVALID,
+			                                               B.VALID_FROM,
+			                                               B.VALID_TO,
+			                                               B.DESCRIPTION,
+			                                               B.CREATED_DATE
+			                                                  AS USER_CREATED_DATE,
+			                                               B.CREATOR,
+			                                               B.MODIFIED_DATE,
+			                                               B.MODIFIER,
+			                                               B.HOLDED,
+			                                               B.DELETED,
+			                                               B.DELETED_DATE,
+			                                               B.LOCKED,
+			                                               B.REMOVER
+			                                        FROM   (SELECT /*+ LEADING(B) USE_HASH(B A) INDEX(A(process_state)) */
+			                                                      A  .ROWID RID
+			                                                  FROM   BIZMASTER.WF4_PROCESS_INSTANCE A,
+			                                                         (SELECT   PID
+			                                                            FROM   BIZMASTER.WF4_WORK_LOG
+			                                                           WHERE   WORK_RESULT <>
+			                                                                      3
+			                                                                   AND PERFORMER =
+			                                                                         #{userId}
+			                                                          UNION ALL
+			                                                          SELECT   PID
+			                                                            FROM   BIZMASTER.WF4_WORK_LOG
+			                                                           WHERE   WORK_RESULT <>
+			                                                                      3
+			                                                                   AND DELEGATOR =
+			                                                                         #{userId})
+			                                                         B
+			                                                 WHERE   (A.PROCESS_STATE = 1
+			                                                          OR A.PROCESS_STATE =
+			                                                               4)
+			                                                         AND A.INST_ID =
+			                                                               B.PID) AA,
+			                                               BIZMASTER.WF4_PROCESS_INSTANCE A,
+			                                               BIZMASTER.WF4_USER B
+			                                       WHERE   AA.RID = A.ROWID
+			                                               AND A.PERFORMER = B.USER_ID(+))
+			                                     PI
+			                                  INNER JOIN
+			                                     BIZMASTER.WF4_PROCESS PROCESS
+			                                  ON     PI.PROCESS_ID = PROCESS.PROCESS_ID
+			                                     AND PROCESS.STATUS = 0
+			                                     AND PROCESS.INVALID = 0
+			                                     AND PROCESS.DELETED = 0
+			                               LEFT JOIN
+			                                  BIZMASTER.WF4_WORK_LOG LOG
+			                               ON     LOG.PID = PI.INST_ID
+			                                  AND LOG.WORK_RESULT = 0
+			                                  AND LOG.WORK_STATE <> 0
+			                                  AND LOG.WORK_STATE <> 1
+			                                  AND LOG.WORK_STATE <> 8
+			                                  AND LOG.WORK_STATE <> 9
+			                                  AND (   LOG.ACTIVITY_LOOP_TYPE = 0
+			                                       OR LOG.ACTIVITY_LOOP_TYPE = 1
+			                                       OR LOG.MI_SEQ <> '000')
+			                            LEFT JOIN
+			                               BIZMASTER.WF4_ACTIVITY ACTIVITY
+			                            ON LOG.PROCESS_ID = ACTIVITY.PROCESS_ID
+			                               AND LOG.ACTIVITY = ACTIVITY.ACTIVITY_ID
+			                         LEFT JOIN
+			                            BIZMASTER.WF4_USER U
+			                         ON LOG.PERFORMER = U.USER_ID
+			                      LEFT JOIN
+			                         BIZMASTER.WF4_WORK_LOG C_LOG
+			                      ON     PI.INST_ID = C_LOG.PID
+			                         AND C_LOG.CANCELABLE = 1
+			                         AND C_LOG.PERFORMER = #{userId}
+			                         AND C_LOG.ACTIVITY_ACTIVITY_TYPE = 16
+			                   LEFT JOIN
+			                      BIZMASTER.WF4_ACTIVITY C_ACTIVITY
+			                   ON C_LOG.PROCESS_ID = C_ACTIVITY.PROCESS_ID
+			                      AND C_LOG.ACTIVITY = C_ACTIVITY.ACTIVITY_ID
+			          UNION ALL
+			          SELECT   DISTINCT TO_CHAR (INST.INSTID)
+			            FROM               BPM_PROCINST INST
+			                            INNER JOIN
+			                               BPM_WORKLIST WL
+			                            ON     INST.INSTID = WL.INSTID
+			                               AND WL.STATUS IN ('DELEGATED', 'COMPLETED')
+			                               AND WL.ENDPOINT = #{userId}
+			                         INNER JOIN
+			                            BPM_PROCDEF DEF
+			                         ON DEF.DEFID = INST.DEFID
+			                      INNER JOIN
+			                         BPM_PROCDEF PARENT
+			                      ON DEF.PARENTFOLDER = PARENT.DEFID
+			                   INNER JOIN
+			                      BPM_PROCDEFVER DEFVER
+			                   ON INST.DEFVERID = DEFVER.DEFVERID
+			           WHERE   INST.ISDELETED = '0'
+			                   AND INST.STATUS IN ('Running', 'Completed'))
+		]]>
+    </select>
+     
+    <select id="selectKrissCompletedInstanceList" parameterType="DefaultVO" resultType="ProcessInstanceVO">
+        <![CDATA[
+			SELECT   *
+			  FROM   (SELECT   ROWNUM AS RNUM,
+			                   INSTID,
+			                   FOLDERNAME,
+			                   DEFNAME,
+			                   INFO,
+			                   STARTEDDATE,
+			                   FINISHEDDATE,
+			                   STATUS
+			            FROM   (SELECT   DISTINCT TO_CHAR (INST.INSTID) INSTID,
+			                                      PARENT.NAME AS FOLDERNAME,
+			                                      DEFVER.DEFNAME,
+			                                      INST.INFO,
+			                                      INST.STARTEDDATE,
+			                                      INST.FINISHEDDATE,
+			                                      INST.STATUS
+			                      FROM               BPM_PROCINST INST
+			                                      INNER JOIN
+			                                         BPM_WORKLIST WL
+			                                      ON INST.INSTID = WL.INSTID
+			                                         AND WL.STATUS IN
+			                                                  ('COMPLETED', 'DELEGATED')
+			                                         AND WL.ENDPOINT = #{userId}
+			                                   INNER JOIN
+			                                      BPM_PROCDEF DEF
+			                                   ON INST.DEFID = DEF.DEFID
+			                                INNER JOIN
+			                                   BPM_PROCDEF PARENT
+			                                ON DEF.PARENTFOLDER = PARENT.DEFID
+			                             INNER JOIN
+			                                BPM_PROCDEFVER DEFVER
+			                             ON INST.DEFVERID = DEFVER.DEFVERID
+			                     WHERE   INST.ISDELETED = '0'
+			                             AND INST.STATUS = 'Completed'
+			                             AND FINISHEDDATE >=
+			                                   TO_TIMESTAMP (#{strFromDate}, 'YYYY-MM-DD')
+			                             AND FINISHEDDATE <=
+			                             	   TO_TIMESTAMP (#{strToDate}||' 235959', 'YYYY-MM-DD HH24MISS')
+			                    UNION ALL
+			                    SELECT   PI.INST_ID,
+			                             SUBSTR (PARENT_FOLDER,
+			                                     2,
+			                                     LENGTH (PARENT_FOLDER)),
+			                             PNAME,
+			                             KEYWORD1,
+			                             PI.CREATED_DATE,
+			                             PI.FINISHED_DATE,
+			                             (CASE WHEN PI.PROCESS_RESULT <> 1 THEN 'Failed' else 'Completed' END)
+			                      FROM   BIZMASTER.WF4_PROCESS PROCESS,
+			                             (SELECT /*+ INDEX(A BIZMASTER.WF4_PROCESS_INSTANCE_IDX1) */
+			                                    A  .INST_ID,
+			                                       A.PROCESS_ID,
+			                                       A.PERFORMER,
+			                                       A.PERFORMER_ORG,
+			                                       A.OWNER,
+			                                       A.PROCESS_STATE,
+			                                       A.PROCESS_RESULT,
+			                                       A.INIT_PID,
+			                                       A.PARENT_PID,
+			                                       A.START_ACTIVITY_ID,
+			                                       A.EMERGENCY_LEVEL,
+			                                       A.FIRST_WORK,
+			                                       A.PARENT_WORK,
+			                                       A.CREATED_DATE,
+			                                       A.DUE_DATE,
+			                                       A.FINISHED_DATE,
+			                                       A.FAULT_NAME,
+			                                       A.SUB_PATTERN,
+			                                       A.KEYWORD1,
+			                                       A.KEYWORD2,
+			                                       A.KEYWORD3,
+			                                       A.KEYWORD4,
+			                                       A.KEYWORD5,
+			                                       A.KEYWORD6,
+			                                       A.KEYWORD7,
+			                                       A.KEYWORD8,
+			                                       A.KEYWORD9,
+			                                       A.KEYWORD10,
+			                                       B.USER_ID,
+			                                       B.USER_NAME,
+			                                       B.BIZ_CODE,
+			                                       B.DEFAULT_PARENT_ID,
+			                                       B.USER_TYPE,
+			                                       B.LOGIN_ID,
+			                                       B.PASSWORD,
+			                                       B.EMAIL,
+			                                       B.RESERVED1,
+			                                       B.RESERVED2,
+			                                       B.RESERVED3,
+			                                       B.INVALID,
+			                                       B.VALID_FROM,
+			                                       B.VALID_TO,
+			                                       B.DESCRIPTION,
+			                                       B.CREATED_DATE AS USER_CREATED_DATE,
+			                                       B.CREATOR,
+			                                       B.MODIFIED_DATE,
+			                                       B.MODIFIER,
+			                                       B.HOLDED,
+			                                       B.DELETED,
+			                                       B.DELETED_DATE,
+			                                       B.LOCKED,
+			                                       B.REMOVER
+			                                FROM   BIZMASTER.WF4_PROCESS_INSTANCE A,
+			                                       BIZMASTER.WF4_USER B
+			                               WHERE       A.PERFORMER = B.USER_ID
+			                                       AND A.PERFORMER = #{userId}
+			                                       AND B.USER_ID = #{userId}
+			                                       AND A.PROCESS_STATE = 5
+			                              UNION
+			                              SELECT /*+ LEADING(C) INDEX(C BIZMASTER.WF4_WORK_LOG_IDX3) INDEX(A BIZMASTER.WF4_PROCESS_INSTANCE_IDX6)*/
+			                                    A  .INST_ID,
+			                                       A.PROCESS_ID,
+			                                       A.PERFORMER,
+			                                       A.PERFORMER_ORG,
+			                                       A.OWNER,
+			                                       A.PROCESS_STATE,
+			                                       A.PROCESS_RESULT,
+			                                       A.INIT_PID,
+			                                       A.PARENT_PID,
+			                                       A.START_ACTIVITY_ID,
+			                                       A.EMERGENCY_LEVEL,
+			                                       A.FIRST_WORK,
+			                                       A.PARENT_WORK,
+			                                       A.CREATED_DATE,
+			                                       A.DUE_DATE,
+			                                       A.FINISHED_DATE,
+			                                       A.FAULT_NAME,
+			                                       A.SUB_PATTERN,
+			                                       A.KEYWORD1,
+			                                       A.KEYWORD2,
+			                                       A.KEYWORD3,
+			                                       A.KEYWORD4,
+			                                       A.KEYWORD5,
+			                                       A.KEYWORD6,
+			                                       A.KEYWORD7,
+			                                       A.KEYWORD8,
+			                                       A.KEYWORD9,
+			                                       A.KEYWORD10,
+			                                       B.USER_ID,
+			                                       B.USER_NAME,
+			                                       B.BIZ_CODE,
+			                                       B.DEFAULT_PARENT_ID,
+			                                       B.USER_TYPE,
+			                                       B.LOGIN_ID,
+			                                       B.PASSWORD,
+			                                       B.EMAIL,
+			                                       B.RESERVED1,
+			                                       B.RESERVED2,
+			                                       B.RESERVED3,
+			                                       B.INVALID,
+			                                       B.VALID_FROM,
+			                                       B.VALID_TO,
+			                                       B.DESCRIPTION,
+			                                       B.CREATED_DATE AS USER_CREATED_DATE,
+			                                       B.CREATOR,
+			                                       B.MODIFIED_DATE,
+			                                       B.MODIFIER,
+			                                       B.HOLDED,
+			                                       B.DELETED,
+			                                       B.DELETED_DATE,
+			                                       B.LOCKED,
+			                                       B.REMOVER
+			                                FROM         BIZMASTER.WF4_PROCESS_INSTANCE A
+			                                          LEFT OUTER JOIN
+			                                             BIZMASTER.WF4_USER B
+			                                          ON A.PERFORMER = B.USER_ID
+			                                       LEFT JOIN
+			                                          BIZMASTER.WF4_WORK_LOG C
+			                                       ON A.INST_ID = C.PID
+			                               WHERE   A.PROCESS_STATE = 5
+			                                       AND C.PERFORMER = #{userId}) PI
+			                     WHERE       PI.PROCESS_ID = PROCESS.PROCESS_ID
+			                             AND PROCESS.STATUS = 0
+			                             AND PROCESS.INVALID = 0
+			                             AND PROCESS.DELETED = 0
+			                             --AND PI.PROCESS_RESULT = 1
+			                             --AND PI.PROCESS_RESULT = 1
+			                             AND PI.FINISHED_DATE >=
+			                                   TO_TIMESTAMP (#{strFromDate}, 'YYYY-MM-DD')
+			                             AND PI.FINISHED_DATE <=
+			                             	   TO_TIMESTAMP (#{strToDate}||' 235959', 'YYYY-MM-DD HH24MISS')
+			                    ORDER BY   FINISHEDDATE DESC))
+			 WHERE   RNUM >= ${startRow} AND RNUM <= ${endRow}
+		]]>
+    </select>
+     
+    <select id="selectCountKrissCompletedInstanceList" parameterType="DefaultVO" resultType="Integer">
+        <![CDATA[
+			SELECT   COUNT(*) TOTALCOUNT
+	            FROM   (SELECT   DISTINCT TO_CHAR (INST.INSTID) INSTID
+	                      FROM               BPM_PROCINST INST
+	                                      INNER JOIN
+	                                         BPM_WORKLIST WL
+	                                      ON INST.INSTID = WL.INSTID
+	                                         AND WL.STATUS IN
+	                                                  ('COMPLETED', 'DELEGATED')
+	                                         AND WL.ENDPOINT = #{userId}
+	                                   INNER JOIN
+	                                      BPM_PROCDEF DEF
+	                                   ON INST.DEFID = DEF.DEFID
+	                                INNER JOIN
+	                                   BPM_PROCDEF PARENT
+	                                ON DEF.PARENTFOLDER = PARENT.DEFID
+	                             INNER JOIN
+	                                BPM_PROCDEFVER DEFVER
+	                             ON INST.DEFVERID = DEFVER.DEFVERID
+	                     WHERE   INST.ISDELETED = '0'
+	                             AND INST.STATUS = 'Completed'
+	                             AND FINISHEDDATE >=
+	                                   TO_TIMESTAMP (#{strFromDate}, 'YYYY-MM-DD')
+	                             AND FINISHEDDATE <=
+	                             	   TO_TIMESTAMP (#{strToDate}||' 235959', 'YYYY-MM-DD HH24MISS')
+	                    UNION ALL
+	                    SELECT   PI.INST_ID
+	                      FROM   BIZMASTER.WF4_PROCESS PROCESS,
+	                             (SELECT /*+ INDEX(A BIZMASTER.WF4_PROCESS_INSTANCE_IDX1) */
+	                                    A  .INST_ID,
+	                                       A.PROCESS_ID,
+	                                       A.PERFORMER,
+	                                       A.PERFORMER_ORG,
+	                                       A.OWNER,
+	                                       A.PROCESS_STATE,
+	                                       A.PROCESS_RESULT,
+	                                       A.INIT_PID,
+	                                       A.PARENT_PID,
+	                                       A.START_ACTIVITY_ID,
+	                                       A.EMERGENCY_LEVEL,
+	                                       A.FIRST_WORK,
+	                                       A.PARENT_WORK,
+	                                       A.CREATED_DATE,
+	                                       A.DUE_DATE,
+	                                       A.FINISHED_DATE,
+	                                       A.FAULT_NAME,
+	                                       A.SUB_PATTERN,
+	                                       A.KEYWORD1,
+	                                       A.KEYWORD2,
+	                                       A.KEYWORD3,
+	                                       A.KEYWORD4,
+	                                       A.KEYWORD5,
+	                                       A.KEYWORD6,
+	                                       A.KEYWORD7,
+	                                       A.KEYWORD8,
+	                                       A.KEYWORD9,
+	                                       A.KEYWORD10,
+	                                       B.USER_ID,
+	                                       B.USER_NAME,
+	                                       B.BIZ_CODE,
+	                                       B.DEFAULT_PARENT_ID,
+	                                       B.USER_TYPE,
+	                                       B.LOGIN_ID,
+	                                       B.PASSWORD,
+	                                       B.EMAIL,
+	                                       B.RESERVED1,
+	                                       B.RESERVED2,
+	                                       B.RESERVED3,
+	                                       B.INVALID,
+	                                       B.VALID_FROM,
+	                                       B.VALID_TO,
+	                                       B.DESCRIPTION,
+	                                       B.CREATED_DATE AS USER_CREATED_DATE,
+	                                       B.CREATOR,
+	                                       B.MODIFIED_DATE,
+	                                       B.MODIFIER,
+	                                       B.HOLDED,
+	                                       B.DELETED,
+	                                       B.DELETED_DATE,
+	                                       B.LOCKED,
+	                                       B.REMOVER
+	                                FROM   BIZMASTER.WF4_PROCESS_INSTANCE A,
+	                                       BIZMASTER.WF4_USER B
+	                               WHERE       A.PERFORMER = B.USER_ID
+	                                       AND A.PERFORMER = #{userId}
+	                                       AND B.USER_ID = #{userId}
+	                                       AND A.PROCESS_STATE = 5
+	                              UNION
+	                              SELECT /*+ LEADING(C) INDEX(C BIZMASTER.WF4_WORK_LOG_IDX3) INDEX(A BIZMASTER.WF4_PROCESS_INSTANCE_IDX6)*/
+	                                    A  .INST_ID,
+	                                       A.PROCESS_ID,
+	                                       A.PERFORMER,
+	                                       A.PERFORMER_ORG,
+	                                       A.OWNER,
+	                                       A.PROCESS_STATE,
+	                                       A.PROCESS_RESULT,
+	                                       A.INIT_PID,
+	                                       A.PARENT_PID,
+	                                       A.START_ACTIVITY_ID,
+	                                       A.EMERGENCY_LEVEL,
+	                                       A.FIRST_WORK,
+	                                       A.PARENT_WORK,
+	                                       A.CREATED_DATE,
+	                                       A.DUE_DATE,
+	                                       A.FINISHED_DATE,
+	                                       A.FAULT_NAME,
+	                                       A.SUB_PATTERN,
+	                                       A.KEYWORD1,
+	                                       A.KEYWORD2,
+	                                       A.KEYWORD3,
+	                                       A.KEYWORD4,
+	                                       A.KEYWORD5,
+	                                       A.KEYWORD6,
+	                                       A.KEYWORD7,
+	                                       A.KEYWORD8,
+	                                       A.KEYWORD9,
+	                                       A.KEYWORD10,
+	                                       B.USER_ID,
+	                                       B.USER_NAME,
+	                                       B.BIZ_CODE,
+	                                       B.DEFAULT_PARENT_ID,
+	                                       B.USER_TYPE,
+	                                       B.LOGIN_ID,
+	                                       B.PASSWORD,
+	                                       B.EMAIL,
+	                                       B.RESERVED1,
+	                                       B.RESERVED2,
+	                                       B.RESERVED3,
+	                                       B.INVALID,
+	                                       B.VALID_FROM,
+	                                       B.VALID_TO,
+	                                       B.DESCRIPTION,
+	                                       B.CREATED_DATE AS USER_CREATED_DATE,
+	                                       B.CREATOR,
+	                                       B.MODIFIED_DATE,
+	                                       B.MODIFIER,
+	                                       B.HOLDED,
+	                                       B.DELETED,
+	                                       B.DELETED_DATE,
+	                                       B.LOCKED,
+	                                       B.REMOVER
+	                                FROM         BIZMASTER.WF4_PROCESS_INSTANCE A
+	                                          LEFT OUTER JOIN
+	                                             BIZMASTER.WF4_USER B
+	                                          ON A.PERFORMER = B.USER_ID
+	                                       LEFT JOIN
+	                                          BIZMASTER.WF4_WORK_LOG C
+	                                       ON A.INST_ID = C.PID
+	                               WHERE   A.PROCESS_STATE = 5
+	                                       AND C.PERFORMER = #{userId}) PI
+	                     WHERE       PI.PROCESS_ID = PROCESS.PROCESS_ID
+	                             AND PROCESS.STATUS = 0
+	                             AND PROCESS.INVALID = 0
+	                             AND PROCESS.DELETED = 0
+	                             --AND PI.PROCESS_RESULT = 1
+	                             --AND PI.PROCESS_RESULT = 1
+	                             AND PI.FINISHED_DATE >=
+	                                   TO_TIMESTAMP (#{strFromDate}, 'YYYY-MM-DD')
+	                             AND PI.FINISHED_DATE <=
+	                             	   TO_TIMESTAMP (#{strToDate}||' 235959', 'YYYY-MM-DD HH24MISS'))
+		]]>
+    </select>
+     
+    <select id="selectKrissDelegatedCompletedInstanceList" parameterType="DefaultVO" resultType="ProcessInstanceVO">
+        <![CDATA[
+			SELECT   *
+			  FROM   (SELECT   ROWNUM AS RNUM,
+			                   INSTID,
+			                   DEFNAME,
+			                   STARTEDDATE,
+			                   FINISHEDDATE,
+			                   STATUS,
+			                   ISEMERGENCY
+			            FROM   (SELECT   DISTINCT TO_CHAR (INST.INSTID) AS INSTID,
+			                                      DEFVER.DEFNAME,
+			                                      INST.STARTEDDATE,
+			                                      INST.FINISHEDDATE,
+			                                      INST.STATUS,
+			                                      INST.ISEMERGENCY
+			                      FROM            BPM_PROCINST INST
+			                                   INNER JOIN
+			                                      BPM_WORKLIST WL
+			                                   ON     INST.INSTID = WL.INSTID
+			                                      AND WL.STATUS = 'Delegated'
+			                                      AND WL.ENDPOINT = #{userId}
+			                                INNER JOIN
+			                                   BPM_PROCDEF DEF
+			                                ON INST.DEFID = DEF.DEFID
+			                             INNER JOIN
+			                                BPM_PROCDEFVER DEFVER
+			                             ON DEFVER.DEFVERID = INST.DEFVERID
+			                     WHERE   INST.ISDELETED = '0'
+			                             AND INST.STATUS = 'Completed'
+			                             AND FINISHEDDATE >=
+			                                   TO_TIMESTAMP (#{strFromDate}, 'YYYY-MM-DD')
+			                             AND FINISHEDDATE <=
+			                             	   TO_TIMESTAMP (#{strToDate}||' 235959', 'YYYY-MM-DD HH24MISS')
+			                    UNION ALL
+			                    SELECT   PI.INST_ID,
+			                             PROCESS.PNAME,
+			                             PI.CREATED_DATE,
+			                             PI.FINISHED_DATE,
+			                             (CASE
+			                                 WHEN PI.PROCESS_RESULT = 1 THEN 'Completed'
+			                                 ELSE 'Failed'
+			                              END),
+			                             (CASE
+			                                 WHEN PI.EMERGENCY_LEVEL > 0 THEN 1
+			                                 ELSE 0
+			                              END)
+			                      FROM   BIZMASTER.WF4_PROCESS PROCESS,
+			                             (SELECT   A.INST_ID,
+			                                       A.PROCESS_ID,
+			                                       A.PERFORMER,
+			                                       A.PERFORMER_ORG,
+			                                       A.OWNER,
+			                                       A.PROCESS_STATE,
+			                                       A.PROCESS_RESULT,
+			                                       A.INIT_PID,
+			                                       A.PARENT_PID,
+			                                       A.START_ACTIVITY_ID,
+			                                       A.EMERGENCY_LEVEL,
+			                                       A.FIRST_WORK,
+			                                       A.PARENT_WORK,
+			                                       A.CREATED_DATE,
+			                                       A.DUE_DATE,
+			                                       A.FINISHED_DATE,
+			                                       A.FAULT_NAME,
+			                                       A.SUB_PATTERN,
+			                                       A.KEYWORD1,
+			                                       A.KEYWORD2,
+			                                       A.KEYWORD3,
+			                                       A.KEYWORD4,
+			                                       A.KEYWORD5,
+			                                       A.KEYWORD6,
+			                                       A.KEYWORD7,
+			                                       A.KEYWORD8,
+			                                       A.KEYWORD9,
+			                                       A.KEYWORD10,
+			                                       B.USER_ID,
+			                                       B.USER_NAME,
+			                                       B.BIZ_CODE,
+			                                       B.DEFAULT_PARENT_ID,
+			                                       B.USER_TYPE,
+			                                       B.LOGIN_ID,
+			                                       B.PASSWORD,
+			                                       B.EMAIL,
+			                                       B.RESERVED1,
+			                                       B.RESERVED2,
+			                                       B.RESERVED3,
+			                                       B.INVALID,
+			                                       B.VALID_FROM,
+			                                       B.VALID_TO,
+			                                       B.DESCRIPTION,
+			                                       B.CREATED_DATE AS USER_CREATED_DATE,
+			                                       B.CREATOR,
+			                                       B.MODIFIED_DATE,
+			                                       B.MODIFIER,
+			                                       B.HOLDED,
+			                                       B.DELETED,
+			                                       B.DELETED_DATE,
+			                                       B.LOCKED,
+			                                       B.REMOVER
+			                                FROM      BIZMASTER.WF4_PROCESS_INSTANCE A
+			                                       LEFT OUTER JOIN
+			                                          BIZMASTER.WF4_USER B
+			                                       ON A.PERFORMER = B.USER_ID
+			                               WHERE   A.PROCESS_STATE = 5
+			                                       AND A.INST_ID IN
+			                                                (SELECT   PID
+			                                                   FROM   BIZMASTER.WF4_WORK_LOG
+			                                                  WHERE   DELEGATOR = #{userId})) PI
+			                     WHERE       PI.PROCESS_ID = PROCESS.PROCESS_ID
+			                             AND PROCESS.STATUS = 0
+			                             AND PROCESS.INVALID = 0
+			                             AND PROCESS.DELETED = 0
+			                             AND PI.PROCESS_RESULT = 1
+			                             AND PI.FINISHED_DATE >=
+			                                   TO_TIMESTAMP (#{strFromDate}, 'YYYY-MM-DD')
+			                             AND PI.FINISHED_DATE <=
+			                             	   TO_TIMESTAMP (#{strToDate}||' 235959', 'YYYY-MM-DD HH24MISS')
+			                    ORDER BY   ISEMERGENCY DESC, FINISHEDDATE DESC))
+			 WHERE   RNUM >= ${startRow} AND RNUM <= ${endRow}
+		]]>
+    </select>
+     
+    <select id="selectCountKrissDelegatedCompletedInstanceList" parameterType="DefaultVO" resultType="Integer">
+        <![CDATA[
+			SELECT   COUNT(*) AS TOTALCOUNT
+			            FROM   (SELECT   DISTINCT TO_CHAR (INST.INSTID) AS INSTID
+			                      FROM            BPM_PROCINST INST
+			                                   INNER JOIN
+			                                      BPM_WORKLIST WL
+			                                   ON     INST.INSTID = WL.INSTID
+			                                      AND WL.STATUS = 'Delegated'
+			                                      AND WL.ENDPOINT = #{userId}
+			                                INNER JOIN
+			                                   BPM_PROCDEF DEF
+			                                ON INST.DEFID = DEF.DEFID
+			                             INNER JOIN
+			                                BPM_PROCDEFVER DEFVER
+			                             ON DEFVER.DEFVERID = INST.DEFVERID
+			                     WHERE   INST.ISDELETED = '0'
+			                             AND INST.STATUS = 'Completed'
+			                             AND FINISHEDDATE >=
+			                                   TO_TIMESTAMP (#{strFromDate}, 'YYYY-MM-DD')
+			                             AND FINISHEDDATE <=
+			                             	   TO_TIMESTAMP (#{strToDate}||' 235959', 'YYYY-MM-DD HH24MISS')
+			                    UNION ALL
+			                    SELECT   PI.INST_ID
+			                      FROM   BIZMASTER.WF4_PROCESS PROCESS,
+			                             (SELECT   A.INST_ID,
+			                                       A.PROCESS_ID,
+			                                       A.PERFORMER,
+			                                       A.PERFORMER_ORG,
+			                                       A.OWNER,
+			                                       A.PROCESS_STATE,
+			                                       A.PROCESS_RESULT,
+			                                       A.INIT_PID,
+			                                       A.PARENT_PID,
+			                                       A.START_ACTIVITY_ID,
+			                                       A.EMERGENCY_LEVEL,
+			                                       A.FIRST_WORK,
+			                                       A.PARENT_WORK,
+			                                       A.CREATED_DATE,
+			                                       A.DUE_DATE,
+			                                       A.FINISHED_DATE,
+			                                       A.FAULT_NAME,
+			                                       A.SUB_PATTERN,
+			                                       A.KEYWORD1,
+			                                       A.KEYWORD2,
+			                                       A.KEYWORD3,
+			                                       A.KEYWORD4,
+			                                       A.KEYWORD5,
+			                                       A.KEYWORD6,
+			                                       A.KEYWORD7,
+			                                       A.KEYWORD8,
+			                                       A.KEYWORD9,
+			                                       A.KEYWORD10,
+			                                       B.USER_ID,
+			                                       B.USER_NAME,
+			                                       B.BIZ_CODE,
+			                                       B.DEFAULT_PARENT_ID,
+			                                       B.USER_TYPE,
+			                                       B.LOGIN_ID,
+			                                       B.PASSWORD,
+			                                       B.EMAIL,
+			                                       B.RESERVED1,
+			                                       B.RESERVED2,
+			                                       B.RESERVED3,
+			                                       B.INVALID,
+			                                       B.VALID_FROM,
+			                                       B.VALID_TO,
+			                                       B.DESCRIPTION,
+			                                       B.CREATED_DATE AS USER_CREATED_DATE,
+			                                       B.CREATOR,
+			                                       B.MODIFIED_DATE,
+			                                       B.MODIFIER,
+			                                       B.HOLDED,
+			                                       B.DELETED,
+			                                       B.DELETED_DATE,
+			                                       B.LOCKED,
+			                                       B.REMOVER
+			                                FROM      BIZMASTER.WF4_PROCESS_INSTANCE A
+			                                       LEFT OUTER JOIN
+			                                          BIZMASTER.WF4_USER B
+			                                       ON A.PERFORMER = B.USER_ID
+			                               WHERE   A.PROCESS_STATE = 5
+			                                       AND A.INST_ID IN
+			                                                (SELECT   PID
+			                                                   FROM   BIZMASTER.WF4_WORK_LOG
+			                                                  WHERE   DELEGATOR = #{userId})) PI
+			                     WHERE       PI.PROCESS_ID = PROCESS.PROCESS_ID
+			                             AND PROCESS.STATUS = 0
+			                             AND PROCESS.INVALID = 0
+			                             AND PROCESS.DELETED = 0
+			                             AND PI.PROCESS_RESULT = 1
+			                             AND PI.FINISHED_DATE >=
+			                                   TO_TIMESTAMP (#{strFromDate}, 'YYYY-MM-DD')
+			                             AND PI.FINISHED_DATE <=
+			                             	   TO_TIMESTAMP (#{strToDate}||' 235959', 'YYYY-MM-DD HH24MISS'))
+		]]>
+    </select>
+    
+</mapper>

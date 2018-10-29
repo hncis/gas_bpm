@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="processmanager">
+     
+    <select id="selectProcessTreeBycomCode" parameterType="String" resultType="TreeVO">
+        <![CDATA[
+        	SELECT 0 AS ID, NULL AS PRODVERID, '#' AS PARENT, 'definitions' AS TEXT, 'root' AS TYPE
+        	UNION
+			SELECT DEF.DEFID AS ID,
+        	  DEF.PRODVERID,
+			  (
+			  CASE
+			    WHEN DEF.PARENTFOLDER=-1
+			    THEN 0
+			    ELSE DEF.PARENTFOLDER
+			  END) AS PARENT,
+			  (
+			  CASE
+			    WHEN VER.DEFNAME IS NULL
+			    THEN DEF.NAME
+			    ELSE VER.DEFNAME
+			  END) AS TEXT,
+			  DEF.OBJTYPE AS TYPE
+			FROM BPM_PROCDEF DEF
+			LEFT JOIN BPM_PROCDEFVER VER
+			ON DEF.PRODVERID=VER.DEFVERID
+			WHERE 1=1 
+			AND DEF.COMCODE=#{comCode}
+			AND DEF.ISDELETED='0'
+		]]>
+    </select>
+    
+    <select id="selectProcessDefinitionObjectListByDefId" parameterType="String" resultType="ProcessDefinitionVO">
+        <![CDATA[
+        	SELECT DEFVER.DEFNAME AS DEFNAME,
+			  DEFVER.DEFVERID,
+			  DEF.ALIAS,
+			  DEFVER.VER AS VERSION,
+			  DATE_FORMAT(DEFVER.MODDATE,'%Y-%m-%d %H:%i:%s') AS MODDATE,
+			  DEF.PRODVER,
+			  DEFVER.AUTHOR,
+			  DEF.OBJTYPE,
+			  DEF.DEFID,
+			  DEF.PRODVER,
+			  DEFVER.DESCRIPTION,
+			  EMP.EMPNAME AS AUTHORNAME,
+			  DEFVER.PROGRAMID,
+			  DEF.PARENTFOLDER AS FOLDERID
+			FROM BPM_PROCDEF DEF
+			INNER JOIN BPM_PROCDEFVER DEFVER ON DEF.DEFID=DEFVER.DEFID
+			LEFT JOIN EMPTABLE EMP ON DEFVER.AUTHOR=EMP.EMPCODE
+			WHERE 1                =1
+			AND DEF.DEFID		   =#{defId}
+			AND (DEF.ISDELETED    IS NULL
+			OR DEF.ISDELETED       ='0')
+			AND (DEFVER.ISDELETED IS NULL
+			OR DEFVER.ISDELETED    ='0')
+			ORDER BY DEFVER.VER
+        ]]>
+    </select>
+
+    <select id="selectProcessInstanceListByComCode" parameterType="String" resultType="ProcessInstanceVO">
+        <![CDATA[
+        	SELECT INST.*
+			FROM BPM_PROCINST INST
+			INNER JOIN BPM_PROCDEF DEF
+			ON DEF.DEFID           =INST.DEFID
+			WHERE 1                =1
+			AND DEF.COMCODE = #{comCode}
+			AND INST.ISDELETED='0'
+			ORDER BY INST.INSTID DESC
+        ]]>
+    </select>
+    
+    <select id="selectProcessInstanceListByStatusAndSearchResult" parameterType="hashmap" resultType="ProcessInstanceVO">
+        <![CDATA[
+		SELECT INST.*
+		FROM BPM_PROCINST INST
+		INNER JOIN BPM_PROCDEF DEF
+		ON DEF.DEFID=INST.DEFID
+		WHERE 1=1
+		AND DEF.COMCODE = 'uEngine'
+		AND INST.ISDELETED='0'
+		]]>
+		<if test="status=='ALL'">
+		<![CDATA[
+			AND INST.STATUS IN ('Running','Completed', 'Stopped', 'Failed')
+		]]>
+		</if>
+		<if test="status=='Running'">
+		<![CDATA[
+			AND INST.STATUS IN ('Running')
+		]]>
+		</if>
+		<if test="status=='Completed'">
+		<![CDATA[
+			AND INST.STATUS IN ('Completed')
+		]]>
+		</if>
+		<if test="status=='Stopped'">
+		<![CDATA[
+			AND INST.STATUS IN ('Stopped')
+		]]>
+		</if>
+		<if test="status=='Failed'">
+		<![CDATA[
+			AND INST.STATUS IN ('Failed')
+		]]>
+		</if>
+		<if test= "!searchResult.equals('') and searchResult!=null">
+		<![CDATA[
+		AND (INST.DEFNAME LIKE concat("%", #{searchResult}, "%")
+		OR INST.INFO LIKE concat("%", #{searchResult}, "%")
+		OR INST.NAME LIKE concat("%", #{searchResult}, "%")
+		OR INST.INITEP LIKE concat("%", #{searchResult}, "%")
+		OR INST.INITRSNM LIKE concat("%", #{searchResult}, "%")
+		OR INST.CURREP LIKE concat("%", #{searchResult}, "%")
+		OR INST.CURRRSNM LIKE concat("%", #{searchResult}, "%"))
+		]]>
+		</if>
+		<![CDATA[
+		ORDER BY INST.INSTID DESC
+		]]>
+    </select>
+    
+    <update id="processVersionChange" parameterType="hashmap" flushCache="true" statementType="PREPARED" timeout="20">
+    <![CDATA[
+    	UPDATE BPM_PROCDEF
+		SET PRODVER = (SELECT VER FROM BPM_PROCDEFVER WHERE DEFVERID = #{defVerId}),
+		PRODVERID = #{defVerId}
+		WHERE DEFID = #{defId}
+		]]>
+    </update>
+	
+	<select id="selectProcessDefinitionByParentId" parameterType="String" resultType="ProcessDefinitionVO">
+        <![CDATA[
+        	SELECT  DEFID AS DEFID, 
+        			NAME AS DEFNAME, 
+        			OBJTYPE AS OBJTYPE 
+        		FROM BPM_PROCDEF 
+        	WHERE ISDELETED='0'
+        		AND PARENTFOLDER=#{parent}
+        ]]>
+    </select>
+
+     
+</mapper>

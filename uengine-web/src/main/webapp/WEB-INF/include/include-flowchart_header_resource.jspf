@@ -1,0 +1,20 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, maximum-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<title>uEngine BPMS 4.0</title>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %> 
+<script type="text/javascript" src="<c:url value='/resources/libs/flowchart/raphael/raphael-min.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/libs/flowchart/crossBrowser/elementControl.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/libs/flowchart/loopDraw.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/libs/flowchart/flowchartDefinition.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/libs/flowchart/flowchartUtil.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/libs/flowchart/popupTooltip.js'/>"></script>
+<link href="<c:url value='/resources/css/flowchart/popupTooltip.css'/>" rel="stylesheet" type="text/css">
+<link href="<c:url value='/resources/css/flowchart/portlet.css'/>" rel="stylesheet" type="text/css">
+<link href="<c:url value='/resources/css/flowchart/portal.css'/>" rel="stylesheet" type="text/css">
+<link href="<c:url value='/resources/css/flowchart/groupware.css'/>" rel="stylesheet" type="text/css">
+<link href="<c:url value='/resources/css/flowchart/flowchart.css'/>" rel="stylesheet" type="text/css">

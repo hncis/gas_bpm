@@ -1,0 +1,148 @@
+<twister>
+    <lifecycle>
+        <resource>org.smartcomps.twister.common.transaction.TransactionManager</resource>
+        <resource>org.smartcomps.twister.common.event.EventManager</resource>
+        <resource>org.smartcomps.twister.engine.priv.timer.EngineTimer</resource>
+    </lifecycle>
+    <transaction>
+        <resource>org.smartcomps.twister.common.persistence.DBSessionManager</resource>
+        <resource>org.smartcomps.twister.common.persistence.XMLSessionManager</resource>
+    </transaction>
+    <event-listeners>
+        <listener>org.smartcomps.twister.common.event.DebuggingListener</listener>
+    </event-listeners>
+    <tools>
+        <xindice>
+            <url>xmldb:xindice://localhost:8080/db</url>
+        </xindice>
+    </tools>
+    <deployer>
+        <namespaces>
+            <map remote-url="http://www.smartcomps.org/twister/examples/loop/service/"
+                 local-url="loop-defs.xml"/>
+            <map remote-url="http://www.smartcomps.org/twister/examples/process-defs.xml"
+                 local-url="process-defs.xml"/>
+            <map remote-url="http://www.smartcomps.org/twister/test/flow/service/"
+                 local-url="test-flow-defs.xml"/>
+            <map remote-url="http://www.smartcomps.org/twister/test/pick/service/"
+                 local-url="test-pick-defs.xml"/>
+            <map remote-url="http://www.smartcomps.org/twister/test/reply/service/"
+                 local-url="test-reply-defs.xml"/>
+            <ignore>http://schemas.xmlsoap.org/ws/2003/03/business-process/</ignore>
+        </namespaces>
+    </deployer>
+    <engine>
+        <history>
+            <sent-messages>true</sent-messages>
+        </history>
+        <implementations>
+            <message-broker impl="org.smartcomps.twister.engine.priv.messaging.impl.DefaultMessageBrokerImpl"/>
+           
+           <activity interface="org.uengine.smcp.twister.engine.priv.core.definition.Assign"
+                impl="org.uengine.smcp.twister.engine.priv.core.definition.impl.AssignImpl"/>
+            <activity interface="org.uengine.smcp.twister.engine.priv.core.definition.Empty"
+                impl="org.uengine.smcp.twister.engine.priv.core.definition.impl.EmptyImpl"/>
+            <activity interface="org.uengine.smcp.twister.engine.priv.core.definition.Flow"
+                impl="org.uengine.smcp.twister.engine.priv.core.definition.impl.FlowImpl"/>
+            <activity interface="org.uengine.smcp.twister.engine.priv.core.definition.Invoke"
+                impl="org.uengine.smcp.twister.engine.priv.core.definition.impl.InvokeImpl"/>
+            <activity interface="org.uengine.smcp.twister.engine.priv.core.definition.Pick"
+                impl="org.uengine.smcp.twister.engine.priv.core.definition.impl.PickImpl"/>
+            <activity interface="org.uengine.smcp.twister.engine.priv.core.definition.Receive"
+                impl="org.uengine.smcp.twister.engine.priv.core.definition.impl.ReceiveImpl"/>
+            <activity interface="org.uengine.smcp.twister.engine.priv.core.definition.Reply"
+                impl="org.uengine.smcp.twister.engine.priv.core.definition.impl.ReplyImpl"/>
+            <activity interface="org.uengine.smcp.twister.engine.priv.core.definition.Sequence"
+                impl="org.uengine.smcp.twister.engine.priv.core.definition.impl.SequenceImpl"/>
+            <activity interface="org.uengine.smcp.twister.engine.priv.core.definition.Scope"
+                impl="org.uengine.smcp.twister.engine.priv.core.definition.impl.ScopeImpl"/>
+            <activity interface="org.uengine.smcp.twister.engine.priv.core.definition.Switch"
+                impl="org.uengine.smcp.twister.engine.priv.core.definition.impl.SwitchImpl"/>
+            <activity interface="org.uengine.smcp.twister.engine.priv.core.definition.Terminate"
+                impl="org.uengine.smcp.twister.engine.priv.core.definition.impl.TerminateImpl"/>
+            <activity interface="org.uengine.smcp.twister.engine.priv.core.definition.Wait"
+                impl="org.uengine.smcp.twister.engine.priv.core.definition.impl.WaitImpl"/>
+            <activity interface="org.uengine.smcp.twister.engine.priv.core.definition.While"
+                impl="org.uengine.smcp.twister.engine.priv.core.definition.impl.WhileImpl"/>
+                
+            <activity interface="org.smartcomps.twister.engine.priv.core.definition.Assign"
+                impl="org.smartcomps.twister.engine.priv.core.definition.impl.AssignImpl"/>
+            <activity interface="org.smartcomps.twister.engine.priv.core.definition.Empty"
+                impl="org.smartcomps.twister.engine.priv.core.definition.impl.EmptyImpl"/>
+            <activity interface="org.smartcomps.twister.engine.priv.core.definition.Flow"
+                impl="org.smartcomps.twister.engine.priv.core.definition.impl.FlowImpl"/>
+            <activity interface="org.smartcomps.twister.engine.priv.core.definition.Invoke"
+                impl="org.smartcomps.twister.engine.priv.core.definition.impl.InvokeImpl"/>
+            <activity interface="org.smartcomps.twister.engine.priv.core.definition.Pick"
+                impl="org.smartcomps.twister.engine.priv.core.definition.impl.PickImpl"/>
+            <activity interface="org.smartcomps.twister.engine.priv.core.definition.Receive"
+                impl="org.smartcomps.twister.engine.priv.core.definition.impl.ReceiveImpl"/>
+            <activity interface="org.smartcomps.twister.engine.priv.core.definition.Reply"
+                impl="org.smartcomps.twister.engine.priv.core.definition.impl.ReplyImpl"/>
+            <activity interface="org.smartcomps.twister.engine.priv.core.definition.Sequence"
+                impl="org.smartcomps.twister.engine.priv.core.definition.impl.SequenceImpl"/>
+            <activity interface="org.smartcomps.twister.engine.priv.core.definition.Scope"
+                impl="org.smartcomps.twister.engine.priv.core.definition.impl.ScopeImpl"/>
+            <activity interface="org.smartcomps.twister.engine.priv.core.definition.Switch"
+                impl="org.smartcomps.twister.engine.priv.core.definition.impl.SwitchImpl"/>
+            <activity interface="org.smartcomps.twister.engine.priv.core.definition.Terminate"
+                impl="org.smartcomps.twister.engine.priv.core.definition.impl.TerminateImpl"/>
+            <activity interface="org.smartcomps.twister.engine.priv.core.definition.Wait"
+                impl="org.smartcomps.twister.engine.priv.core.definition.impl.WaitImpl"/>
+            <activity interface="org.smartcomps.twister.engine.priv.core.definition.While"
+                impl="org.smartcomps.twister.engine.priv.core.definition.impl.WhileImpl"/>
+
+            <execution-context interface="org.smartcomps.twister.engine.priv.core.dynamic.AssignEC"
+                impl="org.smartcomps.twister.engine.priv.core.dynamic.impl.AssignECImpl"/>
+            <execution-context interface="org.smartcomps.twister.engine.priv.core.dynamic.EmptyEC"
+                impl="org.smartcomps.twister.engine.priv.core.dynamic.impl.EmptyECImpl"/>
+            <execution-context interface="org.smartcomps.twister.engine.priv.core.dynamic.FlowEC"
+                impl="org.smartcomps.twister.engine.priv.core.dynamic.impl.FlowECImpl"/>
+            <execution-context interface="org.smartcomps.twister.engine.priv.core.dynamic.InvokeEC"
+                impl="org.smartcomps.twister.engine.priv.core.dynamic.impl.InvokeECImpl"/>
+            <execution-context interface="org.smartcomps.twister.engine.priv.core.dynamic.PickEC"
+                impl="org.smartcomps.twister.engine.priv.core.dynamic.impl.PickECImpl"/>
+            <execution-context interface="org.smartcomps.twister.engine.priv.core.dynamic.ReceiveEC"
+                impl="org.smartcomps.twister.engine.priv.core.dynamic.impl.ReceiveECImpl"/>
+            <execution-context interface="org.smartcomps.twister.engine.priv.core.dynamic.ReplyEC"
+                impl="org.smartcomps.twister.engine.priv.core.dynamic.impl.ReplyECImpl"/>
+            <execution-context interface="org.smartcomps.twister.engine.priv.core.dynamic.SequenceEC"
+                impl="org.smartcomps.twister.engine.priv.core.dynamic.impl.SequenceECImpl"/>
+            <execution-context interface="org.smartcomps.twister.engine.priv.core.dynamic.SwitchEC"
+                impl="org.smartcomps.twister.engine.priv.core.dynamic.impl.SwitchECImpl"/>
+            <execution-context interface="org.smartcomps.twister.engine.priv.core.dynamic.TerminateEC"
+                impl="org.smartcomps.twister.engine.priv.core.dynamic.impl.TerminateECImpl"/>
+            <execution-context interface="org.smartcomps.twister.engine.priv.core.dynamic.WaitEC"
+                impl="org.smartcomps.twister.engine.priv.core.dynamic.impl.WaitECImpl"/>
+            <execution-context interface="org.smartcomps.twister.engine.priv.core.dynamic.WhileEC"
+                impl="org.smartcomps.twister.engine.priv.core.dynamic.impl.WhileECImpl"/>
+        </implementations>
+
+        <executions>
+            <activity interface="org.smartcomps.twister.engine.priv.core.definition.Assign"
+                execution="org.smartcomps.twister.engine.priv.core.dynamic.AssignEC"/>
+            <activity interface="org.smartcomps.twister.engine.priv.core.definition.Empty"
+                execution="org.smartcomps.twister.engine.priv.core.dynamic.EmptyEC"/>
+            <activity interface="org.smartcomps.twister.engine.priv.core.definition.Flow"
+                execution="org.smartcomps.twister.engine.priv.core.dynamic.FlowEC"/>
+            <activity interface="org.smartcomps.twister.engine.priv.core.definition.Invoke"
+                execution="org.smartcomps.twister.engine.priv.core.dynamic.InvokeEC"/>
+            <activity interface="org.smartcomps.twister.engine.priv.core.definition.Pick"
+                execution="org.smartcomps.twister.engine.priv.core.dynamic.PickEC"/>
+            <activity interface="org.smartcomps.twister.engine.priv.core.definition.Receive"
+                execution="org.smartcomps.twister.engine.priv.core.dynamic.ReceiveEC"/>
+            <activity interface="org.smartcomps.twister.engine.priv.core.definition.Reply"
+                execution="org.smartcomps.twister.engine.priv.core.dynamic.ReplyEC"/>
+            <activity interface="org.smartcomps.twister.engine.priv.core.definition.Sequence"
+                execution="org.smartcomps.twister.engine.priv.core.dynamic.SequenceEC"/>
+            <activity interface="org.smartcomps.twister.engine.priv.core.definition.Switch"
+                execution="org.smartcomps.twister.engine.priv.core.dynamic.SwitchEC"/>
+            <activity interface="org.smartcomps.twister.engine.priv.core.definition.Terminate"
+                execution="org.smartcomps.twister.engine.priv.core.dynamic.TerminateEC"/>
+            <activity interface="org.smartcomps.twister.engine.priv.core.definition.Wait"
+                execution="org.smartcomps.twister.engine.priv.core.dynamic.WaitEC"/>
+            <activity interface="org.smartcomps.twister.engine.priv.core.definition.While"
+                execution="org.smartcomps.twister.engine.priv.core.dynamic.WhileEC"/>
+        </executions>
+    </engine>
+</twister>

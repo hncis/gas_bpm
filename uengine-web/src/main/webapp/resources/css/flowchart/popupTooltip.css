@@ -1,0 +1,11 @@
+
+.tooltip{
+width: 300px; color:#000;
+font:lighter 11px tahoma;
+text-decoration:none;text-align:center}
+
+.tooltip span.top{padding: 25px 8px 0;
+    background: url(/uengine-web/processmanager/images/bt.gif) no-repeat top}
+
+.tooltip b.bottom{padding:3px 8px 15px;color: #548912;
+    background: url(/uengine-web/processmanager/images/bt.gif) no-repeat bottom}

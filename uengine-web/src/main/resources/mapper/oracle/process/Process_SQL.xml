@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="process">
+     
+    <select id="selectProcessTreeBycomCode" parameterType="String" resultType="TreeVO">
+        <![CDATA[
+        	SELECT 0 AS ID, NULL AS PRODVERID, '#' AS PARENT, 'definitions' AS TEXT, 'root' AS TYPE FROM dual
+        	UNION
+			SELECT DEF.DEFID AS ID,
+        	  DEF.PRODVERID,
+			  (
+			  CASE
+			    WHEN DEF.PARENTFOLDER=-1
+			    THEN '0'
+			    ELSE TO_CHAR(DEF.PARENTFOLDER)
+			  END) AS PARENT,
+			  (
+			  CASE
+			    WHEN VER.DEFNAME IS NULL
+			    THEN DEF.NAME
+			    ELSE VER.DEFNAME
+			  END) AS TEXT,
+			  DEF.OBJTYPE AS TYPE
+			FROM BPM_PROCDEF DEF
+			LEFT JOIN BPM_PROCDEFVER VER
+			ON DEF.PRODVERID=VER.DEFVERID
+			WHERE 1=1 
+			AND DEF.OBJTYPE  IN ( 'folder','process' )
+			AND DEF.COMCODE=#{comCode}
+			AND DEF.ISDELETED='0'
+		]]>
+    </select>
+     
+    <select id="selectKrissProcessList" parameterType="ProcessDefinitionVO" resultType="ProcessDefinitionVO">
+        <![CDATA[
+			SELECT   *
+			  FROM   (SELECT   ROWNUM AS RNUM,
+			                   DEFID,
+			                   FOLDERNAME,
+			                   PROGRAMID,
+			                   DEFNAME,
+			                   PROCESSCODE,
+			                   DURATION
+			            FROM   (SELECT   DISTINCT
+			                             startablet0_.PROCESS_ID
+			                             || startablet0_.ACTIVITY_ID
+			                                AS DEFID,
+			                             SUBSTR(workflowpr1_.PARENT_FOLDER, 2, LENGTH(workflowpr1_.PARENT_FOLDER)) AS FOLDERNAME,
+			                             startablet0_.ACTIVITY_ID AS PROGRAMID,
+			                             workflowpr1_.PNAME AS DEFNAME,
+			                             workflowpr1_.PROCESS_ID AS PROCESSCODE,
+			                             workflowpr1_.DURATION_UNIT AS DURATION
+			                      FROM   bizmaster.wf4_STARTABLE_TASK startablet0_,
+			                             bizmaster.wf4_PROCESS workflowpr1_
+			                     WHERE   startablet0_.PROCESS_ID =
+			                                workflowpr1_.PROCESS_ID
+			                             AND workflowpr1_.STATUS = 0
+			                             AND workflowpr1_.INVALID = 0
+			                             AND workflowpr1_.DELETED = 0
+			                             AND (EXISTS
+			                                     (SELECT   resolvedst2_.ID
+			                                        FROM   bizmaster.wf4_RESOLVED_STARTER resolvedst2_
+			                                       WHERE   resolvedst2_.INVALID = 0
+			                                               AND (workflowpr1_.START_METHOD =
+			                                                       0
+			                                                    OR workflowpr1_.START_METHOD =
+			                                                         32
+			                                                      AND resolvedst2_.FIRED =
+			                                                            1)
+			                                               AND startablet0_.PROCESS_ID =
+			                                                     resolvedst2_.PROCESS
+			                                               AND (startablet0_.ACTIVITY_ID =
+			                                                       resolvedst2_.ACTIVITY
+			                                                    OR startablet0_.ACTIVITY_ID =
+			                                                         '---'
+			                                                      AND (resolvedst2_.ACTIVITY IS NULL))
+			                                               AND (resolvedst2_.AND_GROUP_NUMBER =
+			                                                       -1
+			                                                    AND (resolvedst2_.RESOLUTION_LEVEL =
+			                                                            2
+			                                                         AND (resolvedst2_.ACTOR =
+			                                                                 #{userId}
+			                                                              OR EXISTS
+			                                                                   (SELECT   absenceset3_.UZER
+			                                                                      FROM   bizmaster.wf4_ABSENCE_SETTING absenceset3_
+			                                                                     WHERE   absenceset3_.SUBSTITUTER =
+			                                                                                #{userId}
+			                                                                             AND absenceset3_.IS_ACTIVE =
+			                                                                                   1
+			                                                                             AND absenceset3_.INVALID =
+			                                                                                   0
+			                                                                             AND absenceset3_.UZER =
+			                                                                                   resolvedst2_.ACTOR))
+			                                                         OR resolvedst2_.RESOLUTION_LEVEL =
+			                                                              1
+			                                                           AND (EXISTS
+			                                                                   (SELECT   roleelemen4_.HUMAN_ROLE
+			                                                                      FROM   bizmaster.wf4_ROLE_ELEMENT roleelemen4_
+			                                                                     WHERE   (roleelemen4_.HUMAN_USER =
+			                                                                                 #{userId}
+			                                                                              OR roleelemen4_.HUMAN_USER IN
+			                                                                                      (SELECT   absenceset5_.UZER
+			                                                                                         FROM   bizmaster.wf4_ABSENCE_SETTING absenceset5_
+			                                                                                        WHERE   absenceset5_.SUBSTITUTER =
+			                                                                                                   #{userId}
+			                                                                                                AND absenceset5_.IS_ACTIVE =
+			                                                                                                      1
+			                                                                                                AND absenceset5_.INVALID =
+			                                                                                                      0))
+			                                                                             AND roleelemen4_.IS_ACTIVE =
+			                                                                                   1
+			                                                                             AND roleelemen4_.INVALID =
+			                                                                                   0
+			                                                                             AND resolvedst2_.ACTOR =
+			                                                                                   roleelemen4_.HUMAN_ROLE)
+			                                                                OR resolvedst2_.ACTOR IS NULL)
+			                                                         OR resolvedst2_.RESOLUTION_LEVEL =
+			                                                              3
+			                                                           AND (EXISTS
+			                                                                   (SELECT   userrelati6_.PARENT
+			                                                                      FROM   bizmaster.wf4_USER_RELATION userrelati6_
+			                                                                     WHERE   userrelati6_.CHILD =
+			                                                                                #{userId}
+			                                                                             AND resolvedst2_.ACTOR =
+			                                                                                   userrelati6_.PARENT)))
+			                                                    OR EXISTS
+			                                                         (SELECT   resolvedan7_.ACTOR
+			                                                            FROM   bizmaster.wf4_RESOLVED_AND_STARTER resolvedan7_
+			                                                           WHERE   resolvedan7_.EXCLUSION =
+			                                                                      0
+			                                                                   AND resolvedan7_.PROCESS =
+			                                                                         resolvedst2_.PROCESS
+			                                                                   AND (resolvedan7_.ACTIVITY =
+			                                                                           resolvedst2_.ACTIVITY
+			                                                                        OR (resolvedst2_.ACTIVITY IS NULL)
+			                                                                          AND (resolvedan7_.ACTIVITY IS NULL))
+			                                                                   AND (resolvedan7_.ACTOR =
+			                                                                           #{userId}
+			                                                                        OR EXISTS
+			                                                                             (SELECT   absenceset8_.UZER
+			                                                                                FROM   bizmaster.wf4_ABSENCE_SETTING absenceset8_
+			                                                                               WHERE   absenceset8_.SUBSTITUTER =
+			                                                                                          #{userId}
+			                                                                                       AND absenceset8_.IS_ACTIVE =
+			                                                                                             1
+			                                                                                       AND absenceset8_.INVALID =
+			                                                                                             0
+			                                                                                       AND resolvedan7_.ACTOR =
+			                                                                                             absenceset8_.UZER))))
+			                                               AND NOT (EXISTS
+			                                                           (SELECT   resolvedst9_.ACTOR
+			                                                              FROM   bizmaster.wf4_RESOLVED_STARTER resolvedst9_
+			                                                             WHERE   resolvedst9_.RESOLUTION_LEVEL =
+			                                                                        5
+			                                                                     AND resolvedst9_.PROCESS =
+			                                                                           resolvedst2_.PROCESS
+			                                                                     AND (resolvedst9_.ACTIVITY =
+			                                                                             resolvedst2_.ACTIVITY
+			                                                                          OR (resolvedst2_.ACTIVITY IS NULL)
+			                                                                            AND (resolvedst9_.ACTIVITY IS NULL))
+			                                                                     AND resolvedst9_.AND_GROUP_NUMBER =
+			                                                                           -1
+			                                                                     AND resolvedst9_.ACTOR =
+			                                                                           #{userId}))
+			                                               AND NOT (EXISTS
+			                                                           (SELECT   roleelemen10_.HUMAN_USER
+			                                                              FROM   bizmaster.wf4_ROLE_ELEMENT roleelemen10_,
+			                                                                     bizmaster.wf4_RESOLVED_STARTER resolvedst11_
+			                                                             WHERE   resolvedst11_.RESOLUTION_LEVEL =
+			                                                                        4
+			                                                                     AND roleelemen10_.HUMAN_ROLE =
+			                                                                           resolvedst11_.ACTOR
+			                                                                     AND resolvedst11_.PROCESS =
+			                                                                           resolvedst2_.PROCESS
+			                                                                     AND (resolvedst11_.ACTIVITY =
+			                                                                             resolvedst2_.ACTIVITY
+			                                                                          OR (resolvedst2_.ACTIVITY IS NULL)
+			                                                                            AND (resolvedst11_.ACTIVITY IS NULL))
+			                                                                     AND resolvedst11_.AND_GROUP_NUMBER =
+			                                                                           -1
+			                                                                     AND roleelemen10_.IS_ACTIVE =
+			                                                                           1
+			                                                                     AND roleelemen10_.INVALID =
+			                                                                           0
+			                                                                     AND roleelemen10_.HUMAN_USER =
+			                                                                           #{userId}))
+			                                               AND NOT (EXISTS
+			                                                           (SELECT   userrelati12_.CHILD
+			                                                              FROM   bizmaster.wf4_USER_RELATION userrelati12_,
+			                                                                     bizmaster.wf4_RESOLVED_STARTER resolvedst13_
+			                                                             WHERE   resolvedst13_.RESOLUTION_LEVEL =
+			                                                                        6
+			                                                                     AND userrelati12_.PARENT =
+			                                                                           resolvedst13_.ACTOR
+			                                                                     AND resolvedst13_.PROCESS =
+			                                                                           resolvedst2_.PROCESS
+			                                                                     AND (resolvedst13_.ACTIVITY =
+			                                                                             resolvedst2_.ACTIVITY
+			                                                                          OR (resolvedst2_.ACTIVITY IS NULL)
+			                                                                            AND (resolvedst13_.ACTIVITY IS NULL))
+			                                                                     AND resolvedst13_.AND_GROUP_NUMBER =
+			                                                                           -1
+			                                                                     AND userrelati12_.CHILD =
+			                                                                           #{userId}))
+			                                               AND NOT (EXISTS
+			                                                           (SELECT   resolvedan14_.ACTOR
+			                                                              FROM   bizmaster.wf4_RESOLVED_AND_STARTER resolvedan14_
+			                                                             WHERE   resolvedan14_.EXCLUSION =
+			                                                                        1
+			                                                                     AND resolvedan14_.PROCESS =
+			                                                                           resolvedst2_.PROCESS
+			                                                                     AND (resolvedan14_.ACTIVITY =
+			                                                                             resolvedst2_.ACTIVITY
+			                                                                          OR (resolvedst2_.ACTIVITY IS NULL)
+			                                                                            AND (resolvedan14_.ACTIVITY IS NULL))
+			                                                                     AND resolvedan14_.ACTOR =
+			                                                                           #{userId}))))
+			                    UNION ALL
+			                    SELECT   TO_CHAR (DEF.DEFID),
+			                             PARENT.NAME,
+			                             DEFVER.PROGRAMID,
+			                             DEFVER.DEFNAME,
+			                             DEF.ALIAS,
+			                             DEFVER.DURATION
+			                      FROM         BPM_PROCDEF DEF
+			                                INNER JOIN
+			                                   BPM_PROCDEF PARENT
+			                                ON DEF.PARENTFOLDER = PARENT.DEFID
+			                             INNER JOIN
+			                                BPM_PROCDEFVER DEFVER
+			                             ON DEF.PRODVERID = DEFVER.DEFVERID
+			                     WHERE   DEF.DEFID IN
+			                                   (SELECT   DEFID.DEFID
+			                                      FROM   (    SELECT   DEFID,
+			                                                           NAME,
+			                                                           OBJTYPE,
+			                                                           ISDELETED,
+			                                                           LEVEL
+			                                                    FROM   BPM_PROCDEF
+			                                              START WITH   NAME = 'KRISS'
+			                                              CONNECT BY   PRIOR DEFID =
+			                                                              PARENTFOLDER)
+			                                             DEFID
+			                                     WHERE   DEFID.OBJTYPE = 'process'
+			                                             AND DEFID.ISDELETED = '0')
+			                    ORDER BY   DEFNAME ASC))
+			 WHERE   rnum >= ${startRow} AND rnum <= ${endRow}
+		]]>
+    </select>
+     
+    <select id="selectCountKrissProcessList" parameterType="String" resultType="Integer">
+        <![CDATA[
+			SELECT   COUNT ( * ) AS TOTALCOUNT
+			  FROM   (SELECT   DISTINCT
+			                   startablet0_.PROCESS_ID || startablet0_.ACTIVITY_ID
+			                      AS DEFID
+			            FROM   bizmaster.wf4_STARTABLE_TASK startablet0_,
+			                   bizmaster.wf4_PROCESS workflowpr1_
+			           WHERE       startablet0_.PROCESS_ID = workflowpr1_.PROCESS_ID
+			                   AND workflowpr1_.STATUS = 0
+			                   AND workflowpr1_.INVALID = 0
+			                   AND workflowpr1_.DELETED = 0
+			                   AND (EXISTS
+			                           (SELECT   resolvedst2_.ID
+			                              FROM   bizmaster.wf4_RESOLVED_STARTER resolvedst2_
+			                             WHERE   resolvedst2_.INVALID = 0
+			                                     AND (workflowpr1_.START_METHOD = 0
+			                                          OR workflowpr1_.START_METHOD = 32
+			                                            AND resolvedst2_.FIRED = 1)
+			                                     AND startablet0_.PROCESS_ID =
+			                                           resolvedst2_.PROCESS
+			                                     AND (startablet0_.ACTIVITY_ID =
+			                                             resolvedst2_.ACTIVITY
+			                                          OR startablet0_.ACTIVITY_ID = '---'
+			                                            AND (resolvedst2_.ACTIVITY IS NULL))
+			                                     AND (resolvedst2_.AND_GROUP_NUMBER = -1
+			                                          AND (resolvedst2_.RESOLUTION_LEVEL =
+			                                                  2
+			                                               AND (resolvedst2_.ACTOR = #{userId}
+			                                                    OR EXISTS
+			                                                         (SELECT   absenceset3_.UZER
+			                                                            FROM   bizmaster.wf4_ABSENCE_SETTING absenceset3_
+			                                                           WHERE   absenceset3_.SUBSTITUTER =
+			                                                                      #{userId}
+			                                                                   AND absenceset3_.IS_ACTIVE =
+			                                                                         1
+			                                                                   AND absenceset3_.INVALID =
+			                                                                         0
+			                                                                   AND absenceset3_.UZER =
+			                                                                         resolvedst2_.ACTOR))
+			                                               OR resolvedst2_.RESOLUTION_LEVEL =
+			                                                    1
+			                                                 AND (EXISTS
+			                                                         (SELECT   roleelemen4_.HUMAN_ROLE
+			                                                            FROM   bizmaster.wf4_ROLE_ELEMENT roleelemen4_
+			                                                           WHERE   (roleelemen4_.HUMAN_USER =
+			                                                                       #{userId}
+			                                                                    OR roleelemen4_.HUMAN_USER IN
+			                                                                            (SELECT   absenceset5_.UZER
+			                                                                               FROM   bizmaster.wf4_ABSENCE_SETTING absenceset5_
+			                                                                              WHERE   absenceset5_.SUBSTITUTER =
+			                                                                                         #{userId}
+			                                                                                      AND absenceset5_.IS_ACTIVE =
+			                                                                                            1
+			                                                                                      AND absenceset5_.INVALID =
+			                                                                                            0))
+			                                                                   AND roleelemen4_.IS_ACTIVE =
+			                                                                         1
+			                                                                   AND roleelemen4_.INVALID =
+			                                                                         0
+			                                                                   AND resolvedst2_.ACTOR =
+			                                                                         roleelemen4_.HUMAN_ROLE)
+			                                                      OR resolvedst2_.ACTOR IS NULL)
+			                                               OR resolvedst2_.RESOLUTION_LEVEL =
+			                                                    3
+			                                                 AND (EXISTS
+			                                                         (SELECT   userrelati6_.PARENT
+			                                                            FROM   bizmaster.wf4_USER_RELATION userrelati6_
+			                                                           WHERE   userrelati6_.CHILD =
+			                                                                      #{userId}
+			                                                                   AND resolvedst2_.ACTOR =
+			                                                                         userrelati6_.PARENT)))
+			                                          OR EXISTS
+			                                               (SELECT   resolvedan7_.ACTOR
+			                                                  FROM   bizmaster.wf4_RESOLVED_AND_STARTER resolvedan7_
+			                                                 WHERE   resolvedan7_.EXCLUSION =
+			                                                            0
+			                                                         AND resolvedan7_.PROCESS =
+			                                                               resolvedst2_.PROCESS
+			                                                         AND (resolvedan7_.ACTIVITY =
+			                                                                 resolvedst2_.ACTIVITY
+			                                                              OR (resolvedst2_.ACTIVITY IS NULL)
+			                                                                AND (resolvedan7_.ACTIVITY IS NULL))
+			                                                         AND (resolvedan7_.ACTOR =
+			                                                                 #{userId}
+			                                                              OR EXISTS
+			                                                                   (SELECT   absenceset8_.UZER
+			                                                                      FROM   bizmaster.wf4_ABSENCE_SETTING absenceset8_
+			                                                                     WHERE   absenceset8_.SUBSTITUTER =
+			                                                                                #{userId}
+			                                                                             AND absenceset8_.IS_ACTIVE =
+			                                                                                   1
+			                                                                             AND absenceset8_.INVALID =
+			                                                                                   0
+			                                                                             AND resolvedan7_.ACTOR =
+			                                                                                   absenceset8_.UZER))))
+			                                     AND NOT (EXISTS
+			                                                 (SELECT   resolvedst9_.ACTOR
+			                                                    FROM   bizmaster.wf4_RESOLVED_STARTER resolvedst9_
+			                                                   WHERE   resolvedst9_.RESOLUTION_LEVEL =
+			                                                              5
+			                                                           AND resolvedst9_.PROCESS =
+			                                                                 resolvedst2_.PROCESS
+			                                                           AND (resolvedst9_.ACTIVITY =
+			                                                                   resolvedst2_.ACTIVITY
+			                                                                OR (resolvedst2_.ACTIVITY IS NULL)
+			                                                                  AND (resolvedst9_.ACTIVITY IS NULL))
+			                                                           AND resolvedst9_.AND_GROUP_NUMBER =
+			                                                                 -1
+			                                                           AND resolvedst9_.ACTOR =
+			                                                                 #{userId}))
+			                                     AND NOT (EXISTS
+			                                                 (SELECT   roleelemen10_.HUMAN_USER
+			                                                    FROM   bizmaster.wf4_ROLE_ELEMENT roleelemen10_,
+			                                                           bizmaster.wf4_RESOLVED_STARTER resolvedst11_
+			                                                   WHERE   resolvedst11_.RESOLUTION_LEVEL =
+			                                                              4
+			                                                           AND roleelemen10_.HUMAN_ROLE =
+			                                                                 resolvedst11_.ACTOR
+			                                                           AND resolvedst11_.PROCESS =
+			                                                                 resolvedst2_.PROCESS
+			                                                           AND (resolvedst11_.ACTIVITY =
+			                                                                   resolvedst2_.ACTIVITY
+			                                                                OR (resolvedst2_.ACTIVITY IS NULL)
+			                                                                  AND (resolvedst11_.ACTIVITY IS NULL))
+			                                                           AND resolvedst11_.AND_GROUP_NUMBER =
+			                                                                 -1
+			                                                           AND roleelemen10_.IS_ACTIVE =
+			                                                                 1
+			                                                           AND roleelemen10_.INVALID =
+			                                                                 0
+			                                                           AND roleelemen10_.HUMAN_USER =
+			                                                                 #{userId}))
+			                                     AND NOT (EXISTS
+			                                                 (SELECT   userrelati12_.CHILD
+			                                                    FROM   bizmaster.wf4_USER_RELATION userrelati12_,
+			                                                           bizmaster.wf4_RESOLVED_STARTER resolvedst13_
+			                                                   WHERE   resolvedst13_.RESOLUTION_LEVEL =
+			                                                              6
+			                                                           AND userrelati12_.PARENT =
+			                                                                 resolvedst13_.ACTOR
+			                                                           AND resolvedst13_.PROCESS =
+			                                                                 resolvedst2_.PROCESS
+			                                                           AND (resolvedst13_.ACTIVITY =
+			                                                                   resolvedst2_.ACTIVITY
+			                                                                OR (resolvedst2_.ACTIVITY IS NULL)
+			                                                                  AND (resolvedst13_.ACTIVITY IS NULL))
+			                                                           AND resolvedst13_.AND_GROUP_NUMBER =
+			                                                                 -1
+			                                                           AND userrelati12_.CHILD =
+			                                                                 #{userId}))
+			                                     AND NOT (EXISTS
+			                                                 (SELECT   resolvedan14_.ACTOR
+			                                                    FROM   bizmaster.wf4_RESOLVED_AND_STARTER resolvedan14_
+			                                                   WHERE   resolvedan14_.EXCLUSION =
+			                                                              1
+			                                                           AND resolvedan14_.PROCESS =
+			                                                                 resolvedst2_.PROCESS
+			                                                           AND (resolvedan14_.ACTIVITY =
+			                                                                   resolvedst2_.ACTIVITY
+			                                                                OR (resolvedst2_.ACTIVITY IS NULL)
+			                                                                  AND (resolvedan14_.ACTIVITY IS NULL))
+			                                                           AND resolvedan14_.ACTOR =
+			                                                                 #{userId}))))
+			          UNION ALL
+			          SELECT   TO_CHAR (DEF.DEFID)
+			            FROM         BPM_PROCDEF DEF
+			                      INNER JOIN
+			                         BPM_PROCDEF PARENT
+			                      ON DEF.PARENTFOLDER = PARENT.DEFID
+			                   INNER JOIN
+			                      BPM_PROCDEFVER DEFVER
+			                   ON DEF.PRODVERID = DEFVER.DEFVERID
+			           WHERE   DEF.DEFID IN
+			                         (SELECT   DEFID.DEFID
+			                            FROM   (    SELECT   DEFID,
+			                                                 NAME,
+			                                                 OBJTYPE,
+			                                                 ISDELETED,
+			                                                 LEVEL
+			                                          FROM   BPM_PROCDEF
+			                                    START WITH   NAME = 'KRISS'
+			                                    CONNECT BY   PRIOR DEFID = PARENTFOLDER)
+			                                   DEFID
+			                           WHERE   DEFID.OBJTYPE = 'process'
+			                                   AND DEFID.ISDELETED = '0'))
+		]]>
+    </select>
+     <select id="selectInstanceIdMyWorkVO" parameterType="String" resultType="MyWorkVO">
+        <![CDATA[
+        	SELECT 
+				DEFVER.DEFNAME AS PROCESSNAME,
+				DEF.ALIAS AS PROCESSCODE,                                               				
+				WL.TITLE,        
+				WL.STATUS,       
+				INST.INFO,         
+				INST.NAME AS INSTANCENAME,  
+				WL.STARTDATE,    
+				WL.ENDDATE,   
+				WL.DUEDATE,
+				INST.CURREP,       
+				INST.CURRSTATUSNAMES CURRSTATUSNAMES,
+				INST.CURRSTATUSCODES CURRSTATUSCODES,   
+				INST.CURRRSNM AS CURRRSNM,  
+				INST.INITEP,
+				INST.INITRSNM,
+				INST.INSTID AS INSTANCEID,   
+				WL.TRCTAG AS TRACINGTAG,   
+				WL.TASKID AS TASKID,       
+				WL.EXT1 AS EXT1,       
+				WL.EXT2 AS EXT2,       
+				WL.EXT3 AS EXT3,       
+				WL.EXT4 AS EXT4,       
+				WL.EXT5 AS EXT5,       
+				WL.EXT6 AS EXT6,       
+				WL.EXT7 AS EXT7,       
+				WL.EXT8 AS EXT8,       
+				WL.EXT9 AS EXT9,       
+				WL.EXT10 AS EXT10       
+				FROM BPM_WORKLIST WL                                                          
+				INNER JOIN BPM_PROCINST INST                                                  
+				ON WL.INSTID      =INST.INSTID                                                
+				AND INST.ISDELETED='0'                                                        
+				AND INST.STATUS   ='Running'                                                  
+				INNER JOIN BPM_WORKLIST INITWL                                                
+				ON INST.INITTASKID=INITWL.TASKID                                              
+				INNER JOIN BPM_PROCDEFVER DEFVER                                              
+				ON WL.DEFID            =DEFVER.DEFVERID                                       
+				INNER JOIN BPM_PROCDEF DEF                                                    
+				ON DEFVER.DEFID     =DEF.DEFID                                                
+				INNER JOIN BPM_ROLEMAPPING RM                                                 
+				ON INST.INSTID   =RM.INSTID                                                   
+				AND WL.ROLENAME  =RM.ROLENAME  
+				WHERE 1=1                                   
+				AND INST.INSTID = #{instId}
+				ORDER BY WL.STARTDATE DESC
+		]]>
+    </select>
+    
+</mapper>

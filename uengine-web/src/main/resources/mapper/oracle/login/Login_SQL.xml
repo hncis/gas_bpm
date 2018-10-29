@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="login">
+     
+    <select id="selectUserByUserVO" parameterType="LoginVO" resultType="LoginVO">
+        <![CDATA[
+            SELECT EMP.EMPCODE AS USERID,
+			       EMP.EMPNAME AS USERNAME,
+			       EMP.ISADMIN AS ISADMIN,
+			       EMP.EMAIL AS EMAIL,
+			       EMP.PARTCODE AS PARTCODE,
+			       PART.PARTNAME AS PARTNAME,
+			       EMP.GLOBALCOM AS COMCODE,
+			       COM.COMNAME AS COMNAME,
+			       EMP.MOBILENO AS MOBILENO,
+			       EMP.LOCALE AS LOCALE,
+			       EMP.JIKNAME AS JIKNAME
+			FROM EMPTABLE EMP
+			  LEFT JOIN PARTTABLE PART ON EMP.PARTCODE = PART.PARTCODE
+			  LEFT JOIN COMTABLE COM ON EMP.GLOBALCOM = COM.COMCODE
+			WHERE EMP.EMPCODE = #{userId}
+			AND   EMP.PASSWORD = #{userPassword}
+			AND   EMP.ISDELETED = 0
+        ]]>
+    </select>
+     
+    <select id="selectUserSSOByUserVO" parameterType="LoginVO" resultType="LoginVO">
+        <![CDATA[
+            SELECT EMP.EMPCODE AS USERID,
+			       EMP.EMPNAME AS USERNAME,
+			       EMP.ISADMIN AS ISADMIN,
+			       EMP.EMAIL AS EMAIL,
+			       EMP.PARTCODE AS PARTCODE,
+			       PART.PARTNAME AS PARTNAME,
+			       EMP.GLOBALCOM AS COMCODE,
+			       COM.COMNAME AS COMNAME,
+			       EMP.MOBILENO AS MOBILENO,
+			       EMP.LOCALE AS LOCALE,
+			       EMP.JIKNAME AS JIKNAME
+			FROM EMPTABLE EMP
+			  LEFT JOIN PARTTABLE PART ON EMP.PARTCODE = PART.PARTCODE
+			  LEFT JOIN COMTABLE COM ON EMP.GLOBALCOM = COM.COMCODE
+			WHERE EMP.EMPCODE = #{userId}
+			AND   EMP.ISDELETED = 0
+        ]]>
+    </select>
+     
+</mapper>

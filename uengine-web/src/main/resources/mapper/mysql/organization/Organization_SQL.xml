@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<mapper namespace="organization">
+     
+    <select id="selectOrganizationTreeByComCode" parameterType="String" resultType="OrganizationVO">
+        <![CDATA[
+            SELECT LEVEL, CONNECT_BY_ISLEAF AS ISLEAF,
+			  P.PARTCODE, P.PARTNAME, P.DESCRIPTION
+			FROM (SELECT * FROM PARTTABLE WHERE ISDELETED='0' AND GLOBALCOM = #{comCode}) P
+			  START WITH P.PARENT_PARTCODE IS NULL
+			  CONNECT BY PRIOR P.PARTCODE   =P.PARENT_PARTCODE AND GLOBALCOM = #{comCode}
+			ORDER SIBLINGS BY P.PARTCODE
+        ]]>
+    </select>
+
+    <select id="selectUserListByPartCode" parameterType="String" resultType="UserVO">
+        <![CDATA[
+            SELECT E.EMPCODE,
+			  E.EMPNAME,
+			  P.PARTNAME,
+  			  E.JIKNAME
+			FROM EMPTABLE E
+			INNER JOIN PARTTABLE P
+			ON E.PARTCODE    =P.PARTCODE
+			WHERE E.ISDELETED='0'
+			AND E.PARTCODE   = #{partCode}
+        ]]>
+    </select>
+     
+    <select id="selectWholeUserByPartcode" parameterType="String" resultType="RoleMapping">
+        <![CDATA[
+        	SELECT EMP.EMPCODE AS ENDPOINT,
+			  EMP.EMPNAME AS RESOURCENAME
+			FROM EMPTABLE EMP
+			WHERE 1                =1
+			AND EMP.PARTCODE	   =#{partCode}
+			AND EMP.ISDELETED      ='0'
+			ORDER BY EMP.EMPNAME
+        ]]>
+    </select>
+
+    <select id="selectPartListByComCode" parameterType="String" resultType="RoleMapping">
+        <![CDATA[
+        	SELECT PARTNAME AS GROUPNAME,
+        		PARTCODE AS GROUPID,
+        		(CASE WHEN PARENT_PARTCODE IS NULL THEN '-1' ELSE PARENT_PARTCODE END) AS PARENTGROUPID
+			FROM PARTTABLE
+			WHERE 1              =1
+			AND GLOBALCOM        =#{comCode}
+			AND ISDELETED        ='0'
+			ORDER BY PARTCODE
+        ]]>
+    </select>
+
+    <select id="selectRoleListByComCode" parameterType="String" resultType="RoleVO">
+        <![CDATA[
+        	SELECT ROLECODE,
+        		DESCR,
+        		COMCODE
+			FROM ROLETABLE
+			WHERE 1              =1
+			AND COMCODE        =#{comCode}
+			AND ISDELETED        ='0'
+			ORDER BY DESCR
+        ]]>
+    </select>
+     
+</mapper>

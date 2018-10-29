@@ -1,0 +1,63 @@
+<%@ include file="/WEB-INF/include/include-header_resource.jspf"%>
+<link href="<c:url value='/resources/libs/bootstrap-3.3.2-dist/css/logo_nav.css'/>" rel="stylesheet" type="text/css">
+<script>
+var requestUri = "${pageContext.request.requestURI}";
+var fn_logout = function(){
+	$.ajax({
+		url: "<c:url value='/login/logout.do' />",
+		type: "POST",
+		cache : false,
+	}).then(function(data) {
+		document.location.href="<c:url value='/' />";
+	});
+};
+$(document).ready(function(){
+	var parentUri = requestUri.substring(0, requestUri.lastIndexOf("/"));
+	parentUri = requestUri.substring(parentUri.lastIndexOf("/")+1, parentUri.length);
+	if ( window.console ) {
+		console.log(parentUri);
+	}
+	if ( parentUri == "worklist" ) {
+		$("#worklistMenuLi").addClass("active");
+	} else if ( parentUri == "instancelist" ) {
+		$("#instancelistMenuLi").addClass("active");
+	}else if ( parentUri == "monitoring" ) {
+		$("#monitoringi").addClass("active");
+	} else if ( parentUri == "processmanager" ) {
+		$("#processManagerMenuLi").addClass("active");
+	} else if ( parentUri == "process" ) {
+		$("#processMenuLi").addClass("active");
+	} else if ( parentUri == "apitest" ) {
+		$("#apiTestMenuLi").addClass("active");
+	}
+})
+</script>
+<!-- Navigation -->
+	<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<a class="" href="<c:url value='/'/>"> <img
+				src="<c:url value='/resources/images/page/logo/${sessionScope.loggedUser.comCode}_logo.png'/>"
+				alt="">
+			</a>
+		</div>
+		<ul class="nav navbar-nav">
+			<li id="worklistMenuLi"><a href="<c:url value='/worklist/' />"><spring:message code="menu.worklist.label" /></a></li>
+			<li id="instancelistMenuLi"><a href="<c:url value='/instancelist/' />"><spring:message code="menu.instancelist.label" /></a></li>
+			<li id="processMenuLi"><a href="<c:url value='/process/' />"><spring:message code="menu.process.label" /></a></li>
+			<li id="monitoringi"><a href="<c:url value='/monitoring/' />"><spring:message code="menu.monitoring.label" /></a></li>
+			<li id="processManagerMenuLi"><a href="<c:url value='/processmanager/' />"><spring:message code="menu.processmanager.label" /></a></li>
+			<li id="apiTestMenuLi"><a href="<c:url value='/apitest/' />"><spring:message code="menu.apitest.label" /></a></li>
+			<li id="apiTestMenuLi"><a href="<c:url value='/apitest/' />"><spring:message code="menu.organization.label" /></a></li>
+		</ul>
+		<ul class="nav navbar-nav navbar-right">
+			<li><a href="#"><span class="glyphicon glyphicon-user"></span>
+					${sessionScope.loggedUser.userName}(${sessionScope.loggedUser.userId})</a></li>
+			<li><a href="javascript:fn_logout();"><span class="glyphicon glyphicon-log-in"></span>
+					<spring:message code="logout.label" /></a></li>
+		</ul>
+	</div>
+	</nav>
+
+
+

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd>
+    <useProjectRuleSet>false</useProjectRuleSet>
+    <ruleSetFile>.ruleset</ruleSetFile>
+    <excludePatterns/>
+    <includePatterns/>
+    <rules>
+        <rule>
+            <name>EmptyCatchBlock</name>
+            <ruleset>Empty Code</ruleset>
+        </rule>
+        <rule>
+            <name>EmptyFinallyBlock</name>
+            <ruleset>Empty Code</ruleset>
+        </rule>
+        <rule>
+            <name>AvoidCatchingThrowable</name>
+            <ruleset>Strict Exceptions</ruleset>
+        </rule>
+        <rule>
+            <name>AvoidCatchingNPE</name>
+            <ruleset>Strict Exceptions</ruleset>
+        </rule>
+        <rule>
+            <name>AvoidCatchingGenericException</name>
+            <ruleset>Strict Exceptions</ruleset>
+        </rule>
+        <rule>
+            <name>MethodReturnsInternalArray</name>
+            <ruleset>Security Code Guidelines</ruleset>
+        </rule>
+        <rule>
+            <name>ArrayIsStoredDirectly</name>
+            <ruleset>Security Code Guidelines</ruleset>
+        </rule>
+        <rule>
+            <name>OverrideBothEqualsAndHashcode</name>
+            <ruleset>Basic</ruleset>
+        </rule>
+        <rule>
+            <name>DoubleCheckedLocking</name>
+            <ruleset>Basic</ruleset>
+        </rule>
+        <rule>
+            <name>MisplacedNullCheck</name>
+            <ruleset>Basic</ruleset>
+        </rule>
+        <rule>
+            <name>BrokenNullCheck</name>
+            <ruleset>Basic</ruleset>
+        </rule>
+        <rule>
+            <name>DontCallThreadRun</name>
+            <ruleset>Basic</ruleset>
+        </rule>
+        <rule>
+            <name>AvoidPrintStackTrace</name>
+            <ruleset>Java Logging</ruleset>
+        </rule>
+        <rule>
+            <name>UseProperClassLoader</name>
+            <ruleset>J2EE</ruleset>
+        </rule>
+        <rule>
+            <name>DoNotCallSystemExit</name>
+            <ruleset>J2EE</ruleset>
+        </rule>
+        <rule>
+            <name>DoNotUseThreads</name>
+            <ruleset>J2EE</ruleset>
+        </rule>
+        <rule>
+            <name>CloseResource</name>
+            <ruleset>Design</ruleset>
+        </rule>
+        <rule>
+            <name>UseNotifyAllInsteadOfNotify</name>
+            <ruleset>Design</ruleset>
+        </rule>
+        <rule>
+            <name>PositionLiteralsFirstInComparisons</name>
+            <ruleset>Design</ruleset>
+        </rule>
+    </rules>
+    <includeDerivedFiles>false</includeDerivedFiles>
+    <violationsAsErrors>true</violationsAsErrors>
+    <fullBuildEnabled>true</fullBuildEnabled>
+</pmd>

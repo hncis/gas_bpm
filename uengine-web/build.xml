@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+
+<!-- ======================================================================= -->
+<!-- JBoss build file                                                       -->
+<!-- ======================================================================= -->
+
+<project name="uEngine-standalone" default="apply" basedir=".">
+<!-- 	<taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="maven.dependency.classpath"/> -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml"/>
+	
+	<target name="apply">
+		<jar jarfile="./build/uengine_settings.jar">
+			<fileset dir="target/classes">
+		  		<include name="**/*.*"/>
+			</fileset>
+		</jar>
+		<for param="theFile">
+			<fileset dir="./build">
+				<include name="**/*.jar" />
+			</fileset>
+			<sequential>
+				<var name="fileName" unset="true" />
+				<basename property="fileName" file="@{theFile}" suffix="*.jar"/>
+				<echo message="${fileName}" />
+				<antcall target="signjar">
+					<param name="file.name" value="${fileName}"/>
+					<param name="file.dir" value="./build"/>
+				</antcall>
+			</sequential>
+		</for>
+		<!-- 
+		<antcall target="signjar">
+			<param name="file.name" value="uengine_settings.jar"/>
+			<param name="file.dir" value="./build"/>
+		</antcall>
+		 -->
+		
+	</target>
+	
+	<target name="foo">
+		<echo message="${theFile}" />
+	</target>
+	
+	<target name="signjar">
+		<echo message="${file.dir}/${file.name}"/>
+		<signjar
+			keystore="./src/main/webapp/resources/processmanager/jars/uenginestore"
+			digestalg="SHA1"
+			storepass="jinyoungj"
+			keypass="jinyoungj"
+			signedjar="${basedir}/src/main/webapp/resources/processmanager/jars/signed${file.name}"
+			jar="${file.dir}/${file.name}" 
+			alias="uenginetools"
+		/>
+	</target>
+
+</project>
+
+
+
