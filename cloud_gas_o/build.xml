@@ -53,6 +53,11 @@
 			</fileset>
 		</copy>
 		
+		<!-- bpmutil-1.1.0.jar 파일 교체 -->
+		<echo message="bpmutil-1.1.0.jar file replace.."/>
+		<copy file="C:/Users/Hmncis/.m2/repository/org/uengine/bpmutil/1.1.0/bpmutil-1.1.0.jar" 
+			tofile="${basedir}/deploy/WebContent/WEB-INF/lib/bpmutil-1.1.0.jar" overwrite="yes"/>
+		
 		<!-- 서버의 설정이 저장된 설정파일로 교체-->
 		<echo message="Config file replace.."/>
 		<copy file="${basedir}/backup/jdbc.properties.test" 
