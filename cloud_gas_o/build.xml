@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project name="gasc" default="deploy_test" basedir=".">
+<project name="cloud_gas_o" default="deploy_test" basedir=".">
 	
-	<property name="app.name" value="gasc"/>
+	<property name="app.name" value="cloud_gas_o"/>
 	<property name="demo.target" value="D:/"/>
 	<property name="build.classpath" value="C:/Program Files/Java/jdk1.7.0_60/lib"/>
 	
