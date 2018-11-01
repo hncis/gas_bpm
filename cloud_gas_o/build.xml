@@ -3,7 +3,7 @@
 	
 	<property name="app.name" value="gasc"/>
 	<property name="demo.target" value="F:/"/>
-	<property name="build.classpath" value="C:/Program Files/Java/jdk1.7.0_17/lib"/>
+	<property name="build.classpath" value="C:/Program Files/Java/jdk1.7.0_60/lib"/>
 	
 	<path id="classpath">
 		<fileset dir="WebContent/WEB-INF/lib">
