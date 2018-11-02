@@ -4,6 +4,6 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/cloud_gas_o/src"/>
         <wb-resource deploy-path="/" source-path="/cloud_gas_o/WebContent"/>
         <property name="java-output-path" value="/cloud_gas_o/bin"/>
-        <property name="context-root" value=""/>
+        <property name="context-root" value="/"/>
     </wb-module>
 </project-modules>
