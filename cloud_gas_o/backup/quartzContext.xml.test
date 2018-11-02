@@ -19,7 +19,7 @@
 	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
-				<ref bean="dayliyTrigger" />
+<!-- 				 <ref bean="dayliyTrigger" /> -->
 			</list>
 		</property>
 	</bean>
@@ -29,7 +29,7 @@
 	<bean id="dayliyTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
 		<property name="jobDetail" ref="dailyTriggerDetail" />
 		<!-- <property name="cronExpression" value="0 10/10 * * * ?" /> -->
-		<property name="cronExpression" value="0 0/10 * * * ?" />
+		<property name="cronExpression" value="0 0/1 * * * ?" />
 	</bean>
 	<!-- ################################################################ -->
 	<!-- # e:trigger -->
