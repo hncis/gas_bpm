@@ -1058,4 +1058,15 @@
 		AND AFFR_SCN_CD = #affr_scn_cd#
 		AND OGC_FIL_NM = #ogc_fil_nm#
 	</delete>
+	
+		
+	<!-- 1102 BPM process(final) 진행 전 모든 항목이 확정 또는 반려상태인지 확인 관련 쿼리 -->
+	<select id="selectByXosIsAllConfirm" parameterClass="bgabGascos03" resultClass="java.lang.Integer">
+		/* Query Id : selectByXosIsAllConfirm */
+		SELECT 	COUNT(*)
+		FROM 	BGAB_GASCOS03$corp_cd$
+		WHERE 	DOC_NO = #doc_no#
+		AND		PGS_ST_CD != '3' AND PGS_ST_CD != '2'
+	</select>
+	
 </sqlMap>

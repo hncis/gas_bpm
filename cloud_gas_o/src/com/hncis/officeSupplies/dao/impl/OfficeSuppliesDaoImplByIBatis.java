@@ -83,6 +83,11 @@ public class OfficeSuppliesDaoImplByIBatis extends CommonDao implements OfficeSu
 	public int doUpdateByConfirmCancel(BgabGascos03 gsReqVo){
 		return super.update("updateByXosConfirmCancel", gsReqVo);
 	}
+	
+	@Override /* 1102 예외 추가*/
+	public int doSearchByXosIsAllConfirm(BgabGascos03 gsParamVo){
+		return (Integer)getSqlMapClientTemplate().queryForObject("selectByXosIsAllConfirm", gsParamVo);
+	}
 
 	/**
 	 * list

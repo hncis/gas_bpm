@@ -545,7 +545,7 @@
 			doSearchRel("N");
 		}
 
-		function doDeleteCal(tgName){
+		function doDeleteRel(tgName){
 			var dParams = [];
 			var dData;
 
@@ -577,7 +577,7 @@
 				$.unblockUI({
 					onUnblock: function(){
 						var params = {
-							dParams : util.jsonToList(dParams)
+							paramJson : util.jsonToList(dParams)
 						};
 						
 						doCommonAjax("doDeleteRelListToFamilyJob.do", params, "doDeleteRelListToFamilyJobCallBack(jsonData.sendResult);");
