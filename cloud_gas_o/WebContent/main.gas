@@ -117,90 +117,118 @@
 
 	var movePage = "";	
 	var M_DOC_NO = "";
+	var hid_view_nm = "";
 	switch(taskCd){
 		case "RC" :
 			movePage = ctxPath+"/hncis/restCenter/xrc01.gas";
 			eeno = "";
+			hid_view_nm = "xrc02";
 			break;
 		case "BK" :
 			movePage = ctxPath+"/hncis/books/xbk07.gas";
+			hid_view_nm = "xbk03";
 			break;
 		case "GS" :
 			if((title == "결재") || (title == "담당자확인")) {
 			movePage = ctxPath+"/hncis/generalService/xgs03.gas";
+			hid_view_nm = "xgs02";
 			} else{
 			movePage = ctxPath+"/hncis/generalService/xgs01.gas";
+			hid_view_nm = "xgs02";
 			}
 			break;
 		case "FC" :
 			movePage = ctxPath+"/hncis/fuelCost/xfc01.gas";
+			hid_view_nm = "xfc02";
 			M_DOC_NO = $("<input type='hidden' id='M_DOC_NO' name='M_DOC_NO'/>").val(docNo);
 			break;
 		case "LV" :
 			movePage = ctxPath+"/hncis/leave/xlv01.gas";
 			eeno = "";
+			hid_view_nm = "xlv02";
 			break;
 		case "TR" :
 			movePage = ctxPath+"/hncis/training/xtr02.gas";
+			hid_view_nm = "xtr02";
 			break;	
 		case "GF" :
 			movePage = ctxPath+"/hncis/gift/xgf03.gas";  //상세페이지로 넘기려면 ITEM_SEQ 값을 받아와서 넘겨야 하는것으로 확인됨.
+			hid_view_nm = "xgf03";
 			break;
 		case "FJ" :
 			movePage = ctxPath+"/hncis/familyJob/xfj01.gas";
+			hid_view_nm = "xfj02";
 			eeno = "";
 			break;
 		case "OS" :
 			if((title == "결재") || (title == "담당자확인")) {
 			movePage = ctxPath+"/hncis/officeSupplies/xos03.gas";
+			hid_view_nm = "xos02";
 			} else{
 			movePage = ctxPath+"/hncis/officeSupplies/xos01.gas";
+			hid_view_nm = "xos02";
 			}
 			break;	
 		case "SC" :
 			movePage = ctxPath+"/hncis/security/xve01.gas?param1=5";
+			hid_view_nm = "xve02";
 			eeno = initEeno;
 			break;
 		case "IC" :
 			movePage = ctxPath+"/hncis/security/xve01.gas?param1=1";
+			hid_view_nm = "xve02";
 			eeno = initEeno;
 			break;
 		case "IM" :
 			movePage = ctxPath+"/hncis/security/xve01.gas?param1=3";
+			hid_view_nm = "xve02";
 			eeno = initEeno;
 			break;	
 		case "BC" :
 			movePage = ctxPath+"/hncis/businessCard/xbc01.gas?hid_doc_no="+docNo+"&hid_eeno="+initEeno+"&hid_type=bpm";
+			hid_view_nm = "xbc03";
 			eeno = initEeno;
 			break;	
 		case "PD" :
 			movePage = ctxPath+"/hncis/product/xpd07.gas";
+			hid_view_nm = "xpd03";
 			eeno = initEeno;
 			break;
 		case "PS" :
 			movePage = ctxPath+"/hncis/pickupService/xps01.gas?M_DOC_NO="+docNo;
+			hid_view_nm = "xps02";
 			eeno = initEeno;
 			break;	
 		case "BV" :
 			movePage = ctxPath+"/hncis/businessVehicles/xbv01.gas?M_DOC_NO="+docNo;
+			hid_view_nm = "xbv02";
 			eeno = initEeno;
 			break;
 		case "VL" :
 			movePage = ctxPath+"/hncis/vehicleLog/xvl01.gas?M_DOC_NO="+docNo;
+			hid_view_nm = "xvl02";
 			eeno = initEeno;
 			break;	
 		case "BT_2" :
 			movePage = ctxPath+"/hncis/businessTravel/xbt01.gas?hid_doc_no="+docNo;
+			hid_view_nm = "xbt02";
 			eeno = initEeno;
 			break;	
 		case "BT_1" :
 			movePage = ctxPath+"/hncis/businessTravel/xbt09.gas?hid_doc_no="+docNo;
+			hid_view_nm = "xbt02";
 			eeno = initEeno;
 			break;	
 		case "UF" :
 			movePage = ctxPath+"/hncis/uniform/xuf03.gas";
+			hid_view_nm = "xuf02";
 			eeno = initEeno;
 			break;	
+		case "TX" : // 교통비인 경우 case를 추가
+			movePage = ctxPath+"/hncis/taxi/xtx01.gas?hid_doc_no="+docNo;
+			hid_view_nm = "xtx02";
+			eeno = initEeno;
+			break;
 	}
 
 	var form = $("<form/>");
@@ -209,7 +237,7 @@
     form.attr("action" , movePage);
     
     var inp1 = $("<input type='hidden' id='hid_doc_no' name='hid_doc_no'/>").val(docNo);
-    var inp2 = $("<input type='hidden' id='hid_view_nm' name='hid_view_nm'/>").val(taskCd);
+    var inp2 = $("<input type='hidden' id='hid_view_nm' name='hid_view_nm'/>").val(hid_view_nm);
     var inp3 = $("<input type='hidden' id='hid_cond' name='hid_cond'/>").val("");
     var inp4 = $("<input type='hidden' id='hid_page' name='hid_page'/>").val("");
     var inp5 = $("<input type='hidden' id='hid_eeno' name='hid_eeno'/>").val(eeno);

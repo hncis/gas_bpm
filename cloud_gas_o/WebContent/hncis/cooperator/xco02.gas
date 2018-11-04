@@ -191,7 +191,8 @@
 		
 		function doSearch(msgFlag){
 			var params = {
-				corp_nm : $("#key_corp_nm").val()
+				corp_nm : $("#key_corp_nm").val(),
+				corp_cd : sess_corp_cd
 			};
 			doCommonSearch("doSearchCOToList.do", util.jsonToString(params), "addGridRow();loadCallBack();initAfterMenus();", gridName1, msgFlag);
 		}
