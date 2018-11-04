@@ -166,7 +166,7 @@
 .notice li a{overflow:hidden;float:left;width:400px;color:#333;font-size:14px;vertical-align:middle;white-space:nowrap;word-wrap:normal;text-overflow:ellipsis;}
 .notice li a:hover{color:#115796; text-decoration:underline;}
 .notice li a.link{margin-right:10px;}
-.notice li a.flow{display:block;right:50px;text-align:right;position:absolute;width:90px;}
+.notice li a.flow{display:block;right:50px;text-align:right;position:absolute;}
 .notice li span{float:right;color:#999;font-size:12px;text-align:right;vertical-align:middle;}
 .notice .more_btn{display:block; position:absolute; right:30px; top:20px; width:26px; height:26px; background:url(/images/main/notice_more_icon.png) 0 0 no-repeat; text-indent:-9999px; overflow:hidden;}
 .notice .more_btn:hover{background-position:0 -26px;}

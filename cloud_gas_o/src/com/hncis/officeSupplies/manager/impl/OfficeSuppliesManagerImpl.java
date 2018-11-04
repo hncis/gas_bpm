@@ -155,9 +155,7 @@ public class OfficeSuppliesManagerImpl implements OfficeSuppliesManager{
 	public int doUpdateByConfirm(BgabGascos03 gsReqVo){
 		int rs = 0;
 		rs = officeSuppliesDao.doUpdateByConfirm(gsReqVo);
-		int isAllConfirm = officeSuppliesDao.doSearchByXosIsAllConfirm(gsReqVo);
-		
-		if(rs>0 && isAllConfirm ==0){
+		if(rs>0){
 			// BPM API호출
 			String processCode = "P-C-003"; 	//프로세스 코드 (사무용품 프로세스) - 프로세스 정의서 참조
 			String bizKey = gsReqVo.getDoc_no();	//신청서 번호

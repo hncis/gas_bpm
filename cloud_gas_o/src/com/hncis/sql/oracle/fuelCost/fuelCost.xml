@@ -843,43 +843,28 @@
 
     <select id="selectXfc05Info" parameterClass="bgabGascfc02Dto" resultClass="bgabGascfc02Dto">
     	/* fuelCost.xml :: selectXfc05Info */
-	   	SELECT   TB.FROM_YMD FROM_YMD,
-				 TB.GAS_DIST GAS_DIST,
-				 TB.GAS_COST GAS_COST,
-				 TB.DSL_DIST DSL_DIST,
-				 TB.DSL_COST DSL_COST,
-				 TB.LPG_DIST LPG_DIST,
-				 TB.LPG_COST LPG_COST,
-				 TB.INP_YMD INP_YMD,
-				 TB.IPE_EENO IPE_EENO,
-				 TB.MDFY_YMD MDFY_YMD,
-				 TB.UPDR_EENO UPDR_EENO
-		FROM
-		(
-		    	 SELECT   A.FROM_YMD
-		    	        , TO_YMD
-					    , CAST(GAS_DIST as DECIMAL)  AS GAS_DIST
-					    , CAST(GAS_COST as DECIMAL)  AS GAS_COST
-					    , CAST(DSL_DIST as DECIMAL)  AS DSL_DIST
-					    , CAST(DSL_COST as DECIMAL)  AS DSL_COST
-					    , CAST(LPG_DIST as DECIMAL)  AS LPG_DIST
-					    , CAST(LPG_COST as DECIMAL)  AS LPG_COST
-					    , INP_YMD
-					    , IPE_EENO
-					    , MDFY_YMD
-					    , UPDR_EENO
-		          FROM   BGAB_GASCFC02$corp_cd$ A
-		         WHERE   (TO_CHAR(A.TO_YMD,'YYYYMMDD') = #to_ymd# OR TO_CHAR(A.TO_YMD,'YYYYMMDD') IS NULL)
-		      ORDER BY	 A.FROM_YMD DESC
-      ) TB
-      WHERE ROWNUM = 1
+    	SELECT   A.FROM_YMD
+    	       , TO_YMD
+			   , CAST(GAS_DIST as DECIMAL)  AS GAS_DIST
+			   , CAST(GAS_COST as DECIMAL)  AS GAS_COST
+			   , CAST(DSL_DIST as DECIMAL)  AS DSL_DIST
+			   , CAST(DSL_COST as DECIMAL)  AS DSL_COST
+			   , CAST(LPG_DIST as DECIMAL)  AS LPG_DIST
+			   , CAST(LPG_COST as DECIMAL)  AS LPG_COST
+			   , INP_YMD
+			   , IPE_EENO
+			   , MDFY_YMD
+			   , UPDR_EENO
+          FROM   BGAB_GASCFC02$corp_cd$ A
+         WHERE   TO_CHAR(A.TO_YMD,'YYYYMMDD') = #to_ymd#
+         AND rownum = 1
     </select>
 
     <select id="selectXfc05InfoListCount" parameterClass="bgabGascfc02Dto" resultClass="int">
     	/* fuelCost.xml :: selectXfc05InfoListCount */
     	SELECT   COUNT(*)
 		  FROM   BGAB_GASCFC02$corp_cd$ A
-         WHERE   (TO_CHAR(A.TO_YMD,'YYYYMMDD') = #to_ymd# OR TO_CHAR(A.TO_YMD,'YYYYMMDD') IS NULL)
+         WHERE   TO_CHAR(A.TO_YMD,'YYYYMMDD') != #to_ymd#
     </select>
 
     <select id="selectXfc05InfoList" parameterClass="bgabGascfc02Dto" resultClass="bgabGascfc02Dto">
@@ -911,13 +896,7 @@
 						     , A.MDFY_YMD
 						     , A.UPDR_EENO
 			            FROM   BGAB_GASCFC02$corp_cd$ A
-			            LEFT   OUTER JOIN  (SELECT   *
-					                          FROM   BGAB_GASCZ005$corp_cd$
-					                         WHERE   XCOD_KND='XFC05'
-					                           AND	 LOCALE=#locale#
-				   			         		) G
-				   	     ON    A.CORP_DIV = G.XCOD_CODE
-			           WHERE   (TO_CHAR(A.TO_YMD,'YYYYMMDD') = #to_ymd# OR TO_CHAR(A.TO_YMD,'YYYYMMDD') IS NULL)
+			           WHERE   TO_CHAR(A.TO_YMD,'YYYYMMDD') != #to_ymd#
 			           ORDER BY A.FROM_YMD DESC
 	    	         ) PAGE
     	)K

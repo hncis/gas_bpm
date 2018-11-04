@@ -507,22 +507,6 @@
 		    	}
 				}]
 			}});
-			
-			if($("#doc_no").val() == ""){
-				/*$("#eeno").val(sess_empno);
-				$("#eeno_nm").val(sess_name);
-				$("#pos_nm").val(sess_step_name);
-				$("#dept_nm").val(sess_dept_name);
-				$("#dept_cd").val(sess_dept_code);
-				$("#tel_no").val(sess_tel_no);
-				$("#reg_ymd").val(getCurrentToDateAddDayEn("-",0));
-				fnChkApplyReqsObjects();*/
-				
-//				$("#drvr_eeno").val(sess_empno);
-//				$("#drvr_eeno_nm").val(sess_name);
-			}else{
-				doSearch();
-			}
 		}
 
 		function gridInsaInfo(rowId){

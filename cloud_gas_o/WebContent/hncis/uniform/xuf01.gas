@@ -616,7 +616,7 @@
 
 		function deptFind(){
 			var param = "?dcd=key_ops_cd&dcdNm=key_ops_nm&callBackYn=Y&csrfToken="+$("#csrfToken").val();
-			newPopWin(ctxPath+"/hncis/popup/deptPopup.gas"+param, "440", "510", "pop_dept");
+			newPopWin(ctxPath+"/hncis/popup/deptPopup.html"+param, "440", "510", "pop_dept");
 		}
 
 		function deptFindCallBack(){

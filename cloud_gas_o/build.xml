@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project name="cloud_gas_o" default="dist" basedir=".">
+<project name="cloud_gas_o" default="deploy_test" basedir=".">
 	
 	<property name="app.name" value="cloud_gas_o"/>
 	<property name="demo.target" value="D:/"/>
@@ -211,29 +211,5 @@
 		</ftp>
 	</target>
 	-->
-
-	<!-- pmd -->
-	<path id="ant_pmd.classpath">
-		<fileset dir="D:/apache-ant-1.9.13/pmd-bin-6.9.0/lib">
-			<include name="**/*.jar"/>
-		</fileset>
-	</path>
-	<target name="pmd">
-		<mkdir dir="./target"/>
-		<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="ant_pmd.classpath"/>
-		<!-- 소스코드를 검사할 PMD 규칙이 설정된 파일 지정 -->
-		<pmd shortFilenames="true" rulesetfiles="pmd-ruleset.xml">
-			<!--  분석결과 파일 저장 위치 지정 -->
-			<formatter type="xml" toFile="target/pmd.xml" />
-			<fileset dir="${basedir}/src">
-			<!-- <include name="**/*.java"/>
-				<include name="com/hncis/**/*.java" /> -->
-				<include name="com/hncis/common/**/*.java" />
-			</fileset>
-		</pmd>
-	</target>
-
-	<target name="dist" depends="deploy_test, pmd" />
-	<!-- <target name="dist" depends="pmd" /> -->
-
+	
 </project>

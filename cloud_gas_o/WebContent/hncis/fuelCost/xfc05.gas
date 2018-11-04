@@ -253,8 +253,7 @@
 		function doSearch2(){
 
 			var params = {
-					corp_cd		: sess_corp_cd,
-					locale		: sess_locale
+					corp_cd		: sess_corp_cd
 			};
 
 			doCommonSearch("doSearchXfc05InfoList.do", util.jsonToString(params), "doSearch2CallBack();", gridName1, "N");
