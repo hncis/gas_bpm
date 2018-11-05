@@ -82,4 +82,9 @@ public interface OfficeSuppliesDao {
 	public int deleteOfficeSuppliesToFile (List<BgabGascZ011Dto> bgabGascZ011List);
 
 	BgabGascos02 selectByOffice3FileName(BgabGascos02 gsReqVo);
+	
+	/**
+	 * 11/02 예외 추가
+	 */
+	int doSearchByXosIsAllConfirm(BgabGascos03 gsParamVo);
 }
