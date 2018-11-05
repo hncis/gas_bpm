@@ -256,6 +256,5 @@
 	</target>
 
 	<target name="dist" depends="deploy_test, pmd" />
-	<!-- <target name="dist" depends="pmd" /> -->
 
 </project>
