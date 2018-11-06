@@ -9,6 +9,8 @@ import kr.co.hncis.components.activity.HncisHumanActivity;
 
 public class HncisHumanActivityDescriptor extends HumanActivityDescriptor{
 
+	private static final String GROUP_ATTR_NAME = "group";
+	
 	public HncisHumanActivityDescriptor() throws Exception{
 		super();
 	}
@@ -20,13 +22,13 @@ public class HncisHumanActivityDescriptor extends HumanActivityDescriptor{
 		setAttributeIgnoresError("ExtValue10", 	"hidden", 	true);
 		
 		String authorityControlValue = GlobalContext.getLocalizedMessage("propertygroupname.authoritycontrol", "Authority Control");
-		setAttributeIgnoresError("Approve", 	"group", 	authorityControlValue);
-		setAttributeIgnoresError("Save", 	"group", 	authorityControlValue);
-		setAttributeIgnoresError("Delegate", 	"group", 	authorityControlValue);
-		setAttributeIgnoresError("Collect", 	"group", 	authorityControlValue);
-		setAttributeIgnoresError("Reject", 	"group", 	authorityControlValue);
-		setAttributeIgnoresError("Complete", 	"group", 	authorityControlValue);
-		setAttributeIgnoresError("Delete", 	"group", 	authorityControlValue);
+		setAttributeIgnoresError("Approve", 	GROUP_ATTR_NAME, 	authorityControlValue);
+		setAttributeIgnoresError("Save", 	GROUP_ATTR_NAME, 	authorityControlValue);
+		setAttributeIgnoresError("Delegate", 	GROUP_ATTR_NAME, 	authorityControlValue);
+		setAttributeIgnoresError("Collect", 	GROUP_ATTR_NAME, 	authorityControlValue);
+		setAttributeIgnoresError("Reject", 	GROUP_ATTR_NAME, 	authorityControlValue);
+		setAttributeIgnoresError("Complete", 	GROUP_ATTR_NAME, 	authorityControlValue);
+		setAttributeIgnoresError("Delete", 	GROUP_ATTR_NAME, 	authorityControlValue);
 		setAttributeIgnoresError("Delete", 	"collapseGroup", 	true);
 
 		setFieldDisplayNames(HncisHumanActivity.class);
