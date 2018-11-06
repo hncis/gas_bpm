@@ -38,6 +38,11 @@ public class BusinessCardManagerImpl implements BusinessCardManager{
 	@Autowired
 	public CommonJobDao commonJobDao;
 
+	private static final String pCode = "P-C-001";
+	private static final String sCode = "GASBZ01310010";
+	private static final String rCode = "GASROLE01310030";
+	private static final String adminID = "10000001";
+	
 	/**
 	 * request search
 	 * @return
@@ -69,16 +74,16 @@ public class BusinessCardManagerImpl implements BusinessCardManager{
 	public Object insertInfoBCToRequest_2(BgabGascba01 cgabGascba01){
 
 		// BPM API호출
-		String processCode = "P-C-001"; 	//프로세스 코드 (명함신청 프로세스) - 프로세스 정의서 참조
+		String processCode = pCode; 	//프로세스 코드 (명함신청 프로세스) - 프로세스 정의서 참조
 		String bizKey = cgabGascba01.getDoc_no();	//신청서 번호
-		String statusCode = "GASBZ01310010";	//액티비티 코드 (명함신청서작성) - 프로세스 정의서 참조
+		String statusCode = sCode;	//액티비티 코드 (명함신청서작성) - 프로세스 정의서 참조
 		String loginUserId = cgabGascba01.getEeno();	//로그인 사용자 아이디
 		String comment = null;
-		String roleCode = "GASROLE01310030";   //명함신청 담당자 역할코드
+		String roleCode = rCode;   //명함신청 담당자 역할코드
 		//역할정보
 		List<String> approveList = new ArrayList<String>();
 		List<String> managerList = new ArrayList<String>();
-		managerList.add("10000001");
+		managerList.add(adminID);
 		
 		BpmApiUtil.sendSaveTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 		return businessCardDao.insertInfoBCToRequest_2(cgabGascba01);
@@ -92,9 +97,9 @@ public class BusinessCardManagerImpl implements BusinessCardManager{
 	public Object deleteInfoBCToRequest(BgabGascba02 keyParamDto){
 		
 		// BPM API호출
-		String processCode = "P-C-001"; 	//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
+		String processCode = pCode; 	//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
 		String bizKey = keyParamDto.getDoc_no();	//신청서 번호
-		String statusCode = "GASBZ01310010";	//액티비티 코드 (명함 신청서작성) - 프로세스 정의서 참조
+		String statusCode = sCode;	//액티비티 코드 (명함 신청서작성) - 프로세스 정의서 참조
 		String loginUserId = keyParamDto.getKey_eeno();	//로그인 사용자 아이디
 		
 		BpmApiUtil.sendDeleteAndRejectTask(processCode, bizKey, statusCode, loginUserId);
@@ -109,7 +114,7 @@ public class BusinessCardManagerImpl implements BusinessCardManager{
 	@Override
 	public Object updateInfoBCToRequest(BgabGascba02 keyParamDto){
 		// BPM API호출
-		String processCode = "P-C-001"; 	//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
+		String processCode = pCode; 	//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
 		String bizKey = keyParamDto.getDoc_no();	//신청서 번호
 		String statusCode = "GASBZ01310030";	//액티비티 코드 (명함 담당자확인) - 프로세스 정의서 참조
 		String loginUserId = keyParamDto.getUpdr_eeno();	//로그인 사용자 아이디
@@ -224,17 +229,17 @@ public class BusinessCardManagerImpl implements BusinessCardManager{
 		if(commonApproval.getResult().equals("Z")){
 			
 			// BPM API호출
-			String processCode = "P-C-001"; 	//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
 			String bizKey = keyParamDto.getDoc_no();	//신청서 번호
-			String statusCode = "GASBZ01310010";	//액티비티 코드 (휴양소신청서작성) - 프로세스 정의서 참조
+			String statusCode = sCode;	//액티비티 코드 (휴양소신청서작성) - 프로세스 정의서 참조
 			String loginUserId = keyParamDto.getKey_eeno();	//로그인 사용자 아이디
 			String comment = null;
-			String roleCode = "GASROLE01310030";   //휴양소 담당자 역할코드
+			String roleCode = rCode;   //휴양소 담당자 역할코드
 			
 			//역할정보
 			List<String> approveList = commonApproval.getApproveList();
 			List<String> managerList = new ArrayList<String>();
-			managerList.add("10000001");
+			managerList.add(adminID);
 
 			BpmApiUtil.sendCompleteTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList);
 			message.setMessage(HncisMessageSource.getMessage("REQUEST.0000"));
@@ -266,17 +271,17 @@ public class BusinessCardManagerImpl implements BusinessCardManager{
 		}else{
 			
 			// BPM API호출
-			String processCode = "P-C-001"; 		//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 		//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
 			String bizKey = keyParamDto.getDoc_no();		//신청서 번호
-			String statusCode = "GASBZ01310010";	//액티비티 코드 (명함신청서작성) - 프로세스 정의서 참조
+			String statusCode = sCode;	//액티비티 코드 (명함신청서작성) - 프로세스 정의서 참조
 			String loginUserId = keyParamDto.getUpdr_eeno();		//로그인 사용자 아이디
 			String comment = null;
-			String roleCode = "GASROLE01310030";  	//명함 담당자 역할코드
+			String roleCode = rCode;  	//명함 담당자 역할코드
 			
 			//역할정보
 			List<String> approveList = new ArrayList<String>();
 			List<String> managerList = new ArrayList<String>();
-			managerList.add("10000001");
+			managerList.add(adminID);
 			
 			BpmApiUtil.sendCollectTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 			
@@ -286,17 +291,17 @@ public class BusinessCardManagerImpl implements BusinessCardManager{
 		if(commonApproval.getResult().equals("Z")){
 			
 			// BPM API호출
-			String processCode = "P-C-001"; 		//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 		//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
 			String bizKey = keyParamDto.getDoc_no();		//신청서 번호
-			String statusCode = "GASBZ01310010";	//액티비티 코드 (명함신청서작성) - 프로세스 정의서 참조
+			String statusCode = sCode;	//액티비티 코드 (명함신청서작성) - 프로세스 정의서 참조
 			String loginUserId = keyParamDto.getUpdr_eeno();		//로그인 사용자 아이디
 			String comment = null;
-			String roleCode = "GASROLE01310030";  	//명함 담당자 역할코드
+			String roleCode = rCode;  	//명함 담당자 역할코드
 			
 			//역할정보
 			List<String> approveList = new ArrayList<String>();
 			List<String> managerList = new ArrayList<String>();
-			managerList.add("10000001");
+			managerList.add(adminID);
 			
 			BpmApiUtil.sendCollectTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 			updateInfoBCToRequest(keyParamDto);
@@ -342,7 +347,7 @@ public class BusinessCardManagerImpl implements BusinessCardManager{
 		CommonMessage message = new CommonMessage();
 		
 		// BPM API호출
-		String processCode = "P-C-001"; 	//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
+		String processCode = pCode; 	//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
 		String bizKey = dto.getDoc_no();	//신청서 번호
 		String statusCode = "GASBZ01310030";	//액티비티 코드 (휴양소 당당자 확인) - 프로세스 정의서 참조
 		String loginUserId = dto.getUpdr_eeno();	//로그인 사용자 아이디

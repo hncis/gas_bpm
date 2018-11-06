@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -31,6 +33,12 @@ import com.hncis.common.util.BpmApiUtil;
 
 @Service("restCenterManagerImpl")
 public class RestCenterManagerImpl  implements RestCenterManager{
+    private transient Log logger = LogFactory.getLog(getClass());
+
+    private static final String pCode = "P-B-001";
+    private static final String sCode = "GASBZ01210010";
+    private static final String rCode = "GASROLE01210030";
+    private static final String adminID = "10000001";
 
 	@Autowired
 	public RestCenterDao restCenterDao;
@@ -66,7 +74,7 @@ public class RestCenterManagerImpl  implements RestCenterManager{
 		int iCnt = restCenterDao.insertRcToCalList(iList);
 		int uCnt = restCenterDao.updateRcToCalList(uList);
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("messege", e);
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
 	}
@@ -89,8 +97,6 @@ public class RestCenterManagerImpl  implements RestCenterManager{
 		for(BgabGascrc02Dto rtnVo : list){
 			rtnVo.setCal_day(day_name[Integer.parseInt(rtnVo.getCal_day())]);
 		}
-		
-		System.out.println("list.size():"+list.size());
 		
 		return list;
 	}
@@ -174,7 +180,7 @@ public class RestCenterManagerImpl  implements RestCenterManager{
 			int diidDays = (int) CurrentDateTime.diffOfDate(dto.getFr_ymd(), dto.getTo_ymd());
 			
 			int chkCnt = restCenterDao.selectCountRcToAmtCheck(dto);
-			System.out.println("@@@@@@@@@@@@dii : "+diidDays+",chkCnt : "+chkCnt);
+			
 			if(diidDays != chkCnt){
 				chkFlag = false;
 				message.setCode1("N");
@@ -194,23 +200,23 @@ public class RestCenterManagerImpl  implements RestCenterManager{
 				message.setCode(dto.getDoc_no());
 				
 				// BPM API호출
-				String processCode = "P-B-001"; 	//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
+				String processCode = pCode; 	//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
 				String bizKey = dto.getDoc_no();	//신청서 번호
-				String statusCode = "GASBZ01210010";	//액티비티 코드 (휴양소신청서작성) - 프로세스 정의서 참조
+				String statusCode = sCode;	//액티비티 코드 (휴양소신청서작성) - 프로세스 정의서 참조
 				String loginUserId = dto.getEeno();	//로그인 사용자 아이디
 				String comment = null;
-				String roleCode = "GASROLE01210030";   //휴양소 담당자 역할코드
+				String roleCode = rCode;   //휴양소 담당자 역할코드
 				//역할정보
 				List<String> approveList = new ArrayList<String>();
 				List<String> managerList = new ArrayList<String>();
-				managerList.add("10000001");
+				managerList.add(adminID);
 
 				BpmApiUtil.sendSaveTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 			}
 			
 			
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("SAVE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -252,9 +258,9 @@ public class RestCenterManagerImpl  implements RestCenterManager{
 			message.setCode1("Y");
 			
 			// BPM API호출
-			String processCode = "P-B-001"; 	//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
 			String bizKey = dto.getDoc_no();	//신청서 번호
-			String statusCode = "GASBZ01210010";	//액티비티 코드 (휴양소 신청서작성) - 프로세스 정의서 참조
+			String statusCode = sCode;	//액티비티 코드 (휴양소 신청서작성) - 프로세스 정의서 참조
 			String loginUserId = dto.getUpdr_eeno();	//로그인 사용자 아이디
 	
 			BpmApiUtil.sendDeleteAndRejectTask(processCode, bizKey, statusCode, loginUserId);
@@ -295,17 +301,17 @@ public class RestCenterManagerImpl  implements RestCenterManager{
 			message.setMessage(HncisMessageSource.getMessage("REQUEST.0000"));
 			
 			// BPM API호출
-			String processCode = "P-B-001"; 	//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
 			String bizKey = dto.getDoc_no();	//신청서 번호
-			String statusCode = "GASBZ01210010";	//액티비티 코드 (휴양소신청서작성) - 프로세스 정의서 참조
+			String statusCode = sCode;	//액티비티 코드 (휴양소신청서작성) - 프로세스 정의서 참조
 			String loginUserId = dto.getEeno();	//로그인 사용자 아이디
 			String comment = null;
-			String roleCode = "GASROLE01210030";   //휴양소 담당자 역할코드
+			String roleCode = rCode;   //휴양소 담당자 역할코드
 			
 			//역할정보
 			List<String> approveList = commonApproval.getApproveList();
 			List<String> managerList = new ArrayList<String>();
-			managerList.add("10000001");
+			managerList.add(adminID);
 
 			BpmApiUtil.sendCompleteTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList);
 				
@@ -329,17 +335,17 @@ public class RestCenterManagerImpl  implements RestCenterManager{
 			message.setCode1("Y");
 			
 			// BPM API호출
-			String processCode = "P-B-001"; 		//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 		//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
 			String bizKey = dto.getDoc_no();		//신청서 번호
-			String statusCode = "GASBZ01210010";	//액티비티 코드 (휴양소신청서작성) - 프로세스 정의서 참조
+			String statusCode = sCode;	//액티비티 코드 (휴양소신청서작성) - 프로세스 정의서 참조
 			String loginUserId = dto.getUpdr_eeno();		//로그인 사용자 아이디
 			String comment = null;
-			String roleCode = "GASROLE01210030";  	//휴양소 담당자 역할코드
+			String roleCode = rCode;  	//휴양소 담당자 역할코드
 			
 			//역할정보
 			List<String> approveList = new ArrayList<String>();
 			List<String> managerList = new ArrayList<String>();
-			managerList.add("10000001");
+			managerList.add(adminID);
 			
 			BpmApiUtil.sendCollectTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 
@@ -366,17 +372,17 @@ public class RestCenterManagerImpl  implements RestCenterManager{
 //			updateInfoTXToApprove(keyParamDto);
 			
 			// BPM API호출
-			String processCode = "P-B-001"; 		//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 		//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
 			String bizKey = keyParamDto.getDoc_no();		//신청서 번호
-			String statusCode = "GASBZ01210010";	//액티비티 코드 (휴양소신청서작성) - 프로세스 정의서 참조
+			String statusCode = sCode;	//액티비티 코드 (휴양소신청서작성) - 프로세스 정의서 참조
 			String loginUserId = keyParamDto.getUpdr_eeno();		//로그인 사용자 아이디
 			String comment = null;
-			String roleCode = "GASROLE01210030";  	//휴양소 담당자 역할코드
+			String roleCode = rCode;  	//휴양소 담당자 역할코드
 			
 			//역할정보
 			List<String> approveList = new ArrayList<String>();
 			List<String> managerList = new ArrayList<String>();
-			managerList.add("10000001");
+			managerList.add(adminID);
 			
 			BpmApiUtil.sendCollectTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 
@@ -396,7 +402,7 @@ public class RestCenterManagerImpl  implements RestCenterManager{
 			message.setMessage(HncisMessageSource.getMessage("CONFIRM.0000"));
 			message.setCode1("Y");
 			// BPM API호출
-			String processCode = "P-B-001"; 	//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
 			String bizKey = dto.getDoc_no();	//신청서 번호
 			String statusCode = "GASBZ01210030";	//액티비티 코드 (휴양소 담당자확인) - 프로세스 정의서 참조
 			String loginUserId = dto.getUpdr_eeno();	//로그인 사용자 아이디
@@ -420,7 +426,7 @@ public class RestCenterManagerImpl  implements RestCenterManager{
 			message.setCode1("Y");
 			
 			// BPM API호출
-			String processCode = "P-B-001"; 	//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
 			String bizKey = dto.getDoc_no();	//신청서 번호
 			String statusCode = "GASBZ01210030";	//액티비티 코드 (휴양소 당당자 확인) - 프로세스 정의서 참조
 			String loginUserId = dto.getUpdr_eeno();	//로그인 사용자 아이디

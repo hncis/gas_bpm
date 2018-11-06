@@ -59,9 +59,9 @@ public class Base64
         for( int3 = int4 - 1; int3 >= 0; --int3 ) 
         {
             if( byte_1darray1[int3] > 32 )
-                ++int5;
+            {    ++int5;}
             if( byte_1darray1[int3] == 61 )
-                ++int2;
+            {    ++int2;}
         }
         if( int5 % 4 != 0 ) 
         {
@@ -85,16 +85,16 @@ public class Base64
                 byte byte11 = byte_1darray1[int3++];
 
                 if( byte11 > 32 )
-                    byte_1darray8[int10++] = byte11;
+                {    byte_1darray8[int10++] = byte11;}
                 if( int10 != 4 )
-                    continue;
+                {    continue;}
                 int9 += decode( byte_1darray7, int9, byte_1darray8[0], byte_1darray8[1], byte_1darray8[2], byte_1darray8[3] );
                 int10 = 0;
                 byte_1darray8[0] = byte_1darray8[1] = byte_1darray8[2] = byte_1darray8[3] = (byte) 61;
             }
 
             if( int10 > 0 )
-                decode( byte_1darray7, int9, byte_1darray8[0], byte_1darray8[1], byte_1darray8[2], byte_1darray8[3] );
+            {    decode( byte_1darray7, int9, byte_1darray8[0], byte_1darray8[1], byte_1darray8[2], byte_1darray8[3] );}
             return byte_1darray7;
         }
     }
@@ -113,12 +113,12 @@ public class Base64
         {
             byte_1darray1[int2++] = (byte) (byte7 << 0x2 | byte8 >>> 0x4);
             if( byte5 == 61 )
-                return 1;
+            {    return 1;}
             else
             {
                 byte_1darray1[int2++] = (byte) (byte8 << 0x4 | byte9 >>> 0x2);
                 if( byte6 == 61 )
-                    return 2;
+                {    return 2;}
                 else
                 {
                     byte_1darray1[int2++] = (byte) (byte9 << 0x6 | byte10);
@@ -187,10 +187,11 @@ public class Base64
                 byte_1darray7[int3++] = (byte) enc_table[byte9 << 0x2 & 0x3C];
                 byte_1darray7[int3++] = (byte) 61;
             }
-            if( int3 != int6 )
+            if( int3 != int6 ){
                 throw new IllegalArgumentException( "Bug in Base64.java: incorrect length calculated for base64 output" );
-            else
+            }else{
                 return byte_1darray7;
+            }
         }
     }
 }

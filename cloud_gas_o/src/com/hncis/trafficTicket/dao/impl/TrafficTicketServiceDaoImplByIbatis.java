@@ -8,6 +8,7 @@ import com.hncis.trafficTicket.vo.BgabGascTm01;
 import com.hncis.trafficTicket.vo.BgabGascTm02;
 
 public class TrafficTicketServiceDaoImplByIbatis extends CommonDao implements TrafficTicketServiceDao{
+	private static final String uncheck = "unchecked";
 	/**
 	 * management list
 	 */
@@ -15,7 +16,7 @@ public class TrafficTicketServiceDaoImplByIbatis extends CommonDao implements Tr
 		return Integer.parseInt((String)getSqlMapClientTemplate().queryForObject("selectByXtm01ListCount", gsReqVo));
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascTm01> getSelectByXtm01List(BgabGascTm01 gsReqVo){
 		return getSqlMapClientTemplate().queryForList("selectByXtm01List", gsReqVo);
 	}
@@ -43,12 +44,12 @@ public class TrafficTicketServiceDaoImplByIbatis extends CommonDao implements Tr
 		return Integer.parseInt((String)getSqlMapClientTemplate().queryForObject("selectByXtm02ListCount", gsReqVo));
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascTm01> getSelectByXtm02List(BgabGascTm01 gsReqVo){
 		return getSqlMapClientTemplate().queryForList("selectByXtm02List", gsReqVo);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascTm01> getSelectByXtm02ExcelList(BgabGascTm01 gsReqVo){
 		//return getSqlMapClientTemplate().queryForList("selectByXtm02ExcelList", gsReqVo);
 		return getSqlMapClientTemplate().queryForList("selectByXtm02List", gsReqVo);
@@ -75,7 +76,7 @@ public class TrafficTicketServiceDaoImplByIbatis extends CommonDao implements Tr
 		return Integer.parseInt((String)getSqlMapClientTemplate().queryForObject("selectByXtm04ListCount", gsReqVo));
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascTm01> getSelectByXtm04List(BgabGascTm01 gsReqVo) {
 		return getSqlMapClientTemplate().queryForList("selectByXtm04List", gsReqVo);
 	}
@@ -99,7 +100,7 @@ public class TrafficTicketServiceDaoImplByIbatis extends CommonDao implements Tr
 		return Integer.parseInt((String)getSqlMapClientTemplate().queryForObject("selectByXtm05ListCount", gsReqVo));
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascTm02> getSelectByXtm05List(BgabGascTm02 gsReqVo) {
 		return getSqlMapClientTemplate().queryForList("selectByXtm05List", gsReqVo);
 	}
@@ -116,7 +117,7 @@ public class TrafficTicketServiceDaoImplByIbatis extends CommonDao implements Tr
 		return delete("deleteByXtm05List", gsParamVo);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascTm02> getSelectByDescrCommboList(){
 		return getSqlMapClientTemplate().queryForList("selectByDescrCommboList");
 	}

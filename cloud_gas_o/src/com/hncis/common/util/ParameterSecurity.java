@@ -90,7 +90,7 @@ public class ParameterSecurity {
 	 */
 	public String getValueToHex(int szSrc[]) {
 		if (szSrc == null)
-			return null;
+			{return null;}
 		int nSrcLen = szSrc.length;
 		byte szBuf[] = new byte[nSrcLen * 2];
 		for (int i = 0; i < nSrcLen * 2; i++) {
@@ -182,17 +182,17 @@ public class ParameterSecurity {
 	 */
 	public int getHexToDecimal(byte cChar) {
 		if (cChar == 'A' || cChar == 'a')
-			return 10;
+		{	return 10;}
 		if (cChar == 'B' || cChar == 'b')
-			return 11;
+		{	return 11;}
 		if (cChar == 'C' || cChar == 'c')
-			return 12;
+		{	return 12;}
 		if (cChar == 'D' || cChar == 'd')
-			return 13;
+		{	return 13;}
 		if (cChar == 'E' || cChar == 'e')
-			return 14;
+		{	return 14;}
 		if (cChar == 'F' || cChar == 'f')
-			return 15;
+		{	return 15;}
 		return (cChar - 48);
 	}
 	
@@ -205,7 +205,7 @@ public class ParameterSecurity {
 	 */
 	public String getDecrypt(byte szSrc[], int Key) {
 		if (szSrc == null)
-			return null;
+		{	return null;}
 		int nSrcLen = szSrc.length;
 		byte FirstResult[] = new byte[nSrcLen / 2];
 		for (int i = 0; i < nSrcLen / 2; i++) {

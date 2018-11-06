@@ -13,9 +13,10 @@ import com.hncis.officeSupplies.vo.BgabGascos04;
 import com.hncis.officeSupplies.vo.BgabGascosDto;
 
 public class OfficeSuppliesDaoImplByIBatis extends CommonDao implements OfficeSuppliesDao {
+	private static final String uncheck = "unchecked";
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<CommonCode> getOfficeCombo(CommonCode code) {
 		return getSqlMapClientTemplate().queryForList("selectOfficeCombo", code);
 	}
@@ -29,7 +30,7 @@ public class OfficeSuppliesDaoImplByIBatis extends CommonDao implements OfficeSu
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascos03> doSearchByRequestList(BgabGascos03 gsParamVo){
 		return getSqlMapClientTemplate().queryForList("searchByXosRequestList", gsParamVo);
 	}
@@ -98,7 +99,7 @@ public class OfficeSuppliesDaoImplByIBatis extends CommonDao implements OfficeSu
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascos03> getSelectByXos02List(BgabGascos01 gsReqVo){
 		return getSqlMapClientTemplate().queryForList("selectByXos02List", gsReqVo);
 	}
@@ -127,13 +128,13 @@ public class OfficeSuppliesDaoImplByIBatis extends CommonDao implements OfficeSu
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascos03> getSelectByXos03List(BgabGascos01 gsReqVo){
 		return getSqlMapClientTemplate().queryForList("selectByXos03List", gsReqVo);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascos03> getSelectByXos03ExcelList(BgabGascos01 gsReqVo){
 		//return getSqlMapClientTemplate().queryForList("selectByXos03ExcelList", gsReqVo);
 		return getSqlMapClientTemplate().queryForList("selectByXos03List", gsReqVo);
@@ -148,7 +149,7 @@ public class OfficeSuppliesDaoImplByIBatis extends CommonDao implements OfficeSu
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascosDto> getSelectByXos04List(BgabGascosDto gsReqVo){
 		return getSqlMapClientTemplate().queryForList("selectByXos04List", gsReqVo);
 	}
@@ -157,25 +158,25 @@ public class OfficeSuppliesDaoImplByIBatis extends CommonDao implements OfficeSu
 	 * production management
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascos02> getSearchByOffice(BgabGascos02 gsReqVo){
 		return getSqlMapClientTemplate().queryForList("selectByOffice", gsReqVo);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascos02> getSearchByOffice2(BgabGascos02 gsReqVo){
 		return getSqlMapClientTemplate().queryForList("selectByOffice2", gsReqVo);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascos02> getSearchByOffice3(BgabGascos02 gsReqVo){
 		return getSqlMapClientTemplate().queryForList("selectByOffice3", gsReqVo);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascos02> getSearchByOffice4(BgabGascos02 gsReqVo){
 		return getSqlMapClientTemplate().queryForList("selectByOffice4", gsReqVo);
 	}
@@ -209,7 +210,7 @@ public class OfficeSuppliesDaoImplByIBatis extends CommonDao implements OfficeSu
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascos04> getSelectByXos06List(BgabGascos04 gsReqVo){
 		return getSqlMapClientTemplate().queryForList("selectByXos06List", gsReqVo);
 	}
@@ -244,7 +245,7 @@ public class OfficeSuppliesDaoImplByIBatis extends CommonDao implements OfficeSu
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascZ011Dto> getSelectOfficeSuppliesToFile(BgabGascZ011Dto bgabGascZ011Dto){
 		return getSqlMapClientTemplate().queryForList("selectOfficeSuppliesToFile", bgabGascZ011Dto);
 	}

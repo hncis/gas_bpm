@@ -24,6 +24,7 @@ import com.hncis.common.util.ParameterSecurity;
 public class LoginHandlerInterceptor extends HandlerInterceptorAdapter
 {
     private transient Log logger = LogFactory.getLog(getClass());
+	private static final String notLogin = "NOTLOGIN";
 
     private long startTime;
     private DecimalFormat formatter = new DecimalFormat("0000");
@@ -42,7 +43,7 @@ public class LoginHandlerInterceptor extends HandlerInterceptorAdapter
     private void writeLog(String log)
     {
         //if(logger.isInfoEnabled())
-    	System.out.println("log="+log);
+    	logger.info("log="+log);
             logger.debug(log);
     }
 
@@ -69,17 +70,17 @@ public class LoginHandlerInterceptor extends HandlerInterceptorAdapter
         message = new StringBuffer();
         startTime = System.currentTimeMillis();
 
-        message.append("[[CONTROLLER LAYER STARTED]")
-               .append(obj.getClass().getSimpleName())
-               .append("(")
-               .append(request.getServletPath())
-               .append(")]");
+        message.append("[[CONTROLLER LAYER STARTED]");
+        message.append(obj.getClass().getSimpleName());
+        message.append("(");
+        message.append(request.getServletPath());
+        message.append(")]");
 
         this.writeLog(message.toString());
 
         request.setAttribute("originalURI", request.getRequestURI());
 
-//        System.out.println("============= request.getRequestURI() : "+request.getRequestURI());
+//        logger.info("============= request.getRequestURI() : "+request.getRequestURI());
 
         if(this.exclusionList.contains(request.getRequestURI())) return true;
         HttpSession session = request.getSession(false);
@@ -114,7 +115,7 @@ public class LoginHandlerInterceptor extends HandlerInterceptorAdapter
         	return true;
         } else if((session == null || session.getAttribute(Constant.SESSION_USER_KEY) == null)) {
         	removeSession(session);
-    		throw new SessionException("NOTLOGIN");
+    		throw new SessionException(notLogin);
 //        } else if(!"M".equals(SessionInfo.getSess_mstu_gubb(request)) && !StringUtil.getMenuAuthManagerFlag(request)){
 
         } else	{
@@ -122,8 +123,8 @@ public class LoginHandlerInterceptor extends HandlerInterceptorAdapter
         		removeSession(session);
         	}
 
-        	if(request.getRequestURI().contains(".xls") ||request.getRequestURI().contains("view.do") || request.getRequestURI().contains("index.do")) throw new SessionException("NOTLOGIN");
-        	else throw new HncisException("NOTLOGIN");
+        	if(request.getRequestURI().contains(".xls") ||request.getRequestURI().contains("view.do") || request.getRequestURI().contains("index.do")) throw new SessionException(notLogin);
+        	else throw new HncisException(notLogin);
         }
 
     }
@@ -135,12 +136,12 @@ public class LoginHandlerInterceptor extends HandlerInterceptorAdapter
         StringBuffer message = new StringBuffer();
         long duringTime = System.currentTimeMillis() - startTime;
 
-        message.append("[[CONTROLLER LAYER FINISHED]")
-               .append(handler.getClass().getSimpleName())
-               .append(".(")
-               .append(request.getServletPath())
-               .append(")] 걸린시간:")
-               .append(formatter.format(duringTime));
+        message.append("[[CONTROLLER LAYER FINISHED]");
+        message.append(handler.getClass().getSimpleName());
+        message.append(".(");
+        message.append(request.getServletPath());
+        message.append(")] 걸린시간:");
+        message.append(formatter.format(duringTime));
 
         this.writeLog(message.toString());
     }
@@ -149,7 +150,7 @@ public class LoginHandlerInterceptor extends HandlerInterceptorAdapter
     	try{
     		session.removeAttribute(Constant.SESSION_USER_KEY);
     	}catch(Exception e){
-    		throw new SessionException("NOTLOGIN");
+    		throw new SessionException(notLogin);
     	}
     }
 }

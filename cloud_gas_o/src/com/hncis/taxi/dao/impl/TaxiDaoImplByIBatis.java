@@ -13,6 +13,7 @@ import com.hncis.taxi.vo.BgabGasctx03;
 import com.hncis.taxi.vo.BgabGasctx04;
 
 public class TaxiDaoImplByIBatis extends CommonDao implements TaxiDao{
+	private static final String uncheck = "unchecked";
 	
 	private final String SELECT_COMBO_LIST_TX_TRANSPORT			   = "selectComboListTxTransport";
 	private final String SELECT_COMBO_LIST_TX_FROM_PLACE           = "selectComboListTxFromPlace";
@@ -59,18 +60,18 @@ public class TaxiDaoImplByIBatis extends CommonDao implements TaxiDao{
 	private final String DELETE_TX_TO_FILE					 = "deleteTxToFile";
 	
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGasctx03> getComboListTxToTransport(BgabGasctx03 dto) {
 		return getSqlMapClientTemplate().queryForList(SELECT_COMBO_LIST_TX_TRANSPORT, dto);
 	}
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGasctx03> getComboListTxFromPlace(BgabGasctx03 dto) {
 		return getSqlMapClientTemplate().queryForList(SELECT_COMBO_LIST_TX_FROM_PLACE, dto);
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGasctx03> getComboListTxToPlace(BgabGasctx03 dto) {
 		return getSqlMapClientTemplate().queryForList(SELECT_COMBO_LIST_TX_TO_PLACE, dto);
 	}
@@ -182,12 +183,12 @@ public class TaxiDaoImplByIBatis extends CommonDao implements TaxiDao{
 		return (String)getSqlMapClientTemplate().queryForObject(SELECT_COUNT_TX_TO_LIST, bgabGasctx01);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGasctx01> getSelectTXToList(BgabGasctx01 bgabGasctx01){
 		return getSqlMapClientTemplate().queryForList(SELECT_TX_TO_LIST, bgabGasctx01);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGasctx01> getSelectListTXToAccept(BgabGasctx02 keyParamDto){
 		return getSqlMapClientTemplate().queryForList(SELECT_LIST_TX_TO_ACCEPT, keyParamDto);
 	}
@@ -201,7 +202,7 @@ public class TaxiDaoImplByIBatis extends CommonDao implements TaxiDao{
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGasctx03> getSelectListTxToPlaceManagement(BgabGasctx03 dto) {
 		return getSqlMapClientTemplate().queryForList(SELECT_LIST_TX_TO_PLACE_MANAGEMENT, dto);
 	}
@@ -234,7 +235,7 @@ public class TaxiDaoImplByIBatis extends CommonDao implements TaxiDao{
 		return update(UPDATE_TAXI_PO_INFO, dto);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGasctx04> getSelectTaxiRejectSubmitPoSearch(BgabGasctx04 dto){
 		return getSqlMapClientTemplate().queryForList(SELECT_TAXI_REJECT_SUBMIT_PO_SEARCH, dto);
 	}

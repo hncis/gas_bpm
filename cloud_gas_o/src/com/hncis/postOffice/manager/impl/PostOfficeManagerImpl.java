@@ -6,6 +6,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -24,6 +26,7 @@ import com.hncis.roomsMeals.vo.BgabGascrm01Dto;
 
 @Service("postOfficeManagerImpl")
 public class PostOfficeManagerImpl implements PostOfficeManager{
+    private transient Log logger = LogFactory.getLog(getClass());
 
 	@Autowired
 	public PostOfficeDao postOfficeDao;
@@ -47,7 +50,7 @@ public class PostOfficeManagerImpl implements PostOfficeManager{
 			message.setMessage(HncisMessageSource.getMessage("SAVE.0000"));
 			message.setCode(dto.getDoc_no());
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("SAVE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -68,7 +71,7 @@ public class PostOfficeManagerImpl implements PostOfficeManager{
 			message.setCode1("Y");
 			message.setMessage(HncisMessageSource.getMessage("REQUEST.0000"));
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("REQUEST.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -84,7 +87,7 @@ public class PostOfficeManagerImpl implements PostOfficeManager{
 			message.setCode1("Y");
 			message.setMessage(HncisMessageSource.getMessage("REQUEST.0002"));
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("REQUEST.0003"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -100,7 +103,7 @@ public class PostOfficeManagerImpl implements PostOfficeManager{
 			message.setCode1("Y");
 			message.setMessage(HncisMessageSource.getMessage("CONFIRM.0000"));
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("CONFIRM.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -116,7 +119,7 @@ public class PostOfficeManagerImpl implements PostOfficeManager{
 			message.setCode1("Y");
 			message.setMessage(HncisMessageSource.getMessage("CONFIRMCANCEL.0000"));
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("CONFIRMCANCEL.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -132,7 +135,7 @@ public class PostOfficeManagerImpl implements PostOfficeManager{
 			message.setCode1("Y");
 			message.setMessage(HncisMessageSource.getMessage("DELETE.0000"));
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("DELETE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -146,7 +149,7 @@ public class PostOfficeManagerImpl implements PostOfficeManager{
 		try{
 			cnt = postOfficeDao.selectCountPoToList(dto);
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 		return cnt;
 	}
@@ -156,7 +159,7 @@ public class PostOfficeManagerImpl implements PostOfficeManager{
 		try{
 			list = postOfficeDao.selectListPoToList(dto);
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 		return list;
 	}
@@ -167,7 +170,7 @@ public class PostOfficeManagerImpl implements PostOfficeManager{
 		try{
 			cnt = postOfficeDao.selectCountPoToConfirm(dto);
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 		return cnt;
 	}
@@ -177,7 +180,7 @@ public class PostOfficeManagerImpl implements PostOfficeManager{
 		try{
 			list = postOfficeDao.selectListPoToConfirm(dto);
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 		return list;
 	}
@@ -213,7 +216,7 @@ public class PostOfficeManagerImpl implements PostOfficeManager{
 		}catch(Exception e){
 			resultUrl = "xpo01_file.gas";
 			msg = HncisMessageSource.getMessage("FILE.0001");
-			e.printStackTrace();
+			logger.error("messege", e);
 		}finally{
 			try{
 				String dispatcherYN = "Y";
@@ -228,7 +231,7 @@ public class PostOfficeManagerImpl implements PostOfficeManager{
 			
 				return;
 			}catch(Exception e){
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 	}
@@ -248,7 +251,7 @@ public class PostOfficeManagerImpl implements PostOfficeManager{
 			try {
 				fileResult = FileUtil.deleteFile(fileInfo.getCorp_cd(), "postOffice", fileInfo.getOgc_fil_nm());
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 		Integer fileDRs = (Integer)postOfficeDao.deletePoToFile(bgabGascZ011IList);

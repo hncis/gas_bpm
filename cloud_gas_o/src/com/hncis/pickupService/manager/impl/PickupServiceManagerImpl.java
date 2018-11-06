@@ -11,6 +11,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -49,6 +51,13 @@ import com.hncis.system.vo.BgabGascz016Dto;
 
 @Service("pickupServiceManagerImpl")
 public class PickupServiceManagerImpl implements PickupServiceManager{
+    private transient Log logger = LogFactory.getLog(getClass());
+
+    private static final String pCode = "P-D-003";
+    private static final String sCode = "GASBZ01430010";
+    private static final String rCode = "GASROLE01430030";
+    private static final String adminID = "10000001";
+    private static final String orgCode = "H301";
 
 	@Autowired
 	public PickupServiceDao pickupServiceDao;
@@ -95,16 +104,16 @@ public class PickupServiceManagerImpl implements PickupServiceManager{
 			int cntList = pickupServiceDao.insertPsToRequestList(list);
 
 			// BPM API호출
-			String processCode = "P-D-003"; 	//프로세스 코드 (픽업 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (픽업 프로세스) - 프로세스 정의서 참조
 			String bizKey = dto.getDoc_no();	//신청서 번호
-			String statusCode = "GASBZ01430010";	//액티비티 코드 (픽업 작성) - 프로세스 정의서 참조
+			String statusCode = sCode;	//액티비티 코드 (픽업 작성) - 프로세스 정의서 참조
 			String loginUserId = dto.getEeno();	//로그인 사용자 아이디
 			String comment = null;
-			String roleCode = "GASROLE01430030";   //명함신청 담당자 역할코드
+			String roleCode = rCode;   //명함신청 담당자 역할코드
 			//역할정보
 			List<String> approveList = new ArrayList<String>();
 			List<String> managerList = new ArrayList<String>();
-			managerList.add("10000001");
+			managerList.add(adminID);
 			
 			BpmApiUtil.sendSaveTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 			
@@ -121,7 +130,7 @@ public class PickupServiceManagerImpl implements PickupServiceManager{
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 			reqDto.setErrYn("Y");
 			reqDto.setErrMsg(HncisMessageSource.getMessage("SAVE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -144,9 +153,9 @@ public class PickupServiceManagerImpl implements PickupServiceManager{
 			pickupServiceDao.deletePsDriverInfoToRequestList(diDto);
 			
 			// BPM API호출
-			String processCode = "P-D-003"; 	//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
 			String bizKey = dto.getDoc_no();	//신청서 번호
-			String statusCode = "GASBZ01430010";	//액티비티 코드 (명함 신청서작성) - 프로세스 정의서 참조
+			String statusCode = sCode;	//액티비티 코드 (명함 신청서작성) - 프로세스 정의서 참조
 			String loginUserId = dto.getEeno();	//로그인 사용자 아이디
 			
 			BpmApiUtil.sendDeleteAndRejectTask(processCode, bizKey, statusCode, loginUserId);
@@ -174,7 +183,7 @@ public class PickupServiceManagerImpl implements PickupServiceManager{
 		pickupServiceDao.deletePsDriverInfoToRequestList(diDto);
 		
 		// BPM API호출
-		String processCode = "P-D-003"; 	//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
+		String processCode = pCode; 	//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
 		String bizKey = dto.getDoc_no();	//신청서 번호
 		String statusCode = "GASBZ01430030";	//액티비티 코드 (명함 담당자확인) - 프로세스 정의서 참조
 		String loginUserId = dto.getAcpc_eeno();	//로그인 사용자 아이디
@@ -197,7 +206,7 @@ public class PickupServiceManagerImpl implements PickupServiceManager{
 		Submit.confirmEmail(fromEeno, fromStepNm, mailAdr, "Pick-up Service");
 
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("messege", e);
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
 		return cnt;
@@ -261,7 +270,7 @@ public class PickupServiceManagerImpl implements PickupServiceManager{
 //					TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 //					message.setMessage(o_PoInfo.getO_if_fail_msg());
 //					message.setErrorCode("E");
-//					e.printStackTrace();
+//					logger.error("messege", e);
 //				}
 //			}
 //
@@ -297,7 +306,7 @@ public class PickupServiceManagerImpl implements PickupServiceManager{
 //						TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 //						message.setMessage(o_PoInfo.getO_if_fail_msg());
 //						message.setErrorCode("E");
-//						e.printStackTrace();
+//						logger.error("messege", e);
 //					}
 //				}
 //			}
@@ -308,7 +317,7 @@ public class PickupServiceManagerImpl implements PickupServiceManager{
 			pickupServiceDao.updateInfoPsToReject(dto);
 			
 			// BPM API호출
-			String processCode = "P-D-003"; 	//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
 			String bizKey = dto.getDoc_no();	//신청서 번호
 			String statusCode = "GASBZ01430030";	//액티비티 코드 (휴양소 당당자 확인) - 프로세스 정의서 참조
 			String loginUserId = dto.getUpdr_eeno();	//로그인 사용자 아이디
@@ -368,17 +377,17 @@ public class PickupServiceManagerImpl implements PickupServiceManager{
 		if(commonApproval.getResult().equals("Z")){
 			
 			// BPM API호출
-			String processCode = "P-D-003"; 	//프로세스 코드 (픽업 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (픽업 프로세스) - 프로세스 정의서 참조
 			String bizKey = reqDto.getDoc_no();	//신청서 번호
-			String statusCode = "GASBZ01430010";	//액티비티 코드 (픽업 신청서작성) - 프로세스 정의서 참조
+			String statusCode = sCode;	//액티비티 코드 (픽업 신청서작성) - 프로세스 정의서 참조
 			String loginUserId = reqDto.getEeno();	//로그인 사용자 아이디
 			String comment = null;
-			String roleCode = "GASROLE01430030";   //휴양소 담당자 역할코드
+			String roleCode = rCode;   //휴양소 담당자 역할코드
 			
 			//역할정보
 			List<String> approveList = commonApproval.getApproveList();
 			List<String> managerList = new ArrayList<String>();
-			managerList.add("10000001");
+			managerList.add(adminID);
 
 			BpmApiUtil.sendCompleteTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList);
 			
@@ -404,17 +413,17 @@ public class PickupServiceManagerImpl implements PickupServiceManager{
 			if(cnt > 0){
 				
 				// BPM API호출
-				String processCode = "P-D-003"; 		//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
+				String processCode = pCode; 		//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
 				String bizKey = regDto.getDoc_no();		//신청서 번호
-				String statusCode = "GASBZ01430010";	//액티비티 코드 (명함신청서작성) - 프로세스 정의서 참조
+				String statusCode = sCode;	//액티비티 코드 (명함신청서작성) - 프로세스 정의서 참조
 				String loginUserId = regDto.getUpdr_eeno();		//로그인 사용자 아이디
 				String comment = null;
-				String roleCode = "GASROLE01430030";  	//명함 담당자 역할코드
+				String roleCode = rCode;  	//명함 담당자 역할코드
 				
 				//역할정보
 				List<String> approveList = new ArrayList<String>();
 				List<String> managerList = new ArrayList<String>();
-				managerList.add("10000001");
+				managerList.add(adminID);
 				
 				BpmApiUtil.sendCollectTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 				message.setMessage(HncisMessageSource.getMessage("APPROVE.0002"));
@@ -431,17 +440,17 @@ public class PickupServiceManagerImpl implements PickupServiceManager{
 			if(commonApproval.getResult().equals("Z")){
 				
 				// BPM API호출
-				String processCode = "P-D-003"; 		//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
+				String processCode = pCode; 		//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
 				String bizKey = regDto.getDoc_no();		//신청서 번호
-				String statusCode = "GASBZ01430010";	//액티비티 코드 (명함신청서작성) - 프로세스 정의서 참조
+				String statusCode = sCode;	//액티비티 코드 (명함신청서작성) - 프로세스 정의서 참조
 				String loginUserId = regDto.getUpdr_eeno();		//로그인 사용자 아이디
 				String comment = null;
-				String roleCode = "GASROLE01430030";  	//명함 담당자 역할코드
+				String roleCode = rCode;  	//명함 담당자 역할코드
 				
 				//역할정보
 				List<String> approveList = new ArrayList<String>();
 				List<String> managerList = new ArrayList<String>();
-				managerList.add("10000001");
+				managerList.add(adminID);
 				
 				BpmApiUtil.sendCollectTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 				message.setMessage(HncisMessageSource.getMessage("APPROVE.0002"));
@@ -625,7 +634,7 @@ public class PickupServiceManagerImpl implements PickupServiceManager{
 
 
     } catch (Exception e) {
-       e.printStackTrace();
+       logger.error("messege", e);
     }
 	return true;
 	}
@@ -706,12 +715,6 @@ public void savePsToFile(HttpServletRequest req, HttpServletResponse res, BgabGa
 			paramVal[2] = "pickupService";
 
 			result = FileUtil.uploadFile(req, res, paramVal);
-			System.out.println("result[0]="+result[0]);
-			System.out.println("result[1]="+result[1]);
-			System.out.println("result[2]="+result[2]);
-			System.out.println("result[3]="+result[3]);
-			System.out.println("result[4]="+result[4]);
-			System.out.println("result[5]="+result[5]);
 
 			if(result != null){
 				if(result[0] != null){
@@ -731,14 +734,9 @@ public void savePsToFile(HttpServletRequest req, HttpServletResponse res, BgabGa
 		}catch(Exception e){
 			resultUrl = "xps01_file.gas";
 			msg = HncisMessageSource.getMessage("FILE.0001");
-			e.printStackTrace();
+			logger.error("messege", e);
 		}finally{
 			try{
-				System.out.println("getDoc_no="+bgabGascZ011Dto.getDoc_no());
-				System.out.println("getEeno="+bgabGascZ011Dto.getEeno());
-				System.out.println("getSeq="+bgabGascZ011Dto.getSeq());
-				System.out.println("msg="+msg);
-
 				String dispatcherYN = "Y";
 				String use_yn = "Y";
 
@@ -753,7 +751,7 @@ public void savePsToFile(HttpServletRequest req, HttpServletResponse res, BgabGa
 
 				return;
 			}catch(Exception e){
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 
@@ -777,10 +775,8 @@ public void savePsToFile(HttpServletRequest req, HttpServletResponse res, BgabGa
 			try {
 				fileResult = FileUtil.deleteFile(fileInfo.getCorp_cd(), "pickupService", fileInfo.getOgc_fil_nm());
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
-
-			System.out.println("fileResult="+fileResult);
 		}
 
 		Integer fileDRs = pickupServiceDao.deletePsToFile(bgabGascZ011Dto);
@@ -869,7 +865,7 @@ public void savePsToFile(HttpServletRequest req, HttpServletResponse res, BgabGa
 						i_PoInfo.setI_date(CurrentDateTime.getDate());
 						i_PoInfo.setI_vendor_code(d_list.get(i).getDriver_agency());		// mapping
 						i_PoInfo.setI_vendor_name(d_list.get(i).getFil_nm());				// mapping
-						i_PoInfo.setI_pur_org_code("H301");
+						i_PoInfo.setI_pur_org_code(orgCode);
 						i_PoInfo.setI_pur_group("B11");
 						i_PoInfo.setI_wrkplc_cd(workPlace.getXusr_plac_work());			// Piracicaba, São Paulo
 						i_PoInfo.setI_usn(reqDto.getEeno());
@@ -880,7 +876,7 @@ public void savePsToFile(HttpServletRequest req, HttpServletResponse res, BgabGa
 						i_PoInfo.setI_price(d_list.get(0).getDriver_tot_amt());
 						i_PoInfo.setI_delivery_date(d.getMonth(d.getDate(), 1));
 						i_PoInfo.setI_cost_cd(reqDto.getCost_cd());
-						i_PoInfo.setI_company_code("H301");
+						i_PoInfo.setI_company_code(orgCode);
 
 						if("D".equals(budg)){
 							i_PoInfo.setI_account_category("K");
@@ -948,7 +944,7 @@ public void savePsToFile(HttpServletRequest req, HttpServletResponse res, BgabGa
 												it_PoInfo.setI_date(CurrentDateTime.getDate());
 												it_PoInfo.setI_vendor_code(dummyInfo.getXcod_code());		// mapping
 												it_PoInfo.setI_vendor_name(dummyInfo.getXcod_hname());		// mapping
-												it_PoInfo.setI_pur_org_code("H301");
+												it_PoInfo.setI_pur_org_code(orgCode);
 												it_PoInfo.setI_pur_group("B11");
 												it_PoInfo.setI_wrkplc_cd(workPlace.getXusr_plac_work());			// Piracicaba, São Paulo
 												it_PoInfo.setI_usn(reqDto.getEeno());
@@ -959,7 +955,7 @@ public void savePsToFile(HttpServletRequest req, HttpServletResponse res, BgabGa
 												it_PoInfo.setI_price(Double.toString(tmpAmt));
 												it_PoInfo.setI_delivery_date(d.getMonth(d.getDate(), 1));
 												it_PoInfo.setI_cost_cd(reqDto.getCost_cd());
-												it_PoInfo.setI_company_code("H301");
+												it_PoInfo.setI_company_code(orgCode);
 
 												if("D".equals(budg)){
 													it_PoInfo.setI_account_category("K");
@@ -1008,7 +1004,7 @@ public void savePsToFile(HttpServletRequest req, HttpServletResponse res, BgabGa
 										TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 										message.setMessage(z_PoInfo.getO_if_fail_msg());
 										message.setErrorCode("E");
-										e.printStackTrace();
+										logger.error("messege", e);
 									}
 								}
 
@@ -1021,7 +1017,7 @@ public void savePsToFile(HttpServletRequest req, HttpServletResponse res, BgabGa
 							TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 							message.setErrorCode("E");
 							message.setMessage(o_PoInfo.getO_if_fail_msg());
-							e.printStackTrace();
+							logger.error("messege", e);
 						}
 					}
 				}

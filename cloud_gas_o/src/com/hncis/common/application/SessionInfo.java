@@ -15,10 +15,15 @@ import com.hncis.common.exception.impl.SessionException;
 import com.hncis.common.util.StringUtil;
 import com.hncis.common.vo.BgabGascz002Dto;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class SessionInfo {
 	public SessionInfo() {
 		super();
 	}
+    private transient static Log logger = LogFactory.getLog(SessionInfo.class.getClass());
+	private static final String notLogin = "NOTLOGIN";
 
 	/**
 	 * @desc :세션정보가 존재여부 체크
@@ -43,7 +48,7 @@ public class SessionInfo {
 
 	public static boolean sessionCheck(HttpServletRequest req) {
 		try{
-			System.out.println("sessionCheck 입장");
+			logger.info("sessionCheck 입장");
 			if (getSession(req)==null){
 				return false;
 			}
@@ -60,7 +65,7 @@ public class SessionInfo {
 		HttpSession session = req.getSession(false);
 //		Map<String, BgabGascz002Dto> attribute = (HashMap<String, BgabGascz002Dto>)session.getAttribute(Constant.SESSION_USER_KEY);
 	
-		System.out.println("session ID="+session.getId());
+		logger.info("session ID="+session.getId());
 
 		String temp_empno 		= getSess_empno(req);
 		String temp_name 		= getSess_name(req);
@@ -109,13 +114,13 @@ public class SessionInfo {
 		newSession.setAttribute(Constant.SESSION_USER_KEY, map);
 		newSession.setAttribute("reqLocale", new Locale(temp_locale));
 		newSession.setAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME, userLocale);
-		System.out.println(newSession.getId());
-		System.out.println(newSession.getAttribute(Constant.SESSION_USER_KEY));
+		logger.info(newSession.getId());
+		logger.info(newSession.getAttribute(Constant.SESSION_USER_KEY));
 
 		
 		
 		/*
-		System.out.println("session ID="+session.getId());
+		logger.info("session ID="+session.getId());
 
 		String temp_empno 		= getSess_empno(req);
 		String temp_name 		= getSess_name(req);
@@ -163,7 +168,7 @@ public class SessionInfo {
 	public static String getSess_empno(HttpServletRequest req) throws SessionException{
 		BgabGascz002Dto sessionInfo = getSession(req);
 		if (sessionInfo==null){
-			throw new SessionException("NOTLOGIN");
+			throw new SessionException(notLogin);
 		}
 		return StringUtil.isNullToString(sessionInfo.getXusr_empno());
 	}
@@ -172,7 +177,7 @@ public class SessionInfo {
 	public static String getSess_name(HttpServletRequest req) throws SessionException{
 		BgabGascz002Dto sessionInfo = getSession(req);
 		if (sessionInfo==null){
-			throw new SessionException("NOTLOGIN");
+			throw new SessionException(notLogin);
 		}
 		return StringUtil.isNullToString(sessionInfo.getXusr_name());
 	}
@@ -181,7 +186,7 @@ public class SessionInfo {
 	public static String getSess_dept_name(HttpServletRequest req) throws SessionException{
 		BgabGascz002Dto sessionInfo = getSession(req);
 		if (sessionInfo==null){
-			throw new SessionException("NOTLOGIN");
+			throw new SessionException(notLogin);
 		}
 		return StringUtil.isNullToString(sessionInfo.getXusr_dept_name());
 	}
@@ -190,7 +195,7 @@ public class SessionInfo {
 	public static String getSess_dept_code(HttpServletRequest req)  throws SessionException{
 		BgabGascz002Dto sessionInfo = getSession(req);
 		if (sessionInfo==null){
-			throw new SessionException("NOTLOGIN");
+			throw new SessionException(notLogin);
 		}
 		return StringUtil.isNullToString(sessionInfo.getXusr_dept_code());
 	}
@@ -199,7 +204,7 @@ public class SessionInfo {
 	public static String getSess_cnfm_auth(HttpServletRequest req)  throws SessionException{
 		BgabGascz002Dto sessionInfo = getSession(req);
 		if (sessionInfo==null){
-			throw new SessionException("NOTLOGIN");
+			throw new SessionException(notLogin);
 		}
 		return StringUtil.isNullToString(sessionInfo.getXusr_cnfm_auth());
 	}
@@ -213,7 +218,7 @@ public class SessionInfo {
 	public static String getSess_work_auth(HttpServletRequest req) throws SessionException{
 		BgabGascz002Dto sessionInfo = getSession(req);
 		if (sessionInfo==null){
-			throw new SessionException("NOTLOGIN");
+			throw new SessionException(notLogin);
 		}
 		return StringUtil.isNullToString(sessionInfo.getXusr_work_auth());
 	}
@@ -221,7 +226,7 @@ public class SessionInfo {
 	public static String getSess_step_code(HttpServletRequest req) throws SessionException{
 		BgabGascz002Dto sessionInfo = getSession(req);
 		if (sessionInfo==null){
-			throw new SessionException("NOTLOGIN");
+			throw new SessionException(notLogin);
 		}
 		return StringUtil.isNullToString(sessionInfo.getXusr_step_code());
 	}
@@ -229,7 +234,7 @@ public class SessionInfo {
 	public static String getSess_step_name(HttpServletRequest req) throws SessionException{
 		BgabGascz002Dto sessionInfo = getSession(req);
 		if (sessionInfo==null){
-			throw new SessionException("NOTLOGIN");
+			throw new SessionException(notLogin);
 		}
 		return StringUtil.isNullToString(sessionInfo.getXusr_step_name());
 	}
@@ -238,7 +243,7 @@ public class SessionInfo {
 	public static String getSess_dsm_yn(HttpServletRequest req) throws SessionException{
 		BgabGascz002Dto sessionInfo = getSession(req);
 		if (sessionInfo==null){
-			throw new SessionException("NOTLOGIN");
+			throw new SessionException(notLogin);
 		}
 		return StringUtil.isNullToString(sessionInfo.getXusr_dsm_yn());
 	}
@@ -246,7 +251,7 @@ public class SessionInfo {
 	public static String getSess_plac_work(HttpServletRequest req) throws SessionException{
 		BgabGascz002Dto sessionInfo = getSession(req);
 		if (sessionInfo==null){
-			throw new SessionException("NOTLOGIN");
+			throw new SessionException(notLogin);
 		}
 		return StringUtil.isNullToString(sessionInfo.getXusr_plac_work());
 	}
@@ -258,7 +263,7 @@ public class SessionInfo {
 	public static String getSess_cost_cd(HttpServletRequest req) throws SessionException{
 		BgabGascz002Dto sessionInfo = getSession(req);
 		if (sessionInfo==null){
-			throw new SessionException("NOTLOGIN");
+			throw new SessionException(notLogin);
 		}
 		return StringUtil.isNullToString(sessionInfo.getXusr_cost_cd());
 	}
@@ -266,7 +271,7 @@ public class SessionInfo {
 	public static String getSess_tel_no(HttpServletRequest req) throws SessionException{
 		BgabGascz002Dto sessionInfo = getSession(req);
 		if (sessionInfo==null){
-			throw new SessionException("NOTLOGIN");
+			throw new SessionException(notLogin);
 		}
 		return StringUtil.isNullToString(sessionInfo.getXusr_tel_no());
 	}
@@ -274,7 +279,7 @@ public class SessionInfo {
 	public static String getSess_corp_cd(HttpServletRequest req) throws SessionException{
 		BgabGascz002Dto sessionInfo = getSession(req);
 		if (sessionInfo==null){
-			throw new SessionException("NOTLOGIN");
+			throw new SessionException(notLogin);
 		}
 		return StringUtil.isNullToString(sessionInfo.getCorp_cd());
 	}
@@ -282,7 +287,7 @@ public class SessionInfo {
 	public static String getSess_adm_corp_cd(HttpServletRequest req) throws SessionException{
 		BgabGascz002Dto sessionInfo = getSession(req);
 		if (sessionInfo==null){
-			throw new SessionException("NOTLOGIN");
+			throw new SessionException(notLogin);
 		}
 		return StringUtil.isNullToString(sessionInfo.getAdm_corp_cd());
 	}
@@ -290,7 +295,7 @@ public class SessionInfo {
 	public static String getSess_locale(HttpServletRequest req) throws SessionException{
 		BgabGascz002Dto sessionInfo = getSession(req);
 		if (sessionInfo==null){
-			throw new SessionException("NOTLOGIN");
+			throw new SessionException(notLogin);
 		}
 		return StringUtil.isNullToString(sessionInfo.getLocale());
 	}

@@ -2,6 +2,8 @@ package com.hncis.trafficTicket.manager.impl;
 
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -28,6 +30,7 @@ import com.hncis.trafficTicket.vo.BgabGascTm02;
 
 @Service("trafficTicketManagerImpl")
 public class TrafficTicketManagerImpl implements TrafficTicketManager{
+    private transient Log logger = LogFactory.getLog(getClass());
 	@Autowired
 	public TrafficTicketServiceDao trafficTicketDao;
 	
@@ -121,11 +124,11 @@ public class TrafficTicketManagerImpl implements TrafficTicketManager{
 						trafficTicketDao.doActionByXtm01List(gsParamVo);
 						
 						if("Y".equals(switchInfo.getXcod_hname())){
-							System.out.println("###################################");
-							System.out.println(o_BudgetInfo.getO_balance());
-							System.out.println(Double.parseDouble(gsParamVo.getTic_amt()) );
-							System.out.println("balanceAmt : " + balanceAmt);
-							System.out.println("###################################");
+							logger.info("###################################");
+							logger.info(o_BudgetInfo.getO_balance());
+							logger.info(Double.parseDouble(gsParamVo.getTic_amt()) );
+							logger.info("balanceAmt : " + balanceAmt);
+							logger.info("###################################");
 							if(Double.parseDouble(gsParamVo.getTic_amt()) > balanceAmt){
 								// 예산부족						
 								TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -212,7 +215,7 @@ public class TrafficTicketManagerImpl implements TrafficTicketManager{
 					TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 					message.setErrorCode("E");
 					message.setMessage(o_BudgetInfo.getGs_msg());
-					e.printStackTrace();
+					logger.error("messege", e);
 				}
 			}
 		}else{

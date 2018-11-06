@@ -16,28 +16,29 @@ import com.hncis.smartRooms.vo.BgabGascsm07;
 import com.hncis.smartRooms.vo.BgabGascsmDto;
 
 public class SmartRoomsDaoImplByIBatis extends CommonDao implements SmartRoomsDao{
+	private static final String uncheck = "unchecked";
 	/**
 	 * 회의실 공통
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascsm05> searchComboByXsm(BgabGascsm05 sm05Vo){
 		return getSqlMapClientTemplate().queryForList("searchComboByXsm", sm05Vo);
 	}
 	public BgabGascsmDto searchXsmByDocNo(HashMap<String, String> paramMap){
 		return (BgabGascsmDto)getSqlMapClientTemplate().queryForObject("searchXsmByDocNo", paramMap);
 	}
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascsm01> searchXsmBySpecialDay(HashMap<String, Object> paramMap) {
 		return getSqlMapClientTemplate().queryForList("searchXsmBySpecialDay", paramMap);
 	}
 	public String searchCormDupCheck(BgabGascsm01 reSm01Vo) {
 		return (String)getSqlMapClientTemplate().queryForObject("searchCormDupCheck", reSm01Vo);
 	}
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascsmDto> searchEtcUserList(BgabGascsmDto xsmDto) {
 		return getSqlMapClientTemplate().queryForList("searchEtcUserList", xsmDto);
 	}
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public HashMap<String, Object> searchConferencePolicy(HashMap<String, String> paramMap) {
 		return (HashMap<String, Object>)getSqlMapClientTemplate().queryForObject("searchConferencePolicy", paramMap);
 	}
@@ -76,7 +77,7 @@ public class SmartRoomsDaoImplByIBatis extends CommonDao implements SmartRoomsDa
 	public String searchFastReservCormTotalCount(BgabGascsm01 paramVo) {
 		return (String)getSqlMapClientTemplate().queryForObject("searchFastReservCormTotalCount", paramVo);
 	}
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascsm01> searchFastReservCormList(BgabGascsm01 paramVo) {
 		return getSqlMapClientTemplate().queryForList("searchFastReservCormList", paramVo);
 	}
@@ -84,18 +85,18 @@ public class SmartRoomsDaoImplByIBatis extends CommonDao implements SmartRoomsDa
 	/**
 	 * 상세검색 및 예약
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascsm02> selectConferenceRoomList1(BgabGascsm02 sm02Vo) {
 		return getSqlMapClientTemplate().queryForList("searchConferenceRoomList1", sm02Vo);
 	}
 	public String selectConferenceRoomTotalCount(BgabGascsm02 sm02Vo) {
 		return (String)getSqlMapClientTemplate().queryForObject("searchConferenceRoomTotalCount", sm02Vo);
 	}
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascsm02> selectConferenceRoomList2(BgabGascsm02 sm02Vo) {
 		return getSqlMapClientTemplate().queryForList("searchConferenceRoomList2", sm02Vo);
 	}
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascsmDto> searchReservationList(BgabGascsm01 paramVo) {
 		return getSqlMapClientTemplate().queryForList("searchReservationList", paramVo);
 	}
@@ -106,11 +107,11 @@ public class SmartRoomsDaoImplByIBatis extends CommonDao implements SmartRoomsDa
 	public String searchMyReservationTotalCount(BgabGascsm01 paramVo) {
 		return (String)getSqlMapClientTemplate().queryForObject("searchMyReservationTotalCount", paramVo);
 	}
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascsm01> searchMyReservationList(BgabGascsm01 paramVo){
 		return getSqlMapClientTemplate().queryForList("searchMyReservationList", paramVo);
 	}
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascsm01> searchMyReservationExcel(BgabGascsm01 paramVo){
 		return getSqlMapClientTemplate().queryForList("searchMyReservationExcel", paramVo);
 	}
@@ -121,11 +122,11 @@ public class SmartRoomsDaoImplByIBatis extends CommonDao implements SmartRoomsDa
 	public int searchCountByXsm04(BgabGascsm01 smParamVo) {
 		return Integer.parseInt((String)getSqlMapClientTemplate().queryForObject("searchCountByXsm04", smParamVo));
 	}
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascsm01> searchByXsm04(BgabGascsm01 smParamVo) {
 		return getSqlMapClientTemplate().queryForList("searchByXsm04", smParamVo);
 	}
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascsm01> searchExcelByXsm04(BgabGascsm01 smParamVo) {
 		return getSqlMapClientTemplate().queryForList("searchExcelByXsm04", smParamVo);
 	}
@@ -135,7 +136,7 @@ public class SmartRoomsDaoImplByIBatis extends CommonDao implements SmartRoomsDa
 	public int updateNotUseApproveByXsm04(BgabGascsm01 sm01Vo){
 		return super.update("updateNotUseApproveByXsm04", sm01Vo);
 	}
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascsmDto> searchXsmConfirmDamdang(BgabGascsm01 smParamVo) {
 		return getSqlMapClientTemplate().queryForList("searchXsmConfirmDamdang", smParamVo);
 	}
@@ -143,14 +144,14 @@ public class SmartRoomsDaoImplByIBatis extends CommonDao implements SmartRoomsDa
 	/**
 	 * 건물 관리
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<CommonCode> searchBuildingComboByXsm05(BgabGascsm03 smParamVo) {
 		return getSqlMapClientTemplate().queryForList("searchBuildingComboByXsm05", smParamVo);
 	}
 	public int searchBuildingMgmtCountByXsm05(BgabGascsm03 smParamVo) {
 		return Integer.parseInt((String)getSqlMapClientTemplate().queryForObject("searchBuildingMgmtCountByXsm05", smParamVo));
 	}
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascsm03> searchBuildingMgmtByXsm05(BgabGascsm03 smParamVo) {
 		return getSqlMapClientTemplate().queryForList("searchBuildingMgmtByXsm05", smParamVo);
 	}
@@ -168,18 +169,18 @@ public class SmartRoomsDaoImplByIBatis extends CommonDao implements SmartRoomsDa
 	/**
 	 * 회의실 관리
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<CommonCode> searchConferenceFlComboByXsm06(BgabGascsm04 smParamVo){
 		return getSqlMapClientTemplate().queryForList("searchConferenceFlComboByXsm06", smParamVo);
 	}
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<CommonCode> searchConferenceComboByXsm06(BgabGascsm04 smParamVo){
 		return getSqlMapClientTemplate().queryForList("searchConferenceComboByXsm06", smParamVo);
 	}
 	public int searchConferenceRoomMgmtCountByXsm06(BgabGascsm04 smParamVo) {
 		return Integer.parseInt((String)getSqlMapClientTemplate().queryForObject("searchConferenceRoomMgmtCountByXsm06", smParamVo));
 	}
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascsm04> searchConferenceRoomMgmtByXsm06(BgabGascsm04 smParamVo) {
 		return getSqlMapClientTemplate().queryForList("searchConferenceRoomMgmtByXsm06", smParamVo);
 	}
@@ -202,7 +203,7 @@ public class SmartRoomsDaoImplByIBatis extends CommonDao implements SmartRoomsDa
 	public int searchConferenceRoomCodeMgmtCountByXsm07(BgabGascsm05 smParamVo) {
 		return Integer.parseInt((String)getSqlMapClientTemplate().queryForObject("searchConferenceRoomCodeMgmtCountByXsm07", smParamVo));
 	}
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascsm05> searchConferenceRoomCodeMgmtByXsm07(BgabGascsm05 smParamVo) {
 		return getSqlMapClientTemplate().queryForList("searchConferenceRoomCodeMgmtByXsm07", smParamVo);
 	}
@@ -215,7 +216,7 @@ public class SmartRoomsDaoImplByIBatis extends CommonDao implements SmartRoomsDa
 	public int deleteConferenceRoomCodeMgmtByXsm07(List<BgabGascsm05> smModifyList) {
 		return super.update("deleteConferenceRoomCodeMgmtByXsm07", smModifyList);
 	}
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascsm05> searchCodeKndCombo(BgabGascsm05 sm05Vo) {
 		return getSqlMapClientTemplate().queryForList("searchCodeKndCombo", sm05Vo);
 	}
@@ -226,7 +227,7 @@ public class SmartRoomsDaoImplByIBatis extends CommonDao implements SmartRoomsDa
 	/**
 	 * 상용구 조회
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascsm01> searchTitleByXsm(BgabGascsm01 smParamVo){
 		return getSqlMapClientTemplate().queryForList("searchTitleByXsm", smParamVo);
 	}
@@ -234,14 +235,14 @@ public class SmartRoomsDaoImplByIBatis extends CommonDao implements SmartRoomsDa
 	/**
 	 * 권한 관리
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascsm05> searchAuthCormComboByXsm10(BgabGascsm05 smParamVo) {
 		return getSqlMapClientTemplate().queryForList("searchAuthCormComboByXsm10", smParamVo);
 	}
 	public int searchAuthMgmtCountByXsm10(BgabGascsm06 smParamVo) {
 		return Integer.parseInt((String)getSqlMapClientTemplate().queryForObject("searchAuthMgmtCountByXsm10", smParamVo));
 	}
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascsm06> searchAuthMgmtByXsm10(BgabGascsm06 smParamVo) {
 		return getSqlMapClientTemplate().queryForList("searchAuthMgmtByXsm10", smParamVo);
 	}
@@ -258,11 +259,11 @@ public class SmartRoomsDaoImplByIBatis extends CommonDao implements SmartRoomsDa
 	/**
 	 * 통계현황
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascsm07> searchConferenceRoomListByXsm11(BgabGascsm07 paramVo){
 		return getSqlMapClientTemplate().queryForList("searchConferenceRoomListByXsm11", paramVo);
 	}
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascsm07> searchListByXsm11(BgabGascsm07 paramVo){
 		return getSqlMapClientTemplate().queryForList("searchListByXsm11", paramVo);
 	}

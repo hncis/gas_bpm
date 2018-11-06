@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -33,11 +34,17 @@ import com.hncis.system.vo.BgabGascz030Dto;
 import com.hncis.system.vo.BgabGascz033Dto;
 import com.hncis.common.vo.BpmInfo;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 @Component
 public class CommonGasc {
-
-	private static CommonJobDao commonJobDao;
+    private transient static Log logger = LogFactory.getLog(CommonGasc.class.getClass());
+    
+    private static CommonJobDao commonJobDao;
 	private static SystemDao systemDao;
+	
+	private static final String reqLocale = "reqLocale";
 
 	@Autowired
 	public void setCommonJobDao(CommonJobDao commonJobDao){
@@ -72,7 +79,7 @@ public class CommonGasc {
 		String eeno = SessionInfo.getSess_empno(req);
 		String corpCd = SessionInfo.getSess_corp_cd(req);
 		String admCorpCd = SessionInfo.getSess_adm_corp_cd(req);
-		String locale = req.getSession().getAttribute("reqLocale").toString();
+		String locale = req.getSession().getAttribute(reqLocale).toString();
 		HncisCommon hmcCommon = new HncisCommon();
 		hmcCommon.setEeNo(eeno);
 		hmcCommon.setScrn_id(screenId);
@@ -81,7 +88,6 @@ public class CommonGasc {
 		hmcCommon.setLocale(locale);
 
 		StringBuffer data       = new StringBuffer();
-		StringBuffer data_excel = new StringBuffer();
 
 //		String arrGubun1 = gubun1 == null || gubun1.equals("") ? "" : gubun1;
 //		String arrGubun2 = gubun2 == null || gubun2.equals("") ? "" : gubun2;
@@ -153,7 +159,6 @@ public class CommonGasc {
 
 				}
 			}catch (Exception ee) {
-				System.out.println(ee.toString());
 				workAuth = 0;
 				cnfm = 1;
 			}
@@ -189,7 +194,9 @@ public class CommonGasc {
 			hmcCommon.setSndType(sndType);
 			screenName = screenName.replace("<BR>", "");
 			data.append("<div class='sub_title_area'> \n");
-			data.append("	<h3 class='sub_title fl'>" + screenName + "</h3>\n");
+			data.append("	<h3 class='sub_title fl'>");
+			data.append(screenName);
+			data.append("</h3>\n");
 			//버튼
 
 			if(!arrGubun1.equals("") && arrGubun3.equals("")){
@@ -199,14 +206,18 @@ public class CommonGasc {
 				data.append("			<tr>  \n");
 				for (int i = 0; i < 5; i++){
 					if (i < Integer.parseInt(arrGubun1)){
-						data.append("		<th id='SUBMIT_TITLE' style='display:"+ dsp +"'>&nbsp;</th> \n");
+						data.append("		<th id='SUBMIT_TITLE' style='display:");
+						data.append(dsp);
+						data.append("'>&nbsp;</th> \n");
 					}
 				}
 				data.append("			</tr> \n");
 				data.append("			<tr>  \n");
 				for (int i = 0; i < 5; i++){
 					if (i < Integer.parseInt(arrGubun1)){
-						data.append("		<td id='SUBMIT_DATA' style='display:"+ dsp +"'>&nbsp;</td> \n");
+						data.append("		<td id='SUBMIT_DATA' style='display:");
+						data.append(dsp);
+						data.append("'>&nbsp;</td> \n");
 					}
 				}
 				data.append("			</tr> \n");
@@ -223,7 +234,9 @@ public class CommonGasc {
 //						data.append("		<th id='SUBMIT_TITLE' style='display:"+ dsp +"'>&nbsp;</th> \n");
 //					}
 					if (i < apprLev){
-						data.append("		<th id='SUBMIT_TITLE' style='display:"+ dsp +"'>&nbsp;</th> \n");
+						data.append("		<th id='SUBMIT_TITLE' style='display:");
+						data.append(dsp);
+						data.append("'>&nbsp;</th> \n");
 					}
 					else{
 						data.append("		<th id='SUBMIT_TITLE' style='display:none'>&nbsp;</th> \n");
@@ -236,7 +249,9 @@ public class CommonGasc {
 //						data.append("		<td id='SUBMIT_DATA' style='display:"+ dsp +"'>&nbsp;</td> \n");
 //					}
 					if (i < apprLev){
-						data.append("		<td id='SUBMIT_DATA' style='display:"+ dsp +"'>&nbsp;</td> \n");
+						data.append("		<td id='SUBMIT_DATA' style='display:");
+						data.append(dsp);
+						data.append("'>&nbsp;</td> \n");
 					}
 					else{
 						data.append("		<td id='SUBMIT_DATA' style='display:none'>&nbsp;</td> \n");
@@ -349,9 +364,25 @@ public class CommonGasc {
 				btnVal = buttonName.substring(0,1).toUpperCase() +  buttonName.substring(1);
 
 				if (buttonFunction.equals("excel")){
-					data.append("		<li id='"+buttonFunction+"'" + display + " class='fl'><a href='javascript:retrieve(\"" + buttonFunction + "\")'>" +btnVal+ "<span></span></a></li> \n");
+					data.append("		<li id='");
+					data.append(buttonFunction);
+					data.append("'");
+					data.append(display);
+					data.append(" class='fl'><a href='javascript:retrieve(\"");
+					data.append(buttonFunction);
+					data.append("\")'>");
+					data.append(btnVal);
+					data.append("<span></span></a></li> \n");
 				} else {
-					data.append("		<li id='"+buttonFunction+"'" + display + "><a href='javascript:retrieve(\"" + buttonFunction + "\")'>" +btnVal+ "<span></span></a></li> \n");
+					data.append("		<li id='");
+					data.append(buttonFunction);
+					data.append("'");
+					data.append(display);
+					data.append("><a href='javascript:retrieve(\"");
+					data.append(buttonFunction);
+					data.append("\")'>");
+					data.append(btnVal);
+					data.append("<span></span></a></li> \n");
 				}
 
 			}
@@ -367,12 +398,18 @@ public class CommonGasc {
 
 			data.append("	</ul> \n");
 			data.append("</div> \n");
-			data.append("<input type='hidden' id='work_auth' value='"+workAuth+"'>");
-			data.append("<input type='hidden' id='apprLev1' value='"+arrGubun1+"'>");
-			data.append("<input type='hidden' id='apprLev2' value='"+apprLev+"'>");
+			data.append("<input type='hidden' id='work_auth' value='");
+			data.append(workAuth);
+			data.append("'>");
+			data.append("<input type='hidden' id='apprLev1' value='");
+			data.append(arrGubun1);
+			data.append("'>");
+			data.append("<input type='hidden' id='apprLev2' value='");
+			data.append(apprLev);
+			data.append("'>");
 			//data.append("<script>jQuery(document).ready(function(){$('#"+screenId.substring(1,3).toUpperCase()+"').slideDown('fast');})</script>");
 		}catch (Exception e){
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 		return data.toString();
 	}
@@ -397,7 +434,7 @@ public class CommonGasc {
 		hmcCommon.setCorp_cd(SessionInfo.getSess_corp_cd(req));
 		hmcCommon.setScrn_id(screenId);
 		hmcCommon.setXcod_code(screenId.substring(1, 3));
-		hmcCommon.setLocale(req.getSession().getAttribute("reqLocale").toString());
+		hmcCommon.setLocale(req.getSession().getAttribute(reqLocale).toString());
 		int sndType = 0;
 		String workAuth = "0";
 
@@ -413,7 +450,7 @@ public class CommonGasc {
 			}
 
 		}catch (Exception e){
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 		return workAuth;
 	}
@@ -440,13 +477,25 @@ public class CommonGasc {
 					content.append("	<input type='hidden' id='hid_csrfToken' name='hid_csrfToken'> \n");
 					content.append("	<script> \n");
 					content.append("		var noticeWin; \n");
-					content.append("		if(getCookie('POP"+boardDto.getBod_indx()+"') != 'done') { \n");
+					content.append("		if(getCookie('POP");
+					content.append(boardDto.getBod_indx());
+					content.append("') != 'done') { \n");
 					content.append("			noticeWin = newPopWin('about:blank', '450', '350', 'notice_popup'); \n");
-					content.append("			document.noticeForm.indx.value    = '"+boardDto.getBod_indx()+"' \n");
-					content.append("			document.noticeForm.hid_csrfToken.value    = '"+(String)req.getAttribute("csrfToken")+"' \n");
-					content.append("			document.noticeForm.title.value   = '"+Base64.serialize(boardDto.getBod_title())+"' \n");
-					content.append("			document.noticeForm.content.value = '"+Base64.serialize(boardDto.getBod_content())+"' \n");
-					content.append("			document.noticeForm.action = '"+req.getContextPath()+"/hncis/popup/notice_popup.gas' \n");
+					content.append("			document.noticeForm.indx.value    = '");
+					content.append(boardDto.getBod_indx());
+					content.append("' \n");
+					content.append("			document.noticeForm.hid_csrfToken.value    = '");
+					content.append((String)req.getAttribute("csrfToken"));
+					content.append("' \n");
+					content.append("			document.noticeForm.title.value   = '");
+					content.append(Base64.serialize(boardDto.getBod_title()));
+					content.append("' \n");
+					content.append("			document.noticeForm.content.value = '");
+					content.append(Base64.serialize(boardDto.getBod_content()));
+					content.append("' \n");
+					content.append("			document.noticeForm.action = '");
+					content.append(req.getContextPath());
+					content.append("/hncis/popup/notice_popup.gas' \n");
 					content.append("			document.noticeForm.target = 'notice_popup'; \n");
 					content.append("			document.noticeForm.method = 'post'; \n");
 					content.append("			document.noticeForm.submit(); \n");
@@ -456,7 +505,7 @@ public class CommonGasc {
 				}
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 
 		return content.toString();
@@ -470,7 +519,7 @@ public class CommonGasc {
 		try{
 			noticeList = commonJobDao.getSelectMainNoticeList(corp_cd);
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 		return noticeList;
 	}
@@ -483,7 +532,7 @@ public class CommonGasc {
 		try{
 			qnaList = commonJobDao.getSelectMainQnaList(corp_cd);
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 		return qnaList;
 	}
@@ -496,7 +545,7 @@ public class CommonGasc {
 		try{
 			faqList = commonJobDao.getSelectMainFaqList(corp_cd);
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 		return faqList;
 	}
@@ -509,7 +558,7 @@ public class CommonGasc {
 		try{
 			claimList = commonJobDao.getSelectMainClaimList(corp_cd);
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 		return claimList;
 	}
@@ -541,7 +590,7 @@ public class CommonGasc {
 				data.addElement(result);
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 
 		return data;
@@ -555,7 +604,7 @@ public class CommonGasc {
 		CommonApproval approval = new CommonApproval();
 		approval.setRdcs_eeno(eeno);
 		approval.setCorp_cd(corp_cd);
-		approval.setLocale(req.getSession().getAttribute("reqLocale").toString());
+		approval.setLocale(req.getSession().getAttribute(reqLocale).toString());
 
 		return systemDao.getSelectCountToMyApproval(approval);
 	}
@@ -616,7 +665,7 @@ public class CommonGasc {
 		hmcCommon.setEeNo(userId);
 		hmcCommon.setScrn_id(screenId);
 		hmcCommon.setXcod_code(screenId.substring(1, 3));
-		hmcCommon.setLocale(req.getSession().getAttribute("reqLocale").toString());
+		hmcCommon.setLocale(req.getSession().getAttribute(reqLocale).toString());
 		StringBuffer data       = new StringBuffer();
 
 		String arrGubun1 = gubun1 == null || gubun1.equals("") ? "" : gubun1;
@@ -660,8 +709,12 @@ public class CommonGasc {
 
 			data.append("	<div id='header_wrap'> \n");
 			data.append("		<div class='sub_title' style='width:99%'> \n");
-			data.append("			<div class='con_title'><h3>"+imgPath+"</h3></div> \n");
-			data.append("			<div class='con_navi'>" + menuInfo + "</div> \n");
+			data.append("			<div class='con_title'><h3>");
+			data.append(imgPath);
+			data.append("</h3></div> \n");
+			data.append("			<div class='con_navi'>");
+			data.append(menuInfo);
+			data.append("</div> \n");
 			data.append("		</div> \n");
 			data.append("	</div> \n");
 
@@ -712,7 +765,7 @@ public class CommonGasc {
 			}
 
 		}catch (Exception e){
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 		return data.toString();
 	}
@@ -747,7 +800,7 @@ public class CommonGasc {
 			hmcCommon.setAdm_corp_cd(strAdmCorpCd);
 			hmcCommon.setWorkArea("1");
 			hmcCommon.setWork_auth(SessionInfo.getSess_mstu_gubb(req));
-			hmcCommon.setLocale(req.getSession().getAttribute("reqLocale").toString());
+			hmcCommon.setLocale(req.getSession().getAttribute(reqLocale).toString());
 
 			BgabGascz030Dto dto2 = new BgabGascz030Dto();
 			dto2.setCorp_cd(strCorpCd);
@@ -842,7 +895,7 @@ public class CommonGasc {
 				selectMenuList = commonJobDao.getTopMenuList(hmcCommon);
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 
 		return selectMenuList;
@@ -853,7 +906,7 @@ public class CommonGasc {
 		try {
 			selectMenuList = commonJobDao.getSelectBusinessTravelTopMenuList();
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 
 		return selectMenuList;
@@ -873,7 +926,7 @@ public class CommonGasc {
 			hmcCommon.setWork_auth(SessionInfo.getSess_mstu_gubb(req));
 			hmcCommon.setKey(menuId);
 			hmcCommon.setBizId(menuId.substring(0, 3));
-			hmcCommon.setLocale(req.getSession().getAttribute("reqLocale").toString());
+			hmcCommon.setLocale(req.getSession().getAttribute(reqLocale).toString());
 
 			if("XGS".equals(menuId.substring(0,3))){
 				BgabGascz004Dto xgsAuth = commonJobDao.getLeftMenuXgsAuth(hmcCommon);
@@ -887,7 +940,7 @@ public class CommonGasc {
 				selectMenuList = commonJobDao.getLeftMenuList(hmcCommon);
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 
 		return selectMenuList;
@@ -1020,18 +1073,32 @@ public class CommonGasc {
 				btnVal = buttonName.substring(0,1).toUpperCase() +  buttonName.substring(1);
 
 				if (buttonFunction.equals("excel")){
-					data.append("		<li id='"+buttonFunction+"'><a href='javascript:retrieve(\"" + buttonFunction + "\")'>" +btnVal+ "<span></span></a></li> \n");
+					data.append("		<li id='");
+					data.append(buttonFunction);
+					data.append("'><a href='javascript:retrieve(\"");
+					data.append(buttonFunction);
+					data.append("\")'>");
+					data.append(btnVal);
+					data.append("<span></span></a></li> \n");
 				} else {
-					data.append("		<li id='"+buttonFunction+"'><a href='javascript:retrieve(\"" + buttonFunction + "\")'>" +btnVal+ "<span></span></a></li> \n");
+					data.append("		<li id='");
+					data.append(buttonFunction);
+					data.append("'><a href='javascript:retrieve(\"");
+					data.append(buttonFunction);
+					data.append("\")'>");
+					data.append(btnVal);
+					data.append("<span></span></a></li> \n");
 				}
 			}
 
 			data.append("	</ul> \n");
 			data.append("</div> \n");
-			data.append("<input type='hidden' id='work_auth' value='"+workAuth+"'>");
+			data.append("<input type='hidden' id='work_auth' value='");
+			data.append(workAuth);
+			data.append("'>");
 			//data.append("<script>jQuery(document).ready(function(){$('#"+screenId.substring(1,3).toUpperCase()+"').slideDown('fast');})</script>");
 		}catch (Exception e){
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 		return data.toString();
 	}
@@ -1048,7 +1115,7 @@ public class CommonGasc {
 			cnt = commonJobDao.getCheckAuthKeyForPw(dto);
 
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 
 		return cnt;
@@ -1064,7 +1131,7 @@ public class CommonGasc {
 
 			approveStepLevel = commonJobDao.selectApproveStepLevel(commonApproval);
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("messege", e);
 			approveStepLevel = "";
 		}
 
@@ -1079,7 +1146,7 @@ public class CommonGasc {
 
 			chkFlag = commonJobDao.getSelectCorpChkCount(dto);
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("messege", e);
 			chkFlag = "N";
 		}
 

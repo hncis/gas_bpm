@@ -14,11 +14,16 @@ import javax.servlet.http.HttpServletResponse;
 import com.hncis.common.application.SessionInfo;
 import com.hncis.common.util.StringUtil;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class CSRSslFilter.
  */
 public class CSRSslFilter implements Filter {
+    private transient Log logger = LogFactory.getLog(getClass());
+	private static final String token = "csrfToken";
 
 	/** The config. */
 	private FilterConfig config;
@@ -65,26 +70,24 @@ public class CSRSslFilter implements Filter {
 				httpReq.getRequestURI().contains("pop_corpList.gas")||
 				httpReq.getRequestURI().contains("pop_resetPw.gas")
 				)){
-			System.out.println("111="+httpReq.getParameter("csrfToken"));
-			System.out.println("222="+httpReq.getParameter("hid_csrfToken"));
 
 			if(SessionInfo.sessionCheck(httpReq)) {
-				String paramToken = StringUtil.isNullToString(httpReq.getParameter("csrfToken")).equals("")?(String) httpReq.getParameter("hid_csrfToken"):(String) httpReq.getParameter("csrfToken");
+				String paramToken = StringUtil.isNullToString(httpReq.getParameter(token)).equals("")?(String) httpReq.getParameter("hid_csrfToken"):(String) httpReq.getParameter(token);
 				String sessToken = SessionInfo.getSess_token_key(httpReq);
 				String refererUrl = StringUtil.isNullToString(httpReq.getHeader("REFERER"));
 				String serverName = httpReq.getServerName();
 				String tempTokenKey = StringUtil.getDocNo();
 				//httpReq.setAttribute("csrfToken", tempTokenKey);
-				httpReq.setAttribute("csrfToken", sessToken);
+				httpReq.setAttribute(token, sessToken);
 
-				System.out.println("###########################################");
-				System.out.println("CSRSslFilter doFilter ="+httpReq.getRequestURI());
-				System.out.println("REFERER="+httpReq.getHeader("REFERER"));
-				System.out.println("getServerName="+httpReq.getServerName());
-				System.out.println("getRequestURI="+httpReq.getRequestURI());
-				System.out.println("paramToken ="+paramToken);
-				System.out.println("sessToken ="+sessToken);
-				System.out.println("SessionInfo.getSess_mstu_gubb(httpReq) ="+SessionInfo.getSess_mstu_gubb(httpReq));
+				logger.info("###########################################");
+				logger.info("CSRSslFilter doFilter ="+httpReq.getRequestURI());
+				logger.info("REFERER="+httpReq.getHeader("REFERER"));
+				logger.info("getServerName="+httpReq.getServerName());
+				logger.info("getRequestURI="+httpReq.getRequestURI());
+				logger.info("paramToken ="+paramToken);
+				logger.info("sessToken ="+sessToken);
+				logger.info("SessionInfo.getSess_mstu_gubb(httpReq) ="+SessionInfo.getSess_mstu_gubb(httpReq));
 
 				if(!refererUrl.contains(serverName) && !httpReq.getRequestURI().contains("main.gas")){
 					throw new ServletException("Wrong Connection.");

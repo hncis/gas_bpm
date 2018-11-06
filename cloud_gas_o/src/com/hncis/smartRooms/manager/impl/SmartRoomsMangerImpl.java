@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,7 @@ import com.hncis.smartRooms.vo.BgabGascsmDto;
 
 @Service("smartRoomsManagerImpl")
 public class SmartRoomsMangerImpl implements SmartRoomsManager{
+    private transient Log logger = LogFactory.getLog(getClass());
 	@Autowired
 	public SmartRoomsDao smartRoomsDao;
 	
@@ -137,7 +140,7 @@ public class SmartRoomsMangerImpl implements SmartRoomsManager{
 					
 				    //회의실 중복 체크
 				    String isDuplicate = smartRoomsDao.searchCormDupCheck(reSm01Vo);
-				    System.out.println("isDuplicate[1] : " + isDuplicate);
+				    
 				    //Y:중복, N:중복아님
 				    if("N".equals(isDuplicate)){
 				    	//smartRoomsDao.mergeConferenceRoom(reSm01Vo);
@@ -188,11 +191,11 @@ public class SmartRoomsMangerImpl implements SmartRoomsManager{
 		}catch(DataIntegrityViolationException dve){
 			rtnVo.setCode1("N");
 			message = "입력 에러";
-			dve.printStackTrace();
+			logger.error("messege", dve);
 		}catch(Exception e){
 			rtnVo.setCode1("N");
 			message = "SYSTEM 오류 입니다. IT 담당자에게 문의 하세요!";
-			e.printStackTrace();
+			logger.error("messege", e);
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}finally{
 			rtnVo.setMessage(message);

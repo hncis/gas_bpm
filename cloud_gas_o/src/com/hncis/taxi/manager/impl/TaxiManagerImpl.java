@@ -7,6 +7,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -33,6 +35,12 @@ import com.hncis.taxi.vo.BgabGasctx04;
 
 @Service("taxiManagerImpl")
 public class TaxiManagerImpl implements TaxiManager{
+    private transient Log logger = LogFactory.getLog(getClass());
+
+    private static final String pCode = "P-D-004";
+    private static final String sCode = "GASBZ01440010";
+    private static final String rCode = "GASROLE01440030";
+    private static final String adminID = "10000001";
 
 	@Autowired
 	public TaxiDao taxiDao;
@@ -89,7 +97,7 @@ public class TaxiManagerImpl implements TaxiManager{
 //		try {
 //			o_BudgetInfo = rfc.getResult(i_BudgetInfo);
 //		} catch (Exception e) {
-//			e.printStackTrace();
+//			logger.error("messege", e);
 //		}
 //
 //
@@ -119,20 +127,20 @@ public class TaxiManagerImpl implements TaxiManager{
 //		try {
 //			o_PoInfo = rfc.getResult(i_PoInfo);
 //		} catch (Exception e) {
-//			e.printStackTrace();
+//			logger.error("messege", e);
 //		}
 
 		// BPM API호출
-		String processCode = "P-D-004"; 	//프로세스 코드 (교통비 프로세스) - 프로세스 정의서 참조
+		String processCode = pCode; 	//프로세스 코드 (교통비 프로세스) - 프로세스 정의서 참조
 		String bizKey = cgabGasctx01.getDoc_no();	//신청서 번호
-		String statusCode = "GASBZ01440010";	//액티비티 코드 (교통비 작성) - 프로세스 정의서 참조
+		String statusCode = sCode;	//액티비티 코드 (교통비 작성) - 프로세스 정의서 참조
 		String loginUserId = cgabGasctx01.getEeno();	//로그인 사용자 아이디
 		String comment = null;
-		String roleCode = "GASROLE01440030";   //명함신청 담당자 역할코드
+		String roleCode = rCode;   //명함신청 담당자 역할코드
 		//역할정보
 		List<String> approveList = new ArrayList<String>();
 		List<String> managerList = new ArrayList<String>();
-		managerList.add("10000001");
+		managerList.add(adminID);
 		
 		BpmApiUtil.sendSaveTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 
@@ -176,9 +184,9 @@ public class TaxiManagerImpl implements TaxiManager{
 		taxiDao.deleteTxToRequestList(delParam);
 		
 		// BPM API호출
-		String processCode = "P-D-004"; 	//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
+		String processCode = pCode; 	//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
 		String bizKey = keyParamDto.getDoc_no();	//신청서 번호
-		String statusCode = "GASBZ01440010";	//액티비티 코드 (명함 신청서작성) - 프로세스 정의서 참조
+		String statusCode = sCode;	//액티비티 코드 (명함 신청서작성) - 프로세스 정의서 참조
 		String loginUserId = keyParamDto.getEeno();	//로그인 사용자 아이디
 		
 		BpmApiUtil.sendDeleteAndRejectTask(processCode, bizKey, statusCode, loginUserId);
@@ -226,17 +234,17 @@ public class TaxiManagerImpl implements TaxiManager{
 		if(commonApproval.getResult().equals("Z")){
 			
 			// BPM API호출
-			String processCode = "P-D-004"; 	//프로세스 코드 (교통비 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (교통비 프로세스) - 프로세스 정의서 참조
 			String bizKey = keyParamDto.getDoc_no();	//신청서 번호
-			String statusCode = "GASBZ01440010";	//액티비티 코드 (교통비 신청서작성) - 프로세스 정의서 참조
+			String statusCode = sCode;	//액티비티 코드 (교통비 신청서작성) - 프로세스 정의서 참조
 			String loginUserId = keyParamDto.getKey_eeno();	//로그인 사용자 아이디
 			String comment = null;
-			String roleCode = "GASROLE01440030";   //휴양소 담당자 역할코드
+			String roleCode = rCode;   //휴양소 담당자 역할코드
 			
 			//역할정보
 			List<String> approveList = commonApproval.getApproveList();
 			List<String> managerList = new ArrayList<String>();
-			managerList.add("10000001");
+			managerList.add(adminID);
 
 			BpmApiUtil.sendCompleteTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList);
 			
@@ -265,7 +273,7 @@ public class TaxiManagerImpl implements TaxiManager{
 		} catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			message.setErrorCode("E");
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 		return message;
 	}
@@ -283,17 +291,17 @@ public class TaxiManagerImpl implements TaxiManager{
 			if(cnt > 0){
 				
 				// BPM API호출
-				String processCode = "P-D-004"; 		//프로세스 코드 (교통비 프로세스) - 프로세스 정의서 참조
+				String processCode = pCode; 		//프로세스 코드 (교통비 프로세스) - 프로세스 정의서 참조
 				String bizKey = keyParamDto.getDoc_no();		//신청서 번호
-				String statusCode = "GASBZ01440010";	//액티비티 코드 (교통비 신청서작성) - 프로세스 정의서 참조
+				String statusCode = sCode;	//액티비티 코드 (교통비 신청서작성) - 프로세스 정의서 참조
 				String loginUserId = keyParamDto.getUpdr_eeno();		//로그인 사용자 아이디
 				String comment = null;
-				String roleCode = "GASROLE01440030";  	//명함 담당자 역할코드
+				String roleCode = rCode;  	//명함 담당자 역할코드
 				
 				//역할정보
 				List<String> approveList = new ArrayList<String>();
 				List<String> managerList = new ArrayList<String>();
-				managerList.add("10000001");
+				managerList.add(adminID);
 				
 				BpmApiUtil.sendCollectTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 				message.setMessage(HncisMessageSource.getMessage("APPROVE.0002"));
@@ -310,17 +318,17 @@ public class TaxiManagerImpl implements TaxiManager{
 			if(commonApproval.getResult().equals("Z")){
 				
 				// BPM API호출
-				String processCode = "P-D-004"; 		//프로세스 코드 (교통비 프로세스) - 프로세스 정의서 참조
+				String processCode = pCode; 		//프로세스 코드 (교통비 프로세스) - 프로세스 정의서 참조
 				String bizKey = keyParamDto.getDoc_no();		//신청서 번호
-				String statusCode = "GASBZ01440010";	//액티비티 코드 (교통비 신청서작성) - 프로세스 정의서 참조
+				String statusCode = sCode;	//액티비티 코드 (교통비 신청서작성) - 프로세스 정의서 참조
 				String loginUserId = keyParamDto.getUpdr_eeno();		//로그인 사용자 아이디
 				String comment = null;
-				String roleCode = "GASROLE01440030";  	//명함 담당자 역할코드
+				String roleCode = rCode;  	//명함 담당자 역할코드
 				
 				//역할정보
 				List<String> approveList = new ArrayList<String>();
 				List<String> managerList = new ArrayList<String>();
-				managerList.add("10000001");
+				managerList.add(adminID);
 				
 				BpmApiUtil.sendCollectTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 				message.setMessage(HncisMessageSource.getMessage("REQUEST.0002"));
@@ -340,7 +348,7 @@ public class TaxiManagerImpl implements TaxiManager{
 	public int updateInfoTXToApprove(BgabGasctx02 keyParamDto){
 		
 		// BPM API호출
-		String processCode = "P-D-004"; 	//프로세스 코드 (교통비 프로세스) - 프로세스 정의서 참조
+		String processCode = pCode; 	//프로세스 코드 (교통비 프로세스) - 프로세스 정의서 참조
 		String bizKey = keyParamDto.getDoc_no();	//신청서 번호
 		String statusCode = "GASBZ01440030";	//액티비티 코드 (교통비 담당자확인) - 프로세스 정의서 참조
 		String loginUserId = keyParamDto.getUpdr_eeno();	//로그인 사용자 아이디
@@ -425,7 +433,7 @@ public class TaxiManagerImpl implements TaxiManager{
 			message.setCode1("Y");
 			
 			// BPM API호출
-			String processCode = "P-D-004"; 	//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
 			String bizKey = dto.getDoc_no();	//신청서 번호
 			String statusCode = "GASBZ01440030";	//액티비티 코드 (휴양소 당당자 확인) - 프로세스 정의서 참조
 			String loginUserId = dto.getUpdr_eeno();	//로그인 사용자 아이디
@@ -475,7 +483,7 @@ public void saveTxToFile(HttpServletRequest req, HttpServletResponse res, BgabGa
 		}catch(Exception e){
 			resultUrl = "xtx01_file.gas";
 			msg = HncisMessageSource.getMessage("FILE.0001");
-			e.printStackTrace();
+			logger.error("messege", e);
 		}finally{
 			try{
 				String dispatcherYN = "Y";
@@ -491,7 +499,7 @@ public void saveTxToFile(HttpServletRequest req, HttpServletResponse res, BgabGa
 
 				return;
 			}catch(Exception e){
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 	}
@@ -514,7 +522,7 @@ public void saveTxToFile(HttpServletRequest req, HttpServletResponse res, BgabGa
 			try {
 				fileResult = FileUtil.deleteFile(fileInfo.getCorp_cd(), "taxi", fileInfo.getOgc_fil_nm());
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 		Integer fileDRs = taxiDao.deleteTxToFile(bgabGascZ011IList);

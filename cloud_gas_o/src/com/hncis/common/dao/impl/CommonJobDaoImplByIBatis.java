@@ -140,48 +140,48 @@ public class CommonJobDaoImplByIBatis extends CommonDao implements CommonJobDao{
 	private final String SELECT_ZIP_CODE						= "selectZipCode";
 	private final String SELECT_USER_LOCALE						= "selectUserLocale";
 	private final String SELECT_CORP_INFO						= "selectCorpInfo";
-	
+
 	private final String SELECT_BPM_LIST						= "selectBpmList";
+	private final String uncheck								= "unchecked";
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<CommonCode> getCodeList(CommonCode commonCode){
 		return getSqlMapClientTemplate().queryForList(SELECT_CODE_LIST, commonCode);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<CommonCode> getCodeListNotIncludeAply(CommonCode commonCode) {
 		// TODO Auto-generated method stub
 		return getSqlMapClientTemplate().queryForList(SELECT_CODE_LIST_NO_INCLUDE_FLAG, commonCode);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<CommonCode> getCodeListNotIncludeXcodAplyFlag(CommonCode commonCode) {
 		// TODO Auto-generated method stub
 		return getSqlMapClientTemplate().queryForList(SELECT_CODE_LIST_NO_INCLUDE_FLAG, commonCode);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public CommonCode getCodeInfo(CommonCode commonCode){
 		return (CommonCode) getSqlMapClientTemplate().queryForObject(SELECT_CODE_LIST, commonCode);
 	}
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public CommonCode getCodeInfoNotIncludeXcodAplyFlag(CommonCode commonCode) {
 		// TODO Auto-generated method stub
 		return (CommonCode) getSqlMapClientTemplate().queryForObject(SELECT_CODE_LIST_NO_INCLUDE_FLAG, commonCode);
 	}
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<CommonCode> getDataComboList(CommonCode commonCode){
 		return getSqlMapClientTemplate().queryForList(SELECT_DATA_COMBO_LIST, commonCode);
 	}
 
 	@Override
 	public BgabGascz002Dto getXusrInfo(BgabGascz002Dto bgabGascz002){
-		System.out.println("getXusrInfo Debug02");
 		return (BgabGascz002Dto)getSqlMapClientTemplate().queryForObject(SELECT_XUSR_INFO, bgabGascz002);
 	}
 
@@ -252,42 +252,41 @@ public class CommonJobDaoImplByIBatis extends CommonDao implements CommonJobDao{
 
 	@Override
 	public int updateSystemStatusByApprovalDoc(CommonApproval commonApproval){
-		System.out.println("updateSystemStatusByApprovalDoc");
 		return update(UPDATE_SYSTEM_STATUS_BY_APPROVAL_DOC, commonApproval);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascz004Dto> getMenuList(HncisCommon hncisCommon){
 		return getSqlMapClientTemplate().queryForList(SELECT_MENU_LIST, hncisCommon);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<String> selectCalendarHolyList(HashMap<String, String> paramMap){
 		return getSqlMapClientTemplate().queryForList(SELECT_CALENDAR_HOLY_LIST, paramMap);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGasc01DtlDto> getSelectMainNoticeList(String corp_cd){
 		return getSqlMapClientTemplate().queryForList(SELECT_MAIN_NOTICE_LIST, corp_cd);
 	}
 
 	@Override
-	@SuppressWarnings({ "unchecked" })
+	@SuppressWarnings({ uncheck })
 	public List<BgabGasc01DtlDto> getSelectMainQnaList(String corp_cd){
 		return getSqlMapClientTemplate().queryForList(SELECT_MAIN_QNA_LIST, corp_cd);
 	}
 
 	@Override
-	@SuppressWarnings({ "unchecked" })
+	@SuppressWarnings({ uncheck })
 	public List<BgabGasc01DtlDto> getSelectMainFaqList(String corp_cd){
 		return getSqlMapClientTemplate().queryForList(SELECT_MAIN_FAQ_LIST, corp_cd);
 	}
 
 	@Override
-	@SuppressWarnings({ "unchecked" })
+	@SuppressWarnings({ uncheck })
 	public List<BgabGasc01DtlDto> getSelectMainClaimList(String corp_cd){
 		return getSqlMapClientTemplate().queryForList(SELECT_MAIN_CLAIM_LIST, corp_cd);
 	}
@@ -350,13 +349,13 @@ public class CommonJobDaoImplByIBatis extends CommonDao implements CommonJobDao{
 		return (String)getSqlMapClientTemplate().queryForObject(SELECT_COUNT_TO_CODE_MANAGEMENT, vo);
 	}
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascz005Dto> getSelectListToCodeManagement(BgabGascz005Dto vo){
 		return getSqlMapClientTemplate().queryForList(SELECT_LIST_TO_CODE_MANAGEMENT, vo);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascz005Dto> getSelectListToCodeManagementOrderBySort(BgabGascz005Dto vo){
 		return getSqlMapClientTemplate().queryForList(SELECT_LIST_TO_CODE_MANAGEMENT_ORDER_BY_SORT, vo);
 	}
@@ -396,7 +395,7 @@ public class CommonJobDaoImplByIBatis extends CommonDao implements CommonJobDao{
 		return Integer.parseInt((String)getSqlMapClientTemplate().queryForObject(SELECT_COUNT_DEPTCODE_BY_COMMON, dto));
 	}
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<HncisCommon> getSelectDeptCodeByCommon(HncisCommon dto){
 		return getSqlMapClientTemplate().queryForList(SELECT_DEPTCODE_BY_COMMON, dto);
 	}
@@ -406,7 +405,7 @@ public class CommonJobDaoImplByIBatis extends CommonDao implements CommonJobDao{
 		return Integer.parseInt((String)getSqlMapClientTemplate().queryForObject(SELECT_COUNT_ZIP_CODE, dto));
 	}
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascz034Dto> getSelectZipCode(BgabGascz034Dto dto){
 		return getSqlMapClientTemplate().queryForList(SELECT_ZIP_CODE, dto);
 	}
@@ -416,12 +415,12 @@ public class CommonJobDaoImplByIBatis extends CommonDao implements CommonJobDao{
 		return Integer.parseInt((String)getSqlMapClientTemplate().queryForObject(SELECT_COUNT_JOB_MGMT_INFO, dto));
 	}
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascz007Dto> getSelectJobMgmtInfo(BgabGascz007Dto dto){
 		return getSqlMapClientTemplate().queryForList(SELECT_JOB_MGMT_INFO, dto);
 	}
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascz007Dto> selectInfoToPicEMailAddr(BgabGascz007Dto dto){
 		return getSqlMapClientTemplate().queryForList(SELECT_INFO_TO_PICE_MAIL_ADDR, dto);
 	}
@@ -509,31 +508,31 @@ public class CommonJobDaoImplByIBatis extends CommonDao implements CommonJobDao{
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascz004Dto> getTopMenuList(HncisCommon hncisCommon){
 		return getSqlMapClientTemplate().queryForList(SELECT_TOP_MENU_LIST, hncisCommon);
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascz004Dto> getTopMenuList1(HncisCommon hncisCommon){
 		return getSqlMapClientTemplate().queryForList(SELECT_TOP_MENU_LIST1, hncisCommon);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascz004Dto> getSelectBusinessTravelTopMenuList(){
 		return getSqlMapClientTemplate().queryForList(SELECT_BUSINESS_TRAVEL_TOP_MENU_LIST);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascz004Dto> getLeftMenuList(HncisCommon hncisCommon){
 		return getSqlMapClientTemplate().queryForList(SELECT_LEFT_MENU_LIST, hncisCommon);
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascz004Dto> getLeftMenuList1(HncisCommon hncisCommon){
 		return getSqlMapClientTemplate().queryForList(SELECT_LEFT_MENU_LIST1, hncisCommon);
 	}
@@ -544,7 +543,7 @@ public class CommonJobDaoImplByIBatis extends CommonDao implements CommonJobDao{
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascz004Dto> selectMenuComboList(){
 		return getSqlMapClientTemplate().queryForList(SELECT_MENU_COMBO_LIST);
 	}
@@ -572,7 +571,7 @@ public class CommonJobDaoImplByIBatis extends CommonDao implements CommonJobDao{
 		return insert(INSERT_EVENT_TO_REPLY, dto);
 	}
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascz017Dto> selectEventQuizList(BgabGascz017Dto dto){
 		return getSqlMapClientTemplate().queryForList(SELECT_EVENT_QUIZ_LIST, dto);
 	}
@@ -640,7 +639,7 @@ public class CommonJobDaoImplByIBatis extends CommonDao implements CommonJobDao{
 		return getSqlMapClientTemplate().queryForList(SELECT_CORP_NAME_LIST, dto);
 	}
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public BgabGascz030Dto selectXst30Info(BgabGascz030Dto dto){
 		return (BgabGascz030Dto)getSqlMapClientTemplate().queryForObject(SELECT_XST30_INFO, dto);
 	}
@@ -650,13 +649,13 @@ public class CommonJobDaoImplByIBatis extends CommonDao implements CommonJobDao{
 		return Integer.parseInt((String)getSqlMapClientTemplate().queryForObject(SELECT_COUNT_USERCODE_BY_COMMON, dto));
 	}
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<HncisCommon> getSelectUserCodeByCommon(HncisCommon dto){
 		return getSqlMapClientTemplate().queryForList(SELECT_USERCODE_BY_COMMON, dto);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<HncisCommon> getSelectUserCodeByCommon1(HncisCommon dto){
 		return getSqlMapClientTemplate().queryForList(SELECT_USERCODE_BY_COMMON1, dto);
 	}

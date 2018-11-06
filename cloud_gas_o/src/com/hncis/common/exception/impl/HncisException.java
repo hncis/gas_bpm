@@ -166,10 +166,11 @@ public class HncisException extends Exception implements IHncisException {
     @Override
     public void printStackTrace(PrintStream ps)
     {
-        if(getCause() == null)
+        if(getCause() == null){
             super.printStackTrace(ps);
-        else
+        }else{
             getCause().printStackTrace(ps);
+        }
     }
     
     /**
@@ -179,9 +180,10 @@ public class HncisException extends Exception implements IHncisException {
     @Override
     public void printStackTrace(PrintWriter pw)
     {
-        if(getCause() == null)
+        if(getCause() == null){
             super.printStackTrace(pw);
-        else
+        }else{
             getCause().printStackTrace(pw);
+        }
     }
 }

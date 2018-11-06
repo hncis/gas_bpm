@@ -7,6 +7,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -31,6 +33,12 @@ import com.hncis.gift.vo.BgabGascgf05Dto;
 
 @Service("giftManagerImpl")
 public class GiftManagerImpl implements GiftManager{
+    private transient Log logger = LogFactory.getLog(getClass());
+
+    private static final String pCode = "P-B-003";
+    private static final String sCode = "GASBZ01230010";
+    private static final String rCode = "GASROLE01230030";
+    private static final String adminID = "10000001";
 
 	@Autowired
 	public GiftDao giftDao;
@@ -86,21 +94,21 @@ public class GiftManagerImpl implements GiftManager{
 			message.setCode(dto.getDoc_no());
 			
 			// BPM API호출
-			String processCode = "P-B-003"; 	//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
 			String bizKey = dto.getDoc_no();	//신청서 번호
-			String statusCode = "GASBZ01230010";	//액티비티 코드 (선물신청서작성) - 프로세스 정의서 참조
+			String statusCode = sCode;	//액티비티 코드 (선물신청서작성) - 프로세스 정의서 참조
 			String loginUserId = dto.getEeno();	//로그인 사용자 아이디
 			String comment = null;
-			String roleCode = "GASROLE01230030";   //휴양소 담당자 역할코드
+			String roleCode = rCode;   //휴양소 담당자 역할코드
 			//역할정보
 			List<String> approveList = new ArrayList<String>();
 			List<String> managerList = new ArrayList<String>();
-			managerList.add("10000001");
+			managerList.add(adminID);
 
 			BpmApiUtil.sendSaveTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("SAVE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -137,17 +145,17 @@ public class GiftManagerImpl implements GiftManager{
 			message.setMessage(HncisMessageSource.getMessage("REQUEST.0000"));
 			
 			// BPM API호출
-			String processCode = "P-B-003"; 	//프로세스 코드 (선물 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (선물 프로세스) - 프로세스 정의서 참조
 			String bizKey = dto.getDoc_no();	//신청서 번호
-			String statusCode = "GASBZ01230010";	//액티비티 코드 (선물신청서작성) - 프로세스 정의서 참조
+			String statusCode = sCode;	//액티비티 코드 (선물신청서작성) - 프로세스 정의서 참조
 			String loginUserId = dto.getEeno();	//로그인 사용자 아이디
 			String comment = null;
-			String roleCode = "GASROLE01230030";   //선물 담당자 역할코드
+			String roleCode = rCode;   //선물 담당자 역할코드
 			
 			//역할정보
 			List<String> approveList = commonApproval.getApproveList();
 			List<String> managerList = new ArrayList<String>();
-			managerList.add("10000001");
+			managerList.add(adminID);
 
 			BpmApiUtil.sendCompleteTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList);
 			
@@ -169,17 +177,17 @@ public class GiftManagerImpl implements GiftManager{
 			
 			if(cnt > 0){
 				// BPM API호출
-				String processCode = "P-B-003"; 	//프로세스 코드 (선물  프로세스) - 프로세스 정의서 참조
+				String processCode = pCode; 	//프로세스 코드 (선물  프로세스) - 프로세스 정의서 참조
 				String bizKey = dto.getDoc_no();	//신청서 번호
-				String statusCode = "GASBZ01230010";	//액티비티 코드 (선물신청서작성) - 프로세스 정의서 참조
+				String statusCode = sCode;	//액티비티 코드 (선물신청서작성) - 프로세스 정의서 참조
 				String loginUserId = dto.getUpdr_eeno();	//로그인 사용자 아이디
 				String comment = null;
-				String roleCode = "GASROLE01230030";   //선물  담당자 역할코드
+				String roleCode = rCode;   //선물  담당자 역할코드
 				
 				//역할정보
 				List<String> approveList = new ArrayList<String>();
 				List<String> managerList = new ArrayList<String>();
-				managerList.add("10000001");
+				managerList.add(adminID);
 				
 				BpmApiUtil.sendCollectTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 
@@ -196,17 +204,17 @@ public class GiftManagerImpl implements GiftManager{
 
 			if(commonApproval.getResult().equals("Z")){
 				// BPM API호출
-				String processCode = "P-B-003"; 	//프로세스 코드 (선물  프로세스) - 프로세스 정의서 참조
+				String processCode = pCode; 	//프로세스 코드 (선물  프로세스) - 프로세스 정의서 참조
 				String bizKey = dto.getDoc_no();	//신청서 번호
-				String statusCode = "GASBZ01230010";	//액티비티 코드 (선물신청서작성) - 프로세스 정의서 참조
+				String statusCode = sCode;	//액티비티 코드 (선물신청서작성) - 프로세스 정의서 참조
 				String loginUserId = dto.getUpdr_eeno();	//로그인 사용자 아이디
 				String comment = null;
-				String roleCode = "GASROLE01230030";   //선물  담당자 역할코드
+				String roleCode = rCode;   //선물  담당자 역할코드
 				
 				//역할정보
 				List<String> approveList = new ArrayList<String>();
 				List<String> managerList = new ArrayList<String>();
-				managerList.add("10000001");
+				managerList.add(adminID);
 				
 				BpmApiUtil.sendCollectTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 
@@ -227,7 +235,7 @@ public class GiftManagerImpl implements GiftManager{
 			message.setCode1("Y");
 			
 			// BPM API호출
-			String processCode = "P-B-003"; 	//프로세스 코드 (선물 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (선물 프로세스) - 프로세스 정의서 참조
 			String bizKey = dto.getDoc_no();	//신청서 번호
 			String statusCode = "GASBZ01230030";	//액티비티 코드 (선물 담당자확인) - 프로세스 정의서 참조
 			String loginUserId = dto.getUpdr_eeno();	//로그인 사용자 아이디
@@ -250,7 +258,7 @@ public class GiftManagerImpl implements GiftManager{
 			message.setCode1("Y");
 			
 			// BPM API호출
-			String processCode = "P-B-003"; 	//프로세스 코드 (선물 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (선물 프로세스) - 프로세스 정의서 참조
 			String bizKey = dto.getDoc_no();	//신청서 번호
 			String statusCode = "GASBZ01230030";	//액티비티 코드 (선물 담당자확인) - 프로세스 정의서 참조
 			String loginUserId = dto.getUpdr_eeno();	//로그인 사용자 아이디
@@ -358,7 +366,7 @@ public class GiftManagerImpl implements GiftManager{
 			message.setMessage(HncisMessageSource.getMessage("SAVE.0000"));
 			message.setCode(dto.getItem_seq());
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("SAVE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -379,7 +387,7 @@ public class GiftManagerImpl implements GiftManager{
 			message.setMessage(HncisMessageSource.getMessage("DELETE.0000"));
 			message.setCode(dto.getItem_seq());
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("DELETE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -435,7 +443,7 @@ public class GiftManagerImpl implements GiftManager{
 		}catch(Exception e){
 			resultUrl = "xgf06_file.gas";
 			msg = HncisMessageSource.getMessage("FILE.0001");
-			e.printStackTrace();
+			logger.error("messege", e);
 		}finally{
 			try{
 				String dispatcherYN = "Y";
@@ -451,7 +459,7 @@ public class GiftManagerImpl implements GiftManager{
 
 				return;
 			}catch(Exception e){
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 	}
@@ -474,7 +482,7 @@ public class GiftManagerImpl implements GiftManager{
 			try {
 				fileResult = FileUtil.deleteFile(fileInfo.getCorp_cd(), "gift", fileInfo.getOgc_fil_nm());
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 		Integer fileDRs = giftDao.deleteGfToFile(bgabGascZ011IList);
@@ -502,7 +510,7 @@ public class GiftManagerImpl implements GiftManager{
 			message.setCode1("Y");
 			message.setMessage(HncisMessageSource.getMessage("SAVE.0000"));
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("SAVE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

@@ -7,6 +7,8 @@ import org.springframework.context.MessageSourceAware;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * HmbMessageSource
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Component;
  */
 @Component("hmbMessageSource")
 public class HncisMessageSource implements MessageSourceAware{
+    private transient static Log logger = LogFactory.getLog(HncisMessageSource.class.getClass());
 	protected static MessageSource messageSource;
     public static final String DEFAULT_MESSAGE_CODE = "ERROR.0000";
     
@@ -54,7 +57,7 @@ public class HncisMessageSource implements MessageSourceAware{
     {
         String message = "";
         if(code == null || code.length() == 0)
-            code = DEFAULT_MESSAGE_CODE;
+            {code = DEFAULT_MESSAGE_CODE;}
         try
         {
 //            message = messageSource.getMessage(code,messageParams,LocaleContextHolder.getLocale());
@@ -67,7 +70,7 @@ public class HncisMessageSource implements MessageSourceAware{
         }
         catch(Exception e)
         {
-            e.printStackTrace();
+			logger.error("messege", e);
             message = DEFAULT_MESSAGE_CODE;
         }
         finally
@@ -90,7 +93,7 @@ public class HncisMessageSource implements MessageSourceAware{
         	locale = LocaleContextHolder.getLocale();
         }
         if(code == null || code.length() == 0)
-            code = DEFAULT_MESSAGE_CODE;
+            {code = DEFAULT_MESSAGE_CODE;}
         try
         {
             message = messageSource.getMessage(code,messageParams, locale);
@@ -102,7 +105,7 @@ public class HncisMessageSource implements MessageSourceAware{
         }
         catch(Exception e)
         {
-            e.printStackTrace();
+			logger.error("messege", e);
             message = DEFAULT_MESSAGE_CODE;
         }
         finally

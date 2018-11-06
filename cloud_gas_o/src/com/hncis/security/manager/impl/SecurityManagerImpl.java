@@ -7,6 +7,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -33,6 +35,10 @@ import com.hncis.security.vo.BgabGascse06;
 
 @Service("securityManagerImpl")
 public class SecurityManagerImpl implements SecurityManager{
+    private transient Log logger = LogFactory.getLog(getClass());
+
+    private static final String pCode = "P-E-001";
+    private static final String sCode = "GASBZ01510010";
 	@Autowired
 	public SecurityDao securityDao;
 
@@ -279,8 +285,8 @@ public class SecurityManagerImpl implements SecurityManager{
 				
 				if(param1.equals("5")){
 					// BMP API호출
-					processCode = "P-E-001"; 	//프로세스 코드 (방문객 프로세스) - 프로세스 정의서 참조
-					statusCode = "GASBZ01510010";	//액티비티 코드 (방문객 신청서작성) - 프로세스 정의서 참조
+					processCode = pCode; 	//프로세스 코드 (방문객 프로세스) - 프로세스 정의서 참조
+					statusCode = sCode;	//액티비티 코드 (방문객 신청서작성) - 프로세스 정의서 참조
 					roleCode = "GASROLE01510030";   //방문객 담당자 역할코드
 				} else if(param1.equals("1")){
 					// BMP API호출
@@ -335,8 +341,8 @@ public class SecurityManagerImpl implements SecurityManager{
 					String roleCode = "";
 					if(param1.equals("5")){
 						// BPM API호출
-						processCode = "P-E-001"; 	//프로세스 코드 (방문객 프로세스) - 프로세스 정의서 참조
-						statusCode = "GASBZ01510010";	//액티비티 코드 (방문객 신청서작성) - 프로세스 정의서 참조				
+						processCode = pCode; 	//프로세스 코드 (방문객 프로세스) - 프로세스 정의서 참조
+						statusCode = sCode;	//액티비티 코드 (방문객 신청서작성) - 프로세스 정의서 참조				
 						roleCode = "GASROLE01510030";   //방문객 담당자 역할코드
 					} else if(param1.equals("1")){
 						// BPM API호출
@@ -380,8 +386,8 @@ public class SecurityManagerImpl implements SecurityManager{
 					String roleCode = "";
 					if(param1.equals("5")){
 						// BPM API호출
-						processCode = "P-E-001"; 	//프로세스 코드 (방문객 프로세스) - 프로세스 정의서 참조
-						statusCode = "GASBZ01510010";	//액티비티 코드 (방문객 신청서작성) - 프로세스 정의서 참조				
+						processCode = pCode; 	//프로세스 코드 (방문객 프로세스) - 프로세스 정의서 참조
+						statusCode = sCode;	//액티비티 코드 (방문객 신청서작성) - 프로세스 정의서 참조				
 						roleCode = "GASROLE01510030";   //방문객 담당자 역할코드
 					} else if(param1.equals("1")){
 						// BPM API호출
@@ -546,9 +552,9 @@ public class SecurityManagerImpl implements SecurityManager{
 		
 
 		// BPM API호출
-		String processCode = "P-E-001"; 	//프로세스 코드 (방문객 프로세스) - 프로세스 정의서 참조
+		String processCode = pCode; 	//프로세스 코드 (방문객 프로세스) - 프로세스 정의서 참조
 		String bizKey = param.getDoc_no();	//신청서 번호
-		String statusCode = "GASBZ01510010";	//액티비티 코드 (방문객 신청서작성) - 프로세스 정의서 참조
+		String statusCode = sCode;	//액티비티 코드 (방문객 신청서작성) - 프로세스 정의서 참조
 		String loginUserId = param.getUpdr_eeno();	//로그인 사용자 아이디
 
 		BpmApiUtil.sendDeleteAndRejectTask(processCode, bizKey, statusCode, loginUserId);
@@ -603,7 +609,7 @@ public class SecurityManagerImpl implements SecurityManager{
 		}catch(Exception e){
 			resultUrl = "xve_file.gas";
 			msg = HncisMessageSource.getMessage("FILE.0001");
-			e.printStackTrace();
+			logger.error("messege", e);
 		}finally{
 			try{
 				String dispatcherYN = "Y";
@@ -618,7 +624,7 @@ public class SecurityManagerImpl implements SecurityManager{
 
 				return;
 			}catch(Exception e){
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 	}
@@ -630,7 +636,7 @@ public class SecurityManagerImpl implements SecurityManager{
 			try {
 				FileUtil.deleteFile(fileInfo.getCorp_cd(), "businessTravel", fileInfo.getOgc_fil_nm());
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 		Integer fileDRs = securityDao.deleteXVToFile(bgabGascZ011IList);

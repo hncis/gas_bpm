@@ -3,6 +3,9 @@ package com.hncis.common.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.hncis.businessVehicles.vo.BgabGascbv01Dto;
 import com.hncis.common.message.HncisMessageSource;
 import com.hncis.common.vo.BgabGascZ011Dto;
@@ -15,6 +18,7 @@ import com.hncis.trafficTicket.vo.BgabGascTm01;
  * The Class Submit. - 메일 주소, body 설정 후 메일 발송하는 클래스
  */
 public class Submit {
+    private transient static Log logger = LogFactory.getLog(Submit.class.getClass());
 	
 	/** The area. - 운영인지, 개발인지 판단하는 변수 */
 	private static String area = StringUtil.getSystemArea().toUpperCase();
@@ -28,6 +32,22 @@ public class Submit {
 
 //	private static final String sTestMail = "TIETEAM@HYUNDAI.COM";
 	private static final String sTestMail = "tobeplain08@naver.com";
+
+	private static final String hostMail = "hncis@hncis.co.kr";
+	private static final String strLocal = "LOCAL";
+	private static final String strTest = "TEST";
+	private static final String strReal = "REAL";
+	private static final String strHttp = "http://";
+	
+	private static final String textHead = " <table cellpadding='0' cellspacing='0'>"
+			+ "<tr><td style='width:710px; background-color:#f8f8f8; border:1px solid #bebfc4'>"
+			+ "<table cellpadding='0' cellspacing='0'>"
+			+ "<tr><td style='width:690px; height:40px; background-color:#004b8e; padding-left:20px;'>"
+			+ "</td></tr>"
+			+ "<tr><td style='padding:20px;'><table cellpadding='0' cellspacing='0'>"
+			+ "<tr> <td style='background-color:#FFF; border:1px solid #dddde5; padding:20px;'>"
+			+ "<table cellpadding='0' cellspacing='0'>"
+			+ "<tr><td style='font-size:12px; width:670px; color:#000; line-height:130%; font-family:Verdana, Geneva, sans-serif;'>";
 	
 	/**
 	 * 신청 메일 발송
@@ -35,30 +55,22 @@ public class Submit {
 	public static boolean sendEmail(String a1, String a2, String a3, String mailAdr, String func, String title, String corp_cd){
 		try{
 			
-			String from    = "hncis@hncis.co.kr";
+			String from    = hostMail;
 			
 			String mailto  = "";
 			String sPath =  "";
 			
-			if(area.equals("LOCAL") || area.equals("TEST")){
+			if(area.equals(strLocal) || area.equals(strTest)){
 				mailto  = sTestMail;
-				sPath = "http://"+corp_cd+sPathDev;
+				sPath = strHttp+corp_cd+sPathDev;
 			}else{
 				mailto  = mailAdr;
-				sPath = "http://"+corp_cd+sPathReal;
+				sPath = strHttp+corp_cd+sPathReal;
 			}
 			
 			String subject = HncisMessageSource.getMessage("MAIL.0004");
 			
-			String text = " <table cellpadding='0' cellspacing='0'>"
-						+ "<tr><td style='width:710px; background-color:#f8f8f8; border:1px solid #bebfc4'>"
-						+ "<table cellpadding='0' cellspacing='0'>"
-						+ "<tr><td style='width:690px; height:40px; background-color:#004b8e; padding-left:20px;'>"
-						+ "</td></tr>"
-						+ "<tr><td style='padding:20px;'><table cellpadding='0' cellspacing='0'>"
-						+ "<tr> <td style='background-color:#FFF; border:1px solid #dddde5; padding:20px;'>"
-						+ "<table cellpadding='0' cellspacing='0'>"
-						+ "<tr><td style='font-size:12px; width:670px; color:#000; line-height:130%; font-family:Verdana, Geneva, sans-serif;'>";
+			String text = textHead;
 					
 				text	+= HncisMessageSource.getMessage("MAIL.0004") + "<br /><br />";
 				
@@ -70,16 +82,16 @@ public class Submit {
 				
 				text	+= "</td></tr></table></td></tr></table></td></tr></table></td></tr></table>";
 				
-				System.out.println(text);
+				logger.info(text);
 				SendMail oMail = new SendMail();
-				if(area.equals("REAL")){
+				if(area.equals(strReal)){
 					oMail.sendMail(mailto, from, subject, text, 1, false);
 				}
 				
 				
 			
 		}catch (Exception ex){
-			ex.printStackTrace();
+			logger.error("messege", ex);
 		}
 		return true;
 	}//end method
@@ -90,30 +102,22 @@ public class Submit {
 	public static boolean returnEmail(String a1, String a2, String a3, String func, String title, String rtnText, String corp_cd){
 		try{
 			
-			String from    = "hncis@hncis.co.kr";
+			String from    = hostMail;
 			
 			String mailto  = "";
 			String sPath =  "";
 			
-			if(area.equals("LOCAL") || area.equals("TEST")){
+			if(area.equals(strLocal) || area.equals(strTest)){
 				mailto  = sTestMail;
-				sPath = "http://"+corp_cd+sPathDev;
+				sPath = strHttp+corp_cd+sPathDev;
 			}else{
 				mailto  = a3;
-				sPath = "http://"+corp_cd+sPathReal;
+				sPath = strHttp+corp_cd+sPathReal;
 			}
 			
 			String subject = HncisMessageSource.getMessage("MAIL.0012");
 
-			String text = " <table cellpadding='0' cellspacing='0'>"
-						+ "<tr><td style='width:710px; background-color:#f8f8f8; border:1px solid #bebfc4'>"
-						+ "<table cellpadding='0' cellspacing='0'>"
-						+ "<tr><td style='width:690px; height:40px; background-color:#004b8e; padding-left:20px;'>"
-						+ "</td></tr>"
-						+ "<tr><td style='padding:20px;'><table cellpadding='0' cellspacing='0'>"
-						+ "<tr> <td style='background-color:#FFF; border:1px solid #dddde5; padding:20px;'>"
-						+ "<table cellpadding='0' cellspacing='0'>"
-						+ "<tr><td style='font-size:12px; width:670px; color:#000; line-height:130%; font-family:Verdana, Geneva, sans-serif;'>";
+			String text = textHead;
 					
 				text	+= HncisMessageSource.getMessage("MAIL.0012") + "<br /><br />";
 				
@@ -125,12 +129,12 @@ public class Submit {
 				text	+= "</td></tr></table></td></tr></table></td></tr></table></td></tr></table>";
 			
 			SendMail oMail = new SendMail();
-			if(area.equals("REAL")){
+			if(area.equals(strReal)){
 				oMail.sendMail(mailto, from, subject, text, 1, false);
 			}
 			
 		}catch (Exception ex){
-			ex.printStackTrace();
+			logger.error("messege", ex);
 		}
 		return true;
 	}
@@ -141,31 +145,23 @@ public class Submit {
 	public static boolean sendStandByConfirmEmail(String fromEeno, String fromStepNm, String toEeno, String func, String title, String corp_cd){
 		try{
 			
-			String from    = "hncis@hncis.co.kr";
+			String from    = hostMail;
 			
 			String mailto  = "";
 			String sPath =  "";
 			
-			if(area.equals("LOCAL") || area.equals("TEST")){
+			if(area.equals(strLocal) || area.equals(strTest)){
 				mailto  = sTestMail;
-				sPath = "http://"+corp_cd+sPathDev;
+				sPath = strHttp+corp_cd+sPathDev;
 			}else{
 				mailto  = toEeno;
 				sPath = sPathReal;
-				sPath = "http://"+corp_cd+sPathReal;
+				sPath = strHttp+corp_cd+sPathReal;
 			}
 			
 			String subject = HncisMessageSource.getMessage("MAIL.0009");
 
-			String text = " <table cellpadding='0' cellspacing='0'>"
-						+ "<tr><td style='width:710px; background-color:#f8f8f8; border:1px solid #bebfc4'>"
-						+ "<table cellpadding='0' cellspacing='0'>"
-						+ "<tr><td style='width:690px; height:40px; background-color:#004b8e; padding-left:20px;'>"
-						+ "</td></tr>"
-						+ "<tr><td style='padding:20px;'><table cellpadding='0' cellspacing='0'>"
-						+ "<tr> <td style='background-color:#FFF; border:1px solid #dddde5; padding:20px;'>"
-						+ "<table cellpadding='0' cellspacing='0'>"
-						+ "<tr><td style='font-size:12px; width:670px; color:#000; line-height:130%; font-family:Verdana, Geneva, sans-serif;'>";
+			String text = textHead;
 					
 				text	+= HncisMessageSource.getMessage("MAIL.0009") + "<br /><br />";
 				text	+= HncisMessageSource.getMessage("MAIL.0005") + " : " + title + "<br />";
@@ -175,11 +171,11 @@ public class Submit {
 				
 				text	+= "</td></tr></table></td></tr></table></td></tr></table></td></tr></table>";
 				SendMail oMail = new SendMail();
-				if(area.equals("REAL")){
+				if(area.equals(strReal)){
 					oMail.sendMail(mailto, from, subject, text, 1, false);
 				}
 		}catch (Exception ex){
-			ex.printStackTrace();
+			logger.error("messege", ex);
 		}
 		return true;
 	}//end method
@@ -197,12 +193,12 @@ public class Submit {
 	public static boolean confirmEmail(String a1, String a2, String a3, String title){
 		try{
 			
-			String from    = "hncis@hncis.co.kr";
+			String from    = hostMail;
 			
 			String mailto  = "";
 			String sPath =  "";
 			
-			if(area.equals("LOCAL") || area.equals("TEST")){
+			if(area.equals(strLocal) || area.equals(strTest)){
 				mailto  = sTestMail;
 				//mailto  = a3;
 				sPath = sPathDev;
@@ -234,12 +230,12 @@ public class Submit {
 				text	+= "</td></tr></table></td></tr></table></td></tr></table></td></tr></table>";
 			
 			SendMail oMail = new SendMail();
-			if(area.equals("REAL")){
+			if(area.equals(strReal)){
 				oMail.sendMail(mailto, from, subject, text, 1, false);
 			}
 			
 		}catch (Exception ex){
-			ex.printStackTrace();
+			logger.error("messege", ex);
 		}
 		return true;
 	}
@@ -257,12 +253,12 @@ public class Submit {
 	public static boolean confirmCancelEmail(String a1, String a2, String a3, String title, String rtnText){
 		try{
 			
-			String from    = "hncis@hncis.co.kr";
+			String from    = hostMail;
 			
 			String mailto  = "";
 			String sPath =  "";
 			
-			if(area.equals("LOCAL") || area.equals("TEST")){
+			if(area.equals(strLocal) || area.equals(strTest)){
 				mailto  = sTestMail;
 				//mailto  = a3;
 				sPath = sPathDev;
@@ -296,12 +292,12 @@ public class Submit {
 				text	+= "</td></tr></table></td></tr></table></td></tr></table></td></tr></table>";
 			
 			SendMail oMail = new SendMail();
-			if(area.equals("REAL")){
+			if(area.equals(strReal)){
 				oMail.sendMail(mailto, from, subject, text, 1, false);
 			}
 			
 		}catch (Exception ex){
-			ex.printStackTrace();
+			logger.error("messege", ex);
 		}
 		return true;
 	}
@@ -309,12 +305,12 @@ public class Submit {
 	public static boolean sendEmailForAsVehicle(List <BgabGascbv01Dto> mailList){
 		try{
 			
-			String from    = "hncis@hncis.co.kr";
+			String from    = hostMail;
 			String mailto  = "";
 			String sPath =  "";
 			String toEeno = "";
 			
-			if(area.equals("LOCAL") || area.equals("TEST")){
+			if(area.equals(strLocal) || area.equals(strTest)){
 				mailto  = sTestMail;
 				sPath = sPathDev;
 			}else{
@@ -351,7 +347,7 @@ public class Submit {
 					
 					toEeno = mailList.get(i).getCrgr_eeno();
 					//mailto = mailList.get(i).getEeno_email();
-					System.out.println("Eeno_email:::"+mailList.get(i).getEeno_email());
+					logger.info("Eeno_email:::"+mailList.get(i).getEeno_email());
 					sendMailList.add(mailList.get(i));
 				}
 				else if(i == (mailList.size()-1)){
@@ -370,8 +366,8 @@ public class Submit {
 					
 					String text = text1+text2+text3;
 					
-					System.out.println(text);
-					if(area.equals("REAL")){
+					logger.info(text);
+					if(area.equals(strReal)){
 						oMail.sendMail(mailto, from, subject, text, 1, false);
 					}
 					
@@ -396,8 +392,8 @@ public class Submit {
 						
 						String text = text1+text2+text3;
 						
-						System.out.println(text);
-						if(area.equals("REAL")){
+						logger.info(text);
+						if(area.equals(strReal)){
 							oMail.sendMail(mailto, from, subject, text, 1, false);
 						}
 						
@@ -407,30 +403,30 @@ public class Submit {
 						sendMailList.add(mailList.get(i));
 						toEeno = mailList.get(i).getCrgr_eeno();
 						//mailto = mailList.get(i).getEeno_email();
-						System.out.println("Eeno_email:::"+mailList.get(i).getEeno_email());
+						logger.info("Eeno_email:::"+mailList.get(i).getEeno_email());
 						
 					}
 				}
 				
 			}
 		}catch (Exception ex){
-			ex.printStackTrace();
+			logger.error("messege", ex);
 		}
 		return true;
 	}//end method
 	
 	public static boolean sendEmailConfirm(String a1, String a2, String a3, String func, String title, String corp_cd){
 		try{
-			String from    = "hncis@hncis.co.kr";
+			String from    = hostMail;
 			String mailto  = "";
 			String sPath =  "";
 			
-			if(area.equals("LOCAL") || area.equals("TEST")){
+			if(area.equals(strLocal) || area.equals(strTest)){
 				mailto  = sTestMail;
-				sPath = "http://"+corp_cd+sPathDev;
+				sPath = strHttp+corp_cd+sPathDev;
 			}else{
 				mailto  = a3;
-				sPath = "http://"+corp_cd+sPathReal;
+				sPath = strHttp+corp_cd+sPathReal;
 			}
 			
 			String subject = HncisMessageSource.getMessage("MAIL.0014");
@@ -451,11 +447,11 @@ public class Submit {
 				text	+= "</td></tr></table></td></tr></table></td></tr></table></td></tr></table>";
 			
 			SendMail oMail = new SendMail();
-			if(area.equals("REAL")){
+			if(area.equals(strReal)){
 				oMail.sendMail(mailto, from, subject, text, 1, false);
 			}
 		}catch (Exception ex){
-			ex.printStackTrace();
+			logger.error("messege", ex);
 		}
 		return true;
 	}
@@ -463,11 +459,11 @@ public class Submit {
 	public static boolean sendEmailTrafficTicket(List<BgabGascTm01> list){
 		try{
 			String imgPath = "http://gasc.hyundai-brasil.com/gasc/";
-			if(area.equals("LOCAL") || area.equals("TEST")){
+			if(area.equals(strLocal) || area.equals(strTest)){
 				imgPath = "http://tstgasc.hyundai-brasil.com/gasc/";
 			}
 			
-			String from    = "hncis@hncis.co.kr";
+			String from    = hostMail;
 			String mailto  = "";
 			
 			String subject = "There is Traffic ticket for you in GASC.";
@@ -492,11 +488,11 @@ public class Submit {
 				}
 				
 			SendMail oMail = new SendMail();
-			if(area.equals("REAL")){
+			if(area.equals(strReal)){
 				oMail.sendMail(mailto, from, subject, text, 1, false);
 			}
 		}catch (Exception ex){
-			ex.printStackTrace();
+			logger.error("messege", ex);
 		}
 		return true;
 	}
@@ -504,11 +500,11 @@ public class Submit {
 	public static boolean sendEmailTrafficTicketForEmailSend(String a1, String a2, String a3, String func, String title){
 		try{
 			String imgPath = "http://gasc.hyundai-brasil.com/gasc/";
-			if(area.equals("LOCAL") || area.equals("TEST")){
+			if(area.equals(strLocal) || area.equals(strTest)){
 				imgPath = "http://tstgasc.hyundai-brasil.com/gasc/";
 			}
 			
-			String from    = "hncis@hncis.co.kr";
+			String from    = hostMail;
 			String mailto  = a3;
 			
 			String subject = "There is Traffic ticket for you in GASC.";
@@ -534,11 +530,11 @@ public class Submit {
 				text	+= "</td></tr></table></td></tr></table></td></tr></table></td></tr></table>";
 			
 			SendMail oMail = new SendMail();
-			if(area.equals("REAL")){
+			if(area.equals(strReal)){
 				oMail.sendMail(mailto, from, subject, text, 1, false);
 			}
 		}catch (Exception ex){
-			ex.printStackTrace();
+			logger.error("messege", ex);
 		}
 		return true;
 	}
@@ -546,11 +542,11 @@ public class Submit {
 	public static boolean sendEmailTrafficTicketForPayment(String a1, String a2, String a3, String func, String title){
 		try{
 			String imgPath = "http://gasc.hyundai-brasil.com/gasc/";
-			if(area.equals("LOCAL") || area.equals("TEST")){
+			if(area.equals(strLocal) || area.equals(strTest)){
 				imgPath = "http://tstgasc.hyundai-brasil.com/gasc/";
 			}
 			
-			String from    = "hncis@hncis.co.kr";
+			String from    = hostMail;
 			String mailto  = a3;
 			
 			String subject = "There is Traffic ticket for you in GASC.";
@@ -574,11 +570,11 @@ public class Submit {
 				text	+= "</td></tr></table></td></tr></table></td></tr></table></td></tr></table>";
 			
 			SendMail oMail = new SendMail();
-			if(area.equals("REAL")){
+			if(area.equals(strReal)){
 				oMail.sendMail(mailto, from, subject, text, 1, false);
 			}
 		}catch (Exception ex){
-			ex.printStackTrace();
+			logger.error("messege", ex);
 		}
 		return true;
 	}
@@ -586,11 +582,11 @@ public class Submit {
 	public static boolean sendEmailGeneralServiceForConfirm(String fromEenm, String fromStepNm, String toEeno, String mode, String title, String comment){
 		try{
 			String imgPath = "http://gasc.hyundai-brasil.com/gasc/";
-			if(area.equals("LOCAL") || area.equals("TEST")){
+			if(area.equals(strLocal) || area.equals(strTest)){
 				imgPath = "http://tstgasc.hyundai-brasil.com/gasc/";
 			}
 			
-			String from    = "hncis@hncis.co.kr";
+			String from    = hostMail;
 			String mailto  = toEeno;
 			
 			String subject = "There is " + title + " for you in GASC.";
@@ -613,11 +609,11 @@ public class Submit {
 				text	+= "</td></tr></table></td></tr></table></td></tr></table></td></tr></table>";
 			
 			SendMail oMail = new SendMail();
-			if(area.equals("REAL")){
+			if(area.equals(strReal)){
 				oMail.sendMail(mailto, from, subject, text, 1, false);
 			}
 		}catch (Exception ex){
-			ex.printStackTrace();
+			logger.error("messege", ex);
 		}
 		return true;
 	}
@@ -625,11 +621,11 @@ public class Submit {
 	public static boolean sendEmailTaxiForRequest(String fromEenm, String fromStepNm, String toEeno, String mode, String title, BgabGasctx04 dto){
 		try{
 			String imgPath = "http://gasc.hyundai-brasil.com/gasc/";
-			if(area.equals("LOCAL") || area.equals("TEST")){
+			if(area.equals(strLocal) || area.equals(strTest)){
 				imgPath = "http://tstgasc.hyundai-brasil.com/gasc/";
 			}
 			
-			String from    = "hncis@hncis.co.kr";
+			String from    = hostMail;
 			String mailto  = toEeno;
 			
 			String subject = "There is " + title + " for you in GASC.";
@@ -682,11 +678,11 @@ public class Submit {
 				text	+= "</td></tr></table></td></tr></table></td></tr></table></td></tr></table>";
 				
 			SendMail oMail = new SendMail();
-			if(area.equals("REAL")){
+			if(area.equals(strReal)){
 				oMail.sendMail(mailto, from, subject, text, 1, false);
 			}
 		}catch (Exception ex){
-			ex.printStackTrace();
+			logger.error("messege", ex);
 		}
 		return true;
 	}
@@ -694,11 +690,11 @@ public class Submit {
 	public static boolean sendEmailShuttleBusForRequest(String fromEenm, String fromStepNm, String toEeno, String mode, String title, BgabGascsb01 dto){
 		try{
 			String imgPath = "http://gasc.hyundai-brasil.com/gasc/";
-			if(area.equals("LOCAL") || area.equals("TEST")){
+			if(area.equals(strLocal) || area.equals(strTest)){
 				imgPath = "http://tstgasc.hyundai-brasil.com/gasc/";
 			}
 			
-			String from    = "hncis@hncis.co.kr";
+			String from    = hostMail;
 			String mailto  = toEeno;
 			
 			String subject = "There is " + title + " for you in GASC.";
@@ -748,11 +744,11 @@ public class Submit {
 				text	+= "</td></tr></table></td></tr></table></td></tr></table></td></tr></table>";
 				
 			SendMail oMail = new SendMail();
-			if(area.equals("REAL")){
+			if(area.equals(strReal)){
 				oMail.sendMail(mailto, from, subject, text, 1, false);
 			}
 		}catch (Exception ex){
-			ex.printStackTrace();
+			logger.error("messege", ex);
 		}
 		return true;
 	}
@@ -760,11 +756,11 @@ public class Submit {
 	public static boolean sendEmailBusinessTripForConfirm(String fromEenm, String fromStepNm, String toEeno, String mode, String title, List<BgabGascZ011Dto> rsList) {
 		try{
 			String imgPath = "http://gasc.hyundai-brasil.com/gasc/";
-			if(area.equals("LOCAL") || area.equals("TEST")){
+			if(area.equals(strLocal) || area.equals(strTest)){
 				imgPath = "http://tstgasc.hyundai-brasil.com/gasc/";
 			}
 			
-			String from    = "hncis@hncis.co.kr";
+			String from    = hostMail;
 			String mailto  = toEeno;
 			
 			String subject = "There is " + title + " for you in GASC.";
@@ -800,11 +796,11 @@ public class Submit {
 			 * @return success - 성공여부, 성공:true, 실패:false
 			 * public boolean sendMailFileGlobal(String to, String from, String fromStr, String subject, String body, String fileUrl, int flag, boolean debug)
 			 */
-			if(area.equals("REAL")){
+			if(area.equals(strReal)){
 				oMail.sendMailFileConfrimation(mailto, from, "", subject, text, rsList, 1, false);
 			}
 		}catch (Exception ex){
-			ex.printStackTrace();
+			logger.error("messege", ex);
 		}
 		return true;
 	}
@@ -812,11 +808,11 @@ public class Submit {
 	public static boolean sendEmailShuttleBusForHRmail(String fromEenm, String fromStepNm, String toEeno, String mode, String title, List<BgabGascZ011Dto> rsList, BgabGascsb01 dto) {
 		try{
 			String imgPath = "http://gasc.hyundai-brasil.com/gasc/";
-			if(area.equals("LOCAL") || area.equals("TEST")){
+			if(area.equals(strLocal) || area.equals(strTest)){
 				imgPath = "http://tstgasc.hyundai-brasil.com/gasc/";
 			}
 			
-			String from    = "hncis@hncis.co.kr";
+			String from    = hostMail;
 			String mailto  = toEeno;
 			
 			String subject = "There is " + title + " for you in GASC.";
@@ -880,11 +876,11 @@ public class Submit {
 			 * @return success - 성공여부, 성공:true, 실패:false
 			 * public boolean sendMailFileGlobal(String to, String from, String fromStr, String subject, String body, String fileUrl, int flag, boolean debug)
 			 */
-			if(area.equals("REAL")){
+			if(area.equals(strReal)){
 				oMail.sendMailShuttleBusFile(mailto, from, "", subject, text, rsList, 1, false);
 			}
 		}catch (Exception ex){
-			ex.printStackTrace();
+			logger.error("messege", ex);
 		}
 		return true;
 	}

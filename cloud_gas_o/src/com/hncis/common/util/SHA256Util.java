@@ -3,6 +3,9 @@ package com.hncis.common.util;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
  
 /**
  * SHA-256 암호화
@@ -11,6 +14,7 @@ import java.util.Random;
  *
  */
 public class SHA256Util {
+    private transient static Log logger = LogFactory.getLog(SHA256Util.class.getClass());
  
     public static String getEncrypt(String source, String salt) {
         return getEncrypt(source, salt.getBytes());
@@ -39,7 +43,7 @@ public class SHA256Util {
             
             result = sb.toString();
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            logger.error("messege", e);
         }
         
         return result;

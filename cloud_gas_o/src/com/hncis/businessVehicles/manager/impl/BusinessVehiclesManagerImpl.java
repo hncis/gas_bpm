@@ -31,8 +31,19 @@ import com.hncis.common.vo.BgabGascz002Dto;
 import com.hncis.common.vo.CommonApproval;
 import com.hncis.common.vo.CommonMessage;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 @Service("businessVehiclesManagerImpl")
 public class BusinessVehiclesManagerImpl implements BusinessVehiclesManager{
+
+    private transient Log logger = LogFactory.getLog(getClass());
+    
+	private static final String pCode = "P-D-005";
+	private static final String sCode = "GASBZ01450010";
+	private static final String rCode = "GASROLE01450030";
+	private static final String adminId = "10000001";
+	private static final String fileMessage = "FILE.0001";
 
 	@Autowired
 	public BusinessVehiclesDao businessVehiclesDao;
@@ -79,16 +90,16 @@ public class BusinessVehiclesManagerImpl implements BusinessVehiclesManager{
 			else{
 
 				// BPM API호출
-				String processCode = "P-D-005"; 	//프로세스 코드 (차량신청 프로세스) - 프로세스 정의서 참조
+				String processCode = pCode; 	//프로세스 코드 (차량신청 프로세스) - 프로세스 정의서 참조
 				String bizKey = dto.getDoc_no();	//신청서 번호
-				String statusCode = "GASBZ01450010";	//액티비티 코드 (차량신청 작성) - 프로세스 정의서 참조
+				String statusCode = sCode;	//액티비티 코드 (차량신청 작성) - 프로세스 정의서 참조
 				String loginUserId = dto.getEeno();	//로그인 사용자 아이디
 				String comment = null;
-				String roleCode = "GASROLE01450030";   //차량신청 담당자 역할코드
+				String roleCode = rCode;   //차량신청 담당자 역할코드
 				//역할정보
 				List<String> approveList = new ArrayList<String>();
 				List<String> managerList = new ArrayList<String>();
-				managerList.add("10000001");
+				managerList.add(adminId);
 				
 				BpmApiUtil.sendSaveTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 				
@@ -108,9 +119,9 @@ public class BusinessVehiclesManagerImpl implements BusinessVehiclesManager{
 	public int deleteBvToRequest(BgabGascbv02Dto dto) {
 		
 		// BPM API호출
-		String processCode = "P-D-005"; 	//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
+		String processCode = pCode; 	//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
 		String bizKey = dto.getDoc_no();	//신청서 번호
-		String statusCode = "GASBZ01450010";	//액티비티 코드 (명함 신청서작성) - 프로세스 정의서 참조
+		String statusCode = sCode;	//액티비티 코드 (명함 신청서작성) - 프로세스 정의서 참조
 		String loginUserId = dto.getEeno();	//로그인 사용자 아이디
 		
 		BpmApiUtil.sendDeleteAndRejectTask(processCode, bizKey, statusCode, loginUserId);
@@ -148,17 +159,17 @@ public class BusinessVehiclesManagerImpl implements BusinessVehiclesManager{
 		if(commonApproval.getResult().equals("Z")){
 			
 			// BPM API호출
-			String processCode = "P-D-005"; 	//프로세스 코드 (픽업 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (픽업 프로세스) - 프로세스 정의서 참조
 			String bizKey = reqDto.getDoc_no();	//신청서 번호
-			String statusCode = "GASBZ01450010";	//액티비티 코드 (픽업 신청서작성) - 프로세스 정의서 참조
+			String statusCode = sCode;	//액티비티 코드 (픽업 신청서작성) - 프로세스 정의서 참조
 			String loginUserId = reqDto.getEeno();	//로그인 사용자 아이디
 			String comment = null;
-			String roleCode = "GASROLE01450030";   //휴양소 담당자 역할코드
+			String roleCode = rCode;   //휴양소 담당자 역할코드
 			
 			//역할정보
 			List<String> approveList = commonApproval.getApproveList();
 			List<String> managerList = new ArrayList<String>();
-			managerList.add("10000001");
+			managerList.add(adminId);
 
 			BpmApiUtil.sendCompleteTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList);
 			message.setMessage(HncisMessageSource.getMessage("REQUEST.0000"));
@@ -181,17 +192,17 @@ public class BusinessVehiclesManagerImpl implements BusinessVehiclesManager{
 			if(cnt > 0){
 				
 				// BPM API호출
-				String processCode = "P-D-005"; 		//프로세스 코드 (차량신청 프로세스) - 프로세스 정의서 참조
+				String processCode = pCode; 		//프로세스 코드 (차량신청 프로세스) - 프로세스 정의서 참조
 				String bizKey = regDto.getDoc_no();		//신청서 번호
-				String statusCode = "GASBZ01450010";	//액티비티 코드 (차량신청서작성) - 프로세스 정의서 참조
+				String statusCode = sCode;	//액티비티 코드 (차량신청서작성) - 프로세스 정의서 참조
 				String loginUserId = regDto.getUpdr_eeno();		//로그인 사용자 아이디
 				String comment = null;
-				String roleCode = "GASROLE01450030";  	//담당자 역할코드
+				String roleCode = rCode;  	//담당자 역할코드
 				
 				//역할정보
 				List<String> approveList = new ArrayList<String>();
 				List<String> managerList = new ArrayList<String>();
-				managerList.add("10000001");
+				managerList.add(adminId);
 				
 				BpmApiUtil.sendCollectTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 				message.setMessage(HncisMessageSource.getMessage("APPROVE.0002"));
@@ -207,17 +218,17 @@ public class BusinessVehiclesManagerImpl implements BusinessVehiclesManager{
 			if(commonApproval.getResult().equals("Z")){
 				
 				// BPM API호출
-				String processCode = "P-D-005"; 		//프로세스 코드 (차량신청 프로세스) - 프로세스 정의서 참조
+				String processCode = pCode; 		//프로세스 코드 (차량신청 프로세스) - 프로세스 정의서 참조
 				String bizKey = regDto.getDoc_no();		//신청서 번호
-				String statusCode = "GASBZ01450010";	//액티비티 코드 (차량신청서작성) - 프로세스 정의서 참조
+				String statusCode = sCode;	//액티비티 코드 (차량신청서작성) - 프로세스 정의서 참조
 				String loginUserId = regDto.getUpdr_eeno();		//로그인 사용자 아이디
 				String comment = null;
-				String roleCode = "GASROLE01450030";  	//담당자 역할코드
+				String roleCode = rCode;  	//담당자 역할코드
 				
 				//역할정보
 				List<String> approveList = new ArrayList<String>();
 				List<String> managerList = new ArrayList<String>();
-				managerList.add("10000001");
+				managerList.add(adminId);
 				
 				BpmApiUtil.sendCollectTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 				message.setMessage(HncisMessageSource.getMessage("APPROVE.0002"));
@@ -252,7 +263,7 @@ public class BusinessVehiclesManagerImpl implements BusinessVehiclesManager{
 		Submit.confirmEmail(fromEeno, fromStepNm, mailAdr, "Business Vehicles");
 		
 		// BPM API호출
-		String processCode = "P-D-005"; 	//프로세스 코드 (차량신청 프로세스) - 프로세스 정의서 참조
+		String processCode = pCode; 	//프로세스 코드 (차량신청 프로세스) - 프로세스 정의서 참조
 		String bizKey = dto.getDoc_no();	//신청서 번호
 		String statusCode = "GASBZ01450030";	//액티비티 코드 (담당자확인) - 프로세스 정의서 참조
 		String loginUserId = dto.getAcpc_eeno();	//로그인 사용자 아이디
@@ -339,7 +350,7 @@ public class BusinessVehiclesManagerImpl implements BusinessVehiclesManager{
 			reqDto.setChss_no(dto.getChss_no());
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 			reqDto.setErrYn(true);
 			reqDto.setErrMsg(HncisMessageSource.getMessage("SAVE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -423,12 +434,6 @@ public class BusinessVehiclesManagerImpl implements BusinessVehiclesManager{
 			paramVal[2] = "businessVehicles";
 
 			result = FileUtil.uploadFile(req, res, paramVal);
-			System.out.println("result[0]="+result[0]);
-			System.out.println("result[1]="+result[1]);
-			System.out.println("result[2]="+result[2]);
-			System.out.println("result[3]="+result[3]);
-			System.out.println("result[4]="+result[4]);
-			System.out.println("result[5]="+result[5]);
 
 			if(result != null){
 				if(result[0] != null){
@@ -441,20 +446,16 @@ public class BusinessVehiclesManagerImpl implements BusinessVehiclesManager{
 
 			}else{
 				resultUrl = "xbv04_file.gas";
-				msg = HncisMessageSource.getMessage("FILE.0001");
+				msg = HncisMessageSource.getMessage(fileMessage);
 			}
 
 
 		}catch(Exception e){
 			resultUrl = "xbv04_file.gas";
-			msg = HncisMessageSource.getMessage("FILE.0001");
-			e.printStackTrace();
+			msg = HncisMessageSource.getMessage(fileMessage);
+			logger.error("messege", e);
 		}finally{
 			try{
-				System.out.println("getDoc_no="+bgabGascZ011Dto.getDoc_no());
-				System.out.println("getEeno="+bgabGascZ011Dto.getEeno());
-				System.out.println("getSeq="+bgabGascZ011Dto.getSeq());
-				System.out.println("msg="+msg);
 
 				String dispatcherYN = "Y";
 
@@ -468,7 +469,7 @@ public class BusinessVehiclesManagerImpl implements BusinessVehiclesManager{
 
 				return;
 			}catch(Exception e){
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 
@@ -492,10 +493,8 @@ public class BusinessVehiclesManagerImpl implements BusinessVehiclesManager{
 			try {
 				fileResult = FileUtil.deleteFile(fileInfo.getCorp_cd(), "businessVehicles", fileInfo.getOgc_fil_nm());
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
-
-			System.out.println("fileResult="+fileResult);
 		}
 
 		Integer fileDRs = businessVehiclesDao.deleteBvToFile(list);
@@ -523,7 +522,7 @@ public class BusinessVehiclesManagerImpl implements BusinessVehiclesManager{
 			Submit.returnEmail(fromEeno, fromStepNm, mailAdr,"", title, rtnText, corp_cd);
 			
 			// BPM API호출
-			String processCode = "P-D-005"; 	//프로세스 코드 (차량신청 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (차량신청 프로세스) - 프로세스 정의서 참조
 			String bizKey = dto.getDoc_no();	//신청서 번호
 			String statusCode = "GASBZ01450030";	//액티비티 코드 (당당자 확인) - 프로세스 정의서 참조
 			String loginUserId = dto.getUpdr_eeno();	//로그인 사용자 아이디
@@ -560,12 +559,12 @@ public void saveMaintenanceToFile(HttpServletRequest req, HttpServletResponse re
 
 			}else{
 				resultUrl = "xbv07_file.gas";
-				msg = HncisMessageSource.getMessage("FILE.0001");
+				msg = HncisMessageSource.getMessage(fileMessage);
 			}
 		}catch(Exception e){
 			resultUrl = "xbv07_file.gas";
-			msg = HncisMessageSource.getMessage("FILE.0001");
-			e.printStackTrace();
+			msg = HncisMessageSource.getMessage(fileMessage);
+			logger.error("messege", e);
 		}finally{
 			try{
 				String dispatcherYN = "Y";
@@ -580,7 +579,7 @@ public void saveMaintenanceToFile(HttpServletRequest req, HttpServletResponse re
 
 				return;
 			}catch(Exception e){
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 	}
@@ -603,7 +602,7 @@ public void saveMaintenanceToFile(HttpServletRequest req, HttpServletResponse re
 			try {
 				fileResult = FileUtil.deleteFile(fileInfo.getCorp_cd(), "companyCar", fileInfo.getOgc_fil_nm());
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 		Integer fileDRs = businessVehiclesDao.deleteMaintenanceToFile(bgabGascZ011IList);

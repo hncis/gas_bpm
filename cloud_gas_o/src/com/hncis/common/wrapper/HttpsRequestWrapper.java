@@ -26,7 +26,7 @@ public class HttpsRequestWrapper extends HttpServletRequestWrapper{
 		return session;
 	}
 	private void processSessionCookie (HttpSession session) {
-		if (null == response || null == session)  return;
+		if (null == response || null == session)  {return;}
 
 		Object cookieOverWritten = getAttribute("COOKIE_OVERWRITTEN_FLAG");
 		if (null == cookieOverWritten && isSecure() && isRequestedSessionIdFromCookie() && session.isNew())  {

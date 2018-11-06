@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -26,6 +28,12 @@ import com.hncis.leave.vo.BgabGasclv03Dto;
 
 @Service("leaveManagerImpl")
 public class LeaveManagerImpl implements LeaveManager{
+    private transient Log logger = LogFactory.getLog(getClass());
+
+    private static final String pCode = "P-E-006";
+    private static final String sCode = "GASBZ01560010";
+    private static final String rCode = "GASROLE01560030";
+    private static final String adminID = "10000001";
 
 	@Autowired
 	public LeaveDao leaveDao;
@@ -86,7 +94,7 @@ public class LeaveManagerImpl implements LeaveManager{
 			rtnDto.setUse_days(Integer.toString(useDays));
 			
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 		
 		
@@ -165,17 +173,17 @@ public class LeaveManagerImpl implements LeaveManager{
 			message.setMessage(HncisMessageSource.getMessage("REQUEST.0000"));
 			
 			// BPM API호출
-			String processCode = "P-E-006"; 	//프로세스 코드 (연차 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (연차 프로세스) - 프로세스 정의서 참조
 			String bizKey = keyParamDto.getDoc_no();	//신청서 번호
-			String statusCode = "GASBZ01560010";	//액티비티 코드 (연차신청서작성) - 프로세스 정의서 참조
+			String statusCode = sCode;	//액티비티 코드 (연차신청서작성) - 프로세스 정의서 참조
 			String loginUserId = keyParamDto.getEeno();	//로그인 사용자 아이디
 			String comment = null;
-			String roleCode = "GASROLE01560030";   //연차 담당자 역할코드
+			String roleCode = rCode;   //연차 담당자 역할코드
 			
 			//역할정보
 			List<String> approveList = commonApproval.getApproveList();
 			List<String> managerList = new ArrayList<String>();
-			managerList.add("10000001");
+			managerList.add(adminID);
 
 			BpmApiUtil.sendCompleteTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList);
 			
@@ -199,17 +207,17 @@ public class LeaveManagerImpl implements LeaveManager{
 			leaveDao.updateInfoLvToRequestCancel2(keyParamDto);
 			
 			// BPM API호출
-			String processCode = "P-E-006"; 			//프로세스 코드 (연차 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 			//프로세스 코드 (연차 프로세스) - 프로세스 정의서 참조
 			String bizKey = keyParamDto.getDoc_no();			//신청서 번호
-			String statusCode = "GASBZ01560010";   		//액티비티 코드 (연차신청서작성) - 프로세스 정의서 참조
+			String statusCode = sCode;   		//액티비티 코드 (연차신청서작성) - 프로세스 정의서 참조
 			String loginUserId = keyParamDto.getUpdr_eeno();	//로그인 사용자 아이디
 			String comment = null;
-			String roleCode = "GASROLE01560030";  //연차 담당자 역할코드
+			String roleCode = rCode;  //연차 담당자 역할코드
 			
 			//역할정보
 			List<String> approveList = new ArrayList<String>();
 			List<String> managerList = new ArrayList<String>();
-			managerList.add("10000001");
+			managerList.add(adminID);
 			
 			BpmApiUtil.sendCollectTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 
@@ -224,17 +232,17 @@ public class LeaveManagerImpl implements LeaveManager{
 				leaveDao.updateInfoLvToRequestCancel(keyParamDto);
 				
 				// BPM API호출
-				String processCode = "P-E-006"; 			//프로세스 코드 (연차 프로세스) - 프로세스 정의서 참조
+				String processCode = pCode; 			//프로세스 코드 (연차 프로세스) - 프로세스 정의서 참조
 				String bizKey = keyParamDto.getDoc_no();			//신청서 번호
-				String statusCode = "GASBZ01560010";   		//액티비티 코드 (연차신청서작성) - 프로세스 정의서 참조
+				String statusCode = sCode;   		//액티비티 코드 (연차신청서작성) - 프로세스 정의서 참조
 				String loginUserId = keyParamDto.getUpdr_eeno();	//로그인 사용자 아이디
 				String comment = null;
-				String roleCode = "GASROLE01560030";  //연차 담당자 역할코드
+				String roleCode = rCode;  //연차 담당자 역할코드
 				
 				//역할정보
 				List<String> approveList = new ArrayList<String>();
 				List<String> managerList = new ArrayList<String>();
-				managerList.add("10000001");
+				managerList.add(adminID);
 				
 				BpmApiUtil.sendCollectTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 
@@ -256,7 +264,7 @@ public class LeaveManagerImpl implements LeaveManager{
 			message.setCode1("Y");
 			
 			// BPM API호출
-			String processCode = "P-E-006"; 	//프로세스 코드 (연차 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (연차 프로세스) - 프로세스 정의서 참조
 			String bizKey = dto.getDoc_no();	//신청서 번호
 			String statusCode = "GASBZ01560030";	//액티비티 코드 (연차 담당자 확인) - 프로세스 정의서 참조
 			String loginUserId = dto.getAcpc_eeno();	//로그인 사용자 아이디
@@ -279,7 +287,7 @@ public class LeaveManagerImpl implements LeaveManager{
 			message.setCode1("Y");
 			
 			// BPM API호출
-			String processCode = "P-E-006"; 	//프로세스 코드 (연차 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (연차 프로세스) - 프로세스 정의서 참조
 			String bizKey = dto.getDoc_no();	//신청서 번호
 			String statusCode = "GASBZ01560030";	//액티비티 코드 (연차 담당자 확인) - 프로세스 정의서 참조
 			String loginUserId = dto.getUpdr_eeno();	//로그인 사용자 아이디
@@ -306,9 +314,9 @@ public class LeaveManagerImpl implements LeaveManager{
 			message.setCode1("Y");
 			
 			// BPM API호출
-			String processCode = "P-E-006"; 			//프로세스 코드 (연차 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 			//프로세스 코드 (연차 프로세스) - 프로세스 정의서 참조
 			String bizKey = dto.getDoc_no();			//신청서 번호
-			String statusCode = "GASBZ01560010";   		//액티비티 코드 (연차신청서작성) - 프로세스 정의서 참조
+			String statusCode = sCode;   		//액티비티 코드 (연차신청서작성) - 프로세스 정의서 참조
 			String loginUserId = dto.getUpdr_eeno();	//로그인 사용자 아이디
 	
 			BpmApiUtil.sendDeleteAndRejectTask(processCode, bizKey, statusCode, loginUserId);
@@ -448,11 +456,6 @@ public class LeaveManagerImpl implements LeaveManager{
 					
 					int chkCnt = rmDays - useDays - reqDays;
 					
-					System.out.println("rmDays:"+rmDays);
-					System.out.println("useDays:"+useDays);
-					System.out.println("reqDays:"+reqDays);
-					System.out.println("chkCnt:"+chkCnt);
-					
 					dto.setTot_days(Integer.toString(useDays+reqDays));
 					dto.setRm_days(Integer.toString(chkCnt));
 					if(chkCnt < 0){
@@ -494,17 +497,17 @@ public class LeaveManagerImpl implements LeaveManager{
 				message.setCode(dto.getDoc_no());
 				
 				// BPM API호출
-				String processCode = "P-E-006"; 	//프로세스 코드 (연차 프로세스) - 프로세스 정의서 참조
+				String processCode = pCode; 	//프로세스 코드 (연차 프로세스) - 프로세스 정의서 참조
 				String bizKey = dto.getDoc_no();	//신청서 번호
-				String statusCode = "GASBZ01560010";	//액티비티 코드 (연차신청서작성) - 프로세스 정의서 참조
+				String statusCode = sCode;	//액티비티 코드 (연차신청서작성) - 프로세스 정의서 참조
 				String loginUserId = dto.getUpdr_eeno();	//로그인 사용자 아이디
 				String comment = null;
-				String roleCode = "GASROLE01560030";  //연차 담당자 역할코드
+				String roleCode = rCode;  //연차 담당자 역할코드
 		
 				//역할정보
 				List<String> approveList = new ArrayList<String>();
 				List<String> managerList = new ArrayList<String>();
-				managerList.add("10000001");
+				managerList.add(adminID);
 				
 				BpmApiUtil.sendSaveTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 
@@ -512,7 +515,7 @@ public class LeaveManagerImpl implements LeaveManager{
 			
 			
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("SAVE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

@@ -24,6 +24,11 @@ import com.hncis.vehicleLog.vo.BgabGascvl01Dto;
 @Service("vehicleLogManagerImpl")
 public class VehicleLogManagerImpl implements VehicleLogManager{
 
+    private static final String pCode = "P-D-007";
+    private static final String sCode = "GASBZ01470010";
+    private static final String rCode = "GASROLE01470030";
+    private static final String adminID = "10000001";
+    
 	@Autowired
 	public VehicleLogDao vehicleLogDao;
 
@@ -53,16 +58,16 @@ public class VehicleLogManagerImpl implements VehicleLogManager{
 			else{
 
 				// BPM API호출
-				String processCode = "P-D-007"; 	//프로세스 코드 (운행일지 프로세스) - 프로세스 정의서 참조
+				String processCode = pCode; 	//프로세스 코드 (운행일지 프로세스) - 프로세스 정의서 참조
 				String bizKey = dto.getDoc_no();	//신청서 번호
-				String statusCode = "GASBZ01470010";	//액티비티 코드 (운행일지 작성) - 프로세스 정의서 참조
+				String statusCode = sCode;	//액티비티 코드 (운행일지 작성) - 프로세스 정의서 참조
 				String loginUserId = dto.getEeno();	//로그인 사용자 아이디
 				String comment = null;
-				String roleCode = "GASROLE01470030";   //담당자 역할코드
+				String roleCode = rCode;   //담당자 역할코드
 				//역할정보
 				List<String> approveList = new ArrayList<String>();
 				List<String> managerList = new ArrayList<String>();
-				managerList.add("10000001");
+				managerList.add(adminID);
 				
 				BpmApiUtil.sendSaveTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 				
@@ -113,9 +118,9 @@ public class VehicleLogManagerImpl implements VehicleLogManager{
 			else{
 				
 				// BPM API호출
-				String processCode = "P-D-007"; 	//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
+				String processCode = pCode; 	//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
 				String bizKey = dto.getDoc_no();	//신청서 번호
-				String statusCode = "GASBZ01470010";	//액티비티 코드 (명함 신청서작성) - 프로세스 정의서 참조
+				String statusCode = sCode;	//액티비티 코드 (명함 신청서작성) - 프로세스 정의서 참조
 				String loginUserId = dto.getEeno();	//로그인 사용자 아이디
 				
 				BpmApiUtil.sendDeleteAndRejectTask(processCode, bizKey, statusCode, loginUserId);
@@ -190,17 +195,17 @@ public class VehicleLogManagerImpl implements VehicleLogManager{
 
 		if(commonApproval.getResult().equals("Z")){
 			// BPM API호출
-			String processCode = "P-D-007"; 	//프로세스 코드 (차량신청 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (차량신청 프로세스) - 프로세스 정의서 참조
 			String bizKey = dto.getDoc_no();	//신청서 번호
-			String statusCode = "GASBZ01470010";	//액티비티 코드 (차량신청 작성) - 프로세스 정의서 참조
+			String statusCode = sCode;	//액티비티 코드 (차량신청 작성) - 프로세스 정의서 참조
 			String loginUserId = dto.getEeno();	//로그인 사용자 아이디
 			String comment = null;
-			String roleCode = "GASROLE01470030";   //담당자 역할코드
+			String roleCode = rCode;   //담당자 역할코드
 			
 			//역할정보
 			List<String> approveList = commonApproval.getApproveList();
 			List<String> managerList = new ArrayList<String>();
-			managerList.add("10000001");
+			managerList.add(adminID);
 
 			BpmApiUtil.sendCompleteTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList);
 			message.setMessage(HncisMessageSource.getMessage("REQUEST.0000"));
@@ -221,17 +226,17 @@ public class VehicleLogManagerImpl implements VehicleLogManager{
 			
 			if(cnt > 0){
 				// BPM API호출
-				String processCode = "P-D-007"; 		//프로세스 코드 (차량신청 프로세스) - 프로세스 정의서 참조
+				String processCode = pCode; 		//프로세스 코드 (차량신청 프로세스) - 프로세스 정의서 참조
 				String bizKey = dto.getDoc_no();		//신청서 번호
-				String statusCode = "GASBZ01470010";	//액티비티 코드 (차량신청서작성) - 프로세스 정의서 참조
+				String statusCode = sCode;	//액티비티 코드 (차량신청서작성) - 프로세스 정의서 참조
 				String loginUserId = dto.getUpdr_eeno();		//로그인 사용자 아이디
 				String comment = null;
-				String roleCode = "GASROLE01470030";  	//담당자 역할코드
+				String roleCode = rCode;  	//담당자 역할코드
 				
 				//역할정보
 				List<String> approveList = new ArrayList<String>();
 				List<String> managerList = new ArrayList<String>();
-				managerList.add("10000001");
+				managerList.add(adminID);
 				
 				BpmApiUtil.sendCollectTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 				
@@ -248,17 +253,17 @@ public class VehicleLogManagerImpl implements VehicleLogManager{
 
 			if(commonApproval.getResult().equals("Z")){
 				// BPM API호출
-				String processCode = "P-D-007"; 		//프로세스 코드 (차량신청 프로세스) - 프로세스 정의서 참조
+				String processCode = pCode; 		//프로세스 코드 (차량신청 프로세스) - 프로세스 정의서 참조
 				String bizKey = dto.getDoc_no();		//신청서 번호
-				String statusCode = "GASBZ01470010";	//액티비티 코드 (차량신청서작성) - 프로세스 정의서 참조
+				String statusCode = sCode;	//액티비티 코드 (차량신청서작성) - 프로세스 정의서 참조
 				String loginUserId = dto.getUpdr_eeno();		//로그인 사용자 아이디
 				String comment = null;
-				String roleCode = "GASROLE01470030";  	//담당자 역할코드
+				String roleCode = rCode;  	//담당자 역할코드
 				
 				//역할정보
 				List<String> approveList = new ArrayList<String>();
 				List<String> managerList = new ArrayList<String>();
-				managerList.add("10000001");
+				managerList.add(adminID);
 				
 				BpmApiUtil.sendCollectTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 				
@@ -274,7 +279,7 @@ public class VehicleLogManagerImpl implements VehicleLogManager{
 	public int confirmTRToRequest(BgabGascvl01Dto dto) {
 		
 		// BPM API호출
-		String processCode = "P-D-007"; 	//프로세스 코드 (차량신청 프로세스) - 프로세스 정의서 참조
+		String processCode = pCode; 	//프로세스 코드 (차량신청 프로세스) - 프로세스 정의서 참조
 		String bizKey = dto.getDoc_no();	//신청서 번호
 		String statusCode = "GASBZ01470030";	//액티비티 코드 (차량신청 담당자확인) - 프로세스 정의서 참조
 		String loginUserId = dto.getUpdr_eeno();	//로그인 사용자 아이디
@@ -290,7 +295,7 @@ public class VehicleLogManagerImpl implements VehicleLogManager{
 		try{
 			int cnt = vehicleLogDao.updateInfoVLToReject(dto);
 			// BPM API호출
-			String processCode = "P-D-007"; 	//프로세스 코드 (차량신청 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (차량신청 프로세스) - 프로세스 정의서 참조
 			String bizKey = dto.getDoc_no();	//신청서 번호
 			String statusCode = "GASBZ01470030";	//액티비티 코드 (차량신청 당당자 확인) - 프로세스 정의서 참조
 			String loginUserId = dto.getUpdr_eeno();	//로그인 사용자 아이디

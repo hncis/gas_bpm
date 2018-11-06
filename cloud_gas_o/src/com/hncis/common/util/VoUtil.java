@@ -5,6 +5,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  *  Class Name  : VoUtil.java<br/>
  *  Description : VO관련 공통 Util Class.<br/><br/>
@@ -24,6 +27,7 @@ import java.util.Set;
  */
 
 public class VoUtil {
+    private transient static Log logger = LogFactory.getLog(VoUtil.class.getClass());
 
 
 	public static Object copyMapToVo(Map map, Object obj) throws Exception {
@@ -42,7 +46,7 @@ public class VoUtil {
                     Method method = oClass.getDeclaredMethod("set"+sKey.substring(0,1).toUpperCase()+sKey.substring(1), new Class[]{new String().getClass()});
                     method.invoke(obj, new Object[]{entry.getValue()});
                 } catch(Exception ex) {
-                   System.out.println("getMethod error : " + ex.toString());
+                	logger.error("messege", ex);
                 }
             }
         }

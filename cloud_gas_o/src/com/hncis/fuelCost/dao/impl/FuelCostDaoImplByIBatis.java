@@ -8,6 +8,7 @@ import com.hncis.fuelCost.vo.BgabGascfc01Dto;
 import com.hncis.fuelCost.vo.BgabGascfc02Dto;
 
 public class FuelCostDaoImplByIBatis extends CommonDao implements FuelCostDao {
+	private static final String uncheck = "unchecked";
 	@Override
 	public int insertXfc01Info(BgabGascfc01Dto dto){
 		return super.insert("insertXfc01Info", dto);
@@ -37,7 +38,7 @@ public class FuelCostDaoImplByIBatis extends CommonDao implements FuelCostDao {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascfc01Dto> selectXfc01InfoList(BgabGascfc01Dto dto){
 		return getSqlMapClientTemplate().queryForList("selectXfc01InfoList", dto);
 	}
@@ -53,7 +54,7 @@ public class FuelCostDaoImplByIBatis extends CommonDao implements FuelCostDao {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascfc01Dto> selectXfcRequestInfoList(BgabGascfc01Dto dto){
 		return getSqlMapClientTemplate().queryForList("selectXfcRequestInfoList", dto);
 	}
@@ -64,7 +65,7 @@ public class FuelCostDaoImplByIBatis extends CommonDao implements FuelCostDao {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascfc01Dto> selectXfc04InfoList(BgabGascfc01Dto dto){
 		return getSqlMapClientTemplate().queryForList("selectXfc04InfoList", dto);
 	}
@@ -95,7 +96,7 @@ public class FuelCostDaoImplByIBatis extends CommonDao implements FuelCostDao {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascfc02Dto> selectXfc05InfoList(BgabGascfc02Dto dto){
 		return getSqlMapClientTemplate().queryForList("selectXfc05InfoList", dto);
 	}

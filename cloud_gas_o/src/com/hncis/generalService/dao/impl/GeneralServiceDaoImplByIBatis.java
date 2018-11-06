@@ -13,9 +13,10 @@ import com.hncis.generalService.vo.BgabGascgs04;
 import com.hncis.generalService.vo.BgabGascgsDto;
 
 public class GeneralServiceDaoImplByIBatis extends CommonDao implements GeneralServiceDao {
+	private static final String uncheck = "unchecked";
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<CommonCode> getGeneralServiceCombo(CommonCode code) {
 		return getSqlMapClientTemplate().queryForList("selectGeneralServiceCombo", code);
 	}
@@ -29,7 +30,7 @@ public class GeneralServiceDaoImplByIBatis extends CommonDao implements GeneralS
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascgs03> doSearchByRequestList(BgabGascgs03 gsParamVo){
 		return getSqlMapClientTemplate().queryForList("searchByXgsRequestList", gsParamVo);
 	}
@@ -93,7 +94,7 @@ public class GeneralServiceDaoImplByIBatis extends CommonDao implements GeneralS
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascgs03> getSelectByXgs02List(BgabGascgs01 gsReqVo){
 		return getSqlMapClientTemplate().queryForList("selectByXgs02List", gsReqVo);
 	}
@@ -122,13 +123,13 @@ public class GeneralServiceDaoImplByIBatis extends CommonDao implements GeneralS
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascgs03> getSelectByXgs03List(BgabGascgs01 gsReqVo){
 		return getSqlMapClientTemplate().queryForList("selectByXgs03List", gsReqVo);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascgs03> getSelectByXgs03ExcelList(BgabGascgs01 gsReqVo){
 		//return getSqlMapClientTemplate().queryForList("selectByXgs03ExcelList", gsReqVo);
 		return getSqlMapClientTemplate().queryForList("selectByXgs03List", gsReqVo);
@@ -143,7 +144,7 @@ public class GeneralServiceDaoImplByIBatis extends CommonDao implements GeneralS
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascgsDto> getSelectByXgs04List(BgabGascgsDto gsReqVo){
 		return getSqlMapClientTemplate().queryForList("selectByXgs04List", gsReqVo);
 	}
@@ -152,25 +153,25 @@ public class GeneralServiceDaoImplByIBatis extends CommonDao implements GeneralS
 	 * production management
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascgs02> getSearchByGeneralService(BgabGascgs02 gsReqVo){
 		return getSqlMapClientTemplate().queryForList("selectByGeneralService", gsReqVo);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascgs02> getSearchByGeneralService2(BgabGascgs02 gsReqVo){
 		return getSqlMapClientTemplate().queryForList("selectByGeneralService2", gsReqVo);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascgs02> getSearchByGeneralService3(BgabGascgs02 gsReqVo){
 		return getSqlMapClientTemplate().queryForList("selectByGeneralService3", gsReqVo);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascgs02> getSearchByGeneralService4(BgabGascgs02 gsReqVo){
 		return getSqlMapClientTemplate().queryForList("selectByGeneralService4", gsReqVo);
 	}
@@ -204,7 +205,7 @@ public class GeneralServiceDaoImplByIBatis extends CommonDao implements GeneralS
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascgs04> getSelectByXgs06List(BgabGascgs04 gsReqVo){
 		return getSqlMapClientTemplate().queryForList("selectByXgs06List", gsReqVo);
 	}
@@ -239,7 +240,7 @@ public class GeneralServiceDaoImplByIBatis extends CommonDao implements GeneralS
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascZ011Dto> getSelectGeneralServiceToFile(BgabGascZ011Dto bgabGascZ011Dto){
 		return getSqlMapClientTemplate().queryForList("selectGeneralServiceToFile", bgabGascZ011Dto);
 	}

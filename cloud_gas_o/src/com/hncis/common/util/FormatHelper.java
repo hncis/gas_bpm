@@ -9,8 +9,15 @@ import java.sql.Date;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public class FormatHelper {
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
+public class FormatHelper {
+    private transient static Log logger = LogFactory.getLog(FormatHelper.class.getClass());
+
+    private static final String zero3 = "000";
+    private static final String zero4 = "0000";
+    
 	private static NumberFormat nf = NumberFormat.getInstance(Locale.KOREAN);
 	private static final int MAX_SCALE = 4;
 
@@ -118,16 +125,16 @@ public class FormatHelper {
 				hpNo[1] = telNo.substring(3, 6);
 				hpNo[2] = telNo.substring(6, 10);
 			} else {
-				hpNo[0] = "000";
-				hpNo[1] = "0000";
-				hpNo[2] = "0000";
+				hpNo[0] = zero3;
+				hpNo[1] = zero4;
+				hpNo[2] = zero4;
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
-			hpNo[0] = "000";
-			hpNo[1] = "0000";
-			hpNo[2] = "0000";
+			logger.error("messege", e);
+			hpNo[0] = zero3;
+			hpNo[1] = zero4;
+			hpNo[2] = zero4;
 		}
 
 		return hpNo;
@@ -142,7 +149,7 @@ public class FormatHelper {
 		String yyyymmdd = String.valueOf(iyyyymmdd);
 
 		if (yyyymmdd.length() == 3) {
-			yyyymmdd = "000" + yyyymmdd;
+			yyyymmdd = zero3 + yyyymmdd;
 		} else if (yyyymmdd.length() == 4) {
 			yyyymmdd = "00" + yyyymmdd;
 		} else if (yyyymmdd.length() == 5) {
@@ -181,14 +188,14 @@ public class FormatHelper {
 		String yyyymmdd = String.valueOf(lyyyymmdd);
 
 		if (yyyymmdd.length() == 3) {
-			yyyymmdd = "000" + yyyymmdd;
+			yyyymmdd = zero3 + yyyymmdd;
 		} else if (yyyymmdd.length() == 4) {
 			yyyymmdd = "00" + yyyymmdd;
 		} else if (yyyymmdd.length() == 5) {
 			yyyymmdd = "0" + yyyymmdd;
 		}
 
-		if (yyyymmdd.length() == 6 && (yyyymmdd.substring(0, 2) != "19" || yyyymmdd.substring(0, 2) != "20")) {
+		if (yyyymmdd.length() == 6 && (!yyyymmdd.substring(0, 2).equals("19") || !yyyymmdd.substring(0, 2).equals("20"))) {
 			if (Integer.parseInt(yyyymmdd.substring(0, 2)) > 50) {
 				yyyymmdd = "19" + yyyymmdd;
 			} else {
@@ -216,12 +223,12 @@ public class FormatHelper {
 	 * yyyy-mm-dd -> yyyy*mm*dd yyyymmdd -> yyyy*mm*dd
 	 */
 	public static String strDate(String yyyymmdd, String separator) {
-		if (yyyymmdd.length() == 6)
+		if (yyyymmdd.length() == 6){
 			return yyyymmdd.substring(0, 4) + separator + yyyymmdd.substring(4, 6);
-		else if (yyyymmdd.length() == 8)
+		}else if (yyyymmdd.length() == 8){
 			return yyyymmdd.substring(0, 4) + separator + yyyymmdd.substring(4, 6) + separator
 					+ yyyymmdd.substring(6, 8);
-		else if (yyyymmdd.length() == 10) {
+		}else if (yyyymmdd.length() == 10) {
 			return yyyymmdd.substring(0, 4) + separator + yyyymmdd.substring(5, 7) + separator
 					+ yyyymmdd.substring(8, 10);
 		} else
@@ -235,11 +242,12 @@ public class FormatHelper {
 	public static String strDate(Date dyyyymmdd, String separator) {
 		String yyyymmdd = String.valueOf(dyyyymmdd);
 
-		if (yyyymmdd.length() == 10)
+		if (yyyymmdd.length() == 10){
 			return yyyymmdd.substring(0, 4) + separator + yyyymmdd.substring(5, 7) + separator
 					+ yyyymmdd.substring(8, 10);
-		else
+		}else{
 			return yyyymmdd;
+		}
 	}
 
 	/**
@@ -448,14 +456,15 @@ public class FormatHelper {
 	 * hh*mm*ss hhmmss -> hh*mm*ss
 	 */
 	public static String strTime(String hhmmss, String separator) {
-		if (hhmmss.length() == 4)
+		if (hhmmss.length() == 4){
 			return hhmmss.substring(0, 2) + separator + hhmmss.substring(2, 4);
-		else if (hhmmss.length() == 6)
+		}else if (hhmmss.length() == 6){
 			return hhmmss.substring(0, 2) + separator + hhmmss.substring(2, 4) + separator + hhmmss.substring(4, 6);
-		else if (hhmmss.length() == 8)
+		}else if (hhmmss.length() == 8){
 			return hhmmss.substring(0, 2) + separator + hhmmss.substring(3, 5) + separator + hhmmss.substring(6, 8);
-		else
+		}else{
 			return hhmmss;
+		}
 	}
 
 	public static long getTrunc(String s, int n) {

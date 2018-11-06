@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.axis.utils.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -32,6 +34,9 @@ import com.hncis.officeSupplies.vo.BgabGascosDto;
 
 @Service("officeSuppliesManagerImpl")
 public class OfficeSuppliesManagerImpl implements OfficeSuppliesManager{
+    private transient Log logger = LogFactory.getLog(getClass());
+
+    private static final String pCode = "P-C-003";
 	@Autowired
 	public OfficeSuppliesDao officeSuppliesDao;
 
@@ -63,7 +68,7 @@ public class OfficeSuppliesManagerImpl implements OfficeSuppliesManager{
 			rs = officeSuppliesDao.doInsertByRequest(gsSaveVo);
 			if(rs>0){
 				// BPM API호출
-				String processCode = "P-C-003"; 	//프로세스 코드 (사무용품 프로세스) - 프로세스 정의서 참조
+				String processCode = pCode; 	//프로세스 코드 (사무용품 프로세스) - 프로세스 정의서 참조
 				String bizKey = gsSaveVo.getDoc_no();	//신청서 번호
 				String statusCode = "GASBZ01330010";	//액티비티 코드 (사무용품신청서작성) - 프로세스 정의서 참조
 				String loginUserId = gsSaveVo.getEeno();	//로그인 사용자 아이디
@@ -90,7 +95,7 @@ public class OfficeSuppliesManagerImpl implements OfficeSuppliesManager{
 		if(rs>0){
 			
 			// BPM API호출
-			String processCode = "P-C-003"; 	//프로세스 코드 (사무용품 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (사무용품 프로세스) - 프로세스 정의서 참조
 			String bizKey = gsDelVo.getDoc_no();	//신청서 번호
 			String statusCode = "GASBZ01330010";	//액티비티 코드 (사무용품신청서작성) - 프로세스 정의서 참조
 			String loginUserId = gsDelVo.getUpdr_eeno();	//로그인 사용자 아이디
@@ -134,7 +139,7 @@ public class OfficeSuppliesManagerImpl implements OfficeSuppliesManager{
 		if(rs>0){
 			
 			// BPM API호출
-			String processCode = "P-C-003"; 	//프로세스 코드 (사무용품 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (사무용품 프로세스) - 프로세스 정의서 참조
 			String bizKey = gsReqVo.getDoc_no();	//신청서 번호
 			String statusCode = "GASBZ01330010";	//액티비티 코드 (사무용품신청서작성) - 프로세스 정의서 참조
 			String loginUserId = gsReqVo.getUpdr_eeno();		//로그인 사용자 아이디
@@ -159,7 +164,7 @@ public class OfficeSuppliesManagerImpl implements OfficeSuppliesManager{
 		
 		if(rs>0 && isAllConfirm ==0){
 			// BPM API호출
-			String processCode = "P-C-003"; 	//프로세스 코드 (사무용품 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (사무용품 프로세스) - 프로세스 정의서 참조
 			String bizKey = gsReqVo.getDoc_no();	//신청서 번호
 			String statusCode = "GASBZ01330030";	//액티비티 코드 (사무용품 담당자확인) - 프로세스 정의서 참조
 			String loginUserId = gsReqVo.getUpdr_eeno();	//로그인 사용자 아이디
@@ -344,7 +349,7 @@ public class OfficeSuppliesManagerImpl implements OfficeSuppliesManager{
 		try {
 			o_PoInfo = rfc.doPoCreate(poParamVo);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 		return o_PoInfo;
 	}
@@ -358,7 +363,7 @@ public class OfficeSuppliesManagerImpl implements OfficeSuppliesManager{
 		try {
 			o_PoInfo = rfc.doPoDelete(poParamVo);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 		return o_PoInfo;
 	}
@@ -369,7 +374,7 @@ public class OfficeSuppliesManagerImpl implements OfficeSuppliesManager{
 		for(BgabGascos03 vo : gsModifyVo){
 			
 			// BPM API호출
-			String processCode = "P-C-003"; 	//프로세스 코드 (사무용품 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (사무용품 프로세스) - 프로세스 정의서 참조
 			String bizKey = vo.getDoc_no();	//신청서 번호
 			String statusCode = "GASBZ01330030";	//액티비티 코드 (사무용품 담당자확인) - 프로세스 정의서 참조
 			String loginUserId = vo.getUpdr_eeno();	//로그인 사용자 아이디		
@@ -418,7 +423,7 @@ public class OfficeSuppliesManagerImpl implements OfficeSuppliesManager{
 		}catch(Exception e){
 			resultUrl = "xos05_img_file.gas";
 			msg = HncisMessageSource.getMessage("FILE.0001");
-			e.printStackTrace();
+			logger.error("messege", e);
 		}finally{
 			try{
 				String dispatcherYN = "Y";
@@ -433,7 +438,7 @@ public class OfficeSuppliesManagerImpl implements OfficeSuppliesManager{
 
 				return;
 			}catch(Exception e){
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 	}
@@ -456,7 +461,7 @@ public class OfficeSuppliesManagerImpl implements OfficeSuppliesManager{
 			try {
 				fileResult = FileUtil.deleteImgFile(fileInfo.getCorp_cd(), "officeSupplies", fileInfo.getOgc_fil_nm());
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 		Integer fileDRs = officeSuppliesDao.deleteOfficeSuppliesToFile(bgabGascZ011IList);

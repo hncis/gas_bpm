@@ -47,8 +47,9 @@ public class ExceptionHandler {
     	}
     	
         IHncisException hncisException = null;
-        if(t instanceof IHncisException)
+        if(t instanceof IHncisException){
         	hncisException = (IHncisException)t;
+        }
         else
         {
             SQLException sqlException = extractSQLException(t);
@@ -59,8 +60,10 @@ public class ExceptionHandler {
                 hncisException = new HncisException(sqlErrorCode,sqlException.getMessage(),t);
             }
             else
+            	{
             	hncisException = new HncisException(t);
             //hncisException = new HmbException(t);//sql Exception code와 message를 사용자에게 보여이려면 이곳의 주석을 달어라.
+            	}
         }
         if(!hncisException.isWriteLog())
         {
@@ -85,17 +88,23 @@ public class ExceptionHandler {
             {
                 sqlException = (SQLException)t;
                 if(sqlException.getCause() != null)
+                {
                     sqlException = extractSQLException(t.getCause());
+                }
                 else
                 {
                     if(sqlException.getNextException() != null)
+                    {
                         sqlException = extractSQLException((Throwable)sqlException.getNextException());
+                    }
                 }
             }
             else
             {
                 if(t.getCause() != null)
+                {
                     sqlException = extractSQLException(t.getCause());
+                }
             }
         }
        

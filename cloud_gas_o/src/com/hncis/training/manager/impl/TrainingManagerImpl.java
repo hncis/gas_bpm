@@ -23,6 +23,8 @@ import com.hncis.training.vo.BgabGasctr01;
 
 @Service("trainingManagerImpl")
 public class TrainingManagerImpl implements TrainingManager{
+    private static final String pCode = "P-B-005";
+    private static final String sCode = "GASBZ01250010";
 
 	@Autowired
 	public TrainingDao trainingDao;
@@ -45,9 +47,9 @@ public class TrainingManagerImpl implements TrainingManager{
 	public Object deleteInfoTRToRequest(BgabGasctr01 dto) {
 		
 		// BPM API호출
-		String processCode = "P-B-005"; 	//프로세스 코드 (교육신청 프로세스) - 프로세스 정의서 참조
+		String processCode = pCode; 	//프로세스 코드 (교육신청 프로세스) - 프로세스 정의서 참조
 		String bizKey = dto.getDoc_no();	//신청서 번호
-		String statusCode = "GASBZ01250010";	//액티비티 코드 (교육신청신청서작성) - 프로세스 정의서 참조
+		String statusCode = sCode;	//액티비티 코드 (교육신청신청서작성) - 프로세스 정의서 참조
 		String loginUserId = dto.getUpdr_eeno();	//로그인 사용자 아이디
 		
 		BpmApiUtil.sendDeleteAndRejectTask(processCode, bizKey, statusCode, loginUserId);
@@ -105,9 +107,9 @@ public class TrainingManagerImpl implements TrainingManager{
 			message.setMessage(HncisMessageSource.getMessage("REQUEST.0000"));
 
 			// BPM API호출
-			String processCode = "P-B-005"; 	//프로세스 코드 (교육신청 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (교육신청 프로세스) - 프로세스 정의서 참조
 			String bizKey = dto.getDoc_no();	//신청서 번호
-			String statusCode = "GASBZ01250010";	//액티비티 코드 (교육신청신청서작성) - 프로세스 정의서 참조
+			String statusCode = sCode;	//액티비티 코드 (교육신청신청서작성) - 프로세스 정의서 참조
 			String loginUserId = dto.getEeno();	//로그인 사용자 아이디
 			String comment = null;
 			String roleCode = "GASROLE01250030";   //교육신청 담당자 역할코드
@@ -139,9 +141,9 @@ public class TrainingManagerImpl implements TrainingManager{
 			if(cnt > 0){
 				
 				// BPM API호출
-				String processCode = "P-B-005"; 	//프로세스 코드 (교육신청 프로세스) - 프로세스 정의서 참조
+				String processCode = pCode; 	//프로세스 코드 (교육신청 프로세스) - 프로세스 정의서 참조
 				String bizKey = dto.getDoc_no();	//신청서 번호
-				String statusCode = "GASBZ01250010";	//액티비티 코드 (교육신청신청서작성) - 프로세스 정의서 참조
+				String statusCode = sCode;	//액티비티 코드 (교육신청신청서작성) - 프로세스 정의서 참조
 				String loginUserId = dto.getUpdr_eeno();	//로그인 사용자 아이디
 				String roleCode = "GASROLE01210030";  	//교육신청 담당자 역할코드
 				
@@ -166,9 +168,9 @@ public class TrainingManagerImpl implements TrainingManager{
 			if(commonApproval.getResult().equals("Z")){
 				
 				// BPM API호출
-				String processCode = "P-B-005"; 	//프로세스 코드 (교육신청 프로세스) - 프로세스 정의서 참조
+				String processCode = pCode; 	//프로세스 코드 (교육신청 프로세스) - 프로세스 정의서 참조
 				String bizKey = dto.getDoc_no();	//신청서 번호
-				String statusCode = "GASBZ01250010";	//액티비티 코드 (교육신청신청서작성) - 프로세스 정의서 참조
+				String statusCode = sCode;	//액티비티 코드 (교육신청신청서작성) - 프로세스 정의서 참조
 				String loginUserId = dto.getUpdr_eeno();	//로그인 사용자 아이디
 				String roleCode = "GASROLE01250030";  	//교육신청 담당자 역할코드
 				
@@ -204,7 +206,7 @@ public class TrainingManagerImpl implements TrainingManager{
 			message.setCode1("Y");
 			
 			// BPM API호출
-			String processCode = "P-B-005"; 	//프로세스 코드 (교육신청 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (교육신청 프로세스) - 프로세스 정의서 참조
 			String bizKey = dto.getDoc_no();	//신청서 번호
 			String statusCode = "GASBZ01250030";	//액티비티 코드 (교육신청신청서작성) - 프로세스 정의서 참조
 			String loginUserId = dto.getUpdr_eeno();	//로그인 사용자 아이디
@@ -232,7 +234,7 @@ public class TrainingManagerImpl implements TrainingManager{
 			message.setCode1("Y");
 			
 			// BPM API호출
-			String processCode = "P-B-005"; 	//프로세스 코드 (교육신청 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (교육신청 프로세스) - 프로세스 정의서 참조
 			String bizKey = dto.getDoc_no();	//신청서 번호
 			String statusCode = "GASBZ01250030";	//액티비티 코드 (교육신청 담당자확인) - 프로세스 정의서 참조
 			String loginUserId = dto.getUpdr_eeno();	//로그인 사용자 아이디

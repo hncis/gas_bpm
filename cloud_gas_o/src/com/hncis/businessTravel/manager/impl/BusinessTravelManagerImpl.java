@@ -55,9 +55,14 @@ import com.hncis.common.vo.RfcPoCreateVo;
 import com.hncis.system.dao.SystemDao;
 import com.hncis.system.vo.BgabGascz014Dto;
 import com.hncis.system.vo.BgabGascz016Dto;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 @Service("businessTravelManagerImpl")
 public class BusinessTravelManagerImpl implements BusinessTravelManager{
+
+    private transient Log logger = LogFactory.getLog(getClass());
+    
 	@Autowired
 	public BusinessTravelDao businessTravelDao;
 
@@ -66,6 +71,20 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 
 	@Autowired
 	public SystemDao systemDao;
+
+	private static final String gubunAb = "PT001";
+	private static final String gubunDo = "PT002";
+	private static final String pCode = "P-D-001";
+	private static final String sCode = "GASBZ01410010";
+	private static final String rCode = "GASROLE01410030";
+	private static final String pCode2 = "P-D-002";
+	private static final String sCode2 = "GASBZ01420010";
+	private static final String rCode2 = "GASROLE01420030";
+	private static final String adminId = "10000001";
+	private static final String fileName = "businessTravel";
+	private static final String fileMessage = "FILE.0001";
+	private static final String orgCode = "H301";
+	private static final String descCancel = "cancel";
 
 	@Override
 	public int insertBTToRequest(BgabGascbt01 bsicInfo, List<BgabGascbt02> travelerList, List<BgabGascbt03> scheduleList){
@@ -111,14 +130,14 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 			String processCode = ""; 	//프로세스 코드 (출장 신청 프로세스) - 프로세스 정의서 참조
 			String statusCode = "";	//액티비티 코드 (출장신청서작성) - 프로세스 정의서 참조
 			String roleCode = "";   //담당자 역할코드
-			if(bgabGascbt01.getDom_abrd_scn_cd().equals("PT001")){
-				processCode = "P-D-002"; // 해외
-				statusCode = "GASBZ01420010";	//액티비티 코드 (출장신청서작성) - 프로세스 정의서 참조
-				roleCode = "GASROLE01420030";   //담당자 역할코드
+			if(bgabGascbt01.getDom_abrd_scn_cd().equals(gubunAb)){
+				processCode = pCode2; // 해외
+				statusCode = sCode2;	//액티비티 코드 (출장신청서작성) - 프로세스 정의서 참조
+				roleCode = rCode2;   //담당자 역할코드
 			}else{
-				processCode = "P-D-001"; // 국내
-				statusCode = "GASBZ01410010";	//액티비티 코드 (출장신청서작성) - 프로세스 정의서 참조
-				roleCode = "GASROLE01410030";   //담당자 역할코드
+				processCode = pCode; // 국내
+				statusCode = sCode;	//액티비티 코드 (출장신청서작성) - 프로세스 정의서 참조
+				roleCode = rCode;   //담당자 역할코드
 			}
 			String bizKey = bgabGascbt01.getDoc_no();	//신청서 번호
 			String loginUserId = bgabGascbt01.getEeno();	//로그인 사용자 아이디
@@ -126,7 +145,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 			//역할정보
 			List<String> approveList = new ArrayList<String>();
 			List<String> managerList = new ArrayList<String>();
-			managerList.add("10000001");
+			managerList.add(adminId);
 			
 			BpmApiUtil.sendSaveTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 		}
@@ -175,14 +194,14 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 			String processCode = ""; 	//프로세스 코드 (출장 신청 프로세스) - 프로세스 정의서 참조
 			String statusCode = "";	//액티비티 코드 (출장신청서작성) - 프로세스 정의서 참조
 			String roleCode = "";   //담당자 역할코드
-			if(bsicInfo.getDom_abrd_scn_cd().equals("PT001")){
-				processCode = "P-D-002"; // 해외
-				statusCode = "GASBZ01420010";	//액티비티 코드 (출장신청서작성) - 프로세스 정의서 참조
-				roleCode = "GASROLE01420030";   //담당자 역할코드
+			if(bsicInfo.getDom_abrd_scn_cd().equals(gubunAb)){
+				processCode = pCode2; // 해외
+				statusCode = sCode2;	//액티비티 코드 (출장신청서작성) - 프로세스 정의서 참조
+				roleCode = rCode2;   //담당자 역할코드
 			}else{
-				processCode = "P-D-001"; // 국내
-				statusCode = "GASBZ01410010";	//액티비티 코드 (출장신청서작성) - 프로세스 정의서 참조
-				roleCode = "GASROLE01410030";   //담당자 역할코드
+				processCode = pCode; // 국내
+				statusCode = sCode;	//액티비티 코드 (출장신청서작성) - 프로세스 정의서 참조
+				roleCode = rCode;   //담당자 역할코드
 			}
 			String bizKey = bsicInfo.getDoc_no();	//신청서 번호
 			String loginUserId = bsicInfo.getEeno();	//로그인 사용자 아이디
@@ -313,7 +332,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 		try{
 			paramVal[0] = "file_name";
 			paramVal[1] = "old_file_name";
-			paramVal[2] = "businessTravel";
+			paramVal[2] = fileName;
 
 			result = FileUtil.uploadFile(req, res, paramVal);
 
@@ -328,12 +347,12 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 
 			}else{
 				//resultUrl = "xbt01_file.gas";
-				msg = HncisMessageSource.getMessage("FILE.0001");
+				msg = HncisMessageSource.getMessage(fileMessage);
 			}
 		}catch(Exception e){
 			//resultUrl = "xbt01_file.gas";
-			msg = HncisMessageSource.getMessage("FILE.0001");
-			e.printStackTrace();
+			msg = HncisMessageSource.getMessage(fileMessage);
+			logger.error("messege", e);
 		}finally{
 			try{
 				String dispatcherYN = "Y";
@@ -348,7 +367,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 
 				return;
 			}catch(Exception e){
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 	}
@@ -366,7 +385,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 		try{
 			paramVal[0] = "file_name";
 			paramVal[1] = "old_file_name";
-			paramVal[2] = "businessTravel";
+			paramVal[2] = fileName;
 
 			result = FileUtil.uploadFile(req, res, paramVal);
 
@@ -381,16 +400,14 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 
 			}else{
 				//resultUrl = "xbt01_file.gas";
-				msg = HncisMessageSource.getMessage("FILE.0001");
+				msg = HncisMessageSource.getMessage(fileMessage);
 			}
 		}catch(Exception e){
 			//resultUrl = "xbt01_file.gas";
-			msg = HncisMessageSource.getMessage("FILE.0001");
-			e.printStackTrace();
+			msg = HncisMessageSource.getMessage(fileMessage);
+			logger.error("messege", e);
 		}finally{
 			try{
-
-				System.out.println("======== resultUrl : "+resultUrl);
 
 				String dispatcherYN = "Y";
 				req.setAttribute("hid_doc_no",  bgabGascZ011Dto.getDoc_no());
@@ -404,7 +421,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 
 				return;
 			}catch(Exception e){
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 	}
@@ -422,7 +439,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 		try{
 			paramVal[0] = "file_name";
 			paramVal[1] = "old_file_name";
-			paramVal[2] = "businessTravel";
+			paramVal[2] = fileName;
 
 			result = FileUtil.uploadFile(req, res, paramVal);
 
@@ -437,16 +454,14 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 
 			}else{
 				//resultUrl = "xbt01_file.gas";
-				msg = HncisMessageSource.getMessage("FILE.0001");
+				msg = HncisMessageSource.getMessage(fileMessage);
 			}
 		}catch(Exception e){
 			//resultUrl = "xbt01_file.gas";
-			msg = HncisMessageSource.getMessage("FILE.0001");
-			e.printStackTrace();
+			msg = HncisMessageSource.getMessage(fileMessage);
+			logger.error("messege", e);
 		}finally{
 			try{
-
-				System.out.println("======== resultUrl : "+resultUrl);
 
 				String dispatcherYN = "Y";
 				req.setAttribute("hid_doc_no",  bgabGascZ011Dto.getDoc_no());
@@ -460,7 +475,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 
 				return;
 			}catch(Exception e){
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 	}
@@ -481,9 +496,9 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 		for(int i=0; i<bgabGascZ011IList.size(); i++){
 			BgabGascZ011Dto fileInfo = bgabGascZ011IList.get(i);
 			try {
-				fileResult = FileUtil.deleteFile(fileInfo.getCorp_cd(), "businessTravel", fileInfo.getOgc_fil_nm());
+				fileResult = FileUtil.deleteFile(fileInfo.getCorp_cd(), fileName, fileInfo.getOgc_fil_nm());
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 		Integer fileDRs = businessTravelDao.deleteBTToFile(bgabGascZ011IList);
@@ -521,14 +536,14 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 			String processCode = ""; 	//프로세스 코드 (출장 신청 프로세스) - 프로세스 정의서 참조
 			String statusCode = "";	//액티비티 코드 (출장 신청서작성) - 프로세스 정의서 참조
 			String roleCode = "";   //담당자 역할코드
-			if(btReqDto.getDom_abrd_scn_cd().equals("PT001")){
-				processCode = "P-D-002"; // 해외
-				statusCode = "GASBZ01420010";	//액티비티 코드 (출장 신청서작성) - 프로세스 정의서 참조
-				roleCode = "GASROLE01420030";   //담당자 역할코드
+			if(btReqDto.getDom_abrd_scn_cd().equals(gubunAb)){
+				processCode = pCode2; // 해외
+				statusCode = sCode2;	//액티비티 코드 (출장 신청서작성) - 프로세스 정의서 참조
+				roleCode = rCode2;   //담당자 역할코드
 			}else{
-				processCode = "P-D-001"; // 국내
-				statusCode = "GASBZ01410010";	//액티비티 코드 (출장 신청서작성) - 프로세스 정의서 참조
-				roleCode = "GASROLE01410030";   //담당자 역할코드
+				processCode = pCode; // 국내
+				statusCode = sCode;	//액티비티 코드 (출장 신청서작성) - 프로세스 정의서 참조
+				roleCode = rCode;   //담당자 역할코드
 			}
 			String bizKey = btReqDto.getDoc_no();	//신청서 번호
 			String loginUserId = btReqDto.getEeno();	//로그인 사용자 아이디
@@ -537,7 +552,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 			//역할정보
 			List<String> approveList = commonApproval.getApproveList();
 			List<String> managerList = new ArrayList<String>();
-			managerList.add("10000001");
+			managerList.add(adminId);
 
 			BpmApiUtil.sendCompleteTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList);
 			
@@ -569,14 +584,14 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 				String processCode = ""; 	//프로세스 코드 (출장 신청 프로세스) - 프로세스 정의서 참조
 				String statusCode = "";	//액티비티 코드 (출장 신청서작성) - 프로세스 정의서 참조
 				String roleCode = "";  	//담당자 역할코드
-				if(btReqDto.getDom_abrd_scn_cd().equals("PT001")){
-					processCode = "P-D-002"; // 해외
-					statusCode = "GASBZ01420010";	//액티비티 코드 (출장 신청서작성) - 프로세스 정의서 참조
-					roleCode = "GASROLE01420030";  	//담당자 역할코드
+				if(btReqDto.getDom_abrd_scn_cd().equals(gubunAb)){
+					processCode = pCode2; // 해외
+					statusCode = sCode2;	//액티비티 코드 (출장 신청서작성) - 프로세스 정의서 참조
+					roleCode = rCode2;  	//담당자 역할코드
 				}else{
-					processCode = "P-D-001"; // 국내
-					statusCode = "GASBZ01410010";	//액티비티 코드 (출장 신청서작성) - 프로세스 정의서 참조
-					roleCode = "GASROLE01410030";  	//담당자 역할코드
+					processCode = pCode; // 국내
+					statusCode = sCode;	//액티비티 코드 (출장 신청서작성) - 프로세스 정의서 참조
+					roleCode = rCode;  	//담당자 역할코드
 				}
 				String bizKey = btReqDto.getDoc_no();		//신청서 번호
 				String loginUserId = btReqDto.getUpdr_eeno();		//로그인 사용자 아이디
@@ -585,7 +600,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 				//역할정보
 				List<String> approveList = new ArrayList<String>();
 				List<String> managerList = new ArrayList<String>();
-				managerList.add("10000001");
+				managerList.add(adminId);
 				
 				BpmApiUtil.sendCollectTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 				
@@ -605,14 +620,14 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 				String processCode = ""; 	//프로세스 코드 (출장 신청 프로세스) - 프로세스 정의서 참조
 				String statusCode = "";	//액티비티 코드 (출장 신청서작성) - 프로세스 정의서 참조
 				String roleCode = "";  	//담당자 역할코드
-				if(btReqDto.getDom_abrd_scn_cd().equals("PT001")){
-					processCode = "P-D-002"; // 해외
-					statusCode = "GASBZ01420010";	//액티비티 코드 (출장 신청서작성) - 프로세스 정의서 참조
-					roleCode = "GASROLE01420030";  	//담당자 역할코드
+				if(btReqDto.getDom_abrd_scn_cd().equals(gubunAb)){
+					processCode = pCode2; // 해외
+					statusCode = sCode2;	//액티비티 코드 (출장 신청서작성) - 프로세스 정의서 참조
+					roleCode = rCode2;  	//담당자 역할코드
 				}else{
-					processCode = "P-D-001"; // 국내
-					statusCode = "GASBZ01410010";	//액티비티 코드 (출장 신청서작성) - 프로세스 정의서 참조
-					roleCode = "GASROLE01410030";  	//담당자 역할코드
+					processCode = pCode; // 국내
+					statusCode = sCode;	//액티비티 코드 (출장 신청서작성) - 프로세스 정의서 참조
+					roleCode = rCode;  	//담당자 역할코드
 				}
 				String bizKey = btReqDto.getDoc_no();		//신청서 번호
 				String loginUserId = btReqDto.getUpdr_eeno();		//로그인 사용자 아이디
@@ -621,7 +636,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 				//역할정보
 				List<String> approveList = new ArrayList<String>();
 				List<String> managerList = new ArrayList<String>();
-				managerList.add("10000001");
+				managerList.add(adminId);
 				
 				BpmApiUtil.sendCollectTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 				
@@ -661,12 +676,12 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 				// BPM API호출
 				String processCode = ""; 	//프로세스 코드 (출장 신청 프로세스) - 프로세스 정의서 참조
 				String roleCode = "";   //담당자 역할코드
-				if(bgabGascbt01.getDom_abrd_scn_cd().equals("PT001")){
-					processCode = "P-D-002"; // 해외
-					roleCode = "GASROLE01420030";   //담당자 역할코드
+				if(bgabGascbt01.getDom_abrd_scn_cd().equals(gubunAb)){
+					processCode = pCode2; // 해외
+					roleCode = rCode2;   //담당자 역할코드
 				}else{
-					processCode = "P-D-001"; // 국내
-					roleCode = "GASROLE01410030";   //담당자 역할코드
+					processCode = pCode; // 국내
+					roleCode = rCode;   //담당자 역할코드
 				}
 				String bizKey = bgabGascbt01.getDoc_no();	//신청서 번호
 				String statusCode = "";
@@ -675,16 +690,16 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 				List<String> approveList = new ArrayList<String>();
 				List<String> managerList = new ArrayList<String>();
 				if(commonApproval.getApproveList() == null){
-					approveList.add("10000001");
+					approveList.add(adminId);
 				}else{
 					approveList = commonApproval.getApproveList();
 				}
-				managerList.add("10000001");
+				managerList.add(adminId);
 				
 				if(bgabGascbt01.getMode().equals("confirm3")){ // 1차 확정
 					// BPM API호출
 					
-					if(bgabGascbt01.getDom_abrd_scn_cd().equals("PT001")){
+					if(bgabGascbt01.getDom_abrd_scn_cd().equals(gubunAb)){
 						statusCode = "GASBZ01420030";	// 해외
 					}else{
 						statusCode = "GASBZ01410030";	// 국내
@@ -694,7 +709,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 					BpmApiUtil.sendCompleteTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList);
 				}else if(bgabGascbt01.getMode().equals("afterCal")){ // 후정산
 					// BPM API호출
-					if(bgabGascbt01.getDom_abrd_scn_cd().equals("PT001")){
+					if(bgabGascbt01.getDom_abrd_scn_cd().equals(gubunAb)){
 						statusCode = "GASBZ01420040";	// 해외
 					}else{
 						statusCode = "GASBZ01410040";	// 국내
@@ -704,7 +719,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 					BpmApiUtil.sendCompleteTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList);
 				}else if(bgabGascbt01.getMode().equals("confirm")){ // 2차 확정
 					// BPM API호출
-					if(bgabGascbt01.getDom_abrd_scn_cd().equals("PT001")){
+					if(bgabGascbt01.getDom_abrd_scn_cd().equals(gubunAb)){
 						statusCode = "GASBZ01420050";	// 해외
 					}else{
 						statusCode = "GASBZ01410050";	// 국내
@@ -822,7 +837,6 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 
 		NumberFormat df = new DecimalFormat("#.00");
 
-		System.out.println("Debug01");
 		for(int i=0; i<travelerList.size(); i++){
 
 			List<BgabGascbt04> reportCardList 	= new ArrayList<BgabGascbt04>();
@@ -831,7 +845,6 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 			List<BgabGascbt04> tempCashList 	= new ArrayList<BgabGascbt04>();
 			List<BgabGascbt04> tempReportList = businessTravelDao.getSelectBTToReport(travelerList.get(i));
 
-			System.out.println("Debug02");
 
 			for(int j=0; j<tempReportList.size(); j++){
 				if(StringUtil.isNullToString(tempReportList.get(j).getStl_way_cd()).equals("BT001")){			// CARD
@@ -841,8 +854,6 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 				}
 			}
 
-			System.out.println("Debug03");
-
 			for(int j=0; j<reportCardList.size(); j++){
 				BgabGascbt04 cardInfo = businessTravelDao.getSelectBTToReportInfo(reportCardList.get(j));
 				reportCardList.get(j).setArsl_refl_yn("Y");
@@ -851,8 +862,6 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 					totalCard += Double.parseDouble(cardInfo.getNatv_curr_amt());
 				}
 			}
-
-			System.out.println("Debug04 reportCashList.size="+reportCashList.size());
 
 			try{
 				for(int j=0; j<reportCashList.size(); j++){
@@ -864,9 +873,6 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 					}
 
 				}
-
-
-				System.out.println("Debug05");
 
 				for(int j=0; j<tempCardList.size(); j++){
 					CommonSap excelMerge = new CommonSap();
@@ -886,12 +892,8 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 					excelMerge.setHeader11(df.format(Double.parseDouble(tempCardList.get(j).getNatv_curr_amt())));						// Amount
 					excelMergeList.add(excelMerge);
 				}
-
-				System.out.println("Debug06");
 				businessTravelDao.updateBTToReportBySapYn(reportCardList);
 
-				System.out.println("Debug07");
-				System.out.println("tempCashList.size()======"+tempCashList.size());
 
 				for(int j=0; j<tempCashList.size(); j++){
 					CommonSap excelMerge = new CommonSap();
@@ -912,8 +914,6 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 				}
 				businessTravelDao.updateBTToReportBySapYn(reportCashList);
 
-				System.out.println("Debug08");
-
 				BgabGascbt04 travelerInfo = new BgabGascbt04();
 				boolean flagChk = false;
 
@@ -932,7 +932,6 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 					travelerInfo.setEeno("");
 					flagChk = false;
 				}
-				System.out.println("Debug09");
 
 				if(flagChk){
 					int NCnt = Integer.parseInt(businessTravelDao.getSelectCountBTToReportBySapYn(travelerInfo));
@@ -947,9 +946,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 			}catch(Exception e){
 				e.printStackTrace();
 			}
-			System.out.println("excelMergeList="+excelMergeList.size());
 		}
-		System.out.println("excelMergeList(total)======:"+excelMergeList.size());
 		return excelMergeList;
 	}
 
@@ -1186,7 +1183,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 //				businessTravelDao.updateTravelerTotBudget(travelerList.get(i));
 //			}
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 		if(chkBudget){
 			message.setResult("Z");
@@ -1258,7 +1255,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 		try {
 			o_BudgetInfo = rfc.getResult(i_BudgetInfo);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 
 		if(StringUtil.isNullToString(bgabGascbt02.getBudg_type()).equals("D")){
@@ -1347,7 +1344,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 							Submit.confirmEmail(fromEeno, fromStepNm, mailAdr, "Business Travel");
 						}
 					} catch (SessionException e) {
-						e.printStackTrace();
+						logger.error("messege", e);
 					}
 				}
 			}
@@ -1683,7 +1680,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 			destFilePath = temp_path+"/temp/"+bgabGascbt02.getDoc_no()+bgabGascbt02.getEeno()+".xls";
         	ExcelTemplat.createXlsFile(realFilePath, destFilePath, map);
 	    } catch (Exception e) {
-	       e.printStackTrace();
+			logger.error("messege", e);
 	    }
 		return true;
 	}
@@ -1844,7 +1841,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 						i_PoInfo.setI_date(CurrentDateTime.getDate());
 						i_PoInfo.setI_vendor_code(param.get(z).getVendor_cd());		// mapping
 						i_PoInfo.setI_vendor_name(vendorNm);		// mapping
-						i_PoInfo.setI_pur_org_code("H301");
+						i_PoInfo.setI_pur_org_code(orgCode);
 						i_PoInfo.setI_pur_group("B11");
 						i_PoInfo.setI_wrkplc_cd(workPlace.getXusr_plac_work());			// Piracicaba, São Paulo
 						if("O".equals(param.get(z).getH_gubn())){
@@ -1859,7 +1856,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 						i_PoInfo.setI_price(Double.toString(param.get(z).getApl_xr()));
 						i_PoInfo.setI_delivery_date(d.getMonth(d.getDate(), 1));
 						i_PoInfo.setI_cost_cd(param.get(z).getCost_cd());
-						i_PoInfo.setI_company_code("H301");
+						i_PoInfo.setI_company_code(orgCode);
 
 						if("D".equals(budg)){
 							i_PoInfo.setI_account_category("K");
@@ -1891,7 +1888,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 							if(!"".equals(StringUtil.isNullToString(totInfo.get(0).getPo_no(),""))){
 								d_PoInfo.setI_date(CurrentDateTime.getDate());
 								d_PoInfo.setI_po_no(totInfo.get(0).getPo_no());
-								d_PoInfo.setI_po_desc("cancel");
+								d_PoInfo.setI_po_desc(descCancel);
 
 								do_PoInfo = drfc.doPoDelete(d_PoInfo);
 							}else{
@@ -1913,7 +1910,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 								tmp_i_PoInfo.setI_date(CurrentDateTime.getDate());
 								tmp_i_PoInfo.setI_vendor_code(dummyInfo.getXcod_code());		// mapping
 								tmp_i_PoInfo.setI_vendor_name(dummyInfo.getXcod_hname());		// mapping
-								tmp_i_PoInfo.setI_pur_org_code("H301");
+								tmp_i_PoInfo.setI_pur_org_code(orgCode);
 								tmp_i_PoInfo.setI_pur_group("B11");
 								tmp_i_PoInfo.setI_wrkplc_cd(workPlace.getXusr_plac_work());			// Piracicaba, São Paulo
 								tmp_i_PoInfo.setI_usn(totInfo.get(0).getEeno());
@@ -1924,7 +1921,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 								tmp_i_PoInfo.setI_price(Double.toString(totAmt));
 								tmp_i_PoInfo.setI_delivery_date(d.getMonth(d.getDate(), 1));
 								tmp_i_PoInfo.setI_cost_cd(param.get(z).getCost_cd());
-								tmp_i_PoInfo.setI_company_code("H301");
+								tmp_i_PoInfo.setI_company_code(orgCode);
 								tmp_i_PoInfo.setI_po_no(totInfo.get(0).getPo_no());
 
 								if("D".equals(budg)){
@@ -1996,7 +1993,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 					TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 					message.setErrorCode("E");
 					message.setMessage(o_PoInfo.getO_if_fail_msg());
-					e.printStackTrace();
+					logger.error("messege", e);
 				}
 			}
 		}else{
@@ -2244,7 +2241,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 						try {
 							i_PoInfo.setI_date(CurrentDateTime.getDate());
 							i_PoInfo.setI_po_no(travelList.get(i).getPo_no());
-							i_PoInfo.setI_po_desc("cancel");
+							i_PoInfo.setI_po_desc(descCancel);
 
 							o_PoInfo = crfc.doPoDelete(i_PoInfo);
 
@@ -2260,7 +2257,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 							TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 							message.setMessage(o_PoInfo.getO_if_fail_msg());
 							message.setErrorCode("E");
-							e.printStackTrace();
+							logger.error("messege", e);
 						}
 					}
 				}
@@ -2281,7 +2278,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 					try {
 						i_PoInfo.setI_date(CurrentDateTime.getDate());
 						i_PoInfo.setI_po_no(vendorList.get(i).getVou_po_no());
-						i_PoInfo.setI_po_desc("cancel");
+						i_PoInfo.setI_po_desc(descCancel);
 
 						o_PoInfo = crfc.doPoDelete(i_PoInfo);
 
@@ -2299,7 +2296,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 						TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 						message.setMessage(o_PoInfo.getO_if_fail_msg());
 						message.setErrorCode("E");
-						e.printStackTrace();
+						logger.error("messege", e);
 					}
 				}
 			}
@@ -2311,10 +2308,10 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 			
 			// BPM API호출
 			String processCode = ""; 	//프로세스 코드 (출장 신청 프로세스) - 프로세스 정의서 참조
-			if(param.getDom_abrd_scn_cd().equals("PT001")){
-				processCode = "P-D-002"; // 해외
+			if(param.getDom_abrd_scn_cd().equals(gubunAb)){
+				processCode = pCode2; // 해외
 			}else{
-				processCode = "P-D-001"; // 국내
+				processCode = pCode; // 국내
 			}
 			String bizKey = param.getDoc_no();	//신청서 번호
 			String statusCode = "GASBZ01410030";	//액티비티 코드 (휴양소 당당자 확인) - 프로세스 정의서 참조
@@ -2400,7 +2397,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 						if(!"".equals(StringUtil.isNullToString(totInfo.get(0).getPo_no(),""))){
 							d_PoInfo.setI_date(CurrentDateTime.getDate());
 							d_PoInfo.setI_po_no(totInfo.get(0).getPo_no());
-							d_PoInfo.setI_po_desc("cancel");
+							d_PoInfo.setI_po_desc(descCancel);
 
 							do_PoInfo = drfc.doPoDelete(d_PoInfo);
 						}else{
@@ -2441,7 +2438,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 								tmp_i_PoInfo.setI_date(CurrentDateTime.getDate());
 								tmp_i_PoInfo.setI_vendor_code(dummyInfo.getXcod_code());		// mapping
 								tmp_i_PoInfo.setI_vendor_name(dummyInfo.getXcod_hname());		// mapping
-								tmp_i_PoInfo.setI_pur_org_code("H301");
+								tmp_i_PoInfo.setI_pur_org_code(orgCode);
 								tmp_i_PoInfo.setI_pur_group("B11");
 								tmp_i_PoInfo.setI_wrkplc_cd(workPlace.getXusr_plac_work());			// Piracicaba, São Paulo
 								tmp_i_PoInfo.setI_usn(totInfo.get(0).getEeno());
@@ -2452,7 +2449,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 								tmp_i_PoInfo.setI_price(Double.toString(totAmt));
 								tmp_i_PoInfo.setI_delivery_date(d.getMonth(d.getDate(), 1));
 								tmp_i_PoInfo.setI_cost_cd(param.get(z).getCost_cd());
-								tmp_i_PoInfo.setI_company_code("H301");
+								tmp_i_PoInfo.setI_company_code(orgCode);
 								tmp_i_PoInfo.setI_po_no(totInfo.get(0).getPo_no());
 
 								if("D".equals(param.get(z).getBudg_type())){
@@ -2524,7 +2521,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 					TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 					message.setErrorCode("E");
 					message.setMessage(o_PoInfo.getO_if_fail_msg());
-					e.printStackTrace();
+					logger.error("messege", e);
 				}
 			}
 		}else{
@@ -2586,7 +2583,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 		try {
 			o_BudgetInfo = rfc.getResult(i_BudgetInfo);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 
 		String blance = "0";

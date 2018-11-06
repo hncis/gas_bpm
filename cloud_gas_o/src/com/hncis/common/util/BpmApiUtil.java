@@ -5,11 +5,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.uengine.bpmutil.util.BpmUtil;
 
 public class BpmApiUtil {
-
+    private transient static Log logger = LogFactory.getLog(BpmApiUtil.class.getClass());
+	private static final String approvalLine = "APPROVALLINE";
+	
 	public static String sendSaveTask(String pCode, String docNo, String sCode, String userId, String roleCd, List<String> aList, List<String> mList){
 		String returnMessage = "";
 		try {
@@ -31,7 +35,7 @@ public class BpmApiUtil {
 				for(int i = 0 ; i < aList.size() ; i++){
 				varList.add(aList.get(i));
 				}
-				varMap.put("APPROVALLINE", varList); //결재라인생성여부 - 프로세스 정의서 참조
+				varMap.put(approvalLine, varList); //결재라인생성여부 - 프로세스 정의서 참조
 
 			} else {
 				varMap = null;
@@ -39,7 +43,7 @@ public class BpmApiUtil {
 			returnMessage = BpmUtil.saveTask(processCode, bizKey, statusCode, loginUserId, roleMap, varMap  );
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 		return returnMessage;
 
@@ -68,7 +72,7 @@ public class BpmApiUtil {
 				for(int i = 0 ; i < aList.size() ; i++){
 				varList.add(aList.get(i));
 				}
-				varMap.put("APPROVALLINE", varList); //결재라인생성여부 - 프로세스 정의서 참조
+				varMap.put(approvalLine, varList); //결재라인생성여부 - 프로세스 정의서 참조
 
 			} else {
 				varMap = null;
@@ -77,7 +81,7 @@ public class BpmApiUtil {
 			returnMessage = BpmUtil.completeTask(processCode, bizKey, statusCode, loginUserId, roleMap, varMap, comment );
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 		return returnMessage;
 
@@ -103,7 +107,7 @@ public class BpmApiUtil {
 			returnMessage = BpmUtil.completeTask(processCode, bizKey, statusCode, loginUserId, roleMap, varMap, comment );
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 		return returnMessage;
 
@@ -130,7 +134,7 @@ public class BpmApiUtil {
 				for(int i = 0 ; i < aList.size() ; i++){
 				varList.add(aList.get(i));
 				}
-				varMap.put("APPROVALLINE", varList); //결재라인생성여부 - 프로세스 정의서 참조
+				varMap.put(approvalLine, varList); //결재라인생성여부 - 프로세스 정의서 참조
 
 			} else {
 				varMap = null;
@@ -138,7 +142,7 @@ public class BpmApiUtil {
 			returnMessage = BpmUtil.rejectTask(processCode, bizKey, statusCode, loginUserId, roleMap, varMap, comment );
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 		return returnMessage;
 
@@ -165,7 +169,7 @@ public class BpmApiUtil {
 				for(int i = 0 ; i < aList.size() ; i++){
 				varList.add(aList.get(i));
 				}
-				varMap.put("APPROVALLINE", varList); //결재라인생성여부 - 프로세스 정의서 참조
+				varMap.put(approvalLine, varList); //결재라인생성여부 - 프로세스 정의서 참조
 
 			} else {
 				varMap = null;
@@ -174,7 +178,7 @@ public class BpmApiUtil {
 			returnMessage = BpmUtil.collectTask(processCode, bizKey, statusCode, loginUserId, roleMap, varMap);
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 		return returnMessage;
 
@@ -192,7 +196,7 @@ public class BpmApiUtil {
 			returnMessage = BpmUtil.completeProcess(processCode, bizKey, statusCode, loginUserId);
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 		return returnMessage;
 
@@ -210,7 +214,7 @@ public class BpmApiUtil {
 			returnMessage = BpmUtil.compensateTask(processCode, bizKey, statusCode, loginUserId);
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 		return returnMessage;
 

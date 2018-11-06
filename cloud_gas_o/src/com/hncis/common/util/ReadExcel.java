@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
@@ -18,6 +21,7 @@ import jxl.read.biff.BiffException;
  * @version 1.0
  */
 public class ReadExcel {
+    private transient Log logger = LogFactory.getLog(getClass());
 
   private String inputFile;
 
@@ -57,7 +61,7 @@ public class ReadExcel {
 			  excellCellList.add(excelCell);
 		  }
 	  } catch (BiffException e) {
-		  e.printStackTrace();
+			 logger.error("messege", e);
 	  }
 	  return excellCellList;
   }

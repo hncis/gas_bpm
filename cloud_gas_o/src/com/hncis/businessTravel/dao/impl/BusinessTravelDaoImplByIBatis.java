@@ -105,6 +105,8 @@ public class BusinessTravelDaoImplByIBatis extends CommonDao implements Business
 	private final String VENDOR_SAVE_TO_REQUEST						= "vendorSaveToRequest";
 	private final String SELECT_BT_TO_EXCEL_LIST					= "selectBtToExcelList";
 	
+	private static final String uncheck = "unchecked";
+	
 	public int insertBTToRequestByBasic(BgabGascbt01 bsicInfo){
 		return super.insert(INSERT_BT_TO_REQUEST_BY_BASIC, bsicInfo);
 	}
@@ -145,18 +147,18 @@ public class BusinessTravelDaoImplByIBatis extends CommonDao implements Business
 		return (BgabGascbt01)getSqlMapClientTemplate().queryForObject(SELECT_BT_TO_REQUEST_BY_BASIC, bsicInfo);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascbt02> getSelectBTToRequestByTraveler(BgabGascbt02 bgabGascbt02){
 		return getSqlMapClientTemplate().queryForList(SELECT_BT_TO_REQUEST_BY_TRAVELER, bgabGascbt02);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascbt02> getSelectBTToRequestByVirtualTraveler(BgabGascbt02 bgabGascbt02){
 		return getSqlMapClientTemplate().queryForList(SELECT_BT_TO_REQUEST_BY_VIRTUAL_TRAVELER, bgabGascbt02);
 	}
 	
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascbt03> getSelectBTToRequestBySchedule(BgabGascbt03 bgabGascbt03){
 		return getSqlMapClientTemplate().queryForList(SELECT_BT_TO_REQUEST_BY_SCHEDULE, bgabGascbt03);
 	}
@@ -165,32 +167,32 @@ public class BusinessTravelDaoImplByIBatis extends CommonDao implements Business
 		return (String)getSqlMapClientTemplate().queryForObject(SELECT_COUNT_BT_TO_LIST, bgabGascbt01);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascbt01> getSelectBTToList(BgabGascbt01 bgabGascbt01){
 		return getSqlMapClientTemplate().queryForList(SELECT_BT_TO_LIST, bgabGascbt01);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<CommonCode> getSelectBTToComboListByReport(CommonCode code){
 		return getSqlMapClientTemplate().queryForList(SELECT_BT_TO_COMBO_LIST_BY_REPORT, code);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascbt04> getSelectBTToReport(BgabGascbt04 bgabGascbt04){
 		return getSqlMapClientTemplate().queryForList(SELECT_BT_TO_REPORT, bgabGascbt04);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascbt04> getSelectBTToReportCard(BgabGascbt04 bgabGascbt04){
 		return getSqlMapClientTemplate().queryForList(SELECT_BT_TO_REPORT_CARD, bgabGascbt04);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascbt04> getSelectBTToReportVendor(BgabGascbt04 bgabGascbt04){
 		return getSqlMapClientTemplate().queryForList(SELECT_BT_TO_REPORT_VENDOR, bgabGascbt04);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public BgabGascbt04 getSelectBTToReportInfo(BgabGascbt04 bgabGascbt04){
 		return (BgabGascbt04)getSqlMapClientTemplate().queryForObject(SELECT_BT_TO_REPORT_BY_EXCEL, bgabGascbt04);
 	}
@@ -219,7 +221,7 @@ public class BusinessTravelDaoImplByIBatis extends CommonDao implements Business
 		return super.insert(INSERT_BT_TO_FILE, bgabGascZ011Dto);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascZ011Dto> getSelectBTToFile(BgabGascZ011Dto bgabGascZ011Dto){
 		return getSqlMapClientTemplate().queryForList(SELECT_BT_TO_FILE, bgabGascZ011Dto);
 	}
@@ -250,7 +252,7 @@ public class BusinessTravelDaoImplByIBatis extends CommonDao implements Business
 		return super.update(CONFIRM_BT_TO_REQUEST, bgabGascbt01);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascbtDto> getSelectTravelerToBudget(BgabGascbt01 bgabGascbt01){
 		return getSqlMapClientTemplate().queryForList(SELECT_TRAVELER_TO_BUDGET, bgabGascbt01);
 	}
@@ -271,7 +273,7 @@ public class BusinessTravelDaoImplByIBatis extends CommonDao implements Business
 		return (String)getSqlMapClientTemplate().queryForObject(SELECT_COUNT_COUNTY_MANAGEMENT, bgabGascz005Dto);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascz005Dto> getSelectCountryManagement(BgabGascz005Dto bgabGascz005Dto){
 		return getSqlMapClientTemplate().queryForList(SELECT_COUNTY_MANAGEMENT, bgabGascz005Dto);
 	}
@@ -288,32 +290,32 @@ public class BusinessTravelDaoImplByIBatis extends CommonDao implements Business
 		return super.delete(DELETE_LIST_TO_COUNTRY_MANAGEMENT, bgabGascz005Dto);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public String getSelectCountBTToSapMngrByTaveler(BgabGascbtDto bgabGascbtDto){
 		return (String)getSqlMapClientTemplate().queryForObject(SELECT_COUNT_BT_TO_SAP_MNGR_BY_TRAVLER, bgabGascbtDto);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascbtDto> getSelectBTToSapMngrByTaveler(BgabGascbtDto bgabGascbtDto){
 		return getSqlMapClientTemplate().queryForList(SELECT_BT_TO_SAP_MNGR_BY_TRAVLER, bgabGascbtDto);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public String getSelectCountExpenseManagement(BgabGascbt06 bgabGascbt06){
 		return (String)getSqlMapClientTemplate().queryForObject(SELECT_COUNT_EXPENSE_MANAGEMENT, bgabGascbt06);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascbt06> getSelectExpenseManagement(BgabGascbt06 bgabGascbt06){
 		return getSqlMapClientTemplate().queryForList(SELECT_EXPENSE_MANAGEMENT, bgabGascbt06);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public String getSelectCountBudgetView(BgabGascbt02 bgabGascbt02){
 		return (String)getSqlMapClientTemplate().queryForObject(SELECT_COUNT_BUDGET_VIEW, bgabGascbt02);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascbt02> getSelectBudgetView(BgabGascbt02 bgabGascbt02){
 		return getSqlMapClientTemplate().queryForList(SELECT_BUDGET_VIEW, bgabGascbt02);
 	}
@@ -342,17 +344,17 @@ public class BusinessTravelDaoImplByIBatis extends CommonDao implements Business
 		return (BgabGascbtDto)getSqlMapClientTemplate().queryForObject(SELECT_BT_TO_TRAVELER_EXCELINFO, bgabGascbt02);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascbtDto> getSelectBTToTravelersExcelList(BgabGascbt02 bgabGascbt02){
 		return getSqlMapClientTemplate().queryForList(SELECT_BT_TO_TRAVELERS_EXCEL_LIST, bgabGascbt02);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascbt04> getSelectBTToExpenseExcelList(BgabGascbt02 bgabGascbt02){
 		return getSqlMapClientTemplate().queryForList(SELECT_BT_TO_EXPENSE_EXCEL_LIST, bgabGascbt02);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascbtVoucherExcelDto> getSelectListBtToVoucherList(BgabGascbtVoucherExcelDto dto) {
 		return getSqlMapClientTemplate().queryForList(SELECT_LIST_BT_TO_VOUCHER_LIST, dto);
 	}
@@ -371,13 +373,13 @@ public class BusinessTravelDaoImplByIBatis extends CommonDao implements Business
 		return (String)getSqlMapClientTemplate().queryForObject(SELECT_COUNT_BT_CUSTOMER_TO_LIST, bgabGascbt01);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascbt01> selectListBtCustomerToList(BgabGascbt01 bgabGascbt01){
 		return getSqlMapClientTemplate().queryForList(SELECT_LIST_BT_CUSTOMER_TO_LIST, bgabGascbt01);
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascbt07> selectFlightConfirmListBtToRequest(BgabGascbt07 bgabGascbt07){
 		return getSqlMapClientTemplate().queryForList(SELECT_FLIGHT_CONFIRM_LIST_BT_TOREQUEST, bgabGascbt07);
 	}
@@ -395,7 +397,7 @@ public class BusinessTravelDaoImplByIBatis extends CommonDao implements Business
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascbt08> selectHotelConfirmListBtToRequest(BgabGascbt08 bgabGascbt08){
 		return getSqlMapClientTemplate().queryForList(SELECT_HOTEL_CONFIRM_LIST_BT_TO_REQUEST, bgabGascbt08);
 	}
@@ -413,7 +415,7 @@ public class BusinessTravelDaoImplByIBatis extends CommonDao implements Business
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascbt09> selectRentCarListBtToRequest(BgabGascbt09 bgabGascbt09){
 		return getSqlMapClientTemplate().queryForList(SELECT_RENT_CAR_LIST_BT_TO_REQUEST, bgabGascbt09);
 	}
@@ -443,14 +445,14 @@ public class BusinessTravelDaoImplByIBatis extends CommonDao implements Business
 	public BgabGascz005Dto getSelectDummyVendorInfo (BgabGascz005Dto dto){
 		return (BgabGascz005Dto)getSqlMapClientTemplate().queryForObject(SELECT_DUMMY_VENDOR_INFO, dto);
 	}
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascbt02>getSelectTravelRejectSubmitPoSearch(BgabGascbt02 dto){
 		return getSqlMapClientTemplate().queryForList(SELECT_TRAVEL_REJECTvSUBMIT_PO_SEARCH, dto);
 	}
 	public int updateInfoBtToReject(BgabGascbt01 param){
 		return update(UPDATE_INFO_BT_TO_REJECT, param);
 	}
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascZ011Dto> doSearchBTToSendMail(BgabGascZ011Dto bgabGascZ011Dto){
 		return getSqlMapClientTemplate().queryForList(SELECT_BT_TO_SEND_MAIL, bgabGascZ011Dto);
 	}
@@ -460,7 +462,7 @@ public class BusinessTravelDaoImplByIBatis extends CommonDao implements Business
 	public int saveVendorCheckBTToSaveDetail(BgabGascbt01 dto){
 		return update(VENDOR_SAVE_TO_REQUEST, dto);
 	}
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascbt01> selectBtToExcelList(BgabGascbt01 bgabGascbt04){
 		return getSqlMapClientTemplate().queryForList(SELECT_BT_TO_EXCEL_LIST, bgabGascbt04);
 	}

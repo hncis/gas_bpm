@@ -12,6 +12,7 @@ import com.hncis.shuttleBus.vo.BgabGascsb03;
 import com.hncis.shuttleBus.vo.BgabGascsb04;
 
 public class ShuttleBusDaoImplByIBatis extends CommonDao implements ShuttleBusDao{
+	private static final String uncheck = "unchecked";
 	private final String INSERT_SHUTTLE_BUS_REQUEST_NEW  = "insertShuttleBusRequstNew";
 	private final String INSERT_SHUTTLE_BUS_REQUEST_FINAL_N  = "updateShuttleBusRequstFinalN";
 	private final String UPDATE_SHUTTLE_BUS_REQUEST_NEW  = "updateShuttleBusRequstNew";
@@ -84,17 +85,17 @@ public class ShuttleBusDaoImplByIBatis extends CommonDao implements ShuttleBusDa
 		return Integer.parseInt((String)getSqlMapClientTemplate().queryForObject(SELECT_SHUTTLE_BUS_LIST_COUNT, param));
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascsb01> getSelectShuttleBusList(BgabGascsb01 param){
 		return getSqlMapClientTemplate().queryForList(SELECT_SHUTTLE_BUS_LIST, param);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascsb02> getSelectTransporteFretadoList(BgabGascsb02 param){
 		return getSqlMapClientTemplate().queryForList(SELECT_TRANSPORTE_FRETADO_LIST, param);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascsb02> getSelectPonteExistenteList(BgabGascsb02 param){
 		return getSqlMapClientTemplate().queryForList(SELECT_PONTO_EXISTENTE_LIST, param);
 	}
@@ -131,17 +132,17 @@ public class ShuttleBusDaoImplByIBatis extends CommonDao implements ShuttleBusDa
 		return (BgabGascsb03)getSqlMapClientTemplate().queryForObject(SELECT_SHUTTLE_BUS_BEFORE_VIEW, param);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascsb02> getSelectShuttleBusLineCombo(BgabGascsb02 dto){
 		return getSqlMapClientTemplate().queryForList(SELECT_SHUTTLE_BUS_LINE_COMBO, dto);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public int getSelectPonteExistentePopupListCount(BgabGascsb02 param){
 		return Integer.parseInt((String)getSqlMapClientTemplate().queryForObject(SELECT_PONTO_EXISTENTE_POPUP_LIST_COUNT, param));
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascsb02> getSelectPonteExistentePopupList(BgabGascsb02 param){
 		return getSqlMapClientTemplate().queryForList(SELECT_PONTO_EXISTENTE_POPUP_LIST, param);
 	}
@@ -171,7 +172,7 @@ public class ShuttleBusDaoImplByIBatis extends CommonDao implements ShuttleBusDa
 		return super.insert(INSERT_SHUTTLE_BUS_TO_FILE, bgabGascZ011Dto);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascZ011Dto> getSelectShuttleBusToFile(BgabGascZ011Dto bgabGascZ011Dto){
 		return getSqlMapClientTemplate().queryForList(SELECT_SHUTTLE_BUS_TO_FILE, bgabGascZ011Dto);
 	}
@@ -184,12 +185,12 @@ public class ShuttleBusDaoImplByIBatis extends CommonDao implements ShuttleBusDa
 		return super.delete(DELETE_SHUTTLE_BUS_TO_FILE, bgabGascZ011List);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<CommonCode> getShuttleBusCombo1(CommonCode code){
 		return getSqlMapClientTemplate().queryForList(SELECT_SHUTTLE_BUS_COMBO1, code);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<CommonCode> getShuttleBusCombo2(CommonCode code){
 		return getSqlMapClientTemplate().queryForList(SELECT_SHUTTLE_BUS_COMBO2, code);
 	}

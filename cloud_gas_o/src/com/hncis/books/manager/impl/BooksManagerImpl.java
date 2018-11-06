@@ -24,10 +24,14 @@ import com.hncis.common.util.StringUtil;
 import com.hncis.common.vo.BgabGascZ011Dto;
 import com.hncis.common.vo.CommonCode;
 import com.hncis.common.vo.CommonMessage;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 @Service("booksManagerImpl")
 public class BooksManagerImpl implements BooksManager{
 
+    private transient Log logger = LogFactory.getLog(getClass());
+    
 	@Autowired
 	public BooksDao booksDao;
 
@@ -98,14 +102,12 @@ public class BooksManagerImpl implements BooksManager{
 				managerList.add("10000001");
 
 				bpmSaveMsg = BpmApiUtil.sendSaveTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
-				System.out.println("BPM 저장 메시지 : " + bpmSaveMsg);
 				
 				bpmReqMsg = BpmApiUtil.sendCompleteTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
-				System.out.println("BPM 신청 메시지 : " + bpmSaveMsg);	
 			}
 			
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("APPLY.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -251,7 +253,7 @@ public class BooksManagerImpl implements BooksManager{
 			message.setMessage(HncisMessageSource.getMessage("SAVE.0000"));
 			message.setCode(dto.getBk_seq());
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("SAVE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -272,7 +274,7 @@ public class BooksManagerImpl implements BooksManager{
 			message.setMessage(HncisMessageSource.getMessage("DELETE.0000"));
 			message.setCode(dto.getBk_seq());
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("DELETE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -317,7 +319,7 @@ public void saveBkToFile(HttpServletRequest req, HttpServletResponse res, BgabGa
 		}catch(Exception e){
 			resultUrl = "xbk06_file.gas";
 			msg = HncisMessageSource.getMessage("FILE.0001");
-			e.printStackTrace();
+			logger.error("messege", e);
 		}finally{
 			try{
 				String dispatcherYN = "Y";
@@ -333,7 +335,7 @@ public void saveBkToFile(HttpServletRequest req, HttpServletResponse res, BgabGa
 			
 				return;
 			}catch(Exception e){
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 	}
@@ -353,7 +355,7 @@ public void saveBkToFile(HttpServletRequest req, HttpServletResponse res, BgabGa
 			try {
 				fileResult = FileUtil.deleteFile(fileInfo.getCorp_cd(), "books", fileInfo.getOgc_fil_nm());
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 		Integer fileDRs = (Integer)booksDao.deleteBkToFile(bgabGascZ011IList);

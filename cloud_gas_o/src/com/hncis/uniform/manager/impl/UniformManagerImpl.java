@@ -20,6 +20,7 @@ import com.hncis.uniform.vo.BgabGascaf03Dto;
 
 @Service("uniformManagerImpl")
 public class UniformManagerImpl  implements UniformManager{
+    private static final String pCode = "P-B-002";
 	
 	@Autowired
 	public UniformDao uniformDao;
@@ -75,7 +76,7 @@ public class UniformManagerImpl  implements UniformManager{
 			}
 
 			// BPM API호출
-			String processCode = "P-B-002"; 	//프로세스 코드 (근무복 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (근무복 프로세스) - 프로세스 정의서 참조
 			String bizKey = dto.getDoc_no() + dto.getUnif_type_cd() + dto.getUnif_clr_cd();	//신청서 번호
 			String statusCode = "GASBZ01220010";	//액티비티 코드 (근무복 작성) - 프로세스 정의서 참조
 			String loginUserId = dto.getEeno();	//로그인 사용자 아이디
@@ -104,7 +105,7 @@ public class UniformManagerImpl  implements UniformManager{
 	public int deleteRequestToList(List<BgabGascaf01Dto> list){
 		for(BgabGascaf01Dto dto : list){
 			// 	BPM API호출
-			String processCode = "P-B-002"; 		//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 		//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
 			String bizKey = dto.getDoc_no();		//신청서 번호
 			String statusCode = "GASBZ01220010";	//액티비티 코드 (명함신청서작성) - 프로세스 정의서 참조
 			String loginUserId = dto.getUpdr_eeno();		//로그인 사용자 아이디
@@ -162,7 +163,7 @@ public class UniformManagerImpl  implements UniformManager{
 				uniformDao.insertListToStockManagement(stock);
 				
 				// BPM API호출
-				String processCode = "P-B-002"; 	//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
+				String processCode = pCode; 	//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
 				String bizKey = vo.getDoc_no();	//신청서 번호
 				String statusCode = "GASBZ01220030";	//액티비티 코드 (명함 담당자확인) - 프로세스 정의서 참조
 				String loginUserId = vo.getUpdr_eeno();	//로그인 사용자 아이디
@@ -389,7 +390,7 @@ public class UniformManagerImpl  implements UniformManager{
 			uniformDao.insertListToStockManagement(stock);
 			
 			// BPM API호출
-			String processCode = "P-B-002"; 	//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
 			String bizKey = vo.getDoc_no();	//신청서 번호
 			String statusCode = "GASBZ01220030";	//액티비티 코드 (휴양소 당당자 확인) - 프로세스 정의서 참조
 			String loginUserId = vo.getUpdr_eeno();	//로그인 사용자 아이디

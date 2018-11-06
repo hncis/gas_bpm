@@ -10,7 +10,11 @@ import com.sap.mw.jco.JCO.Function;
 import com.sap.mw.jco.JCO.ParameterList;
 import com.sap.mw.jco.JCO.Repository;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class RfcPoCreate {
+    private transient Log logger = LogFactory.getLog(getClass());
 
 	private String targetServer;
 	private String host;
@@ -21,6 +25,9 @@ public class RfcPoCreate {
 	private String r3name;
 	private String group;
 	private String sysnr;
+
+	private static final String userInfo = "GASCRFC1";
+	private static final String poNp = "PO_NO";
 	
 	public RfcPoCreate(){
 		targetServer = StringUtil.getSystemArea();
@@ -46,8 +53,8 @@ public class RfcPoCreate {
 			
 			connection.connect();
 		}catch (Exception e) {
-			System.out.println("RFC JCO connect 중 오류발생");
-			e.printStackTrace();
+			logger.info("RFC JCO connect 중 오류발생");
+			logger.error("messege", e);
 		}
 		return connection;
 	}
@@ -68,16 +75,16 @@ public class RfcPoCreate {
 		if( targetServer.equals("REAL") ){
 			host       = "10.121.241.14";
 			client     = "300";
-			user       = "GASCRFC1";
-			passwd     = "GASCRFC1"; 
+			user       = userInfo;
+			passwd     = userInfo; 
 			r3name     = "EPB"; 
 			group      = "HMB_PRD"; 
 			sysnr      = "00";
 		}else{
 			host    = "10.121.241.106";
 			client 	= "300";
-			user	= "GASCRFC1";
-			passwd 	= "GASCRFC1"; 
+			user	= userInfo;
+			passwd 	= userInfo; 
 			r3name 	= "EQB"; 
 			group 	= "HMB_QAS";
 			sysnr   = "00";
@@ -118,24 +125,24 @@ public class RfcPoCreate {
 			ParameterList out_params = function.getExportParameterList();
 			
 			in_params.setValue(i_PoInfo.getI_date(),"DATE");
-			in_params.setValue(i_PoInfo.getI_po_no(),"PO_NO");
+			in_params.setValue(i_PoInfo.getI_po_no(),poNp);
 			in_params.setValue(i_PoInfo.getI_po_desc(),"PO_DESC");
 		
-			System.out.println("ZHBR_MM_GASC_DELETE_PO 호출 시작");
+			logger.info("ZHBR_MM_GASC_DELETE_PO 호출 시작");
 			client.execute(function);
 			
-			System.out.println("UPDATE_DT:"+out_params.getValue("UPDATE_DT"));
-			System.out.println("IF_RESULT:"+out_params.getValue("IF_RESULT"));
-			System.out.println("IF_FAIL_MSG:"+out_params.getValue("IF_FAIL_MSG"));
+			logger.info("UPDATE_DT:"+out_params.getValue("UPDATE_DT"));
+			logger.info("IF_RESULT:"+out_params.getValue("IF_RESULT"));
+			logger.info("IF_FAIL_MSG:"+out_params.getValue("IF_FAIL_MSG"));
 			
 			rfVal.setO_if_result(out_params.getValue("IF_RESULT").toString());
 			rfVal.setO_if_fail_msg(out_params.getValue("IF_FAIL_MSG").toString());
 			
 		}catch(Exception e){
-			System.out.println("RFC 호출 중 문제가 발생하였습니다.");
+			logger.info("RFC 호출 중 문제가 발생하였습니다.");
 			rfVal.setO_if_result("E");
 			rfVal.setO_if_fail_msg(e.toString());
-			e.printStackTrace();
+			logger.error("messege", e);
 		} finally {
 			release(client);
 			rfVal.setO_if_result("Z");
@@ -176,31 +183,31 @@ public class RfcPoCreate {
 			itemTable.setValue(i_PoInfo.getI_wrkplc_cd(),"WRKPLC_CD"); 
 			itemTable.setValue(i_PoInfo.getI_usn(),"USN"); 
 			
-			System.out.println("getI_date : " + i_PoInfo.getI_date());
-			System.out.println("getI_vendor_code : " + i_PoInfo.getI_vendor_code());
-			System.out.println("getI_vendor_name : " + i_PoInfo.getI_vendor_name());
-			System.out.println("getI_pur_org_code : " + i_PoInfo.getI_pur_org_code());
-			System.out.println("getI_pur_group : " + i_PoInfo.getI_pur_group());
-			System.out.println("getI_company_code : " + i_PoInfo.getI_company_code());
-			System.out.println("###########################################");
-			System.out.println("getI_account_category : " + i_PoInfo.getI_account_category());
-			System.out.println("getI_material_code : " + i_PoInfo.getI_material_code());
-			System.out.println("getI_material_desc : " + i_PoInfo.getI_material_desc());
-			System.out.println("getI_mat_group : " + i_PoInfo.getI_mat_group());
-			System.out.println("getI_qty : " + i_PoInfo.getI_qty());
-			System.out.println("getI_price : " + i_PoInfo.getI_price());
-			System.out.println("getI_delivery_date : " + i_PoInfo.getI_delivery_date());
-			System.out.println("getI_cost_cd : " + i_PoInfo.getI_cost_cd());
-			System.out.println("getI_wbs_cd : " + i_PoInfo.getI_wbs_cd());
-			System.out.println("getI_io_cd : " + i_PoInfo.getI_io_cd());
-			System.out.println("getI_account_code : " + i_PoInfo.getI_account_code());
-			System.out.println("getI_wrkplc_cd : " + i_PoInfo.getI_wrkplc_cd());
-			System.out.println("getI_usn : " + i_PoInfo.getI_usn());
+			logger.info("getI_date : " + i_PoInfo.getI_date());
+			logger.info("getI_vendor_code : " + i_PoInfo.getI_vendor_code());
+			logger.info("getI_vendor_name : " + i_PoInfo.getI_vendor_name());
+			logger.info("getI_pur_org_code : " + i_PoInfo.getI_pur_org_code());
+			logger.info("getI_pur_group : " + i_PoInfo.getI_pur_group());
+			logger.info("getI_company_code : " + i_PoInfo.getI_company_code());
+			logger.info("###########################################");
+			logger.info("getI_account_category : " + i_PoInfo.getI_account_category());
+			logger.info("getI_material_code : " + i_PoInfo.getI_material_code());
+			logger.info("getI_material_desc : " + i_PoInfo.getI_material_desc());
+			logger.info("getI_mat_group : " + i_PoInfo.getI_mat_group());
+			logger.info("getI_qty : " + i_PoInfo.getI_qty());
+			logger.info("getI_price : " + i_PoInfo.getI_price());
+			logger.info("getI_delivery_date : " + i_PoInfo.getI_delivery_date());
+			logger.info("getI_cost_cd : " + i_PoInfo.getI_cost_cd());
+			logger.info("getI_wbs_cd : " + i_PoInfo.getI_wbs_cd());
+			logger.info("getI_io_cd : " + i_PoInfo.getI_io_cd());
+			logger.info("getI_account_code : " + i_PoInfo.getI_account_code());
+			logger.info("getI_wrkplc_cd : " + i_PoInfo.getI_wrkplc_cd());
+			logger.info("getI_usn : " + i_PoInfo.getI_usn());
 			
 			ParameterList out_params = function.getExportParameterList();
 //			RfcPoCreateVo rfVal = new RfcPoCreateVo();
 		
-			System.out.println("ZHBR_MM_GASC_PURCHASE_ORDER 호출 시작");
+			logger.info("ZHBR_MM_GASC_PURCHASE_ORDER 호출 시작");
 			client.execute(function);
 			
 			
@@ -209,36 +216,36 @@ public class RfcPoCreate {
 //			rfVal.setO_if_fail_msg(output.getValue("IFFAILMSG").toString());
 //			rfVal.setO_po_no(out_params.getValue("PO_NO").toString());
 			
-			if(StringUtil.isNullToString(out_params.getValue("PO_NO")).equals("")){
+			if(StringUtil.isNullToString(out_params.getValue(poNp)).equals("")){
 				
 				output = function.getTableParameterList().getTable("T_IFFAILMSG");
 				
-				System.out.println("ZSPACK:"+output.getValue("ZSPACK"));
-				System.out.println("IFRESULT:"+output.getValue("IFRESULT"));
-				System.out.println("IFFAILMSG:"+output.getValue("IFFAILMSG"));
-				System.out.println("PO_NO:"+out_params.getValue("PO_NO"));
+				logger.info("ZSPACK:"+output.getValue("ZSPACK"));
+				logger.info("IFRESULT:"+output.getValue("IFRESULT"));
+				logger.info("IFFAILMSG:"+output.getValue("IFFAILMSG"));
+				logger.info("PO_NO:"+out_params.getValue(poNp));
 				
 				rfVal.setO_zspack(output.getValue("ZSPACK").toString());
 				rfVal.setO_if_result(output.getValue("IFRESULT").toString());
 				rfVal.setO_if_fail_msg(output.getValue("IFFAILMSG").toString());
-				rfVal.setO_po_no(out_params.getValue("PO_NO").toString());
+				rfVal.setO_po_no(out_params.getValue(poNp).toString());
 			}else{
-				System.out.println("PO_NO:"+out_params.getValue("PO_NO"));
+				logger.info("PO_NO:"+out_params.getValue(poNp));
 				
-				rfVal.setO_po_no(out_params.getValue("PO_NO").toString());
+				rfVal.setO_po_no(out_params.getValue(poNp).toString());
 				rfVal.setO_if_result("Z");
 			}
 			
-//			System.out.println("ZSPACK:"+output.getValue("ZSPACK"));
-//			System.out.println("IFRESULT:"+output.getValue("IFRESULT"));
-//			System.out.println("IFFAILMSG:"+output.getValue("IFFAILMSG"));
-//			System.out.println("PO_NO:"+out_params.getValue("PO_NO"));
+//			logger.info("ZSPACK:"+output.getValue("ZSPACK"));
+//			logger.info("IFRESULT:"+output.getValue("IFRESULT"));
+//			logger.info("IFFAILMSG:"+output.getValue("IFFAILMSG"));
+//			logger.info("PO_NO:"+out_params.getValue("PO_NO"));
 			
 		}catch(Exception e){
-			System.out.println("RFC 호출 중 문제가 발생하였습니다.");
+			logger.info("RFC 호출 중 문제가 발생하였습니다.");
 			rfVal.setO_if_result("E");
 			rfVal.setO_if_fail_msg(e.toString());
-			e.printStackTrace();
+			logger.error("messege", e);
 		} finally {
 			release(client);
 //			rfVal.setO_if_result("Z");

@@ -4,7 +4,11 @@ import java.security.PrivateKey;
 
 import javax.crypto.Cipher;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class RSA {
+    private transient static Log logger = LogFactory.getLog(RSA.class.getClass());
     
  public static String decryptRsa(PrivateKey privateKey, String securedValue) {
 	 String decryptedValue = "";
@@ -22,6 +26,7 @@ public class RSA {
 	 }catch(Exception e)
 	 {
 //		 logger.info("decryptRsa Exception Error : "+e.getMessage());
+		 logger.error("messege", e);
 	 }
 		return decryptedValue;
 } 

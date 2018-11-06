@@ -9,7 +9,6 @@ public class AutowayLogin {
    public static void main(String[] args) throws Exception {
         boolean s = isLoginCorrect("37100044", "brian6539@");
 //        boolean s = isLoginCorrect("37102488", "say789!!");
-        System.out.println("return : "+s);
     }
 
     public static boolean isLoginCorrect(String s, String s1) throws Exception {
@@ -46,7 +45,6 @@ public class AutowayLogin {
         {
             s3 = "1";
             URL url = new URL((new StringBuilder()).append("http://autoway.hyundai-brasil.com/AutowayDotNet_HMB/Common/Authentication/RequestAuthentication.aspx?").append(s2).toString());
-            System.out.println((new StringBuilder()).append("Autoway Authorizing...[").append(url.toString()).append("]").toString());
             s3 = (new StringBuilder()).append(s3).append("2").toString();
             BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream()));
             s3 = (new StringBuilder()).append(s3).append("3").toString();
@@ -56,12 +54,10 @@ public class AutowayLogin {
             while((s4 = bufferedreader.readLine()) != null) 
                 stringbuffer.append(s4);
             s3 = (new StringBuilder()).append(s3).append("5").toString();
-            System.out.println((new StringBuilder()).append("Autoway response...[").append(stringbuffer.toString()).append("]").toString());
             return "Y".equals(stringbuffer.toString());
         }
         catch(Exception exception)
         {
-            System.out.println((new StringBuilder()).append(s3).append(exception.getMessage()).toString());
             throw new Exception((new StringBuilder()).append(s3).append(exception.getMessage()).toString());
         }
     }

@@ -34,7 +34,19 @@ public class SendMail {
 	final private String _ID	= "hncis@hncis.co.kr";
 	final private String _PWD	= "human1025";
 	private String _HOST = "smtp.daum.net";
+	private String pHost = "mail.smtp.host";
 	private String _PORT = "465";
+	private static final String boolTrue = "true";
+	private static final String encodingType = "utf-8";
+	private static final String plainUtf = "text/plain; charset=utf-8";
+	private static final String htmlUtf = "text/html; charset=utf-8";
+	private static final String strMethod = "method : sendEmail ";
+	private static final String strArea = "area : ";
+	private static final String strServer = "mail server : ";
+	private static final String strFrom = "from : ";
+	private static final String strMailto = "mailto : ";
+	private static final String strBody = "body : ";
+	private static final String strMethod2 = "method : sendMailFileGlobal ";
 	private boolean isReal = false;
 	
 	static Logger logger = Logger.getLogger("SendMail.class");
@@ -50,7 +62,7 @@ public class SendMail {
 //				isReal = false;
 //			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 	}
 	
@@ -83,7 +95,6 @@ public class SendMail {
 		//	to = "gas@hncis.co.kr";
 		//}
 		
-		System.out.println("발송메일 : " + to);
 		if(to.equals("")){
 			return false;
 		}
@@ -95,11 +106,11 @@ public class SendMail {
 //			props.put("mail.smtp.port", "465");
 //			props.put("mail.smtp.ssl_enable", "true");
 //			props.put("mail.smtp.auth", "true");
-			props.put("mail.smtp.host", _HOST);
+			props.put(pHost, _HOST);
 			props.put("mail.smtp.port", _PORT);
-			props.put("mail.smtp.starttls.enable","true");
-			props.put("mail.smtp.auth", "true");
-			props.put("mail.smtp.debug", "true");
+			props.put("mail.smtp.starttls.enable",boolTrue);
+			props.put("mail.smtp.auth", boolTrue);
+			props.put("mail.smtp.debug", boolTrue);
 			props.put("mail.smtp.socketFactory.port", "465"); 
 			props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory"); 
 			props.put("mail.smtp.socketFactory.fallback", "false");
@@ -112,34 +123,34 @@ public class SendMail {
 			}
 			
 			MimeMessage message = new MimeMessage(session);
-			message.setSubject(subject, "utf-8");
+			message.setSubject(subject, encodingType);
 			message.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
 			
 			if(flag == 0){
-				message.setContent(body, "text/plain; charset=utf-8");
+				message.setContent(body, plainUtf);
 			}else{
-				message.setContent(body, "text/html; charset=utf-8");
+				message.setContent(body, htmlUtf);
 			}
-//			System.out.println("_HOST:"+_HOST);
-			message.setFrom(new InternetAddress(from , MimeUtility.encodeText("GAS ADMIN","UTF-8","B")));
+//			logger.info("_HOST:"+_HOST);
+			message.setFrom(new InternetAddress(from , MimeUtility.encodeText("GAS ADMIN",encodingType,"B")));
 			
 			Transport.send(message);
 			
-			logger.debug("method : sendEmail ");
-			logger.debug("area : " + StringUtil.getSystemArea().toUpperCase());
-			logger.debug("mail server : " + _HOST);
-			logger.debug("from : " + from);
-			logger.debug("mailto : " + to);
-			logger.debug("body : "  + body);
+			logger.debug(strMethod);
+			logger.debug(strArea + StringUtil.getSystemArea().toUpperCase());
+			logger.debug(strServer + _HOST);
+			logger.debug(strFrom + from);
+			logger.debug(strMailto + to);
+			logger.debug(strBody  + body);
 		} catch (Exception e) {
 			success = false;
-			e.printStackTrace();
-			logger.error("method : sendEmail ");
-			logger.error("area : " + StringUtil.getSystemArea().toUpperCase());
-			logger.error("mail server : " + _HOST);
-			logger.error("from : " + from);
-			logger.error("mailto : " + to);
-			logger.error("body : "  + body);
+			logger.error("messege", e);
+			logger.error(strMethod);
+			logger.error(strArea + StringUtil.getSystemArea().toUpperCase());
+			logger.error(strServer + _HOST);
+			logger.error(strFrom + from);
+			logger.error(strMailto + to);
+			logger.error(strBody  + body);
 			logger.error(e.getMessage());
 			//throw e;
 		}
@@ -164,18 +175,17 @@ public class SendMail {
 	public boolean sendMailFileGlobal(String to, String from, String fromStr, String subject, String body, String fileUrl, int flag, boolean debug) throws MessagingException, Exception {
 		boolean success = true;
 		
-		if(false){
-			to = "hncis@hncis.co.kr";
+		if(to.equals("")){
+			to = _ID;
 		}
 		
-		System.out.println("발송메일 : " + to);
 		if(to.equals("")){
 			return false;
 		}
 		
 		try {
 			Properties props = System.getProperties();
-			props.put("mail.smtp.host", _HOST);
+			props.put(pHost, _HOST);
 			
 			Session session = Session.getDefaultInstance(props, null);
 			if(debug){
@@ -184,22 +194,22 @@ public class SendMail {
 			
 			MimeMessage message = new MimeMessage(session);
 			try {
-				message.setFrom(new InternetAddress(from, MimeUtility.encodeText(fromStr, "utf-8", "B")));
+				message.setFrom(new InternetAddress(from, MimeUtility.encodeText(fromStr, encodingType, "B")));
 			}catch(UnsupportedEncodingException uee) {
 				message.setFrom(new InternetAddress(from));
 			}
 			
-			message.setSubject(subject, "utf-8");
+			message.setSubject(subject, encodingType);
 			message.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
 			
 			if (flag == 0) {
-				message.setContent(body, "text/plain; charset=utf-8");
+				message.setContent(body, plainUtf);
 			} else {
-				message.setContent(body, "text/html; charset=utf-8");
+				message.setContent(body, htmlUtf);
 			}
 			
 			MimeBodyPart mbp1 = new MimeBodyPart();
-			mbp1.setContent(body, "text/html; charset=utf-8");
+			mbp1.setContent(body, htmlUtf);
 			MimeBodyPart mbp2 = new MimeBodyPart();
 			FileDataSource fds = new FileDataSource(fileUrl);
 			mbp2.setDataHandler(new DataHandler(fds));
@@ -212,23 +222,23 @@ public class SendMail {
 			Transport.send(message);
 		}catch(MessagingException mex){
 			mex.printStackTrace();
-			logger.error("method : sendMailFileGlobal ");
-			logger.error("area : " + StringUtil.getSystemArea().toUpperCase());
-			logger.error("mail server : " + _HOST);
-			logger.error("from : " + from);
-			logger.error("mailto : " + to);
-			logger.error("body : "  + body);
+			logger.error(strMethod2);
+			logger.error(strArea + StringUtil.getSystemArea().toUpperCase());
+			logger.error(strServer + _HOST);
+			logger.error(strFrom + from);
+			logger.error(strMailto + to);
+			logger.error(strBody  + body);
 			logger.error(mex.getMessage());
 			success = false;
 			throw mex;
 		}catch(Exception e) {
-			e.printStackTrace();
-			logger.error("method : sendMailFileGlobal ");
-			logger.error("area : " + StringUtil.getSystemArea().toUpperCase());
-			logger.error("mail server : " + _HOST);
-			logger.error("from : " + from);
-			logger.error("mailto : " + to);
-			logger.error("body : "  + body);
+			logger.error("messege", e);
+			logger.error(strMethod2);
+			logger.error(strArea + StringUtil.getSystemArea().toUpperCase());
+			logger.error(strServer + _HOST);
+			logger.error(strFrom + from);
+			logger.error(strMailto + to);
+			logger.error(strBody  + body);
 			logger.error(e.getMessage());
 			success = false;
 			throw e;
@@ -254,18 +264,17 @@ public class SendMail {
 	public boolean sendMailFileConfrimation(String to, String from, String fromStr, String subject, String body, List<BgabGascZ011Dto> rsList, int flag, boolean debug) throws MessagingException, Exception {
 		boolean success = true;
 		
-		if(false){
-			to = "hncis@hncis.co.kr";
+		if(to.equals("")){
+			to = _ID;
 		}
 		
-		System.out.println("발송메일 : " + to);
 		if(to.equals("")){
 			return false;
 		}
 		
 		try {
 			Properties props = System.getProperties();
-			props.put("mail.smtp.host", _HOST);
+			props.put(pHost, _HOST);
 			
 			Session session = Session.getDefaultInstance(props, null);
 			if(debug){
@@ -274,24 +283,24 @@ public class SendMail {
 			
 			MimeMessage message = new MimeMessage(session);
 			try {
-				message.setFrom(new InternetAddress(from, MimeUtility.encodeText(fromStr, "utf-8", "B")));
+				message.setFrom(new InternetAddress(from, MimeUtility.encodeText(fromStr, encodingType, "B")));
 			}catch(UnsupportedEncodingException uee) {
 				message.setFrom(new InternetAddress(from));
 			}
 			
-			message.setSubject(subject, "utf-8");
+			message.setSubject(subject, encodingType);
 			message.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
 			
 			if (flag == 0) {
-				message.setContent(body, "text/plain; charset=utf-8");
+				message.setContent(body, plainUtf);
 			} else {
-				message.setContent(body, "text/html; charset=utf-8");
+				message.setContent(body, htmlUtf);
 			}
 			
 			Multipart mp = new MimeMultipart();
 			MimeBodyPart mbp1 = new MimeBodyPart();
 			
-			mbp1.setContent(body, "text/html; charset=utf-8");
+			mbp1.setContent(body, htmlUtf);
 			mp.addBodyPart(mbp1);
 			
 			for(BgabGascZ011Dto vo : rsList){
@@ -309,8 +318,8 @@ public class SendMail {
 				
 				FileDataSource fds = new FileDataSource(fileUrl);
 				mbp2.setDataHandler(new DataHandler(fds));
-				//mbp2.setFileName(MimeUtility.encodeText(fds.getName(), "utf-8", "Q"));
-				mbp2.setFileName(MimeUtility.encodeText(vo.getFil_nm(), "utf-8", "Q"));
+				//mbp2.setFileName(MimeUtility.encodeText(fds.getName(), encodingType, "Q"));
+				mbp2.setFileName(MimeUtility.encodeText(vo.getFil_nm(), encodingType, "Q"));
 				
 				mp.addBodyPart(mbp2);
 			}
@@ -319,23 +328,23 @@ public class SendMail {
 			Transport.send(message);
 		}catch(MessagingException mex){
 			mex.printStackTrace();
-			logger.error("method : sendMailFileGlobal ");
-			logger.error("area : " + StringUtil.getSystemArea().toUpperCase());
-			logger.error("mail server : " + _HOST);
-			logger.error("from : " + from);
-			logger.error("mailto : " + to);
-			logger.error("body : "  + body);
+			logger.error(strMethod2);
+			logger.error(strArea + StringUtil.getSystemArea().toUpperCase());
+			logger.error(strServer + _HOST);
+			logger.error(strFrom + from);
+			logger.error(strMailto + to);
+			logger.error(strBody  + body);
 			logger.error(mex.getMessage());
 			success = false;
 			throw mex;
 		}catch(Exception e) {
-			e.printStackTrace();
-			logger.error("method : sendMailFileGlobal ");
-			logger.error("area : " + StringUtil.getSystemArea().toUpperCase());
-			logger.error("mail server : " + _HOST);
-			logger.error("from : " + from);
-			logger.error("mailto : " + to);
-			logger.error("body : "  + body);
+			logger.error("messege", e);
+			logger.error(strMethod2);
+			logger.error(strArea + StringUtil.getSystemArea().toUpperCase());
+			logger.error(strServer + _HOST);
+			logger.error(strFrom + from);
+			logger.error(strMailto + to);
+			logger.error(strBody  + body);
 			logger.error(e.getMessage());
 			success = false;
 			throw e;
@@ -361,18 +370,17 @@ public class SendMail {
 	public boolean sendMailShuttleBusFile(String to, String from, String fromStr, String subject, String body, List<BgabGascZ011Dto> rsList, int flag, boolean debug) throws MessagingException, Exception {
 		boolean success = true;
 		
-		if(false){
-			to = "hondaman@hyundai-autoever.com";
+		if(to.equals("")){
+			to = _ID;
 		}
 		
-		System.out.println("발송메일 : " + to);
 		if(to.equals("")){
 			return false;
 		}
 		
 		try {
 			Properties props = System.getProperties();
-			props.put("mail.smtp.host", _HOST);
+			props.put(pHost, _HOST);
 			
 			Session session = Session.getDefaultInstance(props, null);
 			if(debug){
@@ -381,24 +389,24 @@ public class SendMail {
 			
 			MimeMessage message = new MimeMessage(session);
 			try {
-				message.setFrom(new InternetAddress(from, MimeUtility.encodeText(fromStr, "utf-8", "B")));
+				message.setFrom(new InternetAddress(from, MimeUtility.encodeText(fromStr, encodingType, "B")));
 			}catch(UnsupportedEncodingException uee) {
 				message.setFrom(new InternetAddress(from));
 			}
 			
-			message.setSubject(subject, "utf-8");
+			message.setSubject(subject, encodingType);
 			message.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
 			
 			if (flag == 0) {
-				message.setContent(body, "text/plain; charset=utf-8");
+				message.setContent(body, plainUtf);
 			} else {
-				message.setContent(body, "text/html; charset=utf-8");
+				message.setContent(body, htmlUtf);
 			}
 			
 			Multipart mp = new MimeMultipart();
 			MimeBodyPart mbp1 = new MimeBodyPart();
 			
-			mbp1.setContent(body, "text/html; charset=utf-8");
+			mbp1.setContent(body, htmlUtf);
 			mp.addBodyPart(mbp1);
 			
 			for(BgabGascZ011Dto vo : rsList){
@@ -416,8 +424,8 @@ public class SendMail {
 				
 				FileDataSource fds = new FileDataSource(fileUrl);
 				mbp2.setDataHandler(new DataHandler(fds));
-				//mbp2.setFileName(MimeUtility.encodeText(fds.getName(), "utf-8", "Q"));
-				mbp2.setFileName(MimeUtility.encodeText(vo.getFil_nm(), "utf-8", "Q"));
+				//mbp2.setFileName(MimeUtility.encodeText(fds.getName(), encodingType, "Q"));
+				mbp2.setFileName(MimeUtility.encodeText(vo.getFil_nm(), encodingType, "Q"));
 				
 				mp.addBodyPart(mbp2);
 			}
@@ -426,23 +434,23 @@ public class SendMail {
 			Transport.send(message);
 		}catch(MessagingException mex){
 			mex.printStackTrace();
-			logger.error("method : sendMailFileGlobal ");
-			logger.error("area : " + StringUtil.getSystemArea().toUpperCase());
-			logger.error("mail server : " + _HOST);
-			logger.error("from : " + from);
-			logger.error("mailto : " + to);
-			logger.error("body : "  + body);
+			logger.error(strMethod2);
+			logger.error(strArea + StringUtil.getSystemArea().toUpperCase());
+			logger.error(strServer + _HOST);
+			logger.error(strFrom + from);
+			logger.error(strMailto + to);
+			logger.error(strBody  + body);
 			logger.error(mex.getMessage());
 			success = false;
 			throw mex;
 		}catch(Exception e) {
-			e.printStackTrace();
-			logger.error("method : sendMailFileGlobal ");
-			logger.error("area : " + StringUtil.getSystemArea().toUpperCase());
-			logger.error("mail server : " + _HOST);
-			logger.error("from : " + from);
-			logger.error("mailto : " + to);
-			logger.error("body : "  + body);
+			logger.error("messege", e);
+			logger.error(strMethod2);
+			logger.error(strArea + StringUtil.getSystemArea().toUpperCase());
+			logger.error(strServer + _HOST);
+			logger.error(strFrom + from);
+			logger.error(strMailto + to);
+			logger.error(strBody  + body);
 			logger.error(e.getMessage());
 			success = false;
 			throw e;
@@ -482,19 +490,16 @@ public class SendMail {
 			return false;
 		}
 		
-		to = "hncis@hncis.co.kr";
-		
-		System.out.println("발송메일 : " + from);
-		System.out.println("수신메일 : " + to);
+		to = _ID;
 		
 		try {
 			Properties props = System.getProperties();
 			props.put("mail.transport.protocol", "smtp");
 	    	props.put("mail.smtp.port", PORT); 
 	    	
-	    	props.put("mail.smtp.auth", "true");
-	    	props.put("mail.smtp.starttls.enable", "true");
-	    	props.put("mail.smtp.starttls.required", "true");
+	    	props.put("mail.smtp.auth", boolTrue);
+	    	props.put("mail.smtp.starttls.enable", boolTrue);
+	    	props.put("mail.smtp.starttls.required", boolTrue);
 	    	
 	    	Session session = Session.getDefaultInstance(props);
 			
@@ -504,16 +509,16 @@ public class SendMail {
 			
 			MimeMessage message = new MimeMessage(session);
 			message.setFrom(new InternetAddress(from));
-			message.setSubject(subject, "utf-8");
+			message.setSubject(subject, encodingType);
 			message.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
 			
 			if(flag == 0){
-				message.setContent(body, "text/plain; charset=utf-8");
+				message.setContent(body, plainUtf);
 			}else{
-				message.setContent(body, "text/html; charset=utf-8");
+				message.setContent(body, htmlUtf);
 			}
 			
-			System.out.println("_HOST:"+_HOST);
+			logger.info("_HOST:"+_HOST);
 			
 			transport = session.getTransport();
 			
@@ -521,20 +526,20 @@ public class SendMail {
 			
 			 transport.sendMessage(message, message.getAllRecipients());
 			
-			logger.info("method : sendEmail ");
-			logger.info("area : " + StringUtil.getSystemArea().toUpperCase());
-			logger.info("mail server : " + _HOST);
-			logger.info("from : " + from);
-			logger.info("mailto : " + to);
-			logger.info("body : "  + body);
+			logger.info(strMethod);
+			logger.info(strArea + StringUtil.getSystemArea().toUpperCase());
+			logger.info(strServer + _HOST);
+			logger.info(strFrom + from);
+			logger.info(strMailto + to);
+			logger.info(strBody  + body);
 		} catch (Exception e) {
 			success = false;
-			logger.error("method : sendEmail ");
-			logger.error("area : " + StringUtil.getSystemArea().toUpperCase());
-			logger.error("mail server : " + _HOST);
-			logger.error("from : " + from);
-			logger.error("mailto : " + to);
-			logger.error("body : "  + body);
+			logger.error(strMethod);
+			logger.error(strArea + StringUtil.getSystemArea().toUpperCase());
+			logger.error(strServer + _HOST);
+			logger.error(strFrom + from);
+			logger.error(strMailto + to);
+			logger.error(strBody  + body);
 			logger.error(e.getMessage());
 			throw e;
 		}finally {

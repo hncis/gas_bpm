@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -19,6 +21,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 
 public class ReadExcelPoi {
+    private transient Log logger = LogFactory.getLog(getClass());
 
 	private String inputFile;
 
@@ -81,7 +84,7 @@ public class ReadExcelPoi {
 				}
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("messege", e);
 			throw e;
 		}finally{
 			return resultList;
@@ -91,8 +94,6 @@ public class ReadExcelPoi {
 	public List<Map<String, String>> getExcelXlsxData(String[] excelKeyArr) throws Exception{
 		List<Map<String, String>> resultList = new ArrayList<Map<String, String>>();
 		Map<String, String>       result     = new HashMap<String, String>();
-
-		System.out.println(inputFile);
 
 		File excelFile = new File(inputFile);
 		System.out.println(excelFile.exists());
@@ -138,9 +139,9 @@ public class ReadExcelPoi {
 			}
 			fis.close();
 		}catch(IOException e){
-			e.printStackTrace();
+			logger.error("messege", e);
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("messege", e);
 		}finally{
 			if(fis != null){fis.close();}
 		}

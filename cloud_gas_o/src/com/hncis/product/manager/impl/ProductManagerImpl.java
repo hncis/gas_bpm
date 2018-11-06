@@ -7,6 +7,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -31,6 +33,7 @@ import com.hncis.product.vo.BgabGascpd04Dto;
 
 @Service("productManagerImpl")
 public class ProductManagerImpl implements ProductManager{
+    private transient Log logger = LogFactory.getLog(getClass());
 
 	@Autowired
 	public ProductDao productDao;
@@ -133,7 +136,7 @@ public class ProductManagerImpl implements ProductManager{
 			message.setMessage(HncisMessageSource.getMessage("SAVE.0000"));
 			message.setCode(dtoList.get(0).getPd_seq());
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("SAVE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -206,14 +209,14 @@ public class ProductManagerImpl implements ProductManager{
 				managerList.add("10000001");
 
 				bpmSaveMsg = BpmApiUtil.sendSaveTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
-				System.out.println("BPM 저장 메시지 : " + bpmSaveMsg);
+				logger.info("BPM 저장 메시지 : " + bpmSaveMsg);
 				
 				bpmReqMsg = BpmApiUtil.sendCompleteTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
-				System.out.println("BPM 신청 메시지 : " + bpmSaveMsg);
+				logger.info("BPM 신청 메시지 : " + bpmSaveMsg);
 			}
 			
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("APPLY.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -246,7 +249,7 @@ public class ProductManagerImpl implements ProductManager{
 				}
 			}
 		}catch (Exception e){
-			e.printStackTrace();
+			logger.error("messege", e);
 			rentYn = 0;
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
@@ -338,7 +341,7 @@ public class ProductManagerImpl implements ProductManager{
 			message.setMessage(HncisMessageSource.getMessage("DELETE.0000"));
 			message.setCode(dto.getPd_seq());
 		}catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("DELETE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -384,7 +387,7 @@ public class ProductManagerImpl implements ProductManager{
 		}catch(Exception e){
 			resultUrl = "xpd06_file.gas";
 			msg = HncisMessageSource.getMessage("FILE.0001");
-			e.printStackTrace();
+			logger.error("messege", e);
 		}finally{
 			try{
 				String dispatcherYN = "Y";
@@ -400,7 +403,7 @@ public class ProductManagerImpl implements ProductManager{
 			
 				return;
 			}catch(Exception e){
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 		
@@ -414,7 +417,7 @@ public class ProductManagerImpl implements ProductManager{
 			try {
 				fileResult = FileUtil.deleteFile(fileInfo.getCorp_cd(), "product", fileInfo.getOgc_fil_nm());
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 		Integer fileDRs = (Integer)productDao.deletePdToFile(dto);

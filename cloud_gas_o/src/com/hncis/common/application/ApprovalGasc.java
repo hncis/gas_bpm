@@ -36,6 +36,11 @@ public class ApprovalGasc{
 	private static PickupServiceDao pickupServiceDao;
 	private static RoomsMealsDao roomsMealsDao;
 	private static TaxiDao taxiDao;
+
+	private static final String appType02 = "SE02";
+	private static final String appType03 = "SE03";
+	private static final String appType04 = "SE04";
+	private static final String appType05 = "SE05";
 	
 
 	@Autowired
@@ -94,8 +99,6 @@ public class ApprovalGasc{
 		// 전결권자 레벨 가져오기
 		String approveLevel = commonJobDao.selectApproveLevel(commonApproval);
 
-		System.out.println("========== approveLevel : "+approveLevel);
-
 		//sql - select
 		chkCount = commonJobDao.getSelectApprovalUserCount(commonApproval);
 
@@ -134,12 +137,12 @@ public class ApprovalGasc{
 				commonApproval.setTot_level(totCount);
 			}
 
-		}else if(StringUtil.isNullToString(commonApproval.getAppType()).equals("SE02")
-					|| StringUtil.isNullToString(commonApproval.getAppType()).equals("SE03")
-					|| StringUtil.isNullToString(commonApproval.getAppType()).equals("SE04")){   // Security 결재
+		}else if(StringUtil.isNullToString(commonApproval.getAppType()).equals(appType02)
+					|| StringUtil.isNullToString(commonApproval.getAppType()).equals(appType03)
+					|| StringUtil.isNullToString(commonApproval.getAppType()).equals(appType04)){   // Security 결재
 			totCount = 2;
 			commonApproval.setTot_level(2);
-		}else if(StringUtil.isNullToString(commonApproval.getAppType()).equals("SE05")){
+		}else if(StringUtil.isNullToString(commonApproval.getAppType()).equals(appType05)){
 			totCount = 3;
 			commonApproval.setTot_level(3);
 		}else{
@@ -213,7 +216,6 @@ public class ApprovalGasc{
 
 
 		// 팀장 체크
-//		System.out.println("step_code ="+commonApproval.getStep_code());
 		int readerCnt = 0;
 		String readerYn = "N";
 //		if(commonApproval.getStep_code().equals("05")){
@@ -248,7 +250,7 @@ public class ApprovalGasc{
 				approvalDetail.setResult("0");
 
 				// Security 결재
-				if(StringUtil.isNullToString(commonApproval.getAppType()).equals("SE02")){
+				if(StringUtil.isNullToString(commonApproval.getAppType()).equals(appType02)){
 					rdcsInfo.setCode1("2");
 					CommonApproval securtiyInfo = commonJobDao.getSecurityNextApprovalInfo(rdcsInfo);
 					if(null == securtiyInfo){
@@ -257,7 +259,7 @@ public class ApprovalGasc{
 						approvalDetail.setRdcs_eeno(securtiyInfo.getRdcs_eeno());
 						approvalDetail.setRdcs_dept(securtiyInfo.getRdcs_dept());
 					}
-				}else if(StringUtil.isNullToString(commonApproval.getAppType()).equals("SE03")){
+				}else if(StringUtil.isNullToString(commonApproval.getAppType()).equals(appType03)){
 					rdcsInfo.setCode1("3");
 					CommonApproval securtiyInfo = commonJobDao.getSecurityNextApprovalInfo(rdcsInfo);
 					if(null == securtiyInfo){
@@ -266,8 +268,8 @@ public class ApprovalGasc{
 						approvalDetail.setRdcs_eeno(securtiyInfo.getRdcs_eeno());
 						approvalDetail.setRdcs_dept(securtiyInfo.getRdcs_dept());
 					}
-				}else if(StringUtil.isNullToString(commonApproval.getAppType()).equals("SE04")
-							|| StringUtil.isNullToString(commonApproval.getAppType()).equals("SE05") && i == 1){
+				}else if(StringUtil.isNullToString(commonApproval.getAppType()).equals(appType04)
+							|| StringUtil.isNullToString(commonApproval.getAppType()).equals(appType05) && i == 1){
 					rdcsInfo.setCode1("A");
 					rdcsInfo.setCode2(commonApproval.getCode2());
 					CommonApproval securtiyInfo = commonJobDao.getSecurityNextApprovalInfo(rdcsInfo);
@@ -277,7 +279,7 @@ public class ApprovalGasc{
 						approvalDetail.setRdcs_eeno(securtiyInfo.getRdcs_eeno());
 						approvalDetail.setRdcs_dept(securtiyInfo.getRdcs_dept());
 					}
-				}else if(StringUtil.isNullToString(commonApproval.getAppType()).equals("SE05") && i == 2){
+				}else if(StringUtil.isNullToString(commonApproval.getAppType()).equals(appType05) && i == 2){
 					rdcsInfo.setCode1("4");
 					CommonApproval securtiyInfo = commonJobDao.getSecurityNextApprovalInfo(rdcsInfo);
 					if(null == securtiyInfo){
@@ -346,8 +348,6 @@ public class ApprovalGasc{
 		String approveLevel = commonJobDao.selectApproveLevel(commonApproval);
 //		applevelInfo.setMax_levl(approveLevel);
 
-		System.out.println("========== approveLevel : "+approveLevel);
-
 		// 코디여부 체크
 //		String coordiChkCnt = commonJobDao.getSelectCoordiChk(commonApproval);
 //
@@ -379,13 +379,6 @@ public class ApprovalGasc{
 		if(StringUtil.isNullToString(applevelList.get(0).getEmpno()).equals(StringUtil.isNullToString(commonApproval.getRpts_eeno()))){
 			rptsEqualChk = true;
 		}
-
-		System.out.println("#########################################################");
-		//System.out.println("coordiChkCnt="+coordiChkCnt);
-		System.out.println("applevelList.get(0).getEmpno()="+applevelList.get(0).getEmpno());
-		System.out.println("commonApproval.getRpts_eeno()="+commonApproval.getRpts_eeno());
-		System.out.println("rptsEqualChk="+rptsEqualChk);
-		System.out.println("#########################################################");
 
 		int appLineCnt = 0;
 		String prev_empno = "";
@@ -439,7 +432,7 @@ public class ApprovalGasc{
 		CommonApproval rdcsInfo = new CommonApproval();
 		int cnt = 0;
 		apprDetail.setIf_id(commonApproval.getIf_id());
-		if(StringUtil.isNullToString(commonApproval.getAppr_type()).equals("SE02")){
+		if(StringUtil.isNullToString(commonApproval.getAppr_type()).equals(appType02)){
 			rdcsInfo.setCode1("2");
 			CommonApproval securtiyInfo = commonJobDao.getSecurityNextApprovalInfo(rdcsInfo);
 			if(null == securtiyInfo){
@@ -455,7 +448,7 @@ public class ApprovalGasc{
 				cntLv++;
 			}
 		}
-		if(StringUtil.isNullToString(commonApproval.getAppr_type()).equals("SE03")){
+		if(StringUtil.isNullToString(commonApproval.getAppr_type()).equals(appType03)){
 			rdcsInfo.setCode1("3");
 			CommonApproval securtiyInfo = commonJobDao.getSecurityNextApprovalInfo(rdcsInfo);
 			if(null == securtiyInfo){
@@ -471,7 +464,7 @@ public class ApprovalGasc{
 				cntLv++;
 			}
 		}
-		if(StringUtil.isNullToString(commonApproval.getAppr_type()).equals("SE04") || StringUtil.isNullToString(commonApproval.getAppr_type()).equals("SE05")){
+		if(StringUtil.isNullToString(commonApproval.getAppr_type()).equals(appType04) || StringUtil.isNullToString(commonApproval.getAppr_type()).equals(appType05)){
 			rdcsInfo.setCode1("A");
 			rdcsInfo.setCode2(commonApproval.getCode2());
 			CommonApproval securtiyInfo = commonJobDao.getSecurityNextApprovalInfo(rdcsInfo);
@@ -488,7 +481,7 @@ public class ApprovalGasc{
 				cntLv++;
 			}
 		}
-		if(StringUtil.isNullToString(commonApproval.getAppr_type()).equals("SE05")){
+		if(StringUtil.isNullToString(commonApproval.getAppr_type()).equals(appType05)){
 			rdcsInfo.setCode1("4");
 			CommonApproval securtiyInfo = commonJobDao.getSecurityNextApprovalInfo(rdcsInfo);
 			if(null == securtiyInfo){
@@ -526,8 +519,6 @@ public class ApprovalGasc{
 		}
 
 
-		System.out.println("Debug01");
-
 		if(cnt > 0){
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			commonApproval.setResult("E");
@@ -541,13 +532,9 @@ public class ApprovalGasc{
 			commonApproval.setRdcs_eeno(applevelList.get(0).getEmpno());
 			commonApproval.setRdcs_dept(applevelList.get(0).getOrga_c());
 
-			System.out.println("Debug02");
-
 			// 상신자와 결재자 동일인일 경우 now level +1 setting
 			if(rptsEqualChk){
-				System.out.println("Debug03");
 				if(applevelList.size() > 1){
-					System.out.println("Debug04");
 					commonApproval.setNow_level(2);
 					commonApproval.setRdcs_eeno(applevelList.get(1).getEmpno());
 					commonApproval.setRdcs_dept(applevelList.get(1).getOrga_c());
@@ -609,8 +596,6 @@ public class ApprovalGasc{
 		}else if("BN".equals(tmpSysCode)){
 			commonApproval.setSystem_code("BN");
 		}
-
-		System.out.println("========== approveLevel : "+approveStepLevel);
 
 		List<BgabGascz008Dto> applevelList = new ArrayList<BgabGascz008Dto>();
 
@@ -679,12 +664,6 @@ public class ApprovalGasc{
 				rptsEqualChk = true;
 			}
 
-			System.out.println("#########################################################");
-			//System.out.println("coordiChkCnt="+coordiChkCnt);
-			System.out.println("applevelList.get(0).getEmpno()="+applevelList.get(0).getEmpno());
-			System.out.println("commonApproval.getRpts_eeno()="+commonApproval.getRpts_eeno());
-			System.out.println("rptsEqualChk="+rptsEqualChk);
-			System.out.println("#########################################################");
 			for(int i = 0 ; i < applevelList.size() ; i++){
 
 				// 결재자 정보 체크
@@ -734,7 +713,7 @@ public class ApprovalGasc{
 			CommonApproval rdcsInfo = new CommonApproval();
 
 			apprDetail.setIf_id(commonApproval.getIf_id());
-			if(StringUtil.isNullToString(commonApproval.getAppr_type()).equals("SE02")){
+			if(StringUtil.isNullToString(commonApproval.getAppr_type()).equals(appType02)){
 				rdcsInfo.setCode1("2");
 				CommonApproval securtiyInfo = commonJobDao.getSecurityNextApprovalInfo(rdcsInfo);
 				if(null == securtiyInfo){
@@ -750,7 +729,7 @@ public class ApprovalGasc{
 					cntLv++;
 				}
 			}
-			if(StringUtil.isNullToString(commonApproval.getAppr_type()).equals("SE03")){
+			if(StringUtil.isNullToString(commonApproval.getAppr_type()).equals(appType03)){
 				rdcsInfo.setCode1("3");
 				CommonApproval securtiyInfo = commonJobDao.getSecurityNextApprovalInfo(rdcsInfo);
 				if(null == securtiyInfo){
@@ -766,7 +745,7 @@ public class ApprovalGasc{
 					cntLv++;
 				}
 			}
-			if(StringUtil.isNullToString(commonApproval.getAppr_type()).equals("SE04") || StringUtil.isNullToString(commonApproval.getAppr_type()).equals("SE05")){
+			if(StringUtil.isNullToString(commonApproval.getAppr_type()).equals(appType04) || StringUtil.isNullToString(commonApproval.getAppr_type()).equals(appType05)){
 				rdcsInfo.setCode1("A");
 				rdcsInfo.setCode2(commonApproval.getCode2());
 				CommonApproval securtiyInfo = commonJobDao.getSecurityNextApprovalInfo(rdcsInfo);
@@ -783,7 +762,7 @@ public class ApprovalGasc{
 					cntLv++;
 				}
 			}
-			if(StringUtil.isNullToString(commonApproval.getAppr_type()).equals("SE05")){
+			if(StringUtil.isNullToString(commonApproval.getAppr_type()).equals(appType05)){
 				rdcsInfo.setCode1("4");
 				CommonApproval securtiyInfo = commonJobDao.getSecurityNextApprovalInfo(rdcsInfo);
 				if(null == securtiyInfo){
@@ -821,8 +800,6 @@ public class ApprovalGasc{
 //			}
 
 
-			System.out.println("Debug01");
-
 			if(cnt > 0){
 				TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 				commonApproval.setResult("E");
@@ -836,13 +813,10 @@ public class ApprovalGasc{
 				commonApproval.setRdcs_eeno(applevelList.get(0).getEmpno());
 				commonApproval.setRdcs_dept(applevelList.get(0).getOrga_c());
 
-				System.out.println("Debug02");
 
 				// 상신자와 결재자 동일인일 경우 now level +1 setting
 				if(rptsEqualChk){
-					System.out.println("Debug03");
 					if(applevelList.size() > 1){
-						System.out.println("Debug04");
 						commonApproval.setNow_level(2);
 						commonApproval.setRdcs_eeno(applevelList.get(1).getEmpno());
 						commonApproval.setRdcs_dept(applevelList.get(1).getOrga_c());

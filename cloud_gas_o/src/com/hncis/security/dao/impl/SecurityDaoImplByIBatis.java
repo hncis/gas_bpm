@@ -58,6 +58,7 @@ public class SecurityDaoImplByIBatis extends CommonDao implements SecurityDao{
 
 	private final String SELECT_COUNT_SECURITY_VISTIOR_CUSTOMER = "selectCountSecurityVistiorCustomer";
 	private final String SELECT_SECURITY_VISTIOR_CUSTOMER 		= "selectSecurityVistiorCustomer";
+	private static final String uncheck = "unchecked";
 
 	@Override
 	public int insertSecurityRequestMaster(BgabGascse01 param){
@@ -90,7 +91,7 @@ public class SecurityDaoImplByIBatis extends CommonDao implements SecurityDao{
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascse01> getSelectSecurityRequestVehicle(BgabGascse01 param){
 		return  getSqlMapClientTemplate().queryForList(SELECT_SECURITY_REQUEST_VEHICLE, param);
 	}
@@ -111,7 +112,7 @@ public class SecurityDaoImplByIBatis extends CommonDao implements SecurityDao{
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascse02> getSelectSecurityRequestMaterial(BgabGascse02 param){
 		return  getSqlMapClientTemplate().queryForList(SELECT_SECURITY_REQUEST_MATERIAL, param);
 	}
@@ -132,7 +133,7 @@ public class SecurityDaoImplByIBatis extends CommonDao implements SecurityDao{
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascse03> getSelectSecurityRequestDevices(BgabGascse03 param){
 		return  getSqlMapClientTemplate().queryForList(SELECT_SECURITY_REQUEST_DEVICES, param);
 	}
@@ -154,7 +155,7 @@ public class SecurityDaoImplByIBatis extends CommonDao implements SecurityDao{
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascse04> getSelectSecurityRequestFilm(BgabGascse04 param){
 		return  getSqlMapClientTemplate().queryForList(SELECT_SECURITY_REQUEST_FILM, param);
 	}
@@ -180,7 +181,7 @@ public class SecurityDaoImplByIBatis extends CommonDao implements SecurityDao{
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascse01> getSelectSecurityRequestConfirmList(BgabGascse01 param){
 		return  getSqlMapClientTemplate().queryForList(SELECT_SECURITY_REQUEST_CONFIRM_LIST, param);
 	}
@@ -208,7 +209,7 @@ public class SecurityDaoImplByIBatis extends CommonDao implements SecurityDao{
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascse05> getSelectSecurityManagerMgmtList(BgabGascse05 param){
 		return  getSqlMapClientTemplate().queryForList(SELECT_SECURITY_MANAGER_MGMT_LIST, param);
 	}
@@ -234,7 +235,7 @@ public class SecurityDaoImplByIBatis extends CommonDao implements SecurityDao{
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascse05> selectFilmComboArea(){
 		return getSqlMapClientTemplate().queryForList(SELECT_FILM_COMBO_AREA);
 	}
@@ -255,7 +256,7 @@ public class SecurityDaoImplByIBatis extends CommonDao implements SecurityDao{
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascse06> getSelectSecurityRequestEntrance(BgabGascse06 param){
 		return  getSqlMapClientTemplate().queryForList(SELECT_SECURITY_REQUEST_ENTRANCE, param);
 	}
@@ -266,7 +267,7 @@ public class SecurityDaoImplByIBatis extends CommonDao implements SecurityDao{
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascZ011Dto> getSelectXVToFile(BgabGascZ011Dto btReqDto){
 		return getSqlMapClientTemplate().queryForList("selectXVToFile", btReqDto);
 	}

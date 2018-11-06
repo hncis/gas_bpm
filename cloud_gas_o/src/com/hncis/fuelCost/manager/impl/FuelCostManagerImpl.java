@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -25,6 +27,15 @@ import com.hncis.fuelCost.vo.BgabGascfc02Dto;
 
 @Service("fuelCostManagerImpl")
 public class FuelCostManagerImpl implements FuelCostManager{
+    private transient Log logger = LogFactory.getLog(getClass());
+
+    private static final String pCode = "P-D-006";
+    private static final String sCode = "GASBZ01460010";
+    private static final String rCode = "GASROLE01460030";
+    private static final String adminID = "10000001";
+    private static final String saveMsg0 = "SAVE.0000";
+    private static final String saveMsg1 = "SAVE.0001";
+    
 	@Autowired
 	public FuelCostDao fuelCostDao;
 
@@ -49,37 +60,37 @@ public class FuelCostManagerImpl implements FuelCostManager{
 				cnt = fuelCostDao.insertXfc01Info(dto);
 				if(cnt == 0){
 					message.setResult("N");
-					message.setMessage(HncisMessageSource.getMessage("SAVE.0001"));
+					message.setMessage(HncisMessageSource.getMessage(saveMsg1));
 					TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 				} else {
 					message.setResult("Y");
 					message.setCode(dto.getDoc_no());
-					message.setMessage(HncisMessageSource.getMessage("SAVE.0000"));
+					message.setMessage(HncisMessageSource.getMessage(saveMsg0));
 					
 					// BPM API호출
-					String processCode = "P-D-006"; 	//프로세스 코드 (주유비 프로세스) - 프로세스 정의서 참조
+					String processCode = pCode; 	//프로세스 코드 (주유비 프로세스) - 프로세스 정의서 참조
 					String bizKey = dto.getDoc_no();	//신청서 번호
-					String statusCode = "GASBZ01460010";	//액티비티 코드 (주유비 신청서작성) - 프로세스 정의서 참조
+					String statusCode = sCode;	//액티비티 코드 (주유비 신청서작성) - 프로세스 정의서 참조
 					String loginUserId = dto.getEeno();	//로그인 사용자 아이디
 					String comment = null;
-					String roleCode = "GASROLE01460030";  //주유비 담당자 역할코드
+					String roleCode = rCode;  //주유비 담당자 역할코드
 					
 					//역할정보
 					List<String> approveList = new ArrayList<String>();
 					List<String> managerList = new ArrayList<String>();
-					managerList.add("10000001");
+					managerList.add(adminID);
 
 					BpmApiUtil.sendSaveTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 				}
 			}else{
 				message.setResult("Y");
 				message.setCode(dto.getDoc_no());
-				message.setMessage(HncisMessageSource.getMessage("SAVE.0000"));
+				message.setMessage(HncisMessageSource.getMessage(saveMsg0));
 			}
 
 		} catch (Exception e) {
 			message.setResult("N");
-			message.setMessage(HncisMessageSource.getMessage("SAVE.0001"));
+			message.setMessage(HncisMessageSource.getMessage(saveMsg1));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
 
@@ -103,9 +114,9 @@ public class FuelCostManagerImpl implements FuelCostManager{
 				message.setResult("Y");
 				
 				// BPM API호출
-				String processCode = "P-D-006"; 	//프로세스 코드 (주유비 프로세스) - 프로세스 정의서 참조
+				String processCode = pCode; 	//프로세스 코드 (주유비 프로세스) - 프로세스 정의서 참조
 				String bizKey = dto.getDoc_no();	//신청서 번호
-				String statusCode = "GASBZ01460010";	//액티비티 코드 (주유비 신청서작성) - 프로세스 정의서 참조
+				String statusCode = sCode;	//액티비티 코드 (주유비 신청서작성) - 프로세스 정의서 참조
 				String loginUserId = dto.getUpdr_eeno();	//로그인 사용자 아이디
 				
 				BpmApiUtil.sendDeleteAndRejectTask(processCode, bizKey, statusCode, loginUserId);
@@ -174,8 +185,7 @@ public class FuelCostManagerImpl implements FuelCostManager{
 			stdDist =  new BigDecimal(stdDto.getLpg_dist());
 			stdCost =  new BigDecimal(stdDto.getLpg_cost());
 		}
-		System.out.println("trvgDist:"+trvgDist);
-		System.out.println("stdDist:"+stdDist);
+		
 		fuelLiter = trvgDist.divide(stdDist,1,BigDecimal.ROUND_CEILING);
 		fuelCost = fuelLiter.multiply(stdCost).setScale(0,BigDecimal.ROUND_CEILING);
 
@@ -214,17 +224,17 @@ public class FuelCostManagerImpl implements FuelCostManager{
 				message.setMessage(HncisMessageSource.getMessage("REQUEST.0000"));
 				
 				// BPM API호출
-				String processCode = "P-D-006"; 	//프로세스 코드 (주유비 프로세스) - 프로세스 정의서 참조
+				String processCode = pCode; 	//프로세스 코드 (주유비 프로세스) - 프로세스 정의서 참조
 				String bizKey = dto.getDoc_no();	//신청서 번호
-				String statusCode = "GASBZ01460010";	//액티비티 코드 (주유비신청서작성) - 프로세스 정의서 참조
+				String statusCode = sCode;	//액티비티 코드 (주유비신청서작성) - 프로세스 정의서 참조
 				String loginUserId = dto.getEeno();	//로그인 사용자 아이디
 				String comment = null;
-				String roleCode = "GASROLE01460030";   //주유비 담당자 역할코드
+				String roleCode = rCode;   //주유비 담당자 역할코드
 				
 				//역할정보
 				List<String> approveList = commonApproval.getApproveList();
 				List<String> managerList = new ArrayList<String>();
-				managerList.add("10000001");
+				managerList.add(adminID);
 
 				BpmApiUtil.sendCompleteTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList);
 				
@@ -258,17 +268,17 @@ public class FuelCostManagerImpl implements FuelCostManager{
 					message.setResult("Y");
 					
 					// BPM API호출
-					String processCode = "P-D-006"; 	//프로세스 코드 (주유비 프로세스) - 프로세스 정의서 참조
+					String processCode = pCode; 	//프로세스 코드 (주유비 프로세스) - 프로세스 정의서 참조
 					String bizKey = dto.getDoc_no();	//신청서 번호
-					String statusCode = "GASBZ01460010";	//액티비티 코드 (주유비 신청서작성) - 프로세스 정의서 참조
+					String statusCode = sCode;	//액티비티 코드 (주유비 신청서작성) - 프로세스 정의서 참조
 					String loginUserId = dto.getUpdr_eeno();	//로그인 사용자 아이디
 					String comment = null;
-					String roleCode = "GASROLE01460030";  //주유비 담당자 역할코드
+					String roleCode = rCode;  //주유비 담당자 역할코드
 						
 					//역할정보
 					List<String> approveList = new ArrayList<String>();
 					List<String> managerList = new ArrayList<String>();
-					managerList.add("10000001");
+					managerList.add(adminID);
 					
 					BpmApiUtil.sendCollectTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 
@@ -284,17 +294,17 @@ public class FuelCostManagerImpl implements FuelCostManager{
 				if(commonApproval.getResult().equals("Z")){
 					
 					// BPM API호출
-					String processCode = "P-D-006"; 	//프로세스 코드 (주유비 프로세스) - 프로세스 정의서 참조
+					String processCode = pCode; 	//프로세스 코드 (주유비 프로세스) - 프로세스 정의서 참조
 					String bizKey = dto.getDoc_no();	//신청서 번호
-					String statusCode = "GASBZ01460010";	//액티비티 코드 (주유비 신청서작성) - 프로세스 정의서 참조
+					String statusCode = sCode;	//액티비티 코드 (주유비 신청서작성) - 프로세스 정의서 참조
 					String loginUserId = dto.getUpdr_eeno();	//로그인 사용자 아이디
 					String comment = null;
-					String roleCode = "GASROLE01460030";  //주유비 담당자 역할코드
+					String roleCode = rCode;  //주유비 담당자 역할코드
 						
 					//역할정보
 					List<String> approveList = new ArrayList<String>();
 					List<String> managerList = new ArrayList<String>();
-					managerList.add("10000001");
+					managerList.add(adminID);
 					
 					BpmApiUtil.sendCollectTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 
@@ -326,7 +336,7 @@ public class FuelCostManagerImpl implements FuelCostManager{
 				message.setMessage(HncisMessageSource.getMessage("CONFIRM.0000"));
 				
 				// BPM API호출
-				String processCode = "P-D-006"; 	//프로세스 코드 (주유비 프로세스) - 프로세스 정의서 참조
+				String processCode = pCode; 	//프로세스 코드 (주유비 프로세스) - 프로세스 정의서 참조
 				String bizKey = dto.getDoc_no();	//신청서 번호
 				String statusCode = "GASBZ01460030";	//액티비티 코드 (주유비 담당자확인) - 프로세스 정의서 참조
 				String loginUserId = dto.getUpdr_eeno();	//로그인 사용자 아이디
@@ -379,21 +389,20 @@ public class FuelCostManagerImpl implements FuelCostManager{
 				cnt = fuelCostDao.insertXfc05Info(dto);
 				if(cnt == 0){
 					message.setResult("N");
-					message.setMessage(HncisMessageSource.getMessage("SAVE.0001"));
+					message.setMessage(HncisMessageSource.getMessage(saveMsg1));
 					TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 				} else {
 					message.setResult("Y");
-					message.setMessage(HncisMessageSource.getMessage("SAVE.0000"));
+					message.setMessage(HncisMessageSource.getMessage(saveMsg0));
 				}
 			}else{
 				message.setResult("Y");
-				message.setMessage(HncisMessageSource.getMessage("SAVE.0000"));
+				message.setMessage(HncisMessageSource.getMessage(saveMsg0));
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
 			message.setResult("N");
-			message.setMessage(HncisMessageSource.getMessage("SAVE.0001"));
+			message.setMessage(HncisMessageSource.getMessage(saveMsg1));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
 
@@ -457,7 +466,7 @@ public class FuelCostManagerImpl implements FuelCostManager{
 			message.setCode1("Y");
 			
 			// BPM API호출
-			String processCode = "P-D-006"; 	//프로세스 코드 (주유비 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (주유비 프로세스) - 프로세스 정의서 참조
 			String bizKey = dto.getDoc_no();	//신청서 번호
 			String statusCode = "GASBZ01460030";	//액티비티 코드 (주유비 담당자확인) - 프로세스 정의서 참조
 			String loginUserId = dto.getUpdr_eeno();	//로그인 사용자 아이디

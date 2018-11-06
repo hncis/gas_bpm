@@ -21,6 +21,8 @@ import com.hncis.common.Constant;
 import com.hncis.common.application.SessionInfo;
 import com.hncis.common.exception.impl.SessionException;
 import com.hncis.common.message.HncisMessageSource;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 /**
  *
  * 파일처리에 관련된 클래스
@@ -29,6 +31,26 @@ import com.hncis.common.message.HncisMessageSource;
  *
  */
 public class FileUtil {
+    private transient static Log logger = LogFactory.getLog(FileUtil.class.getClass());
+    
+	private static final String typeDoc = "doc";
+	private static final String typeHwp = "hwp";
+	private static final String typeDocx = "docx";
+	private static final String typeXls = "xls";
+	private static final String typePdf = "pdf";
+	private static final String typePpt = "ppt";
+	private static final String typeGif = "gif";
+	private static final String typePng = "png";
+	private static final String typeJpg = "jpg";
+	private static final String typeJpeg = "jpeg";
+	private static final String strLocal = "LOCAL";
+	private static final String strTest = "TEST";
+	private static final String strHttp = "http://";
+	private static final String strUploadFile = "uploadFile:";
+	private static final String strRealFolder = "realFolder:";
+	private static final String strFileName = "fileName:";
+	private static final String strOldFileName = "oldFileName:";
+	private static final String strStar = "##################################";
 	/**
 	 * 업로드 된 파일을 읽어 레파지토리에 저장한다.
 	 * @param multipartFile MultipartFile Object
@@ -41,12 +63,12 @@ public class FileUtil {
 		OutputStream outputStream = null;
 		String tempName = UUID.randomUUID().toString();
 
-		System.out.println("size="+multipartFile.getSize());
+		logger.info("size="+multipartFile.getSize());
 
 		if (multipartFile.getSize() > 0) {
 			String ext = StringUtil.lowerCase(StringUtil.fileExtention(multipartFile.getOriginalFilename()));
-			if((ext.equals("hwp") || ext.equals("doc") || ext.equals("docx") || ext.equals("xls") || ext.equals("pdf") || ext.equals("ppt") ||
-					ext.equals("gif") || ext.equals("png") || ext.equals("jpg")) ){
+			if((ext.equals(typeHwp) || ext.equals(typeDoc) || ext.equals(typeDocx) || ext.equals(typeXls) || ext.equals(typePdf) || ext.equals(typePpt) ||
+					ext.equals(typeGif) || ext.equals(typePng) || ext.equals(typeJpg)) ){
 				try {
 					File dir = new File(writeFilePath);
 					if(!dir.exists()) {
@@ -90,8 +112,8 @@ public class FileUtil {
 
 		if (multipartFile.getSize() > 0) {
 			String ext = StringUtil.lowerCase(StringUtil.fileExtention(newFileName));
-			if((ext.equals("hwp") || ext.equals("doc") || ext.equals("docx") || ext.equals("xls") || ext.equals("pdf") || ext.equals("ppt") ||
-					ext.equals("gif") || ext.equals("png") || ext.equals("jpg")) ){
+			if((ext.equals(typeHwp) || ext.equals(typeDoc) || ext.equals(typeDocx) || ext.equals(typeXls) || ext.equals(typePdf) || ext.equals(typePpt) ||
+					ext.equals(typeGif) || ext.equals(typePng) || ext.equals(typeJpg)) ){
 				try {
 					File dir = new File(writeFilePath);
 					if(!dir.exists()) {
@@ -188,17 +210,17 @@ public class FileUtil {
 		String[] result = new String[6];
 		mr = (MultipartHttpServletRequest) req;
 		try{
-			System.out.println("paramVal[0]="+paramVal[0]);
+			logger.info("paramVal[0]="+paramVal[0]);
 			uploadFile = mr.getFile(paramVal[0]);
-			System.out.println("uploadFile="+uploadFile);
+			logger.info("uploadFile="+uploadFile);
 
-			System.out.println("##################################");
-			System.out.println("Constant.UPLOAD_REAL_PATH="+Constant.UPLOAD_REAL_PATH);
-			System.out.println("##################################");
+			logger.info(strStar);
+			logger.info("Constant.UPLOAD_REAL_PATH="+Constant.UPLOAD_REAL_PATH);
+			logger.info(strStar);
 
-			if(StringUtil.getSystemArea().equals("LOCAL")){
+			if(StringUtil.getSystemArea().equals(strLocal)){
 				realFolder = Constant.UPLOAD_LOCAL_PATH;
-			}else if(StringUtil.getSystemArea().equals("TEST")){
+			}else if(StringUtil.getSystemArea().equals(strTest)){
 				realFolder = Constant.UPLOAD_TEST_PATH;
 			}else{
 				realFolder = Constant.UPLOAD_REAL_PATH;
@@ -206,7 +228,7 @@ public class FileUtil {
 
 			fileName = uploadFile.getOriginalFilename();
 
-			System.out.println("fileName11111="+fileName);
+			logger.info("fileName11111="+fileName);
 			String corp_cd = "";
 	        try {
 				corp_cd = SessionInfo.getSess_corp_cd(req);
@@ -215,16 +237,16 @@ public class FileUtil {
 				e1.printStackTrace();
 			}
 
-			String realUrl = "http://" + req.getServerName() + realFolder;
+			String realUrl = strHttp + req.getServerName() + realFolder;
 			if(!uploadFile.getOriginalFilename().equals("")){
 				oldFileName = mr.getParameter(paramVal[1]);
 				realFolder += "/"+corp_cd+"/"+paramVal[2];
 				realUrl    += "/"+corp_cd+"/"+paramVal[2];
 
 				String ext = StringUtil.lowerCase(StringUtil.lowerCase(StringUtil.fileExtention(fileName)));
-				if(!(ext.equals("hwp") || ext.equals("doc") || ext.equals("docx") || ext.equals("xls") || ext.equals("xlsx") ||
-					 ext.equals("pdf") || ext.equals("ppt") || ext.equals("pptx") || ext.equals("gif") ||
-					 ext.equals("png") || ext.equals("bmp")  || ext.equals("jpg") || ext.equals("jpeg") || ext.equals("txt"))){
+				if(!(ext.equals(typeHwp) || ext.equals(typeDoc) || ext.equals(typeDocx) || ext.equals(typeXls) || ext.equals("xlsx") ||
+					 ext.equals(typePdf) || ext.equals(typePpt) || ext.equals("pptx") || ext.equals(typeGif) ||
+					 ext.equals(typePng) || ext.equals("bmp")  || ext.equals(typeJpg) || ext.equals(typeJpeg) || ext.equals("txt"))){
 					//result = null;
 					result[4] = HncisMessageSource.getMessage("FILE.0002");
 				}else{
@@ -246,14 +268,14 @@ public class FileUtil {
 					if(oldFileName == null || oldFileName.equals("")){
 						oldFileName = "";
 					}
-					System.out.println("uploadFile:"+uploadFile);
-					System.out.println("realFolder:"+realFolder);
-					System.out.println("fileName:"+fileName);
-					System.out.println("tmpFileName:"+tmpFileName);
-					System.out.println("oldFileName:"+oldFileName);
-					System.out.println("fileSize:"+uploadFile.getSize());
-					System.out.println("path:"+realFolder+"/"+fileName);
-					//System.out.println("exists:"+uploadFile.);
+					logger.info(strUploadFile+uploadFile);
+					logger.info(strRealFolder+realFolder);
+					logger.info(strFileName+fileName);
+					logger.info("tmpFileName:"+tmpFileName);
+					logger.info(strOldFileName+oldFileName);
+					logger.info("fileSize:"+uploadFile.getSize());
+					logger.info("path:"+realFolder+"/"+fileName);
+					//logger.info("exists:"+uploadFile.);
 
 
 
@@ -273,7 +295,7 @@ public class FileUtil {
 				result[4] = HncisMessageSource.getMessage("FILE.0001");
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 
 		return result;
@@ -289,17 +311,17 @@ public class FileUtil {
 		String[] result = new String[6];
 		mr = (MultipartHttpServletRequest) req;
 		try{
-			System.out.println("paramVal[0]="+paramVal[0]);
+			logger.info("paramVal[0]="+paramVal[0]);
 			uploadFile = mr.getFile(paramVal[0]);
-			System.out.println("uploadFile="+uploadFile);
+			logger.info("uploadFile="+uploadFile);
 
-			System.out.println("##################################");
-			System.out.println("Constant.UPLOAD_REAL_PATH="+Constant.UPLOAD_REAL_PATH);
-			System.out.println("##################################");
+			logger.info(strStar);
+			logger.info("Constant.UPLOAD_REAL_PATH="+Constant.UPLOAD_REAL_PATH);
+			logger.info(strStar);
 
-			if(StringUtil.getSystemArea().equals("LOCAL")){
+			if(StringUtil.getSystemArea().equals(strLocal)){
 				realFolder = Constant.EDT_UPLOAD_LOCAL_PATH;
-			}else if(StringUtil.getSystemArea().equals("TEST")){
+			}else if(StringUtil.getSystemArea().equals(strTest)){
 				realFolder = Constant.EDT_UPLOAD_TEST_PATH;
 			}else{
 				realFolder = Constant.EDT_UPLOAD_REAL_PATH;
@@ -315,14 +337,14 @@ public class FileUtil {
 				e1.printStackTrace();
 			}
 
-			String realUrl = "http://" + req.getServerName() + realFolder;
+			String realUrl = strHttp + req.getServerName() + realFolder;
 			if(!uploadFile.getOriginalFilename().equals("")){
 				oldFileName = mr.getParameter(paramVal[1]);
 				realFolder += "/"+corp_cd+"/"+paramVal[2];
 				realUrl    += "/"+corp_cd+"/"+paramVal[2];
 
 				String ext = StringUtil.lowerCase(StringUtil.lowerCase(StringUtil.fileExtention(fileName)));
-				if(!(ext.equals("gif") || ext.equals("png") || ext.equals("bmp")  || ext.equals("jpg") || ext.equals("jpeg"))){
+				if(!(ext.equals(typeGif) || ext.equals(typePng) || ext.equals("bmp")  || ext.equals(typeJpg) || ext.equals(typeJpeg))){
 					//result = null;
 					result[4] = HncisMessageSource.getMessage("FILE.0002");
 				}else{
@@ -344,14 +366,14 @@ public class FileUtil {
 					if(oldFileName == null || oldFileName.equals("")){
 						oldFileName = "";
 					}
-					System.out.println("uploadFile:"+uploadFile);
-					System.out.println("realFolder:"+realFolder);
-					System.out.println("fileName:"+fileName);
-					System.out.println("tmpFileName:"+tmpFileName);
-					System.out.println("oldFileName:"+oldFileName);
-					System.out.println("fileSize:"+uploadFile.getSize());
-					System.out.println("path:"+realFolder+"/"+fileName);
-					//System.out.println("exists:"+uploadFile.);
+					logger.info(strUploadFile+uploadFile);
+					logger.info(strRealFolder+realFolder);
+					logger.info(strFileName+fileName);
+					logger.info("tmpFileName:"+tmpFileName);
+					logger.info(strOldFileName+oldFileName);
+					logger.info("fileSize:"+uploadFile.getSize());
+					logger.info("path:"+realFolder+"/"+fileName);
+					//logger.info("exists:"+uploadFile.);
 
 
 
@@ -371,7 +393,7 @@ public class FileUtil {
 				result[4] = HncisMessageSource.getMessage("FILE.0001");
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 
 		return result;
@@ -384,9 +406,9 @@ public class FileUtil {
 		String fileFullPath = "";
 		String realFolder = "";
 
-		if(StringUtil.getSystemArea().equals("LOCAL")){
+		if(StringUtil.getSystemArea().equals(strLocal)){
 			realFolder = Constant.EDT_UPLOAD_LOCAL_PATH;
-		}else if(StringUtil.getSystemArea().equals("TEST")){
+		}else if(StringUtil.getSystemArea().equals(strTest)){
 			realFolder = Constant.EDT_UPLOAD_TEST_PATH;
 		}else{
 			realFolder = Constant.EDT_UPLOAD_REAL_PATH;
@@ -401,7 +423,7 @@ public class FileUtil {
 			}
 			result = "S";
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 
 		return result;
@@ -429,14 +451,14 @@ public class FileUtil {
 				e1.printStackTrace();
 			}
 	        
-			String realUrl = "http://" + req.getServerName() + realFolder;
+			String realUrl = strHttp + req.getServerName() + realFolder;
 			if(!uploadFile.getOriginalFilename().equals("")){
 				oldFileName = mr.getParameter(paramVal[1]);
 				realFolder += "/"+corp_cd+"/"+paramVal[2];
 				realUrl    += "/"+corp_cd+"/"+paramVal[2];
 
 				String ext = StringUtil.lowerCase(StringUtil.fileExtention(fileName));
-				if(!(ext.equals("gif") || ext.equals("png") || ext.equals("jpg"))){
+				if(!(ext.equals(typeGif) || ext.equals(typePng) || ext.equals(typeJpg))){
 					result = null;
 				}else{
 					File file = new File(realFolder+"/"+fileName);
@@ -453,10 +475,10 @@ public class FileUtil {
 					if(oldFileName == null || oldFileName.equals("")){
 						oldFileName = "";
 					}
-					System.out.println("uploadFile:"+uploadFile);
-					System.out.println("realFolder:"+realFolder);
-					System.out.println("fileName:"+fileName);
-					System.out.println("oldFileName:"+oldFileName);
+					logger.info(strUploadFile+uploadFile);
+					logger.info(strRealFolder+realFolder);
+					logger.info(strFileName+fileName);
+					logger.info(strOldFileName+oldFileName);
 					saveFile(uploadFile, realFolder, fileName, oldFileName);
 					result[0] = fileName;
 					result[1] = realUrl;
@@ -470,7 +492,7 @@ public class FileUtil {
 				result[3] = "";
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 
 		return result;
@@ -482,9 +504,9 @@ public class FileUtil {
 		String fileFullPath = "";
 		String realFolder = "";
 
-		if(StringUtil.getSystemArea().equals("LOCAL")){
+		if(StringUtil.getSystemArea().equals(strLocal)){
 			realFolder = Constant.UPLOAD_LOCAL_PATH;
-		}else if(StringUtil.getSystemArea().equals("TEST")){
+		}else if(StringUtil.getSystemArea().equals(strTest)){
 			realFolder = Constant.UPLOAD_TEST_PATH;
 		}else{
 			realFolder = Constant.UPLOAD_REAL_PATH;
@@ -499,7 +521,7 @@ public class FileUtil {
 			}
 			result = "S";
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 
 		return result;
@@ -515,9 +537,9 @@ public class FileUtil {
 
         mhr = (MultipartHttpServletRequest) req;
         try{
-            if(StringUtil.getSystemArea().equals("LOCAL")){
+            if(StringUtil.getSystemArea().equals(strLocal)){
                 realFolder = Constant.UPLOAD_LOCAL_PATH;
-            }else if(StringUtil.getSystemArea().equals("TEST")){
+            }else if(StringUtil.getSystemArea().equals(strTest)){
                 realFolder = Constant.UPLOAD_TEST_PATH;
             }else{
                 realFolder = Constant.UPLOAD_REAL_PATH;
@@ -531,7 +553,7 @@ public class FileUtil {
 				e1.printStackTrace();
 			}
 	        
-            String realUrl = "http://" + req.getServerName() + realFolder;
+            String realUrl = strHttp + req.getServerName() + realFolder;
             realFolder +="/"+corp_cd+ "/"+paramVal[1];
             realUrl    +="/"+corp_cd+ "/"+paramVal[1];
 
@@ -541,9 +563,9 @@ public class FileUtil {
 
             if(!uploadFile.getOriginalFilename().equals("")){
                 String ext = StringUtil.lowerCase(StringUtil.lowerCase(StringUtil.fileExtention(fileName)));
-                if(!(ext.equals("hwp") || ext.equals("doc") || ext.equals("docx") || ext.equals("xls") || ext.equals("xlsx") ||
-                     ext.equals("pdf") || ext.equals("ppt") || ext.equals("pptx")|| ext.equals("gif") || ext.equals("ncf") ||
-                     ext.equals("png") || ext.equals("jpg") || ext.equals("jpeg") || ext.equals("txt") || ext.equals("zip"))){
+                if(!(ext.equals(typeHwp) || ext.equals(typeDoc) || ext.equals(typeDocx) || ext.equals(typeXls) || ext.equals("xlsx") ||
+                     ext.equals(typePdf) || ext.equals(typePpt) || ext.equals("pptx")|| ext.equals(typeGif) || ext.equals("ncf") ||
+                     ext.equals(typePng) || ext.equals(typeJpg) || ext.equals(typeJpeg) || ext.equals("txt") || ext.equals("zip"))){
                     //resultString += "E01:허용되지 않는 확장자;"+kdhecMessageSource.getMessage("FILE.0002")+";";
                     //resultString += "E01:허용되지 않는 확장자;";
                     return "E01";
@@ -564,7 +586,7 @@ public class FileUtil {
             }
 
         }catch(Exception e){
-            e.printStackTrace();
+            logger.error("messege", e);
         }
         return resultString;
     }
@@ -578,9 +600,9 @@ public class FileUtil {
 
         mhr = (MultipartHttpServletRequest) req;
         try{
-            if(StringUtil.getSystemArea().equals("LOCAL")){
+            if(StringUtil.getSystemArea().equals(strLocal)){
                 realFolder = Constant.EDT_UPLOAD_LOCAL_PATH;
-            }else if(StringUtil.getSystemArea().equals("TEST")){
+            }else if(StringUtil.getSystemArea().equals(strTest)){
                 realFolder = Constant.EDT_UPLOAD_TEST_PATH;
             }else{
                 realFolder = Constant.EDT_UPLOAD_REAL_PATH;
@@ -594,7 +616,7 @@ public class FileUtil {
 				e1.printStackTrace();
 			}
 
-            String realUrl = "http://" + req.getServerName() + realFolder;
+            String realUrl = strHttp + req.getServerName() + realFolder;
             realFolder += "/"+corp_cd+"/"+paramVal[1];
 			realUrl    += "/"+corp_cd+"/"+paramVal[1];
 
@@ -604,7 +626,7 @@ public class FileUtil {
 
             if(!uploadFile.getOriginalFilename().equals("")){
                 String ext = StringUtil.lowerCase(StringUtil.lowerCase(StringUtil.fileExtention(fileName)));
-                if(!(ext.equals("gif") || ext.equals("png") || ext.equals("jpg"))){
+                if(!(ext.equals(typeGif) || ext.equals(typePng) || ext.equals(typeJpg))){
                     //resultString += "E01:허용되지 않는 확장자;"+kdhecMessageSource.getMessage("FILE.0002")+";";
                     //resultString += "E01:허용되지 않는 확장자;";
                     return "E01";
@@ -625,7 +647,7 @@ public class FileUtil {
             }
 
         }catch(Exception e){
-            e.printStackTrace();
+            logger.error("messege", e);
         }
         return resultString;
     }
@@ -640,17 +662,17 @@ public class FileUtil {
 		String[] result = new String[6];
 		mr = (MultipartHttpServletRequest) req;
 		try{
-			System.out.println("paramVal[0]="+paramVal[0]);
+			logger.info("paramVal[0]="+paramVal[0]);
 			uploadFile = mr.getFile(paramVal[0]);
-			System.out.println("uploadFile="+uploadFile);
+			logger.info("uploadFile="+uploadFile);
 
-			System.out.println("##################################");
-			System.out.println("Constant.UPLOAD_REAL_PATH="+Constant.UPLOAD_REAL_PATH);
-			System.out.println("##################################");
+			logger.info(strStar);
+			logger.info("Constant.UPLOAD_REAL_PATH="+Constant.UPLOAD_REAL_PATH);
+			logger.info(strStar);
 
-			if(StringUtil.getSystemArea().equals("LOCAL")){
+			if(StringUtil.getSystemArea().equals(strLocal)){
 				realFolder = Constant.EDT_UPLOAD_LOCAL_PATH;
-			}else if(StringUtil.getSystemArea().equals("TEST")){
+			}else if(StringUtil.getSystemArea().equals(strTest)){
 				realFolder = Constant.EDT_UPLOAD_TEST_PATH;
 			}else{
 				realFolder = Constant.EDT_UPLOAD_REAL_PATH;
@@ -658,7 +680,7 @@ public class FileUtil {
 
 			fileName = uploadFile.getOriginalFilename();
 
-			System.out.println("fileName11111="+fileName);
+			logger.info("fileName11111="+fileName);
 
 			String corp_cd = "";
 	        try {
@@ -668,14 +690,14 @@ public class FileUtil {
 				e1.printStackTrace();
 			}
 
-			String realUrl = "http://" + req.getServerName() + realFolder;
+			String realUrl = strHttp + req.getServerName() + realFolder;
 			if(!uploadFile.getOriginalFilename().equals("")){
 				oldFileName = mr.getParameter(paramVal[1]);
 				realFolder += "/" + corp_cd + "/" + paramVal[2];
 				realUrl    += "/" + corp_cd + "/" + paramVal[2];
 
 				String ext = StringUtil.lowerCase(StringUtil.lowerCase(StringUtil.fileExtention(fileName)));
-				if(!(ext.equals("gif") || ext.equals("png") || ext.equals("bmp")  || ext.equals("jpg") || ext.equals("jpeg"))){
+				if(!(ext.equals(typeGif) || ext.equals(typePng) || ext.equals("bmp")  || ext.equals(typeJpg) || ext.equals(typeJpeg))){
 					//result = null;
 					result[4] = HncisMessageSource.getMessage("FILE.0002");
 				}else{
@@ -697,14 +719,14 @@ public class FileUtil {
 					if(oldFileName == null || oldFileName.equals("")){
 						oldFileName = "";
 					}
-					System.out.println("uploadFile:"+uploadFile);
-					System.out.println("realFolder:"+realFolder);
-					System.out.println("fileName:"+fileName);
-					System.out.println("tmpFileName:"+tmpFileName);
-					System.out.println("oldFileName:"+oldFileName);
-					System.out.println("fileSize:"+uploadFile.getSize());
-					System.out.println("path:"+realFolder+"/"+fileName);
-					//System.out.println("exists:"+uploadFile.);
+					logger.info(strUploadFile+uploadFile);
+					logger.info(strRealFolder+realFolder);
+					logger.info(strFileName+fileName);
+					logger.info("tmpFileName:"+tmpFileName);
+					logger.info(strOldFileName+oldFileName);
+					logger.info("fileSize:"+uploadFile.getSize());
+					logger.info("path:"+realFolder+"/"+fileName);
+					//logger.info("exists:"+uploadFile.);
 
 
 
@@ -724,7 +746,7 @@ public class FileUtil {
 				result[4] = HncisMessageSource.getMessage("FILE.0001");
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 
 		return result;
@@ -752,13 +774,13 @@ public class FileUtil {
 							fos.write(b, 0, cnt);
 						}
 					} catch (Exception e) {
-						e.printStackTrace();
+						logger.error("messege", e);
 					} finally{
 						try {
 							fis.close();
 							fos.close();
 						} catch (IOException e) {
-							e.printStackTrace();
+							logger.error("messege", e);
 						}
 						
 					}
@@ -772,9 +794,9 @@ public class FileUtil {
 		String filePath    = "";
 		String realFolder  = "";
 
-		if(StringUtil.getSystemArea().equals("LOCAL")){
+		if(StringUtil.getSystemArea().equals(strLocal)){
 			realFolder = Constant.EDT_UPLOAD_LOCAL_PATH;
-		}else if(StringUtil.getSystemArea().equals("TEST")){
+		}else if(StringUtil.getSystemArea().equals(strTest)){
 			realFolder = Constant.EDT_UPLOAD_TEST_PATH;
 		}else{
 			realFolder = Constant.EDT_UPLOAD_REAL_PATH;

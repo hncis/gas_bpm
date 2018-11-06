@@ -11,6 +11,7 @@ import com.hncis.uniform.vo.BgabGascaf02Dto;
 import com.hncis.uniform.vo.BgabGascaf03Dto;
 
 public class UniformDaoImplByIBatis extends CommonDao implements UniformDao{
+	private static final String uncheck = "unchecked";
 	private final String SELECT_UNIFORM_TYPE_OF_CLOTHES_COMBO_LIST      = "selectUniformTypeofclothesComboList";
 	private final String SELECT_UNIFORM_COLOR_COMBO_LIST              = "selectUniformColorComboList";
 	private final String SELECT_UNIFORM_SIZE_COMBO_LIST               = "selectUniformSizeComboList";
@@ -58,17 +59,17 @@ public class UniformDaoImplByIBatis extends CommonDao implements UniformDao{
 
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascaf02Dto> selectTypeofclothesComboList(String corp_cd){
 		return getSqlMapClientTemplate().queryForList(SELECT_UNIFORM_TYPE_OF_CLOTHES_COMBO_LIST, corp_cd);
 	}
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascaf02Dto> selectColorComboList(String corp_cd){
 		return getSqlMapClientTemplate().queryForList(SELECT_UNIFORM_COLOR_COMBO_LIST, corp_cd);
 	}
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascaf02Dto> selectSizeComboList(String corp_cd){
 		return getSqlMapClientTemplate().queryForList(SELECT_UNIFORM_SIZE_COMBO_LIST, corp_cd);
 	}
@@ -82,7 +83,7 @@ public class UniformDaoImplByIBatis extends CommonDao implements UniformDao{
 		return Integer.parseInt((String)getSqlMapClientTemplate().queryForObject(SELECT_UNIFORM_COUNT_TO_REQUEST, vo));
 	}
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascaf01Dto> selectListToRequest(BgabGascaf01Dto vo){
 //		UNIF_CLR_REMAIN_QTY_INFO
 		List<BgabGascaf01Dto> rtnList = getSqlMapClientTemplate().queryForList(SELECT_UNIFORM_LIST_TO_REQUEST, vo);
@@ -128,7 +129,7 @@ public class UniformDaoImplByIBatis extends CommonDao implements UniformDao{
 		return Integer.parseInt((String)getSqlMapClientTemplate().queryForObject(SELECT_UNIFORM_COUNT_TO_LIST, vo));
 	}
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascaf01Dto> selectListToList(BgabGascaf01Dto vo){
 		return getSqlMapClientTemplate().queryForList(SELECT_UNIFORM_LIST_TO_LIST, vo);
 	}
@@ -141,7 +142,7 @@ public class UniformDaoImplByIBatis extends CommonDao implements UniformDao{
 		return Integer.parseInt((String)getSqlMapClientTemplate().queryForObject(SELECT_UNIFORM_COUNT_TO_CONFIRM, vo));
 	}
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascaf01Dto> selectListToConfirm(BgabGascaf01Dto vo){
 		return getSqlMapClientTemplate().queryForList(SELECT_UNIFORM_LIST_TO_CONFIRM, vo);
 	}
@@ -151,17 +152,17 @@ public class UniformDaoImplByIBatis extends CommonDao implements UniformDao{
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascaf02Dto> selectTypeofclothesListToItemInfo(BgabGascaf02Dto vo){
 		return getSqlMapClientTemplate().queryForList(SELECT_UNIFORM_TYPE_OF_CLOTHES_LIST_TO_ITEM_INFO, vo);
 	}
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascaf02Dto> selectColorListToItemInfo(BgabGascaf02Dto vo){
 		return getSqlMapClientTemplate().queryForList(SELECT_UNIFORM_COLOR_LIST_TO_ITEM_INFO, vo);
 	}
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascaf02Dto> selectSizeListToItemInfo(BgabGascaf02Dto vo){
 		return getSqlMapClientTemplate().queryForList(SELECT_UNIFORM_SIZE_LIST_TO_ITEM_INFO, vo);
 	}
@@ -187,7 +188,7 @@ public class UniformDaoImplByIBatis extends CommonDao implements UniformDao{
 		return Integer.parseInt((String)getSqlMapClientTemplate().queryForObject(SELECT_UNIFORM_COUNT_TO_STOCK_MANAGEMENT, vo));
 	}
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascaf03Dto> selectListToStockManagement(BgabGascaf03Dto vo){
 		return getSqlMapClientTemplate().queryForList(SELECT_UNIFORM_LIST_TO_STOCK_MANAGEMENT, vo);
 	}
@@ -240,12 +241,12 @@ public class UniformDaoImplByIBatis extends CommonDao implements UniformDao{
 		return Integer.parseInt((String)getSqlMapClientTemplate().queryForObject(SELECT_UNIFORM_COUNT_TO_STOCK_MANAGEMENT_LIST, vo));
 	}
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascaf03Dto> selectListToStockManagementList(BgabGascaf03Dto vo){
 		return getSqlMapClientTemplate().queryForList(SELECT_UNIFORM_LIST_TO_STOCK_MANAGEMENT_LIST, vo);
 	}
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascaf03Dto> selectListToStockDetailIn(BgabGascaf03Dto vo){
 		return getSqlMapClientTemplate().queryForList(SELECT_LIST_TO_STOCK_DETAIL_IN, vo);
 	}
@@ -254,7 +255,7 @@ public class UniformDaoImplByIBatis extends CommonDao implements UniformDao{
 		return Integer.parseInt((String)getSqlMapClientTemplate().queryForObject(SELECT_COUNT_TO_STOCK_DETAIL_OUT, vo));
 	}
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(uncheck)
 	public List<BgabGascaf03Dto> selectListToStockDetailOut(BgabGascaf03Dto vo){
 		return getSqlMapClientTemplate().queryForList(SELECT_LIST_TO_STOCK_DETAIL_OUT, vo);
 	}

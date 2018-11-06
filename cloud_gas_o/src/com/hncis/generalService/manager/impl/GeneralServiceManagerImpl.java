@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.axis.utils.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -32,6 +34,10 @@ import com.hncis.generalService.vo.BgabGascgsDto;
 
 @Service("generalServiceManagerImpl")
 public class GeneralServiceManagerImpl implements GeneralServiceManager{
+    private transient Log logger = LogFactory.getLog(getClass());
+
+    private static final String pCode = "P-C-002";
+    private static final String sCode = "GASBZ01320010";
 	@Autowired
 	public GeneralServiceDao generalServiceDao;
 
@@ -66,9 +72,9 @@ public class GeneralServiceManagerImpl implements GeneralServiceManager{
 		generalServiceDao.doUpdateByList(gsModifyList);
 				
 		// BPM API호출
-		String processCode = "P-C-002"; 	//프로세스 코드 (전산용품 프로세스) - 프로세스 정의서 참조
+		String processCode = pCode; 	//프로세스 코드 (전산용품 프로세스) - 프로세스 정의서 참조
 		String bizKey = gsSaveVo.getDoc_no();	//신청서 번호
-		String statusCode = "GASBZ01320010";	//액티비티 코드 (전산용품신청서작성) - 프로세스 정의서 참조
+		String statusCode = sCode;	//액티비티 코드 (전산용품신청서작성) - 프로세스 정의서 참조
 		String loginUserId = gsSaveVo.getEeno();	//로그인 사용자 아이디
 		String comment = null;
 		String roleCode = "GASROLE01320030";  //전산용품 담당자 역할코드
@@ -90,9 +96,9 @@ public class GeneralServiceManagerImpl implements GeneralServiceManager{
 		if(rs>0){
 			
 			// BPM API호출
-			String processCode = "P-C-002"; 	//프로세스 코드 (전산용품 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 	//프로세스 코드 (전산용품 프로세스) - 프로세스 정의서 참조
 			String bizKey = gsDelVo.getDoc_no();	//신청서 번호
-			String statusCode = "GASBZ01320010";	//액티비티 코드 (전산용품신청서작성) - 프로세스 정의서 참조
+			String statusCode = sCode;	//액티비티 코드 (전산용품신청서작성) - 프로세스 정의서 참조
 			String loginUserId = gsDelVo.getUpdr_eeno();	//로그인 사용자 아이디
 	
 			BpmApiUtil.sendDeleteAndRejectTask(processCode, bizKey, statusCode, loginUserId);
@@ -124,9 +130,9 @@ public class GeneralServiceManagerImpl implements GeneralServiceManager{
 		rs = generalServiceDao.doUpdateByRequest(gsReqVo);
 		
 		// BPM API호출
-		String processCode = "P-C-002"; 	//프로세스 코드 (전산용품 프로세스) - 프로세스 정의서 참조
+		String processCode = pCode; 	//프로세스 코드 (전산용품 프로세스) - 프로세스 정의서 참조
 		String bizKey = gsReqVo.getDoc_no();	//신청서 번호
-		String statusCode = "GASBZ01320010";	//액티비티 코드 (전산용품신청서작성) - 프로세스 정의서 참조
+		String statusCode = sCode;	//액티비티 코드 (전산용품신청서작성) - 프로세스 정의서 참조
 		String loginUserId = gsReqVo.getEeno();	//로그인 사용자 아이디
 		String comment = null;
 		String roleCode = "GASROLE01320030";  //전산용품 담당자 역할코드
@@ -147,9 +153,9 @@ public class GeneralServiceManagerImpl implements GeneralServiceManager{
 		if(rs>0){
 			
 			// BPM API호출
-			String processCode = "P-C-002"; 		//프로세스 코드 (전산용품 프로세스) - 프로세스 정의서 참조
+			String processCode = pCode; 		//프로세스 코드 (전산용품 프로세스) - 프로세스 정의서 참조
 			String bizKey = gsReqVo.getDoc_no();		//신청서 번호
-			String statusCode = "GASBZ01320010";	//액티비티 코드 (전산용품신청서작성) - 프로세스 정의서 참조
+			String statusCode = sCode;	//액티비티 코드 (전산용품신청서작성) - 프로세스 정의서 참조
 			String loginUserId = gsReqVo.getUpdr_eeno();		//로그인 사용자 아이디
 			String comment = null;
 			String roleCode = "GASROLE01320030";  	//전산용품 담당자 역할코드
@@ -170,7 +176,7 @@ public class GeneralServiceManagerImpl implements GeneralServiceManager{
 		rs = generalServiceDao.doUpdateByConfirm(gsReqVo);
 		
 		// BPM API호출
-		String processCode = "P-C-002"; 	//프로세스 코드 (전산용품 프로세스) - 프로세스 정의서 참조
+		String processCode = pCode; 	//프로세스 코드 (전산용품 프로세스) - 프로세스 정의서 참조
 		String bizKey = gsReqVo.getDoc_no();	//신청서 번호
 		String statusCode = "GASBZ01320030";	//액티비티 코드 (담당자 확인) - 프로세스 정의서 참조
 		String loginUserId = gsReqVo.getUpdr_eeno();	//로그인 사용자 아이디
@@ -355,7 +361,7 @@ public class GeneralServiceManagerImpl implements GeneralServiceManager{
 		try {
 			o_PoInfo = rfc.doPoCreate(poParamVo);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 		return o_PoInfo;
 	}
@@ -369,7 +375,7 @@ public class GeneralServiceManagerImpl implements GeneralServiceManager{
 		try {
 			o_PoInfo = rfc.doPoDelete(poParamVo);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("messege", e);
 		}
 		return o_PoInfo;
 	}
@@ -381,7 +387,7 @@ public class GeneralServiceManagerImpl implements GeneralServiceManager{
 		getGs03vo = gsModifyVo.get(0);
 		
 		// BPM API호출
-		String processCode = "P-C-002"; 	//프로세스 코드 (전산용품 프로세스) - 프로세스 정의서 참조
+		String processCode = pCode; 	//프로세스 코드 (전산용품 프로세스) - 프로세스 정의서 참조
 		String bizKey = getGs03vo.getDoc_no();	//신청서 번호
 		String statusCode = "GASBZ01320030";	//액티비티 코드 (전산용품신청서작성) - 프로세스 정의서 참조
 		String loginUserId = getGs03vo.getUpdr_eeno();	//로그인 사용자 아이디
@@ -428,7 +434,7 @@ public class GeneralServiceManagerImpl implements GeneralServiceManager{
 		}catch(Exception e){
 			resultUrl = "xgs05_img_file.gas";
 			msg = HncisMessageSource.getMessage("FILE.0001");
-			e.printStackTrace();
+			logger.error("messege", e);
 		}finally{
 			try{
 				String dispatcherYN = "Y";
@@ -443,7 +449,7 @@ public class GeneralServiceManagerImpl implements GeneralServiceManager{
 
 				return;
 			}catch(Exception e){
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 	}
@@ -466,7 +472,7 @@ public class GeneralServiceManagerImpl implements GeneralServiceManager{
 			try {
 				fileResult = FileUtil.deleteImgFile(fileInfo.getCorp_cd(),"generalService", fileInfo.getOgc_fil_nm());
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 		Integer fileDRs = generalServiceDao.deleteGeneralServiceToFile(bgabGascZ011IList);

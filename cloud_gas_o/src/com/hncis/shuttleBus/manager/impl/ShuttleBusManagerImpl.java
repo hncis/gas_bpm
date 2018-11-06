@@ -7,6 +7,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -33,6 +35,9 @@ import com.hncis.shuttleBus.vo.BgabGascsb04;
 
 @Service("shuttleBusManagerImpl")
 public class ShuttleBusManagerImpl implements ShuttleBusManager{
+    private transient Log logger = LogFactory.getLog(getClass());
+
+    private static final String msgCode = "FILE.0001";
 	@Autowired
 	public ShuttleBusDao shuttleBusDao;
 
@@ -62,7 +67,7 @@ public class ShuttleBusManagerImpl implements ShuttleBusManager{
 			}else{
 				TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 				resultUrl = "xsb03_hidden.gas";
-				msg = HncisMessageSource.getMessage("FILE.0001");
+				msg = HncisMessageSource.getMessage(msgCode);
 				status = "false";
 			}
 
@@ -80,9 +85,9 @@ public class ShuttleBusManagerImpl implements ShuttleBusManager{
 		}catch(Exception e){
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			resultUrl = "xsb03_hidden.gas";
-			msg = HncisMessageSource.getMessage("FILE.0001");
+			msg = HncisMessageSource.getMessage(msgCode);
 			status = "false";
-			e.printStackTrace();
+			logger.error("messege", e);
 		}finally{
 			try{
 				req.setAttribute("status",  status);
@@ -93,7 +98,7 @@ public class ShuttleBusManagerImpl implements ShuttleBusManager{
 
 				return;
 			}catch(Exception e){
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 	}
@@ -365,12 +370,12 @@ public class ShuttleBusManagerImpl implements ShuttleBusManager{
 
 			}else{
 				resultUrl = "xsb04_file.gas";
-				msg = HncisMessageSource.getMessage("FILE.0001");
+				msg = HncisMessageSource.getMessage(msgCode);
 			}
 		}catch(Exception e){
 			resultUrl = "xsb04_file.gas";
-			msg = HncisMessageSource.getMessage("FILE.0001");
-			e.printStackTrace();
+			msg = HncisMessageSource.getMessage(msgCode);
+			logger.error("messege", e);
 		}finally{
 			try{
 				String dispatcherYN = "Y";
@@ -385,7 +390,7 @@ public class ShuttleBusManagerImpl implements ShuttleBusManager{
 
 				return;
 			}catch(Exception e){
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 	}
@@ -408,7 +413,7 @@ public class ShuttleBusManagerImpl implements ShuttleBusManager{
 			try {
 				fileResult = FileUtil.deleteFile(fileInfo.getCorp_cd(), "shuttleBus", fileInfo.getOgc_fil_nm());
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 		Integer fileDRs = shuttleBusDao.deleteShuttleBusToFile(bgabGascZ011IList);

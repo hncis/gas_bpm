@@ -2,12 +2,15 @@ package com.hncis.common.util;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 /**
  * 달력 유틸
  * @author developer
  *
  */
 public  class CalendarUtil {
+    private transient static Log logger = LogFactory.getLog(CalendarUtil.class.getClass());
 
 	
 	//Calendar cal=Calendar.getInstance() ;
@@ -92,7 +95,7 @@ public  class CalendarUtil {
 	public static Date getDataTimes(int year,int month,int day){
 		Calendar cal = cal();
 		cal.set(year, month-1, day);
-		System.out.println(cal.getTime());
+		logger.info(cal.getTime());
 		return cal.getTime();
 	}
 	
@@ -118,8 +121,8 @@ public  class CalendarUtil {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
        //System.out.println(CalendarUtil.dateFormet("\\yyyyMM"));
-       System.out.println(Calendar.SUNDAY);
-       System.out.println( CalendarUtil.dateFormet("yyyyMMdd", CalendarUtil.getDataTimes(2010,5,22)));
+		logger.info(Calendar.SUNDAY);
+		logger.info( CalendarUtil.dateFormet("yyyyMMdd", CalendarUtil.getDataTimes(2010,5,22)));
 	}
 
 }
