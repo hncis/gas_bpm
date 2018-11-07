@@ -76,7 +76,7 @@ public class HncisApprovalActivity extends HncisHumanActivity {
             //1.2 결재 상태코드를 가져온다.
             String approvalStatusCode=parent.getApprovalLineStatusCode();
             processName = parent.getProcessName();
-            System.out.println(processName);
+            //System.out.println(processName);
             
             //2. 결재선을 가져온다.
             // - SQL 에서 가져온다.
@@ -242,10 +242,11 @@ public class HncisApprovalActivity extends HncisHumanActivity {
 			throw new RuntimeException(e);
 		}
 		
-		if(rm != null)
+		if (rm != null) {
 			return rm;
-		else
+		} else {
 			return approver;
+		}
 	}
 	
 	public String setApprover(ProcessInstance instance, RoleMapping approver) {
@@ -263,8 +264,12 @@ public class HncisApprovalActivity extends HncisHumanActivity {
 	protected String createApproverRoleName(){
         //RoleCode = "GASROLE" + 0121(프로세스별 4자리 패딩) + 0010(액티비티 순번 4자리 패딩)
 		String roleCode = null;
-		if (role!=null) roleCode = role.getName();
-		else roleCode = GASROLE + processName + (APPROVAL_ACTIVITY_POTFIX+Integer.parseInt(getApprovalSequenceActivity().getTracingTag())+Integer.parseInt(getTracingTag()));
+		if (role!=null) {
+			roleCode = role.getName();
+		}
+		else {
+			roleCode = GASROLE + processName + (APPROVAL_ACTIVITY_POTFIX+Integer.parseInt(getApprovalSequenceActivity().getTracingTag())+Integer.parseInt(getTracingTag()));
+		}
 		return roleCode;
 		
 		//if(role!=null) return role.getName();
@@ -337,7 +342,9 @@ public class HncisApprovalActivity extends HncisHumanActivity {
 
 	@Override
 	public RoleMapping getActualMapping(ProcessInstance instance) throws Exception {
-		if(getApprover(instance)==null) return super.getActualMapping(instance);
+		if(getApprover(instance)==null) {
+			return super.getActualMapping(instance);
+		}
 		
 		return getApprover(instance);
 	}

@@ -47,8 +47,15 @@ public class BpmUtil {
 	public static final String ACTION_CODE_ACTIVITY_SKIP			= "15";	//15: 건너뛰기
 	static boolean isNds = false;
 	private static final Map<String, String> propertiesMap = propertiesValueMap(isNds);
+
+	private static final String LITERAL_WORKFLOW_URL = "workflow_url";
+	private static final String LITERAL_POST = "POST";
+	private static final String LITERAL_CONTENT_TYPE_NAME = "Content-Type";
+	private static final String LITERAL_CONTENT_TYPE_VALUE = "application/json;charset=utf-8";
+	private static final String LITERAL_UTF8 = "utf-8";
+	private static final String LITERAL_SERVER_OUTPUT = "Output from Server .... \n";	
 	
-    private static final String WORKFLOW_URL = getProperties().getProperty(propertiesMap.get("workflow_url"), "http://105.13.8.62:7070/bpm/service/workflow/");
+    private static final String WORKFLOW_URL = getProperties().getProperty(propertiesMap.get(LITERAL_WORKFLOW_URL), "http://105.13.8.62:7070/bpm/service/workflow/");
     private static final String WORKFLOW_INSTANCE_URL = getProperties().getProperty(propertiesMap.get("workflow_instance_url"), "http://105.13.8.62:7070/bpm/service/instance/list/");
     private static final String WORKFLOW_WORKLIST_URL = getProperties().getProperty(propertiesMap.get("workflow_worklist_url"), "http://105.13.8.62:7070/bpm/service/worklist/list/");
     private static final String WORKFLOW_COMMENT_URL = getProperties().getProperty(propertiesMap.get("workflow_comment_url"), "http://105.13.8.62:7070/bpm/service/comment/list/");
@@ -58,19 +65,19 @@ public class BpmUtil {
    public static Map<String, String> propertiesValueMap(boolean isNds){
 	   Map<String, String> propertiesMap = new HashMap<String, String>();
 	   if(isNds){
-		   propertiesMap.put("workflow_url", "nds.url");
+		   propertiesMap.put(LITERAL_WORKFLOW_URL, "nds.url");
 		   propertiesMap.put("workflow_instance_url", "nds.instance.url");
 		   propertiesMap.put("workflow_worklist_url", "nds.worklist.url");
 		   propertiesMap.put("workflow_comment_url", "nds.comment.url");
 		   propertiesMap.put("workflow_authority_url", "nds.authority.url");
 	   }else{
-		   propertiesMap.put("workflow_url", "bpm.url");
+		   propertiesMap.put(LITERAL_WORKFLOW_URL, "bpm.url");
 		   propertiesMap.put("workflow_instance_url", "bpm.instance.url");
 		   propertiesMap.put("workflow_worklist_url", "bpm.worklist.url");
 		   propertiesMap.put("workflow_comment_url", "bpm.comment.url");
 		   propertiesMap.put("workflow_authority_url", "bpm.authority.url");
 	   }
-	   System.out.println("bpm.url: " + propertiesMap.get("workflow_url"));
+	   System.out.println("bpm.url: " + propertiesMap.get(LITERAL_WORKFLOW_URL)); // NOPMD - The BPM API does not know the Logger of the site-specific application
 	   return propertiesMap;
    }
 	 
@@ -99,11 +106,11 @@ public class BpmUtil {
 						is.close();
 					}
 
-					System.out.println("Loading " + url);
+					System.out.println("Loading " + url); // NOPMD - The BPM API does not know the Logger of the site-specific application
 				}
 			}
 			catch (Exception e) {
-				e.printStackTrace();
+				e.printStackTrace(); // NOPMD - The BPM API does not know the Logger of the site-specific application
 			}
 		}
 
@@ -116,13 +123,13 @@ public class BpmUtil {
         try {
 
             String body = new Gson().toJson(serviceVO);
-            System.out.println(body);
+            System.out.println(body); // NOPMD - The BPM API does not know the Logger of the site-specific application
             URL postUrl = new URL(WORKFLOW_URL);
             HttpURLConnection connection = (HttpURLConnection) postUrl.openConnection();
             connection.setDoOutput(true); // xml내용을 전달하기 위해서 출력 스트림을 사용
             connection.setInstanceFollowRedirects(false); // Redirect처리 하지 않음
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+            connection.setRequestMethod(LITERAL_POST);
+            connection.setRequestProperty(LITERAL_CONTENT_TYPE_NAME, LITERAL_CONTENT_TYPE_VALUE);
             OutputStream os = connection.getOutputStream();
             os.write(body.getBytes());
             os.flush();
@@ -135,20 +142,20 @@ public class BpmUtil {
                 bos.write(buffer, 0, len);
             }
 
-            result = bos.toString("utf-8");
+            result = bos.toString(LITERAL_UTF8);
 
-            System.out.println("Output from Server .... \n");
-            System.out.println(result);
+            System.out.println(LITERAL_SERVER_OUTPUT); // NOPMD - The BPM API does not know the Logger of the site-specific application
+            System.out.println(result); // NOPMD - The BPM API does not know the Logger of the site-specific application
 
             connection.disconnect();
         } catch (ProtocolException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // NOPMD - The BPM API does not know the Logger of the site-specific application
             throw e;
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // NOPMD - The BPM API does not know the Logger of the site-specific application
             throw e;
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // NOPMD - The BPM API does not know the Logger of the site-specific application
             throw e;
         }
 
@@ -518,13 +525,13 @@ public class BpmUtil {
         try {
 
             String body = new Gson().toJson(new ServiceVO());
-            System.out.println(body);
+            System.out.println(body); // NOPMD - The BPM API does not know the Logger of the site-specific application
             URL postUrl = new URL(WORKFLOW_COMMENT_URL+processCode+"/"+bizKey);
             HttpURLConnection connection = (HttpURLConnection) postUrl.openConnection();
             connection.setDoOutput(true); // xml내용을 전달하기 위해서 출력 스트림을 사용
             connection.setInstanceFollowRedirects(false); // Redirect처리 하지 않음
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+            connection.setRequestMethod(LITERAL_POST);
+            connection.setRequestProperty(LITERAL_CONTENT_TYPE_NAME, LITERAL_CONTENT_TYPE_VALUE);
             OutputStream os = connection.getOutputStream();
             os.write(body.getBytes());
             os.flush();
@@ -537,20 +544,20 @@ public class BpmUtil {
                 bos.write(buffer, 0, len);
             }
 
-            result = bos.toString("utf-8");
+            result = bos.toString(LITERAL_UTF8);
 
-            System.out.println("Output from Server .... \n");
-            System.out.println(result);
+            System.out.println(LITERAL_SERVER_OUTPUT); // NOPMD - The BPM API does not know the Logger of the site-specific application
+            System.out.println(result); // NOPMD - The BPM API does not know the Logger of the site-specific application
 
             connection.disconnect();
         } catch (ProtocolException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // NOPMD - The BPM API does not know the Logger of the site-specific application
             throw e;
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // NOPMD - The BPM API does not know the Logger of the site-specific application
             throw e;
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // NOPMD - The BPM API does not know the Logger of the site-specific application
             throw e;
         }
 
@@ -563,13 +570,13 @@ public class BpmUtil {
         try {
 
             String body = new Gson().toJson(new ServiceVO());
-            System.out.println(body);
+            System.out.println(body); // NOPMD - The BPM API does not know the Logger of the site-specific application
             URL postUrl = new URL(WORKFLOW_INSTANCE_URL+userId);
             HttpURLConnection connection = (HttpURLConnection) postUrl.openConnection();
             connection.setDoOutput(true); // xml내용을 전달하기 위해서 출력 스트림을 사용
             connection.setInstanceFollowRedirects(false); // Redirect처리 하지 않음
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+            connection.setRequestMethod(LITERAL_POST);
+            connection.setRequestProperty(LITERAL_CONTENT_TYPE_NAME, LITERAL_CONTENT_TYPE_VALUE);
             OutputStream os = connection.getOutputStream();
             os.write(body.getBytes());
             os.flush();
@@ -582,20 +589,20 @@ public class BpmUtil {
                 bos.write(buffer, 0, len);
             }
 
-            result = bos.toString("utf-8");
+            result = bos.toString(LITERAL_UTF8);
 
-            System.out.println("Output from Server .... \n");
-            System.out.println(result);
+            System.out.println(LITERAL_SERVER_OUTPUT); // NOPMD - The BPM API does not know the Logger of the site-specific application
+            System.out.println(result); // NOPMD - The BPM API does not know the Logger of the site-specific application
 
             connection.disconnect();
         } catch (ProtocolException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // NOPMD - The BPM API does not know the Logger of the site-specific application
             throw e;
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // NOPMD - The BPM API does not know the Logger of the site-specific application
             throw e;
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // NOPMD - The BPM API does not know the Logger of the site-specific application
             throw e;
         }
 
@@ -608,13 +615,13 @@ public class BpmUtil {
         try {
 
             String body = new Gson().toJson(new ServiceVO());
-            System.out.println(body);
+            System.out.println(body); // NOPMD - The BPM API does not know the Logger of the site-specific application
             URL postUrl = new URL(WORKFLOW_WORKLIST_URL+userId);
             HttpURLConnection connection = (HttpURLConnection) postUrl.openConnection();
             connection.setDoOutput(true); // xml내용을 전달하기 위해서 출력 스트림을 사용
             connection.setInstanceFollowRedirects(false); // Redirect처리 하지 않음
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+            connection.setRequestMethod(LITERAL_POST);
+            connection.setRequestProperty(LITERAL_CONTENT_TYPE_NAME, LITERAL_CONTENT_TYPE_VALUE);
             OutputStream os = connection.getOutputStream();
             os.write(body.getBytes());
             os.flush();
@@ -627,20 +634,20 @@ public class BpmUtil {
                 bos.write(buffer, 0, len);
             }
 
-            result = bos.toString("utf-8");
+            result = bos.toString(LITERAL_UTF8);
 
-            System.out.println("Output from Server .... \n");
-            System.out.println(result);
+            System.out.println(LITERAL_SERVER_OUTPUT); // NOPMD - The BPM API does not know the Logger of the site-specific application
+            System.out.println(result); // NOPMD - The BPM API does not know the Logger of the site-specific application
 
             connection.disconnect();
         } catch (ProtocolException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // NOPMD - The BPM API does not know the Logger of the site-specific application
             throw e;
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // NOPMD - The BPM API does not know the Logger of the site-specific application
             throw e;
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // NOPMD - The BPM API does not know the Logger of the site-specific application
             throw e;
         }
 
@@ -653,13 +660,13 @@ public class BpmUtil {
     	try {
     		
     		String body = new Gson().toJson(new ServiceVO());
-    		System.out.println(body);
+    		System.out.println(body); // NOPMD - The BPM API does not know the Logger of the site-specific application
     		URL postUrl = new URL(WORKFLOW_AUTHORITY_URL+processCode+"/"+bizKey+"/"+statusCode+"/"+userId);
     		HttpURLConnection connection = (HttpURLConnection) postUrl.openConnection();
     		connection.setDoOutput(true); // xml내용을 전달하기 위해서 출력 스트림을 사용
     		connection.setInstanceFollowRedirects(false); // Redirect처리 하지 않음
-    		connection.setRequestMethod("POST");
-    		connection.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+    		connection.setRequestMethod(LITERAL_POST);
+    		connection.setRequestProperty(LITERAL_CONTENT_TYPE_NAME, LITERAL_CONTENT_TYPE_VALUE);
     		OutputStream os = connection.getOutputStream();
     		os.write(body.getBytes());
     		os.flush();
@@ -672,20 +679,20 @@ public class BpmUtil {
     			bos.write(buffer, 0, len);
     		}
     		
-    		result = bos.toString("utf-8");
+    		result = bos.toString(LITERAL_UTF8);
     		
-    		System.out.println("Output from Server .... \n");
-    		System.out.println(result);
+    		System.out.println(LITERAL_SERVER_OUTPUT); // NOPMD - The BPM API does not know the Logger of the site-specific application
+    		System.out.println(result); // NOPMD - The BPM API does not know the Logger of the site-specific application
     		
     		connection.disconnect();
     	} catch (ProtocolException e) {
-    		e.printStackTrace();
+    		e.printStackTrace(); // NOPMD - The BPM API does not know the Logger of the site-specific application
     		throw e;
     	} catch (MalformedURLException e) {
-    		e.printStackTrace();
+    		e.printStackTrace(); // NOPMD - The BPM API does not know the Logger of the site-specific application
     		throw e;
     	} catch (IOException e) {
-    		e.printStackTrace();
+    		e.printStackTrace(); // NOPMD - The BPM API does not know the Logger of the site-specific application
     		throw e;
     	}
     	

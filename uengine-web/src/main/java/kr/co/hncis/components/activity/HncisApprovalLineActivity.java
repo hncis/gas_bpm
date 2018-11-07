@@ -104,8 +104,9 @@ public class HncisApprovalLineActivity extends SequenceActivity {
 	
 	HncisApprovalSequenceActivity approvalSequenceActivity;
 		public HncisApprovalSequenceActivity getApprovalSequenceActivity() {
-			if(approvalSequenceActivity!=null)
-				return approvalSequenceActivity;
+			if(approvalSequenceActivity!=null) {
+				return approvalSequenceActivity;				
+			}
 			
 			ActivityForLoop findingLoop = new ActivityForLoop(){
 				public void logic(Activity activity){
@@ -134,8 +135,9 @@ public class HncisApprovalLineActivity extends SequenceActivity {
 			if(getPreConfirmPv()==null)
 				valCtx.addWarning(getActivityLabel() + " " + GlobalContext.getLocalizedMessage("activitytypes.kr.co.hncis.components.activity.hncisapprovallineactivity.fields.preconfirmpv.displayname", "preConfirm Process Variable") + " is not specified");*/
 			
-			if(getProcessName()==null)
+			if(getProcessName()==null) {
 				valCtx.add(getActivityLabel() + " " + GlobalContext.getLocalizedMessage("activitytypes.kr.co.hncis.components.activity.hncisapprovallineactivity.fields.processname.displayname", "Process Name") + " is not specified");
+			}
 			
 			return valCtx;
 		}
