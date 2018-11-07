@@ -62,21 +62,24 @@ public class HncisMessageSource implements MessageSourceAware{
         {
 //            message = messageSource.getMessage(code,messageParams,LocaleContextHolder.getLocale());
             message = messageSource.getMessage(code,messageParams, null);
+            return message;
         }
         catch(NoSuchMessageException nsme)
         {
-            nsme.printStackTrace();
+			logger.error("messege", nsme);
             message = DEFAULT_MESSAGE_CODE;
+            return message;
         }
         catch(Exception e)
         {
 			logger.error("messege", e);
             message = DEFAULT_MESSAGE_CODE;
-        }
-        finally
-        {
             return message;
         }
+        //finally
+        //{
+        //    return message;
+        //}
     }
     
     /**
@@ -97,20 +100,23 @@ public class HncisMessageSource implements MessageSourceAware{
         try
         {
             message = messageSource.getMessage(code,messageParams, locale);
+            return message;
         }
         catch(NoSuchMessageException nsme)
         {
-            nsme.printStackTrace();
+			logger.error("messege", nsme);
             message = DEFAULT_MESSAGE_CODE;
+            return message;
         }
         catch(Exception e)
         {
 			logger.error("messege", e);
             message = DEFAULT_MESSAGE_CODE;
-        }
-        finally
-        {
             return message;
         }
+        /*finally
+        {
+            return message;
+        }*/
     }
 }

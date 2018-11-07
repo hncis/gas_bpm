@@ -13,6 +13,7 @@ import org.uengine.bpmutil.util.BpmUtil;
 public class BpmApiUtil {
     private transient static Log logger = LogFactory.getLog(BpmApiUtil.class.getClass());
 	private static final String approvalLine = "APPROVALLINE";
+	private static final String strMessage = "messege";
 	
 	public static String sendSaveTask(String pCode, String docNo, String sCode, String userId, String roleCd, List<String> aList, List<String> mList){
 		String returnMessage = "";
@@ -43,7 +44,7 @@ public class BpmApiUtil {
 			returnMessage = BpmUtil.saveTask(processCode, bizKey, statusCode, loginUserId, roleMap, varMap  );
 
 		} catch (IOException e) {
-			logger.error("messege", e);
+			logger.error(strMessage, e);
 		}
 		return returnMessage;
 
@@ -81,7 +82,7 @@ public class BpmApiUtil {
 			returnMessage = BpmUtil.completeTask(processCode, bizKey, statusCode, loginUserId, roleMap, varMap, comment );
 
 		} catch (IOException e) {
-			logger.error("messege", e);
+			logger.error(strMessage, e);
 		}
 		return returnMessage;
 
@@ -107,7 +108,7 @@ public class BpmApiUtil {
 			returnMessage = BpmUtil.completeTask(processCode, bizKey, statusCode, loginUserId, roleMap, varMap, comment );
 
 		} catch (IOException e) {
-			logger.error("messege", e);
+			logger.error(strMessage, e);
 		}
 		return returnMessage;
 
@@ -142,7 +143,7 @@ public class BpmApiUtil {
 			returnMessage = BpmUtil.rejectTask(processCode, bizKey, statusCode, loginUserId, roleMap, varMap, comment );
 
 		} catch (IOException e) {
-			logger.error("messege", e);
+			logger.error(strMessage, e);
 		}
 		return returnMessage;
 
@@ -178,7 +179,7 @@ public class BpmApiUtil {
 			returnMessage = BpmUtil.collectTask(processCode, bizKey, statusCode, loginUserId, roleMap, varMap);
 
 		} catch (IOException e) {
-			logger.error("messege", e);
+			logger.error(strMessage, e);
 		}
 		return returnMessage;
 
@@ -196,7 +197,7 @@ public class BpmApiUtil {
 			returnMessage = BpmUtil.completeProcess(processCode, bizKey, statusCode, loginUserId);
 
 		} catch (IOException e) {
-			logger.error("messege", e);
+			logger.error(strMessage, e);
 		}
 		return returnMessage;
 
@@ -214,7 +215,7 @@ public class BpmApiUtil {
 			returnMessage = BpmUtil.compensateTask(processCode, bizKey, statusCode, loginUserId);
 
 		} catch (IOException e) {
-			logger.error("messege", e);
+			logger.error(strMessage, e);
 		}
 		return returnMessage;
 

@@ -55,6 +55,7 @@ import com.hncis.common.vo.RfcPoCreateVo;
 import com.hncis.system.dao.SystemDao;
 import com.hncis.system.vo.BgabGascz014Dto;
 import com.hncis.system.vo.BgabGascz016Dto;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -62,6 +63,7 @@ import org.apache.commons.logging.LogFactory;
 public class BusinessTravelManagerImpl implements BusinessTravelManager{
 
     private transient Log logger = LogFactory.getLog(getClass());
+    private static final String strMessege = "messege";
     
 	@Autowired
 	public BusinessTravelDao businessTravelDao;
@@ -352,24 +354,24 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 		}catch(Exception e){
 			//resultUrl = "xbt01_file.gas";
 			msg = HncisMessageSource.getMessage(fileMessage);
-			logger.error("messege", e);
-		}finally{
-			try{
-				String dispatcherYN = "Y";
-				req.setAttribute("hid_doc_no",  bgabGascZ011Dto.getDoc_no());
-				req.setAttribute("hid_eeno",  bgabGascZ011Dto.getEeno());
-				req.setAttribute("hid_pgs_st_cd",  bgabGascZ011Dto.getPgs_st_cd());
-				req.setAttribute("hid_seq",  bgabGascZ011Dto.getSeq());
-				req.setAttribute("dispatcherYN", dispatcherYN);
-				req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
-				req.setAttribute("message",  msg);
-				req.getRequestDispatcher(resultUrl).forward(req, res);
-
-				return;
-			}catch(Exception e){
-				logger.error("messege", e);
-			}
+			logger.error(strMessege, e);
 		}
+		try{
+			String dispatcherYN = "Y";
+			req.setAttribute("hid_doc_no",  bgabGascZ011Dto.getDoc_no());
+			req.setAttribute("hid_eeno",  bgabGascZ011Dto.getEeno());
+			req.setAttribute("hid_pgs_st_cd",  bgabGascZ011Dto.getPgs_st_cd());
+			req.setAttribute("hid_seq",  bgabGascZ011Dto.getSeq());
+			req.setAttribute("dispatcherYN", dispatcherYN);
+			req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
+			req.setAttribute("message",  msg);
+			req.getRequestDispatcher(resultUrl).forward(req, res);
+
+			return;
+		}catch(Exception e){
+			logger.error(strMessege, e);
+		}
+	
 	}
 
 	@Override
@@ -405,25 +407,25 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 		}catch(Exception e){
 			//resultUrl = "xbt01_file.gas";
 			msg = HncisMessageSource.getMessage(fileMessage);
-			logger.error("messege", e);
-		}finally{
-			try{
-
-				String dispatcherYN = "Y";
-				req.setAttribute("hid_doc_no",  bgabGascZ011Dto.getDoc_no());
-				req.setAttribute("hid_eeno",  bgabGascZ011Dto.getEeno());
-				req.setAttribute("hid_pgs_st_cd",  bgabGascZ011Dto.getPgs_st_cd());
-				req.setAttribute("hid_seq",  bgabGascZ011Dto.getSeq());
-				req.setAttribute("dispatcherYN", dispatcherYN);
-				req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
-				req.setAttribute("message",  msg);
-				req.getRequestDispatcher(resultUrl).forward(req, res);
-
-				return;
-			}catch(Exception e){
-				logger.error("messege", e);
-			}
+			logger.error(strMessege, e);
 		}
+		try{
+
+			String dispatcherYN = "Y";
+			req.setAttribute("hid_doc_no",  bgabGascZ011Dto.getDoc_no());
+			req.setAttribute("hid_eeno",  bgabGascZ011Dto.getEeno());
+			req.setAttribute("hid_pgs_st_cd",  bgabGascZ011Dto.getPgs_st_cd());
+			req.setAttribute("hid_seq",  bgabGascZ011Dto.getSeq());
+			req.setAttribute("dispatcherYN", dispatcherYN);
+			req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
+			req.setAttribute("message",  msg);
+			req.getRequestDispatcher(resultUrl).forward(req, res);
+
+			return;
+		}catch(Exception e){
+			logger.error(strMessege, e);
+		}
+		
 	}
 
 	@Override
@@ -459,25 +461,25 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 		}catch(Exception e){
 			//resultUrl = "xbt01_file.gas";
 			msg = HncisMessageSource.getMessage(fileMessage);
-			logger.error("messege", e);
-		}finally{
-			try{
-
-				String dispatcherYN = "Y";
-				req.setAttribute("hid_doc_no",  bgabGascZ011Dto.getDoc_no());
-				req.setAttribute("hid_eeno",  bgabGascZ011Dto.getEeno());
-				req.setAttribute("hid_pgs_st_cd",  bgabGascZ011Dto.getPgs_st_cd());
-				req.setAttribute("hid_seq",  bgabGascZ011Dto.getSeq());
-				req.setAttribute("dispatcherYN", dispatcherYN);
-				req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
-				req.setAttribute("message",  msg);
-				req.getRequestDispatcher(resultUrl).forward(req, res);
-
-				return;
-			}catch(Exception e){
-				logger.error("messege", e);
-			}
+			logger.error(strMessege, e);
 		}
+		try{
+
+			String dispatcherYN = "Y";
+			req.setAttribute("hid_doc_no",  bgabGascZ011Dto.getDoc_no());
+			req.setAttribute("hid_eeno",  bgabGascZ011Dto.getEeno());
+			req.setAttribute("hid_pgs_st_cd",  bgabGascZ011Dto.getPgs_st_cd());
+			req.setAttribute("hid_seq",  bgabGascZ011Dto.getSeq());
+			req.setAttribute("dispatcherYN", dispatcherYN);
+			req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
+			req.setAttribute("message",  msg);
+			req.getRequestDispatcher(resultUrl).forward(req, res);
+
+			return;
+		}catch(Exception e){
+			logger.error(strMessege, e);
+		}
+		
 	}
 
 	@Override
@@ -498,7 +500,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 			try {
 				fileResult = FileUtil.deleteFile(fileInfo.getCorp_cd(), fileName, fileInfo.getOgc_fil_nm());
 			} catch (IOException e) {
-				logger.error("messege", e);
+				logger.error(strMessege, e);
 			}
 		}
 		Integer fileDRs = businessTravelDao.deleteBTToFile(bgabGascZ011IList);
@@ -886,9 +888,6 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 					excelMerge.setHeader08(tempCardList.get(j).getBudg_no());									// GL account
 					excelMerge.setHeader09(tempCardList.get(j).getCost_cd());									// Cost center
 					excelMerge.setHeader10(tempCardList.get(j).getPrvs_dtl_nm());								// Category
-					System.out.println("Debug05_01 Natv_curr_amt="+tempCardList.get(j).getNatv_curr_amt());
-					System.out.println("Debug05_01 Natv_curr_amt cast="+Double.parseDouble(tempCardList.get(j).getNatv_curr_amt()));
-					System.out.println("Debug05_01 Natv_curr_amt df="+df.format(Double.parseDouble(tempCardList.get(j).getNatv_curr_amt())));
 					excelMerge.setHeader11(df.format(Double.parseDouble(tempCardList.get(j).getNatv_curr_amt())));						// Amount
 					excelMergeList.add(excelMerge);
 				}
@@ -897,8 +896,6 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 
 				for(int j=0; j<tempCashList.size(); j++){
 					CommonSap excelMerge = new CommonSap();
-					System.out.println("tempCashList.get(j).getDoc_no()="+tempCashList.get(j).getDoc_no());
-					System.out.println("tempCashList.get(j).getEeno()==="+tempCashList.get(j).getEeno());
 					excelMerge.setHeader01(tempCashList.get(j).getDoc_no()+tempCashList.get(j).getEeno()+"F");	// GA number
 					excelMerge.setHeader02(CurrentDateTime.getDate());									// Document date
 					excelMerge.setHeader03(CurrentDateTime.getDate(CurrentDateTime.getDate(), 5));									// Due date
@@ -944,7 +941,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 					}
 				}
 			}catch(Exception e){
-				e.printStackTrace();
+				logger.error("messege", e);
 			}
 		}
 		return excelMergeList;
@@ -1183,7 +1180,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 //				businessTravelDao.updateTravelerTotBudget(travelerList.get(i));
 //			}
 		}catch (Exception e) {
-			logger.error("messege", e);
+			logger.error(strMessege, e);
 		}
 		if(chkBudget){
 			message.setResult("Z");
@@ -1255,7 +1252,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 		try {
 			o_BudgetInfo = rfc.getResult(i_BudgetInfo);
 		} catch (Exception e) {
-			logger.error("messege", e);
+			logger.error(strMessege, e);
 		}
 
 		if(StringUtil.isNullToString(bgabGascbt02.getBudg_type()).equals("D")){
@@ -1344,7 +1341,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 							Submit.confirmEmail(fromEeno, fromStepNm, mailAdr, "Business Travel");
 						}
 					} catch (SessionException e) {
-						logger.error("messege", e);
+						logger.error(strMessege, e);
 					}
 				}
 			}
@@ -1652,11 +1649,6 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 				excelInfo.setTtl_pymnt_cash(StringUtil.replaceComma(df.format(totalPaymentCash))+"R$");				// TOTAL PAYMENT CASH
 			}
 
-			System.out.println("getTtl_gnrl_exp_card:"+excelInfo.getTtl_gnrl_exp_card());
-			System.out.println("getTtl_pymnt_card:"+excelInfo.getTtl_pymnt_card());
-			System.out.println("getTtl_gnrl_exp_cash:"+excelInfo.getTtl_gnrl_exp_cash());
-			System.out.println("getTtl_pymnt_cash:"+excelInfo.getTtl_pymnt_cash());
-
 			map.put("excelInfo", excelInfo);
 			map.put("accommodationCardList", accommodationCardList);
 			map.put("accommodationCashList", accommodationCashList);
@@ -1680,7 +1672,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 			destFilePath = temp_path+"/temp/"+bgabGascbt02.getDoc_no()+bgabGascbt02.getEeno()+".xls";
         	ExcelTemplat.createXlsFile(realFilePath, destFilePath, map);
 	    } catch (Exception e) {
-			logger.error("messege", e);
+			logger.error(strMessege, e);
 	    }
 		return true;
 	}
@@ -1993,7 +1985,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 					TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 					message.setErrorCode("E");
 					message.setMessage(o_PoInfo.getO_if_fail_msg());
-					logger.error("messege", e);
+					logger.error(strMessege, e);
 				}
 			}
 		}else{
@@ -2205,7 +2197,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 //					TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 //					message.setErrorCode("E");
 //					message.setMessage(o_PoInfo.getO_if_fail_msg());
-//					e.printStackTrace();
+//					logger.error("messege", e);
 //				}
 //			}
 //		}else{
@@ -2257,7 +2249,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 							TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 							message.setMessage(o_PoInfo.getO_if_fail_msg());
 							message.setErrorCode("E");
-							logger.error("messege", e);
+							logger.error(strMessege, e);
 						}
 					}
 				}
@@ -2296,7 +2288,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 						TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 						message.setMessage(o_PoInfo.getO_if_fail_msg());
 						message.setErrorCode("E");
-						logger.error("messege", e);
+						logger.error(strMessege, e);
 					}
 				}
 			}
@@ -2521,7 +2513,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 					TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 					message.setErrorCode("E");
 					message.setMessage(o_PoInfo.getO_if_fail_msg());
-					logger.error("messege", e);
+					logger.error(strMessege, e);
 				}
 			}
 		}else{
@@ -2583,7 +2575,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 		try {
 			o_BudgetInfo = rfc.getResult(i_BudgetInfo);
 		} catch (Exception e) {
-			logger.error("messege", e);
+			logger.error(strMessege, e);
 		}
 
 		String blance = "0";

@@ -30,6 +30,9 @@ public class RfcBudgetCheck {
 	private static final String strBudget = "BUDGET";
 	private static final String strDesc = "DESC";
 	
+	private static final String strMessage = "messege";
+	private static final String strUser = "GASCRFC1";
+	
 	public RfcBudgetCheck(String gubn){
 		targetServer = StringUtil.getSystemArea();
 		this.initEaiConnections(gubn);
@@ -50,7 +53,7 @@ public class RfcBudgetCheck {
 			connection.connect();
 		}catch (Exception e) {
 			logger.info("RFC JCO connect 중 오류발생");
-			logger.error("messege", e);
+			logger.error(strMessage, e);
 		}
 		return connection;
 	}
@@ -71,16 +74,16 @@ public class RfcBudgetCheck {
 		if( targetServer.equals("REAL") ){
 			host       = "10.121.241.14";
 			client     = "300";
-			user       = "GASCRFC1";
-			passwd     = "GASCRFC1"; 
+			user       = strUser;
+			passwd     = strUser; 
 			r3name     = "EPB"; 
 			group      = "HMB_PRD"; 
 			sysnr      = "00";
 		}else{
 			host    = "10.121.241.106";
 			client 	= "300";
-			user	= "GASCRFC1";
-			passwd 	= "GASCRFC1"; 
+			user	= strUser;
+			passwd 	= strUser; 
 			r3name 	= "EQB"; 
 			group 	= "HMB_QAS";
 			sysnr   = "00";
@@ -146,7 +149,7 @@ public class RfcBudgetCheck {
 			
 		}catch(Exception e){
 			logger.info("RFC 호출 중 문제가 발생하였습니다.");
-			logger.error("messege", e);
+			logger.error(strMessage, e);
 		} finally {
 			release(client);
 		}
@@ -185,7 +188,7 @@ public class RfcBudgetCheck {
 			
 		}catch(Exception e){
 			logger.info("RFC 호출 중 문제가 발생하였습니다.");
-			logger.error("messege", e);
+			logger.error(strMessage, e);
 		} finally {
 			release(client);
 		}
@@ -224,7 +227,7 @@ public class RfcBudgetCheck {
 			
 		}catch(Exception e){
 			logger.info("RFC 호출 중 문제가 발생하였습니다.");
-			logger.error("messege", e);
+			logger.error(strMessage, e);
 		} finally {
 			release(client);
 		}

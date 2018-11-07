@@ -1,4 +1,4 @@
-package com.hncis.common.application;
+package com.hncis.common.application; 
 
 
 import java.util.ArrayList;
@@ -45,7 +45,20 @@ public class CommonGasc {
 	private static SystemDao systemDao;
 	
 	private static final String reqLocale = "reqLocale";
-
+	
+	private static final String str_excel = "excel";
+	private static final String str_message = "messege";
+	
+	private static final String str_html_template_01 = "			<tr>  \n";
+	private static final String str_html_template_02 = "			</tr> \n";
+	private static final String str_html_template_03 = "		</table> \n";
+	private static final String str_html_template_04 = "	</div> \n";
+	private static final String str_html_template_05 = "</div> \n";
+	private static final String str_html_template_06 = "\")'>";
+	private static final String str_html_template_07 = "<span></span></a></li> \n";
+	private static final String str_html_template_08 = "' \n";
+	
+	
 	@Autowired
 	public void setCommonJobDao(CommonJobDao commonJobDao){
 		CommonGasc.commonJobDao = commonJobDao;
@@ -87,7 +100,7 @@ public class CommonGasc {
 		hmcCommon.setCorp_cd(corpCd);
 		hmcCommon.setLocale(locale);
 
-		StringBuffer data       = new StringBuffer();
+		StringBuffer data       = new StringBuffer(500);
 
 //		String arrGubun1 = gubun1 == null || gubun1.equals("") ? "" : gubun1;
 //		String arrGubun2 = gubun2 == null || gubun2.equals("") ? "" : gubun2;
@@ -131,6 +144,7 @@ public class CommonGasc {
 		int idx = 0;
 		boolean flag = false;
 
+		String appendStr = "";
 		try {
 			HncisCommon scrnInfo = commonJobDao.getScrnInfo(hmcCommon);
 			if(scrnInfo != null){
@@ -193,79 +207,79 @@ public class CommonGasc {
 
 			hmcCommon.setSndType(sndType);
 			screenName = screenName.replace("<BR>", "");
-			data.append("<div class='sub_title_area'> \n");
-			data.append("	<h3 class='sub_title fl'>");
-			data.append(screenName);
-			data.append("</h3>\n");
+			appendStr += "<div class='sub_title_area'> \n";
+			appendStr += "	<h3 class='sub_title fl'>";
+			appendStr += screenName;
+			appendStr += "</h3>\n";
 			//버튼
 
 			if(!arrGubun1.equals("") && arrGubun3.equals("")){
-				data.append("<div class='app_box fr'> \n");
-				data.append("	<div class='app_box_left'> \n");
-				data.append("		<table class='tbl_fixed'> \n");
-				data.append("			<tr>  \n");
+				appendStr += "<div class='app_box fr'> \n";
+				appendStr += "	<div class='app_box_left'> \n";
+				appendStr += "		<table class='tbl_fixed'> \n";
+				appendStr += str_html_template_01;
 				for (int i = 0; i < 5; i++){
 					if (i < Integer.parseInt(arrGubun1)){
-						data.append("		<th id='SUBMIT_TITLE' style='display:");
-						data.append(dsp);
-						data.append("'>&nbsp;</th> \n");
+						appendStr += "		<th id='SUBMIT_TITLE' style='display:";
+						appendStr += dsp;
+						appendStr += "'>&nbsp;</th> \n";
 					}
 				}
-				data.append("			</tr> \n");
-				data.append("			<tr>  \n");
+				appendStr += str_html_template_02;
+				appendStr += str_html_template_01;
 				for (int i = 0; i < 5; i++){
 					if (i < Integer.parseInt(arrGubun1)){
-						data.append("		<td id='SUBMIT_DATA' style='display:");
-						data.append(dsp);
-						data.append("'>&nbsp;</td> \n");
+						appendStr += "		<td id='SUBMIT_DATA' style='display:";
+						appendStr += dsp;
+						appendStr += "'>&nbsp;</td> \n";
 					}
 				}
-				data.append("			</tr> \n");
-				data.append("		</table> \n");
-				data.append("	</div> \n");
+				appendStr += str_html_template_02;
+				appendStr += str_html_template_03;
+				appendStr += str_html_template_04;
 			}
 
 			if(!arrGubun2.equals("") && arrGubun3.equals("")){
-				data.append("	<div class='app_box_right'> \n");
-				data.append("		<table class='tbl_fixed'> \n");
-				data.append("			<tr> \n");
+				appendStr += "	<div class='app_box_right'> \n";
+				appendStr += "		<table class='tbl_fixed'> \n";
+				appendStr += "			<tr> \n";
 				for(int i = 0; i < 5; i++){
 //					if (i < Integer.parseInt(arrGubun2)){
-//						data.append("		<th id='SUBMIT_TITLE' style='display:"+ dsp +"'>&nbsp;</th> \n");
+//						appendStr += "		<th id='SUBMIT_TITLE' style='display:"+ dsp +"'>&nbsp;</th> \n");
 //					}
 					if (i < apprLev){
-						data.append("		<th id='SUBMIT_TITLE' style='display:");
-						data.append(dsp);
-						data.append("'>&nbsp;</th> \n");
+						appendStr += "		<th id='SUBMIT_TITLE' style='display:";
+						appendStr += dsp;
+						appendStr += "'>&nbsp;</th> \n";
 					}
 					else{
-						data.append("		<th id='SUBMIT_TITLE' style='display:none'>&nbsp;</th> \n");
+						appendStr += "		<th id='SUBMIT_TITLE' style='display:none'>&nbsp;</th> \n";
 					}
 				}
-				data.append("			</tr> \n");
-				data.append("			<tr>  \n");
+				appendStr += str_html_template_02;
+				appendStr += str_html_template_01;
 				for(int i = 0; i < 5; i++){
 //					if (i < Integer.parseInt(arrGubun2)){
-//						data.append("		<td id='SUBMIT_DATA' style='display:"+ dsp +"'>&nbsp;</td> \n");
+//						appendStr += "		<td id='SUBMIT_DATA' style='display:"+ dsp +"'>&nbsp;</td> \n");
 //					}
 					if (i < apprLev){
-						data.append("		<td id='SUBMIT_DATA' style='display:");
-						data.append(dsp);
-						data.append("'>&nbsp;</td> \n");
+						appendStr += "		<td id='SUBMIT_DATA' style='display:";
+						appendStr += dsp;
+						appendStr += "'>&nbsp;</td> \n";
 					}
 					else{
-						data.append("		<td id='SUBMIT_DATA' style='display:none'>&nbsp;</td> \n");
+						appendStr += "		<td id='SUBMIT_DATA' style='display:none'>&nbsp;</td> \n";
 					}
 				}
-				data.append("			</tr> \n");
-				data.append("		</table> \n");
-				data.append("	</div> \n");
-				data.append("</div> \n");
+				appendStr += str_html_template_02;
+				appendStr += str_html_template_03;
+				appendStr += str_html_template_04;
+				appendStr += str_html_template_05;
 			}
 
-			data.append("	</div> \n");
-			data.append("	<div class='btn_area'> \n");
-			data.append("		<ul class='btns'> \n");
+			appendStr += str_html_template_04;
+			appendStr += "	<div class='btn_area'> \n";
+			appendStr += "		<ul class='btns'> \n";
 
 			st = new StringTokenizer(button);
 			while(st.hasMoreElements()){
@@ -287,7 +301,7 @@ public class CommonGasc {
 				if (buttonFunction.trim().equals("close")){
 					flag = true;
 				} else {
-					if (buttonFunction.equals("excel")){
+					if (buttonFunction.equals(str_excel)){
 						if (workAuth >= 1){flag = true;}
 					} else if (buttonFunction.startsWith("excelUpload")){
 						if (workAuth >= 1){flag = true;}
@@ -363,53 +377,54 @@ public class CommonGasc {
 				String btnVal = buttonName;
 				btnVal = buttonName.substring(0,1).toUpperCase() +  buttonName.substring(1);
 
-				if (buttonFunction.equals("excel")){
-					data.append("		<li id='");
-					data.append(buttonFunction);
-					data.append("'");
-					data.append(display);
-					data.append(" class='fl'><a href='javascript:retrieve(\"");
-					data.append(buttonFunction);
-					data.append("\")'>");
-					data.append(btnVal);
-					data.append("<span></span></a></li> \n");
+				if (buttonFunction.equals(str_excel)){
+					appendStr += "		<li id='";
+					appendStr += buttonFunction;
+					appendStr += "' ";
+					appendStr += display;
+					appendStr += " class='fl'><a href='javascript:retrieve(\"";
+					appendStr += buttonFunction;
+					appendStr += str_html_template_06;
+					appendStr += btnVal;
+					appendStr += str_html_template_07;
 				} else {
-					data.append("		<li id='");
-					data.append(buttonFunction);
-					data.append("'");
-					data.append(display);
-					data.append("><a href='javascript:retrieve(\"");
-					data.append(buttonFunction);
-					data.append("\")'>");
-					data.append(btnVal);
-					data.append("<span></span></a></li> \n");
+					appendStr += "		<li id='";
+					appendStr += buttonFunction;
+					appendStr += "' ";
+					appendStr += display;
+					appendStr += "><a href='javascript:retrieve(\"";
+					appendStr += buttonFunction;
+					appendStr += str_html_template_06;
+					appendStr += btnVal;
+					appendStr += str_html_template_07;
 				}
 
 			}
 
 			if(!"".equals(button)){
 				/*if(!screenId.substring(0,3).toUpperCase().equals("XST") && !locale.equals("zh")){
-					data.append("		<li id='q_tip' class='fr'><p id='tipBtn' name='q_tip' onclick='javascript:pageStepHelpPopup();' style='cursor:pointer;'></p></li> \n");
+					appendStr += "		<li id='q_tip' class='fr'><p id='tipBtn' name='q_tip' onclick='javascript:pageStepHelpPopup();' style='cursor:pointer;'></p></li> \n");
 				}*/
-				if(!screenId.substring(0,3).toUpperCase().equals("XST")){
-					data.append("		<li id='q_tip' class='fr'><p id='tipBtn' name='q_tip' onclick='javascript:pageStepHelpPopup();' style='cursor:pointer;'></p></li> \n");
+				if(!screenId.substring(0,3).equalsIgnoreCase("XST")){
+					appendStr += "		<li id='q_tip' class='fr'><p id='tipBtn' name='q_tip' onclick='javascript:pageStepHelpPopup();' style='cursor:pointer;'></p></li> \n";
 				}
 			}
 
-			data.append("	</ul> \n");
-			data.append("</div> \n");
-			data.append("<input type='hidden' id='work_auth' value='");
-			data.append(workAuth);
-			data.append("'>");
-			data.append("<input type='hidden' id='apprLev1' value='");
-			data.append(arrGubun1);
-			data.append("'>");
-			data.append("<input type='hidden' id='apprLev2' value='");
-			data.append(apprLev);
-			data.append("'>");
-			//data.append("<script>jQuery(document).ready(function(){$('#"+screenId.substring(1,3).toUpperCase()+"').slideDown('fast');})</script>");
+			appendStr += "	</ul> \n";
+			appendStr += str_html_template_05;
+			appendStr += "<input type='hidden' id='work_auth' value='";
+			appendStr += workAuth;
+			appendStr += "'>";
+			appendStr += "<input type='hidden' id='apprLev1' value='";
+			appendStr += arrGubun1;
+			appendStr += "'>";
+			appendStr += "<input type='hidden' id='apprLev2' value='";
+			appendStr += apprLev;
+			appendStr += "'>";
+			//appendStr += "<script>jQuery(document).ready(function(){$('#"+screenId.substring(1,3).toUpperCase()+"').slideDown('fast');})</script>");
+			data.append(appendStr);
 		}catch (Exception e){
-			logger.error("messege", e);
+			logger.error(str_message, e);
 		}
 		return data.toString();
 	}
@@ -450,7 +465,7 @@ public class CommonGasc {
 			}
 
 		}catch (Exception e){
-			logger.error("messege", e);
+			logger.error(str_message, e);
 		}
 		return workAuth;
 	}
@@ -483,16 +498,16 @@ public class CommonGasc {
 					content.append("			noticeWin = newPopWin('about:blank', '450', '350', 'notice_popup'); \n");
 					content.append("			document.noticeForm.indx.value    = '");
 					content.append(boardDto.getBod_indx());
-					content.append("' \n");
+					content.append(str_html_template_08);
 					content.append("			document.noticeForm.hid_csrfToken.value    = '");
 					content.append((String)req.getAttribute("csrfToken"));
-					content.append("' \n");
+					content.append(str_html_template_08);
 					content.append("			document.noticeForm.title.value   = '");
 					content.append(Base64.serialize(boardDto.getBod_title()));
-					content.append("' \n");
+					content.append(str_html_template_08);
 					content.append("			document.noticeForm.content.value = '");
 					content.append(Base64.serialize(boardDto.getBod_content()));
-					content.append("' \n");
+					content.append(str_html_template_08);
 					content.append("			document.noticeForm.action = '");
 					content.append(req.getContextPath());
 					content.append("/hncis/popup/notice_popup.gas' \n");
@@ -505,7 +520,7 @@ public class CommonGasc {
 				}
 			}
 		}catch(Exception e){
-			logger.error("messege", e);
+			logger.error(str_message, e);
 		}
 
 		return content.toString();
@@ -519,7 +534,7 @@ public class CommonGasc {
 		try{
 			noticeList = commonJobDao.getSelectMainNoticeList(corp_cd);
 		}catch(Exception e){
-			logger.error("messege", e);
+			logger.error(str_message, e);
 		}
 		return noticeList;
 	}
@@ -532,7 +547,7 @@ public class CommonGasc {
 		try{
 			qnaList = commonJobDao.getSelectMainQnaList(corp_cd);
 		}catch(Exception e){
-			logger.error("messege", e);
+			logger.error(str_message, e);
 		}
 		return qnaList;
 	}
@@ -545,7 +560,7 @@ public class CommonGasc {
 		try{
 			faqList = commonJobDao.getSelectMainFaqList(corp_cd);
 		}catch(Exception e){
-			logger.error("messege", e);
+			logger.error(str_message, e);
 		}
 		return faqList;
 	}
@@ -558,7 +573,7 @@ public class CommonGasc {
 		try{
 			claimList = commonJobDao.getSelectMainClaimList(corp_cd);
 		}catch(Exception e){
-			logger.error("messege", e);
+			logger.error(str_message, e);
 		}
 		return claimList;
 	}
@@ -590,7 +605,7 @@ public class CommonGasc {
 				data.addElement(result);
 			}
 		}catch(Exception e){
-			logger.error("messege", e);
+			logger.error(str_message, e);
 		}
 
 		return data;
@@ -666,7 +681,7 @@ public class CommonGasc {
 		hmcCommon.setScrn_id(screenId);
 		hmcCommon.setXcod_code(screenId.substring(1, 3));
 		hmcCommon.setLocale(req.getSession().getAttribute(reqLocale).toString());
-		StringBuffer data       = new StringBuffer();
+		StringBuffer data       = new StringBuffer(256);
 
 		String arrGubun1 = gubun1 == null || gubun1.equals("") ? "" : gubun1;
 		String arrGubun2 = gubun2 == null || gubun2.equals("") ? "" : gubun2;
@@ -679,6 +694,8 @@ public class CommonGasc {
 		int sndType = 0;
 
 		String imgPath = "";
+		
+		String appendStr = "";
 
 		try {
 			HncisCommon scrnInfo = commonJobDao.getScrnInfo(hmcCommon);
@@ -707,65 +724,66 @@ public class CommonGasc {
 			hmcCommon.setSndType(sndType);
 			screenName = screenName.replace("<BR>", "");
 
-			data.append("	<div id='header_wrap'> \n");
-			data.append("		<div class='sub_title' style='width:99%'> \n");
-			data.append("			<div class='con_title'><h3>");
-			data.append(imgPath);
-			data.append("</h3></div> \n");
-			data.append("			<div class='con_navi'>");
-			data.append(menuInfo);
-			data.append("</div> \n");
-			data.append("		</div> \n");
-			data.append("	</div> \n");
+			appendStr += "	<div id='header_wrap'> \n";
+			appendStr += "		<div class='sub_title' style='width:99%'> \n";
+			appendStr += "			<div class='con_title'><h3>";
+			appendStr += imgPath;
+			appendStr += "</h3></div> \n";
+			appendStr += "			<div class='con_navi'>";
+			appendStr += menuInfo;
+			appendStr += str_html_template_05;
+			appendStr += "		</div> \n";
+			appendStr += str_html_template_04;
 
-			data.append("<div id='contents'> \n");
+			appendStr += "<div id='contents'> \n";
 
 			if(!arrGubun1.equals("") && arrGubun3.equals("")){
-				data.append("<div id='appBox' style='width:99%'> \n");
-				data.append("	<div class='appBox_left'> \n");
-				data.append("		<table> \n");
-				data.append("			<tr>  \n");
+				appendStr += "<div id='appBox' style='width:99%'> \n";
+				appendStr += "	<div class='appBox_left'> \n";
+				appendStr += "		<table> \n";
+				appendStr += str_html_template_01;
 				for (int i = 0; i < 13; i++){
 					if (i < Integer.parseInt(arrGubun1)){
-						data.append("		<th id='SUBMIT_TITLE'>&nbsp;</th> \n");
+						appendStr += "		<th id='SUBMIT_TITLE'>&nbsp;</th> \n";
 					}
 				}
-				data.append("			</tr> \n");
-				data.append("			<tr>  \n");
+				appendStr += str_html_template_02;
+				appendStr += str_html_template_01;
 				for (int i = 0; i < 13; i++){
 					if (i < Integer.parseInt(arrGubun1)){
-						data.append("		<td id='SUBMIT_DATA'>&nbsp;</td> \n");
+						appendStr += "		<td id='SUBMIT_DATA'>&nbsp;</td> \n";
 					}
 				}
-				data.append("			</tr> \n");
-				data.append("		</table> \n");
-				data.append("	</div> \n");
+				appendStr += str_html_template_02;
+				appendStr += str_html_template_03;
+				appendStr += str_html_template_04;
 			}
 
 			if(!arrGubun2.equals("") && arrGubun3.equals("")){
-				data.append("	<div class='appBox_right' align='right'> \n");
-				data.append("		<table> \n");
-				data.append("			<tr> \n");
+				appendStr += "	<div class='appBox_right' align='right'> \n";
+				appendStr += "		<table> \n";
+				appendStr += "			<tr> \n";
 				for(int i = 0; i < 13; i++){
 					if (i < Integer.parseInt(arrGubun2)){
-						data.append("		<th id='SUBMIT_TITLE'>&nbsp;</th> \n");
+						appendStr += "		<th id='SUBMIT_TITLE'>&nbsp;</th> \n";
 					}
 				}
-				data.append("			</tr> \n");
-				data.append("			<tr>  \n");
+				appendStr += str_html_template_02;
+				appendStr += str_html_template_01;
 				for(int i = 0; i < 13; i++){
 					if (i < Integer.parseInt(arrGubun2)){
-						data.append("		<td id='SUBMIT_DATA'>&nbsp;</td> \n");
+						appendStr += "		<td id='SUBMIT_DATA'>&nbsp;</td> \n";
 					}
 				}
-				data.append("			</tr> \n");
-				data.append("		</table> \n");
-				data.append("	</div> \n");
-				data.append("</div> \n");
+				appendStr += str_html_template_02;
+				appendStr += str_html_template_03;
+				appendStr += str_html_template_04;
+				appendStr += str_html_template_05;
 			}
+			data.append(appendStr);
 
 		}catch (Exception e){
-			logger.error("messege", e);
+			logger.error(str_message, e);
 		}
 		return data.toString();
 	}
@@ -895,7 +913,7 @@ public class CommonGasc {
 				selectMenuList = commonJobDao.getTopMenuList(hmcCommon);
 			}
 		}catch(Exception e){
-			logger.error("messege", e);
+			logger.error(str_message, e);
 		}
 
 		return selectMenuList;
@@ -906,7 +924,7 @@ public class CommonGasc {
 		try {
 			selectMenuList = commonJobDao.getSelectBusinessTravelTopMenuList();
 		}catch(Exception e){
-			logger.error("messege", e);
+			logger.error(str_message, e);
 		}
 
 		return selectMenuList;
@@ -940,7 +958,7 @@ public class CommonGasc {
 				selectMenuList = commonJobDao.getLeftMenuList(hmcCommon);
 			}
 		}catch(Exception e){
-			logger.error("messege", e);
+			logger.error(str_message, e);
 		}
 
 		return selectMenuList;
@@ -965,11 +983,13 @@ public class CommonGasc {
 
 		StringTokenizer st = null;
 		StringTokenizer st2 = null;
-		StringBuffer data       = new StringBuffer();
+		StringBuffer data       = new StringBuffer(200);
 		String tempButton = "";
 		String buttonName = "";
 		String buttonFunction = "";
 		String display = "";
+		
+		String appendStr = "";
 
 		try {
 			try{
@@ -980,8 +1000,8 @@ public class CommonGasc {
 				cnfm = 1;
 			}
 
-			data.append("	<div class='btn_area'> \n");
-			data.append("		<ul class='btns'> \n");
+			appendStr += "	<div class='btn_area'> \n";
+			appendStr += "		<ul class='btns'> \n";
 
 			st = new StringTokenizer(button);
 			while(st.hasMoreElements()){
@@ -1003,7 +1023,7 @@ public class CommonGasc {
 				if (buttonFunction.trim().equals("close")){
 					flag = true;
 				} else {
-					if (buttonFunction.equals("excel")){
+					if (buttonFunction.equals(str_excel)){
 						if (workAuth >= 1){flag = true;}
 					} else if (buttonFunction.equals("search")){
 						if (workAuth >= 1){flag = true;	}
@@ -1072,33 +1092,34 @@ public class CommonGasc {
 				String btnVal = buttonName;
 				btnVal = buttonName.substring(0,1).toUpperCase() +  buttonName.substring(1);
 
-				if (buttonFunction.equals("excel")){
-					data.append("		<li id='");
-					data.append(buttonFunction);
-					data.append("'><a href='javascript:retrieve(\"");
-					data.append(buttonFunction);
-					data.append("\")'>");
-					data.append(btnVal);
-					data.append("<span></span></a></li> \n");
+				if (buttonFunction.equals(str_excel)){
+					appendStr += "		<li id='";
+					appendStr += buttonFunction;
+					appendStr += "'><a href='javascript:retrieve(\"";
+					appendStr += buttonFunction;
+					appendStr += str_html_template_06;
+					appendStr += btnVal;
+					appendStr += str_html_template_07;
 				} else {
-					data.append("		<li id='");
-					data.append(buttonFunction);
-					data.append("'><a href='javascript:retrieve(\"");
-					data.append(buttonFunction);
-					data.append("\")'>");
-					data.append(btnVal);
-					data.append("<span></span></a></li> \n");
+					appendStr += "		<li id='";
+					appendStr += buttonFunction;
+					appendStr += "'><a href='javascript:retrieve(\"";
+					appendStr += buttonFunction;
+					appendStr += str_html_template_06;
+					appendStr += btnVal;
+					appendStr += str_html_template_07;
 				}
 			}
 
-			data.append("	</ul> \n");
-			data.append("</div> \n");
-			data.append("<input type='hidden' id='work_auth' value='");
-			data.append(workAuth);
-			data.append("'>");
+			appendStr += "	</ul> \n";
+			appendStr += str_html_template_05;
+			appendStr += "<input type='hidden' id='work_auth' value='";
+			appendStr += workAuth;
+			appendStr += "'>";
 			//data.append("<script>jQuery(document).ready(function(){$('#"+screenId.substring(1,3).toUpperCase()+"').slideDown('fast');})</script>");
+			data.append(appendStr);
 		}catch (Exception e){
-			logger.error("messege", e);
+			logger.error(str_message, e);
 		}
 		return data.toString();
 	}
@@ -1115,7 +1136,7 @@ public class CommonGasc {
 			cnt = commonJobDao.getCheckAuthKeyForPw(dto);
 
 		}catch(Exception e){
-			logger.error("messege", e);
+			logger.error(str_message, e);
 		}
 
 		return cnt;
@@ -1131,7 +1152,7 @@ public class CommonGasc {
 
 			approveStepLevel = commonJobDao.selectApproveStepLevel(commonApproval);
 		}catch(Exception e){
-			logger.error("messege", e);
+			logger.error(str_message, e);
 			approveStepLevel = "";
 		}
 
@@ -1146,7 +1167,7 @@ public class CommonGasc {
 
 			chkFlag = commonJobDao.getSelectCorpChkCount(dto);
 		}catch(Exception e){
-			logger.error("messege", e);
+			logger.error(str_message, e);
 			chkFlag = "N";
 		}
 

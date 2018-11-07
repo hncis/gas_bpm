@@ -21,6 +21,7 @@ import com.hncis.common.Constant;
 import com.hncis.common.application.SessionInfo;
 import com.hncis.common.exception.impl.SessionException;
 import com.hncis.common.message.HncisMessageSource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 /**
@@ -51,6 +52,7 @@ public class FileUtil {
 	private static final String strFileName = "fileName:";
 	private static final String strOldFileName = "oldFileName:";
 	private static final String strStar = "##################################";
+	private static final String strMessage = "messege";
 	/**
 	 * 업로드 된 파일을 읽어 레파지토리에 저장한다.
 	 * @param multipartFile MultipartFile Object
@@ -131,7 +133,7 @@ public class FileUtil {
 					inputStream.close();
 					return fileFullPath;
 				} catch(Exception ex) {
-					ex.printStackTrace();
+					logger.error(strMessage, ex);
 					outputStream.close();
 					inputStream.close();
 				} finally {
@@ -234,7 +236,7 @@ public class FileUtil {
 				corp_cd = SessionInfo.getSess_corp_cd(req);
 			} catch (SessionException e1) {
 				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				logger.error(strMessage, e1);
 			}
 
 			String realUrl = strHttp + req.getServerName() + realFolder;
@@ -295,7 +297,7 @@ public class FileUtil {
 				result[4] = HncisMessageSource.getMessage("FILE.0001");
 			}
 		}catch(Exception e){
-			logger.error("messege", e);
+			logger.error(strMessage, e);
 		}
 
 		return result;
@@ -334,7 +336,7 @@ public class FileUtil {
 				corp_cd = SessionInfo.getSess_corp_cd(req);
 			} catch (SessionException e1) {
 				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				logger.error(strMessage, e1);
 			}
 
 			String realUrl = strHttp + req.getServerName() + realFolder;
@@ -393,7 +395,7 @@ public class FileUtil {
 				result[4] = HncisMessageSource.getMessage("FILE.0001");
 			}
 		}catch(Exception e){
-			logger.error("messege", e);
+			logger.error(strMessage, e);
 		}
 
 		return result;
@@ -423,7 +425,7 @@ public class FileUtil {
 			}
 			result = "S";
 		}catch(Exception e){
-			logger.error("messege", e);
+			logger.error(strMessage, e);
 		}
 
 		return result;
@@ -448,7 +450,7 @@ public class FileUtil {
 				corp_cd = SessionInfo.getSess_corp_cd(req);
 			} catch (SessionException e1) {
 				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				logger.error(strMessage, e1);
 			}
 	        
 			String realUrl = strHttp + req.getServerName() + realFolder;
@@ -492,7 +494,7 @@ public class FileUtil {
 				result[3] = "";
 			}
 		}catch(Exception e){
-			logger.error("messege", e);
+			logger.error(strMessage, e);
 		}
 
 		return result;
@@ -521,7 +523,7 @@ public class FileUtil {
 			}
 			result = "S";
 		}catch(Exception e){
-			logger.error("messege", e);
+			logger.error(strMessage, e);
 		}
 
 		return result;
@@ -550,7 +552,7 @@ public class FileUtil {
 				corp_cd = SessionInfo.getSess_corp_cd(req);
 			} catch (SessionException e1) {
 				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				logger.error(strMessage, e1);
 			}
 	        
             String realUrl = strHttp + req.getServerName() + realFolder;
@@ -586,7 +588,7 @@ public class FileUtil {
             }
 
         }catch(Exception e){
-            logger.error("messege", e);
+            logger.error(strMessage, e);
         }
         return resultString;
     }
@@ -613,7 +615,7 @@ public class FileUtil {
 				corp_cd = SessionInfo.getSess_corp_cd(req);
 			} catch (SessionException e1) {
 				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				logger.error(strMessage, e1);
 			}
 
             String realUrl = strHttp + req.getServerName() + realFolder;
@@ -647,7 +649,7 @@ public class FileUtil {
             }
 
         }catch(Exception e){
-            logger.error("messege", e);
+            logger.error(strMessage, e);
         }
         return resultString;
     }
@@ -687,7 +689,7 @@ public class FileUtil {
 				corp_cd = SessionInfo.getSess_corp_cd(req);
 			} catch (SessionException e1) {
 				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				logger.error(strMessage, e1);
 			}
 
 			String realUrl = strHttp + req.getServerName() + realFolder;
@@ -746,7 +748,7 @@ public class FileUtil {
 				result[4] = HncisMessageSource.getMessage("FILE.0001");
 			}
 		}catch(Exception e){
-			logger.error("messege", e);
+			logger.error(strMessage, e);
 		}
 
 		return result;
@@ -774,13 +776,13 @@ public class FileUtil {
 							fos.write(b, 0, cnt);
 						}
 					} catch (Exception e) {
-						logger.error("messege", e);
+						logger.error(strMessage, e);
 					} finally{
 						try {
 							fis.close();
 							fos.close();
 						} catch (IOException e) {
-							logger.error("messege", e);
+							logger.error(strMessage, e);
 						}
 						
 					}

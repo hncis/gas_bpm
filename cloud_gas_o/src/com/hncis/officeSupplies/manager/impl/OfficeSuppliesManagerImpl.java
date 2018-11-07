@@ -37,6 +37,8 @@ public class OfficeSuppliesManagerImpl implements OfficeSuppliesManager{
     private transient Log logger = LogFactory.getLog(getClass());
 
     private static final String pCode = "P-C-003";
+    private static final String strMessege = "messege";
+    
 	@Autowired
 	public OfficeSuppliesDao officeSuppliesDao;
 
@@ -349,7 +351,7 @@ public class OfficeSuppliesManagerImpl implements OfficeSuppliesManager{
 		try {
 			o_PoInfo = rfc.doPoCreate(poParamVo);
 		} catch (Exception e) {
-			logger.error("messege", e);
+			logger.error(strMessege, e);
 		}
 		return o_PoInfo;
 	}
@@ -363,7 +365,7 @@ public class OfficeSuppliesManagerImpl implements OfficeSuppliesManager{
 		try {
 			o_PoInfo = rfc.doPoDelete(poParamVo);
 		} catch (Exception e) {
-			logger.error("messege", e);
+			logger.error(strMessege, e);
 		}
 		return o_PoInfo;
 	}
@@ -423,24 +425,24 @@ public class OfficeSuppliesManagerImpl implements OfficeSuppliesManager{
 		}catch(Exception e){
 			resultUrl = "xos05_img_file.gas";
 			msg = HncisMessageSource.getMessage("FILE.0001");
-			logger.error("messege", e);
-		}finally{
-			try{
-				String dispatcherYN = "Y";
-				req.setAttribute("file_doc_no",  bgabGascZ011Dto.getDoc_no());
-				req.setAttribute("file_eeno",  bgabGascZ011Dto.getEeno());
-				req.setAttribute("file_pgs_st_cd",  bgabGascZ011Dto.getPgs_st_cd());
-				req.setAttribute("file_seq",  bgabGascZ011Dto.getSeq());
-				req.setAttribute("dispatcherYN", dispatcherYN);
-				req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
-				req.setAttribute("message",  msg);
-				req.getRequestDispatcher(resultUrl).forward(req, res);
-
-				return;
-			}catch(Exception e){
-				logger.error("messege", e);
-			}
+			logger.error(strMessege, e);
 		}
+		try{
+			String dispatcherYN = "Y";
+			req.setAttribute("file_doc_no",  bgabGascZ011Dto.getDoc_no());
+			req.setAttribute("file_eeno",  bgabGascZ011Dto.getEeno());
+			req.setAttribute("file_pgs_st_cd",  bgabGascZ011Dto.getPgs_st_cd());
+			req.setAttribute("file_seq",  bgabGascZ011Dto.getSeq());
+			req.setAttribute("dispatcherYN", dispatcherYN);
+			req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
+			req.setAttribute("message",  msg);
+			req.getRequestDispatcher(resultUrl).forward(req, res);
+
+			return;
+		}catch(Exception e){
+			logger.error(strMessege, e);
+		}
+		
 	}
 
 	@Override
@@ -461,7 +463,7 @@ public class OfficeSuppliesManagerImpl implements OfficeSuppliesManager{
 			try {
 				fileResult = FileUtil.deleteImgFile(fileInfo.getCorp_cd(), "officeSupplies", fileInfo.getOgc_fil_nm());
 			} catch (IOException e) {
-				logger.error("messege", e);
+				logger.error(strMessege, e);
 			}
 		}
 		Integer fileDRs = officeSuppliesDao.deleteOfficeSuppliesToFile(bgabGascZ011IList);
