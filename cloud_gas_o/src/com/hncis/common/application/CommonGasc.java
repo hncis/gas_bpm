@@ -378,7 +378,7 @@ public class CommonGasc {
 				btnVal = buttonName.substring(0,1).toUpperCase() +  buttonName.substring(1);
 
 				if (buttonFunction.equals(str_excel)){
-					appendStr += "		<li id='";
+					appendStr += "	<li id='";
 					appendStr += buttonFunction;
 					appendStr += "' ";
 					appendStr += display;
@@ -485,38 +485,40 @@ public class CommonGasc {
 			boardDto = commonJobDao.getNoticePopup(paramMap);
 			if(boardDto != null){
 				if(boardDto.getBod_popyn().equals("Y")){
-					content.append("<form id='noticeForm' name='noticeForm'> \n");
-					content.append("	<input type='hidden' id='indx' name='indx'> \n");
-					content.append("	<input type='hidden' id='title' name='title'> \n");
-					content.append("	<input type='hidden' id='content' name='content'> \n");
-					content.append("	<input type='hidden' id='hid_csrfToken' name='hid_csrfToken'> \n");
-					content.append("	<script> \n");
-					content.append("		var noticeWin; \n");
-					content.append("		if(getCookie('POP");
-					content.append(boardDto.getBod_indx());
-					content.append("') != 'done') { \n");
-					content.append("			noticeWin = newPopWin('about:blank', '450', '350', 'notice_popup'); \n");
-					content.append("			document.noticeForm.indx.value    = '");
-					content.append(boardDto.getBod_indx());
-					content.append(str_html_template_08);
-					content.append("			document.noticeForm.hid_csrfToken.value    = '");
-					content.append((String)req.getAttribute("csrfToken"));
-					content.append(str_html_template_08);
-					content.append("			document.noticeForm.title.value   = '");
-					content.append(Base64.serialize(boardDto.getBod_title()));
-					content.append(str_html_template_08);
-					content.append("			document.noticeForm.content.value = '");
-					content.append(Base64.serialize(boardDto.getBod_content()));
-					content.append(str_html_template_08);
-					content.append("			document.noticeForm.action = '");
-					content.append(req.getContextPath());
-					content.append("/hncis/popup/notice_popup.gas' \n");
-					content.append("			document.noticeForm.target = 'notice_popup'; \n");
-					content.append("			document.noticeForm.method = 'post'; \n");
-					content.append("			document.noticeForm.submit(); \n");
-					content.append("		} \n");
-					content.append("	</script> \n");
-					content.append("</form>");
+					String strText = "<form id='noticeForm' name='noticeForm'> \n";
+					strText += "	<input type='hidden' id='indx' name='indx'> \n";
+					strText += "	<input type='hidden' id='title' name='title'> \n";
+					strText += "	<input type='hidden' id='content' name='content'> \n";
+					strText += "	<input type='hidden' id='hid_csrfToken' name='hid_csrfToken'> \n";
+					strText += "	<script> \n";
+					strText += "		var noticeWin; \n";
+					strText += "		if(getCookie('POP";
+					strText += boardDto.getBod_indx();
+					strText += "') != 'done') { \n";
+					strText += "			noticeWin = newPopWin('about:blank', '450', '350', 'notice_popup'); \n";
+					strText += "			document.noticeForm.indx.value    = '";
+					strText += boardDto.getBod_indx();
+					strText += str_html_template_08;
+					strText += "			document.noticeForm.hid_csrfToken.value    = '";
+					strText += (String)req.getAttribute("csrfToken");
+					strText += str_html_template_08;
+					strText += "			document.noticeForm.title.value   = '";
+					strText += Base64.serialize(boardDto.getBod_title());
+					strText += str_html_template_08;
+					strText += "			document.noticeForm.content.value = '";
+					strText += Base64.serialize(boardDto.getBod_content());
+					strText += str_html_template_08;
+					strText += "			document.noticeForm.action = '";
+					strText += req.getContextPath();
+					strText += "/hncis/popup/notice_popup.gas' \n";
+					strText += "			document.noticeForm.target = 'notice_popup'; \n";
+					strText += "			document.noticeForm.method = 'post'; \n";
+					strText += "			document.noticeForm.submit(); \n";
+					strText += "		} \n";
+					strText += "	</script> \n";
+					strText += "</form>";
+					
+					content.append(strText);
 				}
 			}
 		}catch(Exception e){
@@ -1093,7 +1095,7 @@ public class CommonGasc {
 				btnVal = buttonName.substring(0,1).toUpperCase() +  buttonName.substring(1);
 
 				if (buttonFunction.equals(str_excel)){
-					appendStr += "		<li id='";
+					appendStr += "	<li id='";
 					appendStr += buttonFunction;
 					appendStr += "'><a href='javascript:retrieve(\"";
 					appendStr += buttonFunction;

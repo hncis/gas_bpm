@@ -19,6 +19,7 @@ public class HncisMessageSource implements MessageSourceAware{
     private transient static Log logger = LogFactory.getLog(HncisMessageSource.class.getClass());
 	protected static MessageSource messageSource;
     public static final String DEFAULT_MESSAGE_CODE = "ERROR.0000";
+    public static final String strMessege = "messege";
     
     /**
      * messageSource setter
@@ -66,13 +67,13 @@ public class HncisMessageSource implements MessageSourceAware{
         }
         catch(NoSuchMessageException nsme)
         {
-			logger.error("messege", nsme);
+			logger.error(strMessege, nsme);
             message = DEFAULT_MESSAGE_CODE;
             return message;
         }
         catch(Exception e)
         {
-			logger.error("messege", e);
+			logger.error(strMessege, e);
             message = DEFAULT_MESSAGE_CODE;
             return message;
         }
@@ -104,13 +105,13 @@ public class HncisMessageSource implements MessageSourceAware{
         }
         catch(NoSuchMessageException nsme)
         {
-			logger.error("messege", nsme);
+			logger.error(strMessege, nsme);
             message = DEFAULT_MESSAGE_CODE;
             return message;
         }
         catch(Exception e)
         {
-			logger.error("messege", e);
+			logger.error(strMessege, e);
             message = DEFAULT_MESSAGE_CODE;
             return message;
         }

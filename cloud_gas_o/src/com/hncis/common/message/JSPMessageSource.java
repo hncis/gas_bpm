@@ -12,8 +12,9 @@ public class JSPMessageSource extends HncisMessageSource {
 	public static String getMessage(String code, Locale locale)
     {
         String message = "";
-        if(code == null || code.length() == 0)
+        if(code == null || code.length() == 0){
             code = DEFAULT_MESSAGE_CODE;
+        }
         try
         {
             message = messageSource.getMessage(code,null,locale);

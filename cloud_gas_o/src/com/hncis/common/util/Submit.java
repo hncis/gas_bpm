@@ -112,7 +112,7 @@ public class Submit {
 				text	+= HncisMessageSource.getMessage("MAIL.0006") + html_colon+ a1 + " " + a2+"<br /><br /><br />";
 				text	+= HncisMessageSource.getMessage("MAIL.0007") + html_tag_br2;
 				
-				text	+= "<a href='"+sPath+"' target='_blank'>" + HncisMessageSource.getMessage("MAIL.0008") + html_tag_a_close;
+				text	+= "<a   href='"+sPath+"' target='_blank'>" + HncisMessageSource.getMessage("MAIL.0008") + html_tag_a_close;
 				
 				text	+= html_template_01;
 				
@@ -201,7 +201,7 @@ public class Submit {
 				text	+= HncisMessageSource.getMessage("MAIL.0005") + html_colon + title + html_tag_br1;
 				text	+= HncisMessageSource.getMessage("MAIL.0010") + html_colon + fromEeno + " " + fromStepNm + "<br /><br /><br />";
 				text	+= HncisMessageSource.getMessage("MAIL.0007") + html_tag_br2;
-				text	+= "<a href='"+sPath+"' target='_blank'>" + HncisMessageSource.getMessage("MAIL.0008") + html_tag_a_close;
+				text	+= "<a  href='"+sPath+"' target='_blank'>" + HncisMessageSource.getMessage("MAIL.0008") + html_tag_a_close;
 				
 				text	+= html_template_01;
 				SendMail oMail = new SendMail();
@@ -321,7 +321,7 @@ public class Submit {
 				text	+= html_str_From+ a1 + " " + a2+html_tag_br1;
 				text	+= "Reason: "+rtnText+html_tag_br2;
 				text	+= "Please login to the GASC system to check your data.<br /><br />";
-				text	+= "<a href='"+sPath+"index.htm' target='_blank'>General Affairs Support Center</a>";
+				text	+= "<a  href='"+sPath+"index.htm' target='_blank'>General Affairs Support Center</a>";
 				
 				text	+= html_template_01;
 			

@@ -448,7 +448,7 @@ public class FormatHelper {
 		} else if (param.split(".").length == 1) {
 			return strNum(param, "###,##0");
 		} else {
-			return strNum(param.substring(0, param.indexOf(".")), "###,##0");
+			return strNum(param.split(".")[0], "###,##0");
 		}
 	}
 
