@@ -69,8 +69,8 @@
 										<option value="">ALL</option>
 									</select>
 								</td>
-								<th><fmt:message key="req_ymd"/></th>
-								<td>
+								<th style = "display:none;"><fmt:message key="req_ymd"/></th>
+								<td style = "display:none;">
 									<input id="key_fr_ymd" type="text" style="width:80px" value="<%=fromDay%>" readonly> ~
 									<input id="key_to_ymd" type="text" style="width:80px"  value="<%=toDay%>" readonly>
 								</td>
@@ -114,6 +114,8 @@
 	
 			$("#key_fr_ymd").datepicker({ dateFormat: "yy-mm-dd" });
 			$("#key_to_ymd").datepicker({ dateFormat: "yy-mm-dd" });
+			$("#key_fr_ymd").val('1000-01-01');
+			$("#key_to_ymd").val('9999-12-31');
 			
 			initMenus();
 			
@@ -370,6 +372,8 @@
 		}
 
 		function doSearch(msgFlag){
+			$("#key_fr_ymd").val('1000-01-01');
+			$("#key_to_ymd").val('9999-12-31');
 			var params = {
 					lrg_cd       : $("#key_lrg_cd").val(),
 					mrg_cd       : $("#key_mrg_cd").val(),
