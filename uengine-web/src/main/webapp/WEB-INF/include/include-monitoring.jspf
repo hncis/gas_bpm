@@ -13,3 +13,9 @@
 <script type="text/javascript" src="<c:url value='/resources/libs/chartjs/Chart.bundle.min.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/libs/chartjs/utils.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/resources/libs/canvasjs/canvasjs.min.js'/>"></script>
+
+<!-- toast -->
+<link rel="stylesheet" href="<c:url value='/resources/libs/toast/tui-chart.min.css'/>">
+<script type="text/javascript" src="<c:url value='/resources/libs/toast/tui-chart-all.min.js'/>"></script>
+
+

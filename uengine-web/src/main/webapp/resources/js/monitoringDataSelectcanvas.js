@@ -10,7 +10,7 @@ var fn_canvascolumn = function(windowName, canvasid,
 			createcanvascolumnjs(canvasid, xLabel, yLabel, titleText, result.datas);
         },
         error : function(XMLHttpRequest, textStatus, errorThrown) {
-            alert('There is an error : method(group)에 에러가 있습니다.');
+        	 alert('There is an error : method(group)에 에러가 있습니다. (windowName_' + windowName + ')');
         }
 	});
 }
@@ -44,7 +44,7 @@ var fn_canvasdoughnut = function(windowName, canvasid, titleText) {
 			createcanvasdoughnutjs(canvasid, titleText, result.datas);
         },
         error : function(XMLHttpRequest, textStatus, errorThrown) {
-            alert('There is an error : method(group)에 에러가 있습니다.');
+            alert('There is an error : method(group)에 에러가 있습니다. (windowName_' + windowName + ')');
         }
 	});
 }
@@ -111,7 +111,7 @@ var fn_canvasstackedcolumn = function(windowName, canvasid, titleText) {
 			createcanvasstackedcolumn(canvasid, titleText, returnValue);
         },
         error : function(XMLHttpRequest, textStatus, errorThrown) {
-            alert('There is an error : method(group)에 에러가 있습니다.');
+            alert('There is an error : method(group)에 에러가 있습니다. (windowName_' + windowName + ')');
         }
 	});
 }
@@ -167,7 +167,7 @@ var fn_canvasline = function(windowName, canvasid, titleText) {
 			createcanvasline(canvasid, titleText, returnValue);
         },
         error : function(XMLHttpRequest, textStatus, errorThrown) {
-            alert('There is an error : method(group)에 에러가 있습니다.');
+        	 alert('There is an error : method(group)에 에러가 있습니다. (windowName_' + windowName + ')');
         }
 	});
 }
