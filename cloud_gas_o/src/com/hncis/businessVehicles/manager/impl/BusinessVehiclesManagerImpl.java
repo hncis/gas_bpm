@@ -44,7 +44,6 @@ public class BusinessVehiclesManagerImpl implements BusinessVehiclesManager{
 	private static final String rCode = "GASROLE01450030";
 	private static final String adminId = "10000001";
 	private static final String fileMessage = "FILE.0001";
-    private static final String strMessege = "messege";
 
 	@Autowired
 	public BusinessVehiclesDao businessVehiclesDao;
@@ -351,7 +350,7 @@ public class BusinessVehiclesManagerImpl implements BusinessVehiclesManager{
 			reqDto.setChss_no(dto.getChss_no());
 
 		} catch (Exception e) {
-			logger.error(strMessege, e);
+			logger.error("messege", e);
 			reqDto.setErrYn(true);
 			reqDto.setErrMsg(HncisMessageSource.getMessage("SAVE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -454,25 +453,25 @@ public class BusinessVehiclesManagerImpl implements BusinessVehiclesManager{
 		}catch(Exception e){
 			resultUrl = "xbv04_file.gas";
 			msg = HncisMessageSource.getMessage(fileMessage);
-			logger.error(strMessege, e);
+			logger.error("messege", e);
+		}finally{
+			try{
+
+				String dispatcherYN = "Y";
+
+				req.setAttribute("hid_doc_no",  bgabGascZ011Dto.getDoc_no());
+				req.setAttribute("hid_eeno",  bgabGascZ011Dto.getEeno());
+				req.setAttribute("hid_seq",  bgabGascZ011Dto.getSeq());
+				req.setAttribute("dispatcherYN", dispatcherYN);
+				req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
+				req.setAttribute("message",  msg);
+				req.getRequestDispatcher(resultUrl).forward(req, res);
+
+				return;
+			}catch(Exception e){
+				logger.error("messege", e);
+			}
 		}
-		try{
-
-			String dispatcherYN = "Y";
-
-			req.setAttribute("hid_doc_no",  bgabGascZ011Dto.getDoc_no());
-			req.setAttribute("hid_eeno",  bgabGascZ011Dto.getEeno());
-			req.setAttribute("hid_seq",  bgabGascZ011Dto.getSeq());
-			req.setAttribute("dispatcherYN", dispatcherYN);
-			req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
-			req.setAttribute("message",  msg);
-			req.getRequestDispatcher(resultUrl).forward(req, res);
-
-			return;
-		}catch(Exception e){
-			logger.error(strMessege, e);
-		}
-		
 
 	}
 
@@ -494,7 +493,7 @@ public class BusinessVehiclesManagerImpl implements BusinessVehiclesManager{
 			try {
 				fileResult = FileUtil.deleteFile(fileInfo.getCorp_cd(), "businessVehicles", fileInfo.getOgc_fil_nm());
 			} catch (IOException e) {
-				logger.error(strMessege, e);
+				logger.error("messege", e);
 			}
 		}
 
@@ -565,24 +564,24 @@ public void saveMaintenanceToFile(HttpServletRequest req, HttpServletResponse re
 		}catch(Exception e){
 			resultUrl = "xbv07_file.gas";
 			msg = HncisMessageSource.getMessage(fileMessage);
-			logger.error(strMessege, e);
-		}
-		try{
-			String dispatcherYN = "Y";
-			req.setAttribute("hid_doc_no",  bgabGascZ011Dto.getDoc_no());
-			req.setAttribute("hid_eeno",  bgabGascZ011Dto.getEeno());
-			req.setAttribute("hid_pgs_st_cd",  bgabGascZ011Dto.getPgs_st_cd());
-			req.setAttribute("hid_seq",  bgabGascZ011Dto.getSeq());
-			req.setAttribute("dispatcherYN", dispatcherYN);
-			req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
-			req.setAttribute("message",  msg);
-			req.getRequestDispatcher(resultUrl).forward(req, res);
+			logger.error("messege", e);
+		}finally{
+			try{
+				String dispatcherYN = "Y";
+				req.setAttribute("hid_doc_no",  bgabGascZ011Dto.getDoc_no());
+				req.setAttribute("hid_eeno",  bgabGascZ011Dto.getEeno());
+				req.setAttribute("hid_pgs_st_cd",  bgabGascZ011Dto.getPgs_st_cd());
+				req.setAttribute("hid_seq",  bgabGascZ011Dto.getSeq());
+				req.setAttribute("dispatcherYN", dispatcherYN);
+				req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
+				req.setAttribute("message",  msg);
+				req.getRequestDispatcher(resultUrl).forward(req, res);
 
-			return;
-		}catch(Exception e){
-			logger.error(strMessege, e);
+				return;
+			}catch(Exception e){
+				logger.error("messege", e);
+			}
 		}
-		
 	}
 
 	@Override
@@ -603,7 +602,7 @@ public void saveMaintenanceToFile(HttpServletRequest req, HttpServletResponse re
 			try {
 				fileResult = FileUtil.deleteFile(fileInfo.getCorp_cd(), "companyCar", fileInfo.getOgc_fil_nm());
 			} catch (IOException e) {
-				logger.error(strMessege, e);
+				logger.error("messege", e);
 			}
 		}
 		Integer fileDRs = businessVehiclesDao.deleteMaintenanceToFile(bgabGascZ011IList);

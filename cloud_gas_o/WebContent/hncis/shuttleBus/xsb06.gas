@@ -609,10 +609,10 @@
 	
 	function checkCallBack(result){
 		setBottomMsg(result.message, true);
-		doNew(1);
+		doNew();
 	}
 	
-	function doNew(flag){
+	function doNew(){
 		var d = new Date();
 		var yy = d.getFullYear();
 		var mm = d.getMonth()+1;
@@ -629,10 +629,8 @@
 		$("#sel_route").val("");
 		setComboValueMulti2('sel_boarding', '');
 		$("#remark").val("");
-		
-		if(flag != 1){
-			doBeforeSearch();
-		}
+
+		doBeforeSearch();
 	}
 	
 	function doBack(){

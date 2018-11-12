@@ -24,13 +24,11 @@ import com.hncis.common.util.StringUtil;
 import com.hncis.common.vo.BgabGascZ011Dto;
 import com.hncis.common.vo.CommonCode;
 import com.hncis.common.vo.CommonMessage;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 @Service("booksManagerImpl")
 public class BooksManagerImpl implements BooksManager{
-    private static final String strMessege = "messege";
 
     private transient Log logger = LogFactory.getLog(getClass());
     
@@ -109,7 +107,7 @@ public class BooksManagerImpl implements BooksManager{
 			}
 			
 		}catch (Exception e) {
-			logger.error(strMessege, e);
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("APPLY.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -255,7 +253,7 @@ public class BooksManagerImpl implements BooksManager{
 			message.setMessage(HncisMessageSource.getMessage("SAVE.0000"));
 			message.setCode(dto.getBk_seq());
 		}catch (Exception e) {
-			logger.error(strMessege, e);
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("SAVE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -276,7 +274,7 @@ public class BooksManagerImpl implements BooksManager{
 			message.setMessage(HncisMessageSource.getMessage("DELETE.0000"));
 			message.setCode(dto.getBk_seq());
 		}catch (Exception e) {
-			logger.error(strMessege, e);
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("DELETE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -321,24 +319,24 @@ public void saveBkToFile(HttpServletRequest req, HttpServletResponse res, BgabGa
 		}catch(Exception e){
 			resultUrl = "xbk06_file.gas";
 			msg = HncisMessageSource.getMessage("FILE.0001");
-			logger.error(strMessege, e);
-		}
-
-		try{
-			String dispatcherYN = "Y";
-			req.setAttribute("hid_doc_no",  bgabGascZ011Dto.getDoc_no());
-			req.setAttribute("hid_eeno",  bgabGascZ011Dto.getEeno());
-			req.setAttribute("hid_pgs_st_cd",  bgabGascZ011Dto.getPgs_st_cd());
-			req.setAttribute("hid_seq",  bgabGascZ011Dto.getSeq());
-			req.setAttribute("dispatcherYN", dispatcherYN);
-			req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
-			req.setAttribute("message",  msg);
-			req.setAttribute("saveYn",  "Y");
-			req.getRequestDispatcher(resultUrl).forward(req, res);
-		
-			return;
-		}catch(Exception e){
-			logger.error(strMessege, e);
+			logger.error("messege", e);
+		}finally{
+			try{
+				String dispatcherYN = "Y";
+				req.setAttribute("hid_doc_no",  bgabGascZ011Dto.getDoc_no());
+				req.setAttribute("hid_eeno",  bgabGascZ011Dto.getEeno());
+				req.setAttribute("hid_pgs_st_cd",  bgabGascZ011Dto.getPgs_st_cd());
+				req.setAttribute("hid_seq",  bgabGascZ011Dto.getSeq());
+				req.setAttribute("dispatcherYN", dispatcherYN);
+				req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
+				req.setAttribute("message",  msg);
+				req.setAttribute("saveYn",  "Y");
+				req.getRequestDispatcher(resultUrl).forward(req, res);
+			
+				return;
+			}catch(Exception e){
+				logger.error("messege", e);
+			}
 		}
 	}
 	
@@ -357,7 +355,7 @@ public void saveBkToFile(HttpServletRequest req, HttpServletResponse res, BgabGa
 			try {
 				fileResult = FileUtil.deleteFile(fileInfo.getCorp_cd(), "books", fileInfo.getOgc_fil_nm());
 			} catch (IOException e) {
-				logger.error(strMessege, e);
+				logger.error("messege", e);
 			}
 		}
 		Integer fileDRs = (Integer)booksDao.deleteBkToFile(bgabGascZ011IList);

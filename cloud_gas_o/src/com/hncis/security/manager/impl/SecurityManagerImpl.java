@@ -610,23 +610,23 @@ public class SecurityManagerImpl implements SecurityManager{
 			resultUrl = "xve_file.gas";
 			msg = HncisMessageSource.getMessage("FILE.0001");
 			logger.error("messege", e);
-		}
-		try{
-			String dispatcherYN = "Y";
-			req.setAttribute("hid_doc_no",  bgabGascZ011Dto.getDoc_no());
-			req.setAttribute("hid_eeno",  bgabGascZ011Dto.getEeno());
-			req.setAttribute("hid_pgs_st_cd",  bgabGascZ011Dto.getPgs_st_cd());
-			req.setAttribute("hid_seq",  bgabGascZ011Dto.getSeq());
-			req.setAttribute("dispatcherYN", dispatcherYN);
-			req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
-			req.setAttribute("message",  msg);
-			req.getRequestDispatcher(resultUrl).forward(req, res);
+		}finally{
+			try{
+				String dispatcherYN = "Y";
+				req.setAttribute("hid_doc_no",  bgabGascZ011Dto.getDoc_no());
+				req.setAttribute("hid_eeno",  bgabGascZ011Dto.getEeno());
+				req.setAttribute("hid_pgs_st_cd",  bgabGascZ011Dto.getPgs_st_cd());
+				req.setAttribute("hid_seq",  bgabGascZ011Dto.getSeq());
+				req.setAttribute("dispatcherYN", dispatcherYN);
+				req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
+				req.setAttribute("message",  msg);
+				req.getRequestDispatcher(resultUrl).forward(req, res);
 
-			return;
-		}catch(Exception e){
-			logger.error("messege", e);
+				return;
+			}catch(Exception e){
+				logger.error("messege", e);
+			}
 		}
-		
 	}
 
 	@Override

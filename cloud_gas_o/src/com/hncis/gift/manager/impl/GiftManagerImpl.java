@@ -39,7 +39,6 @@ public class GiftManagerImpl implements GiftManager{
     private static final String sCode = "GASBZ01230010";
     private static final String rCode = "GASROLE01230030";
     private static final String adminID = "10000001";
-    private static final String strMessege = "messege";
 
 	@Autowired
 	public GiftDao giftDao;
@@ -109,7 +108,7 @@ public class GiftManagerImpl implements GiftManager{
 			BpmApiUtil.sendSaveTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 
 		}catch (Exception e) {
-			logger.error(strMessege, e);
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("SAVE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -367,7 +366,7 @@ public class GiftManagerImpl implements GiftManager{
 			message.setMessage(HncisMessageSource.getMessage("SAVE.0000"));
 			message.setCode(dto.getItem_seq());
 		}catch (Exception e) {
-			logger.error(strMessege, e);
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("SAVE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -388,7 +387,7 @@ public class GiftManagerImpl implements GiftManager{
 			message.setMessage(HncisMessageSource.getMessage("DELETE.0000"));
 			message.setCode(dto.getItem_seq());
 		}catch (Exception e) {
-			logger.error(strMessege, e);
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("DELETE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -444,25 +443,25 @@ public class GiftManagerImpl implements GiftManager{
 		}catch(Exception e){
 			resultUrl = "xgf06_file.gas";
 			msg = HncisMessageSource.getMessage("FILE.0001");
-			logger.error(strMessege, e);
-		}
-		try{
-			String dispatcherYN = "Y";
-			req.setAttribute("hid_doc_no",  bgabGascZ011Dto.getDoc_no());
-			req.setAttribute("hid_eeno",  bgabGascZ011Dto.getEeno());
-			req.setAttribute("hid_pgs_st_cd",  bgabGascZ011Dto.getPgs_st_cd());
-			req.setAttribute("hid_seq",  bgabGascZ011Dto.getSeq());
-			req.setAttribute("dispatcherYN", dispatcherYN);
-			req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
-			req.setAttribute("message",  msg);
-			req.setAttribute("saveYn",  "Y");
-			req.getRequestDispatcher(resultUrl).forward(req, res);
+			logger.error("messege", e);
+		}finally{
+			try{
+				String dispatcherYN = "Y";
+				req.setAttribute("hid_doc_no",  bgabGascZ011Dto.getDoc_no());
+				req.setAttribute("hid_eeno",  bgabGascZ011Dto.getEeno());
+				req.setAttribute("hid_pgs_st_cd",  bgabGascZ011Dto.getPgs_st_cd());
+				req.setAttribute("hid_seq",  bgabGascZ011Dto.getSeq());
+				req.setAttribute("dispatcherYN", dispatcherYN);
+				req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
+				req.setAttribute("message",  msg);
+				req.setAttribute("saveYn",  "Y");
+				req.getRequestDispatcher(resultUrl).forward(req, res);
 
-			return;
-		}catch(Exception e){
-			logger.error(strMessege, e);
+				return;
+			}catch(Exception e){
+				logger.error("messege", e);
+			}
 		}
-		
 	}
 
 	@Override
@@ -483,7 +482,7 @@ public class GiftManagerImpl implements GiftManager{
 			try {
 				fileResult = FileUtil.deleteFile(fileInfo.getCorp_cd(), "gift", fileInfo.getOgc_fil_nm());
 			} catch (IOException e) {
-				logger.error(strMessege, e);
+				logger.error("messege", e);
 			}
 		}
 		Integer fileDRs = giftDao.deleteGfToFile(bgabGascZ011IList);
@@ -511,7 +510,7 @@ public class GiftManagerImpl implements GiftManager{
 			message.setCode1("Y");
 			message.setMessage(HncisMessageSource.getMessage("SAVE.0000"));
 		}catch (Exception e) {
-			logger.error(strMessege, e);
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("SAVE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

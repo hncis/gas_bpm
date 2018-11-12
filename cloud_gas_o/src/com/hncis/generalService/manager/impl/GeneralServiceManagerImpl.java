@@ -38,8 +38,6 @@ public class GeneralServiceManagerImpl implements GeneralServiceManager{
 
     private static final String pCode = "P-C-002";
     private static final String sCode = "GASBZ01320010";
-    private static final String strMessege = "messege";
-    
 	@Autowired
 	public GeneralServiceDao generalServiceDao;
 
@@ -363,7 +361,7 @@ public class GeneralServiceManagerImpl implements GeneralServiceManager{
 		try {
 			o_PoInfo = rfc.doPoCreate(poParamVo);
 		} catch (Exception e) {
-			logger.error(strMessege, e);
+			logger.error("messege", e);
 		}
 		return o_PoInfo;
 	}
@@ -377,7 +375,7 @@ public class GeneralServiceManagerImpl implements GeneralServiceManager{
 		try {
 			o_PoInfo = rfc.doPoDelete(poParamVo);
 		} catch (Exception e) {
-			logger.error(strMessege, e);
+			logger.error("messege", e);
 		}
 		return o_PoInfo;
 	}
@@ -436,23 +434,23 @@ public class GeneralServiceManagerImpl implements GeneralServiceManager{
 		}catch(Exception e){
 			resultUrl = "xgs05_img_file.gas";
 			msg = HncisMessageSource.getMessage("FILE.0001");
-			logger.error(strMessege, e);
-		}
-		
-		try{
-			String dispatcherYN = "Y";
-			req.setAttribute("file_doc_no",  bgabGascZ011Dto.getDoc_no());
-			req.setAttribute("file_eeno",  bgabGascZ011Dto.getEeno());
-			req.setAttribute("file_pgs_st_cd",  bgabGascZ011Dto.getPgs_st_cd());
-			req.setAttribute("file_seq",  bgabGascZ011Dto.getSeq());
-			req.setAttribute("dispatcherYN", dispatcherYN);
-			req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
-			req.setAttribute("message",  msg);
-			req.getRequestDispatcher(resultUrl).forward(req, res);
+			logger.error("messege", e);
+		}finally{
+			try{
+				String dispatcherYN = "Y";
+				req.setAttribute("file_doc_no",  bgabGascZ011Dto.getDoc_no());
+				req.setAttribute("file_eeno",  bgabGascZ011Dto.getEeno());
+				req.setAttribute("file_pgs_st_cd",  bgabGascZ011Dto.getPgs_st_cd());
+				req.setAttribute("file_seq",  bgabGascZ011Dto.getSeq());
+				req.setAttribute("dispatcherYN", dispatcherYN);
+				req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
+				req.setAttribute("message",  msg);
+				req.getRequestDispatcher(resultUrl).forward(req, res);
 
-			return;
-		}catch(Exception e){
-			logger.error(strMessege, e);
+				return;
+			}catch(Exception e){
+				logger.error("messege", e);
+			}
 		}
 	}
 
@@ -474,7 +472,7 @@ public class GeneralServiceManagerImpl implements GeneralServiceManager{
 			try {
 				fileResult = FileUtil.deleteImgFile(fileInfo.getCorp_cd(),"generalService", fileInfo.getOgc_fil_nm());
 			} catch (IOException e) {
-				logger.error(strMessege, e);
+				logger.error("messege", e);
 			}
 		}
 		Integer fileDRs = generalServiceDao.deleteGeneralServiceToFile(bgabGascZ011IList);

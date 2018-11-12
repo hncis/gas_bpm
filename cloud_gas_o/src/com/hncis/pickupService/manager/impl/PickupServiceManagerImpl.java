@@ -58,8 +58,7 @@ public class PickupServiceManagerImpl implements PickupServiceManager{
     private static final String rCode = "GASROLE01430030";
     private static final String adminID = "10000001";
     private static final String orgCode = "H301";
-    private static final String strMessege = "messege";
-    
+
 	@Autowired
 	public PickupServiceDao pickupServiceDao;
 
@@ -131,7 +130,7 @@ public class PickupServiceManagerImpl implements PickupServiceManager{
 			}
 
 		} catch (Exception e) {
-			logger.error(strMessege, e);
+			logger.error("messege", e);
 			reqDto.setErrYn("Y");
 			reqDto.setErrMsg(HncisMessageSource.getMessage("SAVE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -207,7 +206,7 @@ public class PickupServiceManagerImpl implements PickupServiceManager{
 		Submit.confirmEmail(fromEeno, fromStepNm, mailAdr, "Pick-up Service");
 
 		}catch(Exception e){
-			logger.error(strMessege, e);
+			logger.error("messege", e);
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
 		return cnt;
@@ -635,7 +634,7 @@ public class PickupServiceManagerImpl implements PickupServiceManager{
 
 
     } catch (Exception e) {
-       logger.error(strMessege, e);
+       logger.error("messege", e);
     }
 	return true;
 	}
@@ -735,26 +734,26 @@ public void savePsToFile(HttpServletRequest req, HttpServletResponse res, BgabGa
 		}catch(Exception e){
 			resultUrl = "xps01_file.gas";
 			msg = HncisMessageSource.getMessage("FILE.0001");
-			logger.error(strMessege, e);
-		}
-		try{
-			String dispatcherYN = "Y";
-			String use_yn = "Y";
+			logger.error("messege", e);
+		}finally{
+			try{
+				String dispatcherYN = "Y";
+				String use_yn = "Y";
 
-			req.setAttribute("hid_doc_no",  bgabGascZ011Dto.getDoc_no());
-			req.setAttribute("hid_eeno",  bgabGascZ011Dto.getEeno());
-			req.setAttribute("hid_seq",  bgabGascZ011Dto.getSeq());
-			req.setAttribute("dispatcherYN", dispatcherYN);
-			req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
-			req.setAttribute("hid_use_yn", use_yn);
-			req.setAttribute("message",  msg);
-			req.getRequestDispatcher(resultUrl).forward(req, res);
+				req.setAttribute("hid_doc_no",  bgabGascZ011Dto.getDoc_no());
+				req.setAttribute("hid_eeno",  bgabGascZ011Dto.getEeno());
+				req.setAttribute("hid_seq",  bgabGascZ011Dto.getSeq());
+				req.setAttribute("dispatcherYN", dispatcherYN);
+				req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
+				req.setAttribute("hid_use_yn", use_yn);
+				req.setAttribute("message",  msg);
+				req.getRequestDispatcher(resultUrl).forward(req, res);
 
-			return;
-		}catch(Exception e){
-			logger.error(strMessege, e);
+				return;
+			}catch(Exception e){
+				logger.error("messege", e);
+			}
 		}
-		
 
 	}
 
@@ -776,7 +775,7 @@ public void savePsToFile(HttpServletRequest req, HttpServletResponse res, BgabGa
 			try {
 				fileResult = FileUtil.deleteFile(fileInfo.getCorp_cd(), "pickupService", fileInfo.getOgc_fil_nm());
 			} catch (IOException e) {
-				logger.error(strMessege, e);
+				logger.error("messege", e);
 			}
 		}
 
@@ -1005,7 +1004,7 @@ public void savePsToFile(HttpServletRequest req, HttpServletResponse res, BgabGa
 										TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 										message.setMessage(z_PoInfo.getO_if_fail_msg());
 										message.setErrorCode("E");
-										logger.error(strMessege, e);
+										logger.error("messege", e);
 									}
 								}
 
@@ -1018,7 +1017,7 @@ public void savePsToFile(HttpServletRequest req, HttpServletResponse res, BgabGa
 							TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 							message.setErrorCode("E");
 							message.setMessage(o_PoInfo.getO_if_fail_msg());
-							logger.error(strMessege, e);
+							logger.error("messege", e);
 						}
 					}
 				}

@@ -13,12 +13,9 @@ import com.hncis.cooperator.dao.CooperatorDao;
 import com.hncis.cooperator.manager.CooperatorManager;
 import com.hncis.cooperator.vo.BgabGascco01Dto;
 import com.hncis.cooperator.vo.BgabGascco02Dto;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 @Service("cooperatorManagerImpl")
 public class CooperatorManagerImpl implements CooperatorManager{
-    private transient Log logger = LogFactory.getLog(getClass());
 
 	@Autowired
 	public CooperatorDao cooperatorDao;
@@ -57,9 +54,7 @@ public class CooperatorManagerImpl implements CooperatorManager{
 			List<String> managerList = new ArrayList<String>();
 			managerList.add("10000001");
 			
-			String msg = BpmApiUtil.sendSaveTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
-			
-			logger.info(msg);
+			BpmApiUtil.sendSaveTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 		}
 		
 		return basicCnt+picCnt; 

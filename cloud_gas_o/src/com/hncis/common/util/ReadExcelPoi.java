@@ -83,15 +83,12 @@ public class ReadExcelPoi {
 					resultList.add(result);
 				}
 			}
-			
 		}catch(Exception e){
 			logger.error("messege", e);
 			throw e;
-		}
-		/*finally{
+		}finally{
 			return resultList;
-		}*/
-		return resultList;
+		}
 	}
 
 	public List<Map<String, String>> getExcelXlsxData(String[] excelKeyArr) throws Exception{
@@ -99,6 +96,7 @@ public class ReadExcelPoi {
 		Map<String, String>       result     = new HashMap<String, String>();
 
 		File excelFile = new File(inputFile);
+		System.out.println(excelFile.exists());
 		//파일을 읽기위해 엑셀파일을 가져온다
 		FileInputStream fis   = null;
 		XSSFWorkbook workbook = null;

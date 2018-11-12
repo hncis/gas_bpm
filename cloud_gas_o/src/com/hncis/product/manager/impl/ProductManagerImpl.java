@@ -34,8 +34,6 @@ import com.hncis.product.vo.BgabGascpd04Dto;
 @Service("productManagerImpl")
 public class ProductManagerImpl implements ProductManager{
     private transient Log logger = LogFactory.getLog(getClass());
-    
-    private static final String strMessege = "messege";
 
 	@Autowired
 	public ProductDao productDao;
@@ -138,7 +136,7 @@ public class ProductManagerImpl implements ProductManager{
 			message.setMessage(HncisMessageSource.getMessage("SAVE.0000"));
 			message.setCode(dtoList.get(0).getPd_seq());
 		}catch (Exception e) {
-			logger.error(strMessege, e);
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("SAVE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -218,7 +216,7 @@ public class ProductManagerImpl implements ProductManager{
 			}
 			
 		}catch (Exception e) {
-			logger.error(strMessege, e);
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("APPLY.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -251,7 +249,7 @@ public class ProductManagerImpl implements ProductManager{
 				}
 			}
 		}catch (Exception e){
-			logger.error(strMessege, e);
+			logger.error("messege", e);
 			rentYn = 0;
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
@@ -343,7 +341,7 @@ public class ProductManagerImpl implements ProductManager{
 			message.setMessage(HncisMessageSource.getMessage("DELETE.0000"));
 			message.setCode(dto.getPd_seq());
 		}catch (Exception e) {
-			logger.error(strMessege, e);
+			logger.error("messege", e);
 			message.setCode1("N");
 			message.setMessage(HncisMessageSource.getMessage("DELETE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -389,23 +387,24 @@ public class ProductManagerImpl implements ProductManager{
 		}catch(Exception e){
 			resultUrl = "xpd06_file.gas";
 			msg = HncisMessageSource.getMessage("FILE.0001");
-			logger.error(strMessege, e);
-		}
-		try{
-			String dispatcherYN = "Y";
-			req.setAttribute("hid_doc_no",  bgabGascZ011Dto.getDoc_no());
-			req.setAttribute("hid_eeno",  bgabGascZ011Dto.getEeno());
-			req.setAttribute("hid_pgs_st_cd",  bgabGascZ011Dto.getPgs_st_cd());
-			req.setAttribute("hid_seq",  bgabGascZ011Dto.getSeq());
-			req.setAttribute("dispatcherYN", dispatcherYN);
-			req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
-			req.setAttribute("message",  msg);
-			req.setAttribute("saveYn",  "Y");
-			req.getRequestDispatcher(resultUrl).forward(req, res);
-		
-			return;
-		}catch(Exception e){
-			logger.error(strMessege, e);
+			logger.error("messege", e);
+		}finally{
+			try{
+				String dispatcherYN = "Y";
+				req.setAttribute("hid_doc_no",  bgabGascZ011Dto.getDoc_no());
+				req.setAttribute("hid_eeno",  bgabGascZ011Dto.getEeno());
+				req.setAttribute("hid_pgs_st_cd",  bgabGascZ011Dto.getPgs_st_cd());
+				req.setAttribute("hid_seq",  bgabGascZ011Dto.getSeq());
+				req.setAttribute("dispatcherYN", dispatcherYN);
+				req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
+				req.setAttribute("message",  msg);
+				req.setAttribute("saveYn",  "Y");
+				req.getRequestDispatcher(resultUrl).forward(req, res);
+			
+				return;
+			}catch(Exception e){
+				logger.error("messege", e);
+			}
 		}
 		
 	}
@@ -418,7 +417,7 @@ public class ProductManagerImpl implements ProductManager{
 			try {
 				fileResult = FileUtil.deleteFile(fileInfo.getCorp_cd(), "product", fileInfo.getOgc_fil_nm());
 			} catch (IOException e) {
-				logger.error(strMessege, e);
+				logger.error("messege", e);
 			}
 		}
 		Integer fileDRs = (Integer)productDao.deletePdToFile(dto);

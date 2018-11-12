@@ -41,9 +41,7 @@ public class ApprovalGasc{
 	private static final String appType03 = "SE03";
 	private static final String appType04 = "SE04";
 	private static final String appType05 = "SE05";
-
-	private static final String strMsg = "Please ask system administrator.";
-	private static final String strApprove = "approve";
+	
 
 	@Autowired
 	public void setCommonJobDao(CommonJobDao commonJobDao){
@@ -196,7 +194,7 @@ public class ApprovalGasc{
 				commonApproval.setTot_level(totCount);
 			}else{
 				commonApproval.setResult("E");
-				commonApproval.setMessage(strMsg);
+				commonApproval.setMessage("Please ask system administrator.");
 				return commonApproval;
 			}
 		}
@@ -299,7 +297,7 @@ public class ApprovalGasc{
 		if(cnt > 0){
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			commonApproval.setResult("E");
-			commonApproval.setMessage(strMsg);
+			commonApproval.setMessage("Please ask system administrator.");
 		}else{
 			if(commonApproval.getRpts_eeno().equals(commonApproval.getRdcs_eeno())){
 				readerYn = "Y";
@@ -311,7 +309,7 @@ public class ApprovalGasc{
 				// 메일발송 - 결재 상신
 				String fromEeno   = commonApproval.getRpts_eeno_nm();
 				String fromStepNm = commonApproval.getStep_nm();
-				String mode       = strApprove;
+				String mode       = "approve";
 				String toEeno     = commonApproval.getRdcs_eeno();
 				String title      = commonApproval.getTitle_nm();
 				String corp_cd    = commonApproval.getCorp_cd();
@@ -524,7 +522,7 @@ public class ApprovalGasc{
 		if(cnt > 0){
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			commonApproval.setResult("E");
-			commonApproval.setMessage(strMsg);
+			commonApproval.setMessage("Please ask system administrator.");
 		}else{
 			// total level setting
 			//commonApproval.setTot_level(applevelList.size());
@@ -557,7 +555,7 @@ public class ApprovalGasc{
 			String fromEeno   = commonApproval.getRpts_eeno_nm();
 			String fromStepNm = commonApproval.getStep_nm();
 			String toEeno     = commonApproval.getRdcs_eeno();
-			String mode       = strApprove;
+			String mode       = "approve";
 			String title      = commonApproval.getTitle_nm();
 			String corp_cd    = commonApproval.getCorp_cd();
 			
@@ -805,7 +803,7 @@ public class ApprovalGasc{
 			if(cnt > 0){
 				TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 				commonApproval.setResult("E");
-				commonApproval.setMessage(strMsg);
+				commonApproval.setMessage("Please ask system administrator.");
 			}else{
 				// total level setting
 				//commonApproval.setTot_level(applevelList.size());
@@ -839,7 +837,7 @@ public class ApprovalGasc{
 				String fromEeno   = commonApproval.getRpts_eeno_nm();
 				String fromStepNm = commonApproval.getStep_nm();
 				String toEeno     = commonApproval.getRdcs_eeno();
-				String mode       = strApprove;
+				String mode       = "approve";
 				String title      = commonApproval.getTitle_nm();
 				String corp_cd    = commonApproval.getCorp_cd();
 
@@ -952,7 +950,7 @@ public class ApprovalGasc{
 				String fromEeno   = rpts_info.getRpts_name();
 				String fromStepNm = rpts_info.getRpts_step();
 				String toEeno     = nextInfo.getRdcs_eeno();
-				String mode       = strApprove;
+				String mode       = "approve";
 				String title      = commonApproval.getTitle_nm();
 				
 				String mailAdr = commonJobDao.getSelectInfoToEenoEmailAdr(commonApproval);
@@ -1095,7 +1093,7 @@ public class ApprovalGasc{
 			}
 		}else{
 			returnCd = "E";
-			returnMsg = strMsg;
+			returnMsg = "Please ask system administrator.";
 		}
 
 		return commonApproval;
