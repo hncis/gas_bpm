@@ -407,7 +407,7 @@
                        <%for(BpmInfo list : bpmList){ %>
                         <li>
                         	<a href="javascript:readBpm('<%=list.getName()%>', '<%=list.getTask_cd()%>', '<%=sess_empno%>', '<%=list.getTitle()%>','<%=list.getStartdate()%>','<%=list.getInitrsnm()%>')" class="link">
-                        		<% if((list.getTitle().equals("담당자확인") || list.getTitle().equals("결재") || list.getTitle().equals("담당자1차확인") || list.getTitle().equals("담당자2차확인"))) { %>
+                        		<% if((list.getTitle().equals("담당자확인") || list.getTitle().equals("결재") || list.getTitle().equals("담당자1차확인") || list.getTitle().equals("담당자2차확인") || list.getTitle().equals("사용자 후정산"))) { %>
                         				<%=list.getDefname() + " " + list.getTitle() + " " + list.getStartdate() %>
 										<%
 									} else{%>
