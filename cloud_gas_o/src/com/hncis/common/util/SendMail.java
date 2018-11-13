@@ -47,6 +47,8 @@ public class SendMail {
 	private static final String strMailto = "mailto : ";
 	private static final String strBody = "body : ";
 	private static final String strMethod2 = "method : sendMailFileGlobal ";
+	private static final String strMessege = "messege";
+	
 	private boolean isReal = false;
 	
 	static Logger logger = Logger.getLogger("SendMail.class");
@@ -54,6 +56,7 @@ public class SendMail {
 	public SendMail() {
 		String area = StringUtil.getSystemArea().toUpperCase();
 		try {
+			logger.info("SendMail try...");
 //			if (area.equals("REAL")){
 //				_HOST = "smtp.gmail.com";
 //				isReal = true;
@@ -62,7 +65,7 @@ public class SendMail {
 //				isReal = false;
 //			}
 		} catch (Exception e) {
-			logger.error("messege", e);
+			logger.error(strMessege, e);
 		}
 	}
 	
@@ -144,7 +147,7 @@ public class SendMail {
 			logger.debug(strBody  + body);
 		} catch (Exception e) {
 			success = false;
-			logger.error("messege", e);
+			logger.error(strMessege, e);
 			logger.error(strMethod);
 			logger.error(strArea + StringUtil.getSystemArea().toUpperCase());
 			logger.error(strServer + _HOST);
@@ -221,7 +224,6 @@ public class SendMail {
 			
 			Transport.send(message);
 		}catch(MessagingException mex){
-			mex.printStackTrace();
 			logger.error(strMethod2);
 			logger.error(strArea + StringUtil.getSystemArea().toUpperCase());
 			logger.error(strServer + _HOST);
@@ -232,7 +234,7 @@ public class SendMail {
 			success = false;
 			throw mex;
 		}catch(Exception e) {
-			logger.error("messege", e);
+			logger.error(strMessege, e);
 			logger.error(strMethod2);
 			logger.error(strArea + StringUtil.getSystemArea().toUpperCase());
 			logger.error(strServer + _HOST);
@@ -327,7 +329,6 @@ public class SendMail {
 			
 			Transport.send(message);
 		}catch(MessagingException mex){
-			mex.printStackTrace();
 			logger.error(strMethod2);
 			logger.error(strArea + StringUtil.getSystemArea().toUpperCase());
 			logger.error(strServer + _HOST);
@@ -338,7 +339,7 @@ public class SendMail {
 			success = false;
 			throw mex;
 		}catch(Exception e) {
-			logger.error("messege", e);
+			logger.error(strMessege, e);
 			logger.error(strMethod2);
 			logger.error(strArea + StringUtil.getSystemArea().toUpperCase());
 			logger.error(strServer + _HOST);
@@ -433,7 +434,6 @@ public class SendMail {
 			
 			Transport.send(message);
 		}catch(MessagingException mex){
-			mex.printStackTrace();
 			logger.error(strMethod2);
 			logger.error(strArea + StringUtil.getSystemArea().toUpperCase());
 			logger.error(strServer + _HOST);
@@ -444,7 +444,7 @@ public class SendMail {
 			success = false;
 			throw mex;
 		}catch(Exception e) {
-			logger.error("messege", e);
+			logger.error(strMessege, e);
 			logger.error(strMethod2);
 			logger.error(strArea + StringUtil.getSystemArea().toUpperCase());
 			logger.error(strServer + _HOST);

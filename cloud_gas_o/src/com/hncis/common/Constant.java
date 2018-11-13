@@ -14,13 +14,13 @@ public class Constant {
 
 	//public static final String SYSTEM_AREA = "LOCAL";									// server area : LOCAL, TEST, REAL
 	public static final String UPLOAD_LOCAL_PATH = "C:/projects/Cloud_GASC/workspace/cloud_gasc/WebContent/upload";	// upload local path
-	public static final String UPLOAD_TEST_PATH = "C:/Tomcat7_ORACLE_GAS/webapps/cloud_gasc/upload";
+	public static final String UPLOAD_TEST_PATH = "C:/project_gas_bmp/workspace/gas_bmp/cloud_gas_o/WebContent/upload";
 	public static final String UPLOAD_REAL_PATH = "D:/Tomcat7_ORACLE_GAS/webapps/cloud_gasc/upload";        			//tomcat7// upload real path
 	public static final String EXCEL_TEMPLAT = "/expenseReport/expenseTemplate.xls";					 			// excel templat name
 	public static final String EXCEL_TEMPLAT_PS = "/expenseReport/PickupTemplate.xls";					 			// excel templat name 픽업
 
 	public static final String TOMCAT_LOG_LOCAL_PATH = "C:/projects/Cloud_GASC/Tomcat 7.0/logs";	// tomcat local path
-	public static final String TOMCAT_LOG_TEST_PATH = "D:/Tomcat7_ORACLE_GAS/logs";					// tomcat local path
+	public static final String TOMCAT_LOG_TEST_PATH = "C:/project_gas_bmp/logs";					// tomcat local path
 	public static final String TOMCAT_LOG_REAL_PATH = "D:/Tomcat7_ORACLE_GAS/logs";					// tomcat local path
 
 	public static final String APACHE_LOG_LOCAL_PATH = "/usr/local/apache/logs";	// apache local path
@@ -31,6 +31,6 @@ public class Constant {
 
 	//에디터 업로드 이미지 경로
 	public static final String EDT_UPLOAD_LOCAL_PATH = "C:/projects/Cloud_GASC/workspace/cloud_gasc/WebContent/upload";	// upload local path
-	public static final String EDT_UPLOAD_TEST_PATH = "C:/Tomcat7_ORACLE_GAS/webapps/cloud_gasc/upload";					// upload local path
+	public static final String EDT_UPLOAD_TEST_PATH = "C:/project_gas_bmp/workspace/gas_bmp/cloud_gas_o/WebContent/upload";					// upload local path
 	public static final String EDT_UPLOAD_REAL_PATH = "D:/Tomcat7_ORACLE_GAS/webapps/cloud_gasc/upload";					//tomcat7// upload real path
 }

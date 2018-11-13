@@ -67,14 +67,16 @@ public class LoginHandlerInterceptor extends HandlerInterceptorAdapter
     public boolean preHandle(HttpServletRequest request,HttpServletResponse response,Object obj) throws SessionException , HncisException
     {
         StringBuffer message = new StringBuffer();
-        message = new StringBuffer();
+        String appendStr = "";
+//        message = new StringBuffer();
         startTime = System.currentTimeMillis();
 
-        message.append("[[CONTROLLER LAYER STARTED]");
-        message.append(obj.getClass().getSimpleName());
-        message.append("(");
-        message.append(request.getServletPath());
-        message.append(")]");
+        appendStr += "[[CONTROLLER LAYER STARTED]";
+        appendStr += obj.getClass().getSimpleName();
+        appendStr += "( ";
+        appendStr += request.getServletPath();
+        appendStr += " )]";
+        message.append(appendStr);
 
         this.writeLog(message.toString());
 
@@ -82,7 +84,7 @@ public class LoginHandlerInterceptor extends HandlerInterceptorAdapter
 
 //        logger.info("============= request.getRequestURI() : "+request.getRequestURI());
 
-        if(this.exclusionList.contains(request.getRequestURI())) return true;
+        if(this.exclusionList.contains(request.getRequestURI())) {return true;}
         HttpSession session = request.getSession(false);
 
         //String sess_empno 		= SessionInfo.getSess_empno(request);			//작업자 사번
@@ -123,8 +125,8 @@ public class LoginHandlerInterceptor extends HandlerInterceptorAdapter
         		removeSession(session);
         	}
 
-        	if(request.getRequestURI().contains(".xls") ||request.getRequestURI().contains("view.do") || request.getRequestURI().contains("index.do")) throw new SessionException(notLogin);
-        	else throw new HncisException(notLogin);
+        	if(request.getRequestURI().contains(".xls") ||request.getRequestURI().contains("view.do") || request.getRequestURI().contains("index.do")){ throw new SessionException(notLogin);}
+        	else{ throw new HncisException(notLogin);}
         }
 
     }
@@ -133,16 +135,17 @@ public class LoginHandlerInterceptor extends HandlerInterceptorAdapter
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception
     {
-        StringBuffer message = new StringBuffer();
+        StringBuffer message = new StringBuffer(60);
+        String appendStr = "";
         long duringTime = System.currentTimeMillis() - startTime;
-
-        message.append("[[CONTROLLER LAYER FINISHED]");
-        message.append(handler.getClass().getSimpleName());
-        message.append(".(");
-        message.append(request.getServletPath());
-        message.append(")] 걸린시간:");
-        message.append(formatter.format(duringTime));
-
+        
+        appendStr += "[[CONTROLLER LAYER FINISHED]";
+        appendStr += handler.getClass().getSimpleName();
+        appendStr += ".(";
+        appendStr += request.getServletPath();
+        appendStr += ")] 걸린시간:";
+        appendStr += formatter.format(duringTime);
+        message.append(appendStr);
         this.writeLog(message.toString());
     }
 

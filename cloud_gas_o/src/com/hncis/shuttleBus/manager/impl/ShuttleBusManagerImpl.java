@@ -38,6 +38,8 @@ public class ShuttleBusManagerImpl implements ShuttleBusManager{
     private transient Log logger = LogFactory.getLog(getClass());
 
     private static final String msgCode = "FILE.0001";
+    private static final String strMessege = "messege";
+    
 	@Autowired
 	public ShuttleBusDao shuttleBusDao;
 
@@ -87,20 +89,20 @@ public class ShuttleBusManagerImpl implements ShuttleBusManager{
 			resultUrl = "xsb03_hidden.gas";
 			msg = HncisMessageSource.getMessage(msgCode);
 			status = "false";
-			logger.error("messege", e);
-		}finally{
-			try{
-				req.setAttribute("status",  status);
-				req.setAttribute("doc_no",  vo.getDoc_no());
-				req.setAttribute("eeno",  vo.getEeno());
-				req.setAttribute("message",  msg);
-				req.getRequestDispatcher(resultUrl).forward(req, res);
-
-				return;
-			}catch(Exception e){
-				logger.error("messege", e);
-			}
+			logger.error(strMessege, e);
 		}
+		try{
+			req.setAttribute("status",  status);
+			req.setAttribute("doc_no",  vo.getDoc_no());
+			req.setAttribute("eeno",  vo.getEeno());
+			req.setAttribute("message",  msg);
+			req.getRequestDispatcher(resultUrl).forward(req, res);
+
+			return;
+		}catch(Exception e){
+			logger.error(strMessege, e);
+		}
+		
 	}
 
 	@Override
@@ -375,24 +377,24 @@ public class ShuttleBusManagerImpl implements ShuttleBusManager{
 		}catch(Exception e){
 			resultUrl = "xsb04_file.gas";
 			msg = HncisMessageSource.getMessage(msgCode);
-			logger.error("messege", e);
-		}finally{
-			try{
-				String dispatcherYN = "Y";
-				req.setAttribute("hid_doc_no",  bgabGascZ011Dto.getDoc_no());
-				req.setAttribute("hid_eeno",  bgabGascZ011Dto.getEeno());
-				req.setAttribute("hid_pgs_st_cd",  bgabGascZ011Dto.getPgs_st_cd());
-				req.setAttribute("hid_seq",  bgabGascZ011Dto.getSeq());
-				req.setAttribute("dispatcherYN", dispatcherYN);
-				req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
-				req.setAttribute("message",  msg);
-				req.getRequestDispatcher(resultUrl).forward(req, res);
-
-				return;
-			}catch(Exception e){
-				logger.error("messege", e);
-			}
+			logger.error(strMessege, e);
 		}
+		try{
+			String dispatcherYN = "Y";
+			req.setAttribute("hid_doc_no",  bgabGascZ011Dto.getDoc_no());
+			req.setAttribute("hid_eeno",  bgabGascZ011Dto.getEeno());
+			req.setAttribute("hid_pgs_st_cd",  bgabGascZ011Dto.getPgs_st_cd());
+			req.setAttribute("hid_seq",  bgabGascZ011Dto.getSeq());
+			req.setAttribute("dispatcherYN", dispatcherYN);
+			req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
+			req.setAttribute("message",  msg);
+			req.getRequestDispatcher(resultUrl).forward(req, res);
+
+			return;
+		}catch(Exception e){
+			logger.error(strMessege, e);
+		}
+		
 	}
 
 	@Override
@@ -413,7 +415,7 @@ public class ShuttleBusManagerImpl implements ShuttleBusManager{
 			try {
 				fileResult = FileUtil.deleteFile(fileInfo.getCorp_cd(), "shuttleBus", fileInfo.getOgc_fil_nm());
 			} catch (IOException e) {
-				logger.error("messege", e);
+				logger.error(strMessege, e);
 			}
 		}
 		Integer fileDRs = shuttleBusDao.deleteShuttleBusToFile(bgabGascZ011IList);

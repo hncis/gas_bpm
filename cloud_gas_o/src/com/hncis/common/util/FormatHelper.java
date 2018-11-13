@@ -231,8 +231,9 @@ public class FormatHelper {
 		}else if (yyyymmdd.length() == 10) {
 			return yyyymmdd.substring(0, 4) + separator + yyyymmdd.substring(5, 7) + separator
 					+ yyyymmdd.substring(8, 10);
-		} else
+		} else{
 			return yyyymmdd;
+		}
 	}
 
 	/**
@@ -382,7 +383,7 @@ public class FormatHelper {
 				str = "0";
 			}
 			str = trimChar(str, ",").trim();
-			if (Double.parseDouble(str) == 0 && format.indexOf("0") == -1) {
+			if (Double.parseDouble(str) == 0 && format.split("0").length == 1) {
 				return "";
 			} else {
 				return strNum(new java.math.BigDecimal(str).doubleValue(), format);
@@ -444,10 +445,10 @@ public class FormatHelper {
 
 		if (num == 0) {
 			return "";
-		} else if (param.indexOf(".") == -1) {
+		} else if (param.split(".").length == 1) {
 			return strNum(param, "###,##0");
 		} else {
-			return strNum(param.substring(0, param.indexOf(".")), "###,##0");
+			return strNum(param.split(".")[0], "###,##0");
 		}
 	}
 

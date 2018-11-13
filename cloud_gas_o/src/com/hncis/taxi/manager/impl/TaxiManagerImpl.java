@@ -41,6 +41,7 @@ public class TaxiManagerImpl implements TaxiManager{
     private static final String sCode = "GASBZ01440010";
     private static final String rCode = "GASROLE01440030";
     private static final String adminID = "10000001";
+    private static final String strMessege = "messege";
 
 	@Autowired
 	public TaxiDao taxiDao;
@@ -273,7 +274,7 @@ public class TaxiManagerImpl implements TaxiManager{
 		} catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			message.setErrorCode("E");
-			logger.error("messege", e);
+			logger.error(strMessege, e);
 		}
 		return message;
 	}
@@ -286,7 +287,7 @@ public class TaxiManagerImpl implements TaxiManager{
 	public CommonMessage setApprovalCancel(BgabGasctx02 keyParamDto, CommonApproval appInfo, CommonMessage message, HttpServletRequest req) throws SessionException{
 		if("".equals(StringUtil.isNullToString(keyParamDto.getIf_id()))){
 			keyParamDto.setKey_pgs_st_cd("0");
-			int cnt = taxiDao.updateInfoTXToApprove(keyParamDto);;
+			int cnt = taxiDao.updateInfoTXToApprove(keyParamDto);
 			
 			if(cnt > 0){
 				
@@ -483,25 +484,25 @@ public void saveTxToFile(HttpServletRequest req, HttpServletResponse res, BgabGa
 		}catch(Exception e){
 			resultUrl = "xtx01_file.gas";
 			msg = HncisMessageSource.getMessage("FILE.0001");
-			logger.error("messege", e);
-		}finally{
-			try{
-				String dispatcherYN = "Y";
-				req.setAttribute("hid_doc_no",  bgabGascZ011Dto.getDoc_no());
-				req.setAttribute("hid_eeno",  bgabGascZ011Dto.getEeno());
-				req.setAttribute("hid_pgs_st_cd",  bgabGascZ011Dto.getPgs_st_cd());
-				req.setAttribute("hid_seq",  bgabGascZ011Dto.getSeq());
-				req.setAttribute("dispatcherYN", dispatcherYN);
-				req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
-				req.setAttribute("message",  msg);
-				req.setAttribute("saveYn",  "Y");
-				req.getRequestDispatcher(resultUrl).forward(req, res);
-
-				return;
-			}catch(Exception e){
-				logger.error("messege", e);
-			}
+			logger.error(strMessege, e);
 		}
+		try{
+			String dispatcherYN = "Y";
+			req.setAttribute("hid_doc_no",  bgabGascZ011Dto.getDoc_no());
+			req.setAttribute("hid_eeno",  bgabGascZ011Dto.getEeno());
+			req.setAttribute("hid_pgs_st_cd",  bgabGascZ011Dto.getPgs_st_cd());
+			req.setAttribute("hid_seq",  bgabGascZ011Dto.getSeq());
+			req.setAttribute("dispatcherYN", dispatcherYN);
+			req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
+			req.setAttribute("message",  msg);
+			req.setAttribute("saveYn",  "Y");
+			req.getRequestDispatcher(resultUrl).forward(req, res);
+
+			return;
+		}catch(Exception e){
+			logger.error(strMessege, e);
+		}
+		
 	}
 
 	@Override
@@ -522,7 +523,7 @@ public void saveTxToFile(HttpServletRequest req, HttpServletResponse res, BgabGa
 			try {
 				fileResult = FileUtil.deleteFile(fileInfo.getCorp_cd(), "taxi", fileInfo.getOgc_fil_nm());
 			} catch (IOException e) {
-				logger.error("messege", e);
+				logger.error(strMessege, e);
 			}
 		}
 		Integer fileDRs = taxiDao.deleteTxToFile(bgabGascZ011IList);
