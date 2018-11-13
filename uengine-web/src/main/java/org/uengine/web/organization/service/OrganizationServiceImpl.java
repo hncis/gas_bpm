@@ -189,4 +189,8 @@ public class OrganizationServiceImpl implements OrganizationService {
 		}
 		
 	}
+	@ Override
+	public List<RoleMapping> getPartListByComCode(String comCode){
+		return organizationDAO.getPartListByComCode(comCode);
+	}
 }

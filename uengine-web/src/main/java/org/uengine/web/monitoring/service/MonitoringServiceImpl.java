@@ -22,6 +22,8 @@ import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
+import org.uengine.kernel.RoleMapping;
+import org.uengine.util.UEngineUtil;
 import org.uengine.web.monitoring.controller.MonitoringController;
 import org.uengine.web.monitoring.dao.MonitoringDAO;
 import org.uengine.web.monitoring.vo.MonitoringVO;
@@ -75,6 +77,24 @@ public class MonitoringServiceImpl implements MonitoringService {
 		return data;	
 	}
 	
+	@Override
+	public Object getComboBoxData(List<RoleMapping> roleInfoList)
+			throws Exception {
+		JSONArray datas = new JSONArray();
+		Iterator<RoleMapping> roleInfoListIterator = roleInfoList.iterator();
+		while(roleInfoListIterator.hasNext()){
+			RoleMapping roleMapping = roleInfoListIterator.next();
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("groupName", roleMapping.getGroupName());
+			jsonObject.put("groupId", roleMapping.getGroupId());
+			datas.add(jsonObject);
+		}
+		JSONObject result = new JSONObject();
+		result.put("datas", datas);
+		return result;
+	}
+	
+		
 
 	private Object getSevenDaysDate(List<MonitoringVO> monitoringVoList,
 									ColorAutoDeployerTest cadt, String type) throws Exception {
@@ -371,10 +391,92 @@ public class MonitoringServiceImpl implements MonitoringService {
 			
 			resultObject.put("result", result);
 		return resultObject;
-	} 
+	}
 
-	
-	
-	
+	@Override
+	public Object getProcessingStatusByTaskData(Map<String, String> map)
+			throws Exception {
+		List<MonitoringVO> listMonitoringVo = null;
+		List<MonitoringVO> afterMonitoringVoList = new ArrayList<MonitoringVO>();
+		List<String> beforePartNameList = new ArrayList<String>();
+		List<String> afterPartNameList = new ArrayList<String>();
+		List<String> beforeProcessTypeList = new ArrayList<String>();
+		List<String> afterProcessTypeList = new ArrayList<String>();
+		listMonitoringVo = monitoringDAO.getProcessingStatusByTask(map);
+		Iterator<MonitoringVO> iteratorMonitoringVo = listMonitoringVo.iterator();
+		while(iteratorMonitoringVo.hasNext()){
+			MonitoringVO monitoringVo = iteratorMonitoringVo.next();
+			String editProcessPath = monitoringVo.getPath();
+			String editProcessPath2 = monitoringVo.getPath();
+			editProcessPath = editProcessPath.substring(5);
+			int subStringStartIndex = editProcessPath.indexOf(">");
+			editProcessPath = editProcessPath.substring(0, subStringStartIndex);
+			monitoringVo.setDefName(editProcessPath);
+			
+			int subStringStartIndex2 = editProcessPath2.lastIndexOf(">") + 1;
+			editProcessPath2 = editProcessPath2.substring(subStringStartIndex2);
+			monitoringVo.setPath(editProcessPath2);
+			
+			beforePartNameList.add(monitoringVo.getPartName());
+			beforeProcessTypeList.add(editProcessPath);
+			afterMonitoringVoList.add(monitoringVo);
+		}
+		for(String eachPartName : beforePartNameList){
+			if(!afterPartNameList.contains(eachPartName)){
+				afterPartNameList.add(eachPartName);
+			}
+		}
+		
+		for(String eachProcessPath : beforeProcessTypeList){
+			if(!afterProcessTypeList.contains(eachProcessPath)){
+				afterProcessTypeList.add(eachProcessPath);
+			}
+		}
+		
+		Collections.sort(afterPartNameList);
+		Collections.sort(afterProcessTypeList);
+		
+        JSONObject result = new JSONObject();
+        JSONArray resultArray = new JSONArray();
+        Iterator<String> afterPartNameListIterator  = afterPartNameList.iterator();
+        while(afterPartNameListIterator.hasNext()){
+        	String eachPartName = afterPartNameListIterator.next();
+        	Iterator<String> afterProcessTypeListIterator = afterProcessTypeList.iterator();
+        	JSONObject depthOneObject = new JSONObject();
+        	JSONArray depthOneArray = new JSONArray();
+        	depthOneObject.put("partName", eachPartName);
+        	while(afterProcessTypeListIterator.hasNext()){
+        		String eachProcessPath = afterProcessTypeListIterator.next();
+        		Iterator<MonitoringVO> iteratorMonitoringVO = afterMonitoringVoList.iterator();
+        		JSONObject depthTwoObject = new JSONObject();
+            	depthTwoObject.put("processType", eachProcessPath);
+            	JSONArray depthTwoArray = new JSONArray();
+                while(iteratorMonitoringVO.hasNext()){
+                	MonitoringVO monitoringVO = iteratorMonitoringVO.next();
+                	if (UEngineUtil.isNotEmpty(monitoringVO.getPartName()) &&
+                			UEngineUtil.isNotEmpty(monitoringVO.getDefName())) {
+                		if (eachPartName.equals(monitoringVO.getPartName())){
+            				if(eachProcessPath.equals(monitoringVO.getDefName())){
+            					JSONObject depthThreeObject = new JSONObject();
+            					depthThreeObject.put("path", monitoringVO.getPath());
+            					depthThreeObject.put("workingDayAVG", monitoringVO.getWorkingDayAVG());
+            					depthThreeObject.put("workingDayMin", monitoringVO.getWorkingDayMin());
+            					depthThreeObject.put("workingDayMax", monitoringVO.getWorkingDayMax());
+            					depthThreeObject.put("totalCount", monitoringVO.getTotalCount());
+            					depthTwoArray.add(depthThreeObject);
+            				}
+                		}
+                	}
+                }
+                depthTwoObject.put("depthTwoArray", depthTwoArray);
+                depthOneArray.add(depthTwoObject);
+        	}
+        	depthOneObject.put("depthOneArray", depthOneArray);
+        	resultArray.add(depthOneObject);
+        }
+        result.put("datas", resultArray);
+     
+		return result;
+	}
 
 }

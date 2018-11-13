@@ -65,12 +65,28 @@ var barChartData = {
 		}]
 
 	};
-	
-  var clickevent = function(){
-	  alert('test');
+  
+  var getComboBoxData =  function(){
+	  //'demo'
+	  $.ajax({
+			type : "POST",
+			url : contextPath+"/monitoring/combovaluelist/demo",
+			cache : false,
+			dataType : "JSON",
+			success : function(result) {
+				let data = result.datas;
+				for(eachData in data){
+					$("#department").append($('<option>',{ value: data[eachData].groupId, text: data[eachData].groupName }));	
+				}
+	        },
+	        error : function(XMLHttpRequest, textStatus, errorThrown) {
+	            alert('There is an error : method(group)에 에러가 있습니다.');
+	        }
+		});
   }
   
   $( function() {
+	  getComboBoxData();	  
 	  wordExportBefore('<spring:message code="menu.monitoring.content.psbu" />');
 	  $( "#init_start_date" ).datepicker({
 	      showOn: "button",
@@ -85,6 +101,7 @@ var barChartData = {
 	      buttonImageOnly: true,
 	      buttonText: "Select date"
 	    });
+	  $("#init_end_date").val($.datepicker.formatDate('yy-mm-dd', new Date()));
 	  setDate(1, 'week');
 	  
 	  
@@ -132,8 +149,8 @@ var barChartData = {
   } );
   
   function setDate(num, type){
-	 
-	  var addDate = 0;
+		 
+	  var minusDate = 0;
 	  var typeNum = 0;
 	  if(type == 'month'){
 		  typeNum = 31;
@@ -143,15 +160,15 @@ var barChartData = {
 		
 	  }
 	  if(num == 0 || num == null ||isNaN(num)){
-		  addDate = 1*typeNum;
+		  minusDate = 1*typeNum;
 	  }else{
-		  addDate = num*typeNum;  
+		  minusDate = num*typeNum;  
 	  }
-	  if(addDate != 0){
-		  var today = $("#init_start_date").datepicker('getDate');
+	  if(minusDate != 0){
+		  var today = $("#init_end_date").datepicker('getDate');
 		  var setData = new Date();
-		  setData.setDate(today.getDate()+ addDate); 
-		  $("#init_end_date").val($.datepicker.formatDate('yy-mm-dd', setData));  
+		  setData.setDate(today.getDate()- minusDate); 
+		  $("#init_start_date").val($.datepicker.formatDate('yy-mm-dd', setData));  
 	  }
 	  
   }
@@ -171,10 +188,6 @@ var barChartData = {
                 <td>
 		<select name="department" id="department" style="height: 21.979166px;" >
 		<option value="all"><spring:message code="menu.all.label" /></option>
-		<option value="a1">도시개발과</option>
-		<option value="a2">유기농업과</option>
-		<option value="a3">산림녹지과</option>
-		<option value="a4">건축1과</option>
 		</select></td>
             </tr>
             <tr bgcolor="#b9cae3"><td colspan="4" height="1"></td></tr>
@@ -194,7 +207,7 @@ var barChartData = {
 	        		<img  src="<c:url value='/resources/images/icons/microsoft-word.svg' />" width="18" height="20" border="0">
 	        	</a>
 	        	
-	        	<button style="background-color: #F5F5F5; margin-left: 60px;" onclick="clickevent()"><img src="<c:url value='/resources/images/icons/Search.svg' />" align="absmiddle" width="18" height="20" border="0"><spring:message code="menu.monitoring.label.search" /></button>
+	        	<button style="background-color: #F5F5F5; margin-left: 60px;" ><img src="<c:url value='/resources/images/icons/Search.svg' />" align="absmiddle" width="18" height="20" border="0"><spring:message code="menu.monitoring.label.search" /></button>
 	        </td>
 
             </tr>

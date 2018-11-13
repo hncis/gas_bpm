@@ -15,7 +15,7 @@ var dateConverter = function(input){
 var fn_toastStackedColumn = function(windowName, canvasid, titleText) {
 	$.ajax({
 		type : "POST",
-		url : contextPath+"/monitoring/canvasjs/" + windowName,
+		url : contextPath+"/monitoring/toastjs/" + windowName,
 		cache : false,
 		dataType : "JSON",
 		success : function(result) {
@@ -158,7 +158,7 @@ var createToastStackedColumn = function(canvasid, titleText, inputData){
 var fn_toastDoughnut = function(windowName, canvasid, titleText) {
 	$.ajax({
 		type : "POST",
-		url : contextPath+"/monitoring/canvasjs/" + windowName,
+		url : contextPath+"/monitoring/toastjs/" + windowName,
 		cache : false,
 		dataType : "JSON",
 		success : function(result) {
@@ -238,7 +238,7 @@ var fn_toastColumnChartByTask = function(windowName, canvasid,
 		xLabel, yLabel, titleText) {
 	$.ajax({
 		type : "POST",
-		url : contextPath+"/monitoring/canvasjs/" + windowName,
+		url : contextPath+"/monitoring/toastjs/" + windowName,
 		cache : false,
 		dataType : "JSON",
 		success : function(result) {
@@ -312,7 +312,7 @@ var createToastColumnChartByTask = function(canvasid, xLabel, yLabel, titleText,
 var fn_toastline = function(windowName, canvasid, titleText) {
 	$.ajax({
 		type : "POST",
-		url : contextPath+"/monitoring/canvasjs/" + windowName,
+		url : contextPath+"/monitoring/toastjs/" + windowName,
 		cache : false,
 		dataType : "JSON",
 		success : function(result) {

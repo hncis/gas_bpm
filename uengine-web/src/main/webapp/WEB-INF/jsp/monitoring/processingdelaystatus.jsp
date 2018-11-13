@@ -29,9 +29,9 @@
 
 	
   var clickevent = function(){
-	  changeTableDate();
+	  initChangeTableDate();
   }
-  function changeTableDate(){
+  function initChangeTableDate(){
 	  var initStartDate = $("#init_start_date").val();
 	  var initEndDate = $("#init_end_date").val();
 	  var displayDate = initStartDate + ' ~ ' + initEndDate;
@@ -40,8 +40,27 @@
 	  $("#tableDate").css('border', '1px solid #E0E0E0');
   }
   
+  var getComboBoxData =  function(){
+	  //'demo'
+	  $.ajax({
+			type : "POST",
+			url : contextPath+"/monitoring/combovaluelist/demo",
+			cache : false,
+			dataType : "JSON",
+			success : function(result) {
+				let data = result.datas;
+				for(eachData in data){
+					$("#department").append($('<option>',{ value: data[eachData].groupId, text: data[eachData].groupName }));	
+				}
+	        },
+	        error : function(XMLHttpRequest, textStatus, errorThrown) {
+	            alert('There is an error : method(group)에 에러가 있습니다.');
+	        }
+		});
+  }
+  
   $( function() {
-	 
+	  getComboBoxData();
 	  $( "#init_start_date" ).datepicker({
 	      showOn: "button",
 	      buttonImage: "../resources/images/icons/calendar.gif",
@@ -55,9 +74,11 @@
 	      buttonImageOnly: true,
 	      buttonText: "Select date"
 	    });
+	  $("#init_end_date").val($.datepicker.formatDate('yy-mm-dd', new Date()));
 	  setDate(1, 'week');
-	  changeTableDate();
-	  
+	  if(($("#tableDate").html()) != null){
+		  initChangeTableDate();  
+	  } 
 	  $("#btnExcelExport").click(function (e) {
 		  var uri = $("#dvData").excelexportjs({
 			    containerid: "dvData" 
@@ -78,7 +99,7 @@
   
   function setDate(num, type){
 	 
-	  var addDate = 0;
+	  var minusDate = 0;
 	  var typeNum = 0;
 	  if(type == 'month'){
 		  typeNum = 31;
@@ -88,15 +109,15 @@
 		
 	  }
 	  if(num == 0 || num == null ||isNaN(num)){
-		  addDate = 1*typeNum;
+		  minusDate = 1*typeNum;
 	  }else{
-		  addDate = num*typeNum;  
+		  minusDate = num*typeNum;  
 	  }
-	  if(addDate != 0){
-		  var today = $("#init_start_date").datepicker('getDate');
+	  if(minusDate != 0){
+		  var today = $("#init_end_date").datepicker('getDate');
 		  var setData = new Date();
-		  setData.setDate(today.getDate()+ addDate); 
-		  $("#init_end_date").val($.datepicker.formatDate('yy-mm-dd', setData));  
+		  setData.setDate(today.getDate()- minusDate); 
+		  $("#init_start_date").val($.datepicker.formatDate('yy-mm-dd', setData));  
 	  }
 	  
   }
@@ -116,10 +137,6 @@
                 <td>
 		<select name="department" id="department" style="height: 21.979166px;" >
 		<option value="all"><spring:message code="menu.all.label" /></option>
-		<option value="a1">도시개발과</option>
-		<option value="a2">유기농업과</option>
-		<option value="a3">산림녹지과</option>
-		<option value="a4">건축1과</option>
 		</select></td>
             </tr>
             <tr bgcolor="#b9cae3"><td colspan="4" height="1"></td></tr>
