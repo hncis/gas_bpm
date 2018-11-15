@@ -1,6 +1,7 @@
 package org.uengine.web.monitoring.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 import org.uengine.web.common.dao.AbstractDAO;
@@ -29,7 +30,10 @@ public class MonitoringDAO extends AbstractDAO {
 	public List<MonitoringVO> getTaskCompletedAverageTime(){
 		return (List<MonitoringVO>)selectList("monitoring.selectTaskCompletedAverageTime");
 	}
+	@SuppressWarnings("unchecked")
+	public List<MonitoringVO> getProcessingStatusByTask(Map<String, String> map){
+		return (List<MonitoringVO>)selectList("monitoring.selectProcessingStatusByTask", map);
+	}
 	
 	
-	// taskcompletedaveragetime.jsp
 }

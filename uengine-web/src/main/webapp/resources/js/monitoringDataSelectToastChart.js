@@ -15,7 +15,7 @@ var dateConverter = function(input){
 var fn_toastStackedColumn = function(windowName, canvasid, titleText) {
 	$.ajax({
 		type : "POST",
-		url : contextPath+"/monitoring/canvasjs/" + windowName,
+		url : contextPath+"/monitoring/toastjs/" + windowName,
 		cache : false,
 		dataType : "JSON",
 		success : function(result) {
@@ -114,51 +114,43 @@ var enDateToKrDate = function(inputDate){
 
 var createToastStackedColumn = function(canvasid, titleText, inputData){
 	var container = document.getElementById(canvasid);
-	var data = toastPercentColumnchartData(inputData);
-	var options = {
-	    chart: {
-	        width: 700,
-	        height: 350,
-	        title: titleText,
-	        format: '1,000'
-	    },
-	    yAxis: {
-	        title: '신규업무건'
-	    },
-	    xAxis: {
-	        title: '최근 7일'
-	    },
-	    series: {
-	        barWidth: 30,
-	        stackType: 'normal'
-	    },
-	    tooltip: {
-	        grouped: true
-	    },
-	    legend: {
-	        align: 'bottom4000'
-	    }
-	};
-	/*
-	let theme = {
-	    series: {
-	        colors: getColor(inputData)
-	    }
-	};
-
-	// For apply theme
-
-	 tui.chart.registerTheme('myTheme', theme);
-	 options.theme = 'myTheme';
-	 */
+	if(inputData.length != 0){
+		var data = toastPercentColumnchartData(inputData);
+		var options = {
+			    chart: {
+			        width: 700,
+			        height: 350,
+			        title: titleText,
+			        format: '1,000'
+			    },
+			    yAxis: {
+			        title: '신규업무건'
+			    },
+			    xAxis: {
+			        title: '최근 7일'
+			    },
+			    series: {
+			        barWidth: 30,
+			        stackType: 'normal'
+			    },
+			    tooltip: {
+			        grouped: true
+			    },
+			    legend: {
+			        align: 'bottom4000'
+			    }
+			};
+			tui.chart.columnChart(container, data, options);
+	} else {
+		$("#" + canvasid).html("<h4>신규 신청 현황</h4><br><h5>데이터가 존재하지 않습니다</h5>");
+	}	
 	
-	tui.chart.columnChart(container, data, options);
 }
 
 var fn_toastDoughnut = function(windowName, canvasid, titleText) {
 	$.ajax({
 		type : "POST",
-		url : contextPath+"/monitoring/canvasjs/" + windowName,
+		url : contextPath+"/monitoring/toastjs/" + windowName,
 		cache : false,
 		dataType : "JSON",
 		success : function(result) {
@@ -193,52 +185,56 @@ var toastDonutChartData = function(inputData){
 
 var createToastDoughnutJs = function(canvasid, titleText, inputData){
 	var container = document.getElementById(canvasid);
-	var data = toastDonutChartData(inputData);
-	var options = {
-	    chart: {
-	    	width: 700,
-	        height: 450,
-	        title: titleText,
-	        format: function(value, chartType, areaType, valuetype, legendName) {
-	            if (areaType === 'makingSeriesLabel') { // formatting at series area
-	                value = value + '건';
-	            }
+	if(inputData.length != 0){
+		var data = toastDonutChartData(inputData);
+		var options = {
+		    chart: {
+		    	width: 700,
+		        height: 450,
+		        title: titleText,
+		        format: function(value, chartType, areaType, valuetype, legendName) {
+		            if (areaType === 'makingSeriesLabel') { // formatting at series area
+		                value = value + '건';
+		            }
 
-	            return value;
-	        }
-	    },
-	    series: {
-	        radiusRange: ['40%', '100%'],
-	        showLabel: true
-	    },
-	    legend: {
-	        align: 'bottom'
-	    }
-	};
-	var theme = {
-	    series: {
-	        series: {
-	            colors: [
-	                '#83b14e', '#458a3f', '#295ba0', '#2a4175', '#289399',
-	                '#289399', '#617178', '#8a9a9a', '#516f7d', '#dddddd'
-	            ]
-	        },
-	        label: {
-	            color: '#fff',
-	            fontFamily: 'sans-serif'
-	        }
-	    }
-	};
-	tui.chart.registerTheme('myTheme', theme);
-	options.theme = 'myTheme';
-	tui.chart.pieChart(container, data, options);
+		            return value;
+		        }
+		    },
+		    series: {
+		        radiusRange: ['40%', '100%'],
+		        showLabel: true
+		    },
+		    legend: {
+		        align: 'bottom'
+		    }
+		};
+		var theme = {
+		    series: {
+		        series: {
+		            colors: [
+		                '#83b14e', '#458a3f', '#295ba0', '#2a4175', '#289399',
+		                '#289399', '#617178', '#8a9a9a', '#516f7d', '#dddddd'
+		            ]
+		        },
+		        label: {
+		            color: '#fff',
+		            fontFamily: 'sans-serif'
+		        }
+		    }
+		};
+		tui.chart.registerTheme('myTheme', theme);
+		options.theme = 'myTheme';
+		tui.chart.pieChart(container, data, options);
+	} else {
+		$("#" + canvasid).html("<h4>업무별 처리 지연현황</h4><br><h5>데이터가 존재하지 않습니다</h5>");
+	}
 }
 
 var fn_toastColumnChartByTask = function(windowName, canvasid,
 		xLabel, yLabel, titleText) {
 	$.ajax({
 		type : "POST",
-		url : contextPath+"/monitoring/canvasjs/" + windowName,
+		url : contextPath+"/monitoring/toastjs/" + windowName,
 		cache : false,
 		dataType : "JSON",
 		success : function(result) {
@@ -285,34 +281,39 @@ var toastColumnChartByTaskMaxCounter = function(inputData){
 }
 
 var createToastColumnChartByTask = function(canvasid, xLabel, yLabel, titleText, inputData){
-	let container = document.getElementById(canvasid);
-	let data = toastColumnChartByTaskData(inputData);
-	let options = {
-	    chart: {
-	    	width: 700,
-	        height: 350,
-	        title: titleText,
-	        format: '1,000'
-	    },
-	    yAxis: {
-	        title: yLabel,
-	        min: 0,
-	        max: toastColumnChartByTaskMaxCounter(inputData)
-	    },
-	    xAxis: {
-	        title: xLabel
-	    },
-	    legend: {
-	        align: 'top'
-	    }
-	};	
-	tui.chart.columnChart(container, data, options);	
+	if(inputData.length != 0){
+		let container = document.getElementById(canvasid);
+		let data = toastColumnChartByTaskData(inputData);
+		let options = {
+		    chart: {
+		    	width: 700,
+		        height: 350,
+		        title: titleText,
+		        format: '1,000'
+		    },
+		    yAxis: {
+		        title: yLabel,
+		        min: 0,
+		        max: toastColumnChartByTaskMaxCounter(inputData)
+		    },
+		    xAxis: {
+		        title: xLabel
+		    },
+		    legend: {
+		        align: 'top'
+		    }
+		};	
+		tui.chart.columnChart(container, data, options);		
+	} else {
+		$("#" + canvasid).html("<h4>업무별 진행현황</h4><br><h5>데이터가 존재하지 않습니다</h5>");
+	}
+	
 }
 
 var fn_toastline = function(windowName, canvasid, titleText) {
 	$.ajax({
 		type : "POST",
-		url : contextPath+"/monitoring/canvasjs/" + windowName,
+		url : contextPath+"/monitoring/toastjs/" + windowName,
 		cache : false,
 		dataType : "JSON",
 		success : function(result) {
@@ -327,39 +328,34 @@ var fn_toastline = function(windowName, canvasid, titleText) {
 
 var createToastline =  function(canvasid, titleText, inputData){
 	var container = document.getElementById(canvasid);
-	var data = toastLineData(inputData);
-	var options = {
-	    chart: {
-	    	width: 700,
-	        height: 350,
-	        title: titleText
-	    },
-	    yAxis: {
-	        title: '완료건',
-	        pointOnColumn: true
-	    },
-	    xAxis: {
-	        title: '최근 7일'
-	    },
-	    series: {
-	        showDot: false,
-	        zoomable: true
-	    },
-	    tooltip: {
-	        suffix: '건'
-	    }
-	};
-	/*
-	var theme = {
-	    series: {
-	        colors: getColor(inputData)
-	    }
-	};
+	if(inputData.length != 0){
+		var data = toastLineData(inputData);
+		var options = {
+		    chart: {
+		    	width: 700,
+		        height: 350,
+		        title: titleText
+		    },
+		    yAxis: {
+		        title: '완료건',
+		        pointOnColumn: true
+		    },
+		    xAxis: {
+		        title: '최근 7일'
+		    },
+		    series: {
+		        showDot: false,
+		        zoomable: true
+		    },
+		    tooltip: {
+		        suffix: '건'
+		    }
+		};
+		var chart = tui.chart.lineChart(container, data, options);
+	} else {
+		$("#" + canvasid).html("<h4>평균 업무완료 시간 추이</h4><br><h5>데이터가 존재하지 않습니다</h5>");
+	}
 	
-	tui.chart.registerTheme('myTheme', theme);
-	options.theme = 'myTheme';
-	*/
-	var chart = tui.chart.lineChart(container, data, options);
 }
 
 var toastLineData =  function(inputData){

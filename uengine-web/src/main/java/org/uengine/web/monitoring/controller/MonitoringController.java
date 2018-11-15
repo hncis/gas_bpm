@@ -1,8 +1,16 @@
 package org.uengine.web.monitoring.controller;
 
 
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
+
+
+
+
 
 
 
@@ -12,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,8 +28,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.uengine.kernel.RoleMapping;
+import org.uengine.util.UEngineUtil;
 import org.uengine.web.login.vo.LoginVO;
 import org.uengine.web.monitoring.service.MonitoringService;
+import org.uengine.web.organization.service.OrganizationService;
 import org.uengine.web.worklist.vo.MyWorkVO;
 
 import be.ceau.chart.BarChart;
@@ -49,6 +61,9 @@ public class MonitoringController {
 	
 	@Resource(name = "monitoringService")
 	private MonitoringService monitoringService;
+	
+	@Resource(name = "organizationService")
+	private OrganizationService organizationService;
 	
 	@RequestMapping(value="/monitoring/")
 	public ModelAndView portalMain(LoginVO sessionVO, HttpServletRequest request) throws Exception{
@@ -97,10 +112,35 @@ public class MonitoringController {
         return result;
     }
 	
-	@RequestMapping(value="/monitoring/canvasjs/{windowName}", method = RequestMethod.POST)
+	@RequestMapping(value="/monitoring/toastjs/{windowName}", method = RequestMethod.POST)
 	@ResponseBody
-	public JSONObject viewCanvasData(@PathVariable String windowName, HttpServletRequest request) throws Exception{
+	public JSONObject viewToastData(@PathVariable String windowName, HttpServletRequest request) throws Exception{
         return (JSONObject)monitoringService.getChartData(windowName);
+    }
+	
+	@RequestMapping(value="/monitoring/processingstatusbytask", method = RequestMethod.POST)
+	@ResponseBody
+	public JSONObject getProcessingStatusByTaskData(HttpServletRequest request) throws Exception{
+		Map<String, String> map = new HashedMap();
+		System.out.println("partCode: " + request.getParameter("partCode"));
+		if(UEngineUtil.isNotEmpty(request.getParameter("partCode"))){
+			map.put("partCode", request.getParameter("partCode"));	
+		} 
+		if(UEngineUtil.isNotEmpty(request.getParameter("searchFromDate"))){
+			System.out.println("searchFromDate: " + request.getParameter("searchFromDate"));
+			map.put("searchFromDate", request.getParameter("searchFromDate"));	
+		} 
+		if(UEngineUtil.isNotEmpty(request.getParameter("searchToDate"))){
+			map.put("searchToDate", request.getParameter("searchToDate"));	
+		} 
+        return (JSONObject)monitoringService.getProcessingStatusByTaskData(map);
+    }
+	
+	@RequestMapping(value="/monitoring/combovaluelist/{comCode}", method = RequestMethod.POST)
+	@ResponseBody
+	public JSONObject getComboData(@PathVariable String comCode) throws Exception{
+		List<RoleMapping> roleInfoList = organizationService.getPartListByComCode(comCode);
+        return (JSONObject)monitoringService.getComboBoxData(roleInfoList);
     }
 	
 	@RequestMapping(value="/monitoring/taskcompletedaveragetime.do")

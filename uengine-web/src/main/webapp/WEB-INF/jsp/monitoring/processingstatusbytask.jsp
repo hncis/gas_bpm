@@ -27,10 +27,138 @@
 <script>
 
   var clickevent = function(){
-	  alert('test');
+	  $("#dataListTbody").empty();
+	  $("#dataListTbody").prepend("<tr id='dataList'></tr>");
+	  getProcessingstatusbytask(false);
+  }
+  
+  var getProcessingstatusbytask = function(init){
+	  var inputPartCode;
+	  if(init){
+		  inputPartCode = null;
+	  } else {
+		  inputPartCode = $("#department option:selected").val();
+		  if(inputPartCode == "all"){
+		  	 inputPartCode = null;
+		  }
+	  }
+	  
+	  $("#partCode").val(inputPartCode);
+	  $("#searchFromDate").val($("#init_start_date").val());
+	  $("#searchToDate").val($("#init_end_date").val());
+	  
+	  var sendData = $("#processingstatusbytask").serialize();
+	  $.ajax({
+			type : "POST",
+			data : sendData,
+			url : contextPath+"/monitoring/processingstatusbytask",
+			cache : false,
+			dataType : "JSON",
+			success : function(result) {
+				let data = result.datas;
+				makeTableList(data);
+	        },
+	        error : function(XMLHttpRequest, textStatus, errorThrown) {
+	            alert('There is an error : method(group)에 에러가 있습니다.');
+	        }
+		});
+  }
+  
+  var makeTableList = function(data){
+	  var dvData = $("#dvData");
+	  if(data.length != 0){
+		  var counter = 0;
+			for(eachData in data){
+				isInit = true;
+				var oneDepthData = data[eachData].depthOneArray;
+				counter = 0;
+				for(var depthOneObject in oneDepthData){
+					var twoDepthData = oneDepthData[depthOneObject];
+					for(var depthTwoObject in twoDepthData){
+						if(depthTwoObject == 'depthTwoArray'){
+							counter += twoDepthData[depthTwoObject].length;
+						}
+						
+					}
+				}
+				var makeTr = document.createElement("tr");
+				var makeTd = document.createElement("td");
+				makeTd.style.textAlign="center";
+				makeTd.style.verticalAlign="middle";
+				makeTd.style.backgroundColor="#f1f1c1";
+				makeTd.rowSpan = counter;
+				makeTd.innerHTML = data[eachData].partName;
+				makeTr.appendChild(makeTd);
+				
+				for(var depthOneObject in oneDepthData){
+					var twoDepthData = oneDepthData[depthOneObject];
+					for(var depthTwoObject in twoDepthData){
+						if(depthTwoObject == 'depthTwoArray' && (twoDepthData[depthTwoObject].length != 0)){
+							var processPathTd = document.createElement("td");
+							processPathTd.style.textAlign="center";
+							processPathTd.innerHTML = twoDepthData.processType;
+							processPathTd.rowSpan = twoDepthData[depthTwoObject].length;
+							makeTr.appendChild(processPathTd);
+							var threeDepthData = twoDepthData[depthTwoObject];
+							for(depthThreeObject in threeDepthData){
+								var pathTd = document.createElement("td");
+								pathTd.style.textAlign="center";
+								pathTd.innerHTML = threeDepthData[depthThreeObject].path;
+								makeTr.appendChild(pathTd);
+								var workingDayAVGTd = document.createElement("td");
+								workingDayAVGTd.innerHTML = threeDepthData[depthThreeObject].workingDayAVG;
+								workingDayAVGTd.style.textAlign="center";
+								makeTr.appendChild(workingDayAVGTd);
+								var workingDayMaxTd = document.createElement("td");
+								workingDayMaxTd.innerHTML = threeDepthData[depthThreeObject].workingDayMax;
+								workingDayMaxTd.style.textAlign="center";
+								makeTr.appendChild(workingDayMaxTd);
+								var workingDayMinTd = document.createElement("td");
+								workingDayMinTd.innerHTML = threeDepthData[depthThreeObject].workingDayMin;
+								workingDayMinTd.style.textAlign="center";
+								makeTr.appendChild(workingDayMinTd);
+								var totalCountTd = document.createElement("td");
+								totalCountTd.style.textAlign="center";
+								totalCountTd.innerHTML = threeDepthData[depthThreeObject].totalCount;
+								makeTr.appendChild(totalCountTd);
+								$("#dataList").before(makeTr);
+								makeTr = document.createElement("tr");
+								makeTr.id ="makeTr";
+							}								
+						} 
+					}
+					
+				}
+				
+			}
+	  } else {
+		  var dataList = $("#dataList");
+		  console.log('test');
+		  dataList.html("<td colspan='7' style='text-align: center'>데이터가 존재하지 않습니다</td>");
+	  }
+		  
+  }
+  
+  var getComboBoxData =  function(){
+	  $.ajax({
+			type : "POST",
+			url : contextPath+"/monitoring/combovaluelist/demo",
+			cache : false,
+			dataType : "JSON",
+			success : function(result) {
+				let data = result.datas;
+				for(eachData in data){
+					$("#department").append($('<option>',{ value: data[eachData].groupId, text: data[eachData].groupName }));	
+				}
+	        },
+	        error : function(XMLHttpRequest, textStatus, errorThrown) {
+	            alert('There is an error : method(group)에 에러가 있습니다.');
+	        }
+		});
   }
   
   $( function() {
+	  getComboBoxData();
 	  wordExportBefore('<spring:message code="menu.monitoring.content.pcsbt" />');
 	  $( "#init_start_date" ).datepicker({
 	      showOn: "button",
@@ -45,12 +173,12 @@
 	      buttonImageOnly: true,
 	      buttonText: "Select date"
 	    });
+	  $("#init_end_date").val($.datepicker.formatDate('yy-mm-dd', new Date()));
 	  setDate(1, 'week');
-	  
-	  
+	  getProcessingstatusbytask(true);
 	  $("#btnExcelExport").click(function (e) {
-		  var uri = $("#dvData").excelexportjs({
-			    containerid: "dvData" 
+		  var uri = $("#dvColume").excelexportjs({
+			    containerid: "dvColume" 
 			  , datatype: 'table'
 			  , encoding: "UTF-8"
 			  , returnUri: true
@@ -66,8 +194,8 @@
   } );
   
   function setDate(num, type){
-	 
-	  var addDate = 0;
+		 
+	  var minusDate = 0;
 	  var typeNum = 0;
 	  if(type == 'month'){
 		  typeNum = 31;
@@ -77,15 +205,15 @@
 		
 	  }
 	  if(num == 0 || num == null ||isNaN(num)){
-		  addDate = 1*typeNum;
+		  minusDate = 1*typeNum;
 	  }else{
-		  addDate = num*typeNum;  
+		  minusDate = num*typeNum;  
 	  }
-	  if(addDate != 0){
-		  var today = $("#init_start_date").datepicker('getDate');
+	  if(minusDate != 0){
+		  var today = $("#init_end_date").datepicker('getDate');
 		  var setData = new Date();
-		  setData.setDate(today.getDate()+ addDate); 
-		  $("#init_end_date").val($.datepicker.formatDate('yy-mm-dd', setData));  
+		  setData.setDate(today.getDate()- minusDate); 
+		  $("#init_start_date").val($.datepicker.formatDate('yy-mm-dd', setData));  
 	  }
 	  
   }
@@ -105,10 +233,6 @@
                 <td>
 		<select name="department" id="department" style="height: 21.979166px;" >
 		<option value="all"><spring:message code="menu.all.label" /></option>
-		<option value="a1">도시개발과</option>
-		<option value="a2">유기농업과</option>
-		<option value="a3">산림녹지과</option>
-		<option value="a4">건축1과</option>
 		</select></td>
             </tr>
             <tr bgcolor="#b9cae3"><td colspan="4" height="1"></td></tr>
@@ -140,98 +264,30 @@
 </div>
 
 <div id="page-content" class="container-fluid" style="width:100%; padding-top: 30px;   ">
-<table id="dvData" class="table" style="width:100%; border:1px solid #E0E0E0; ">
-  <tr>
-    <th class="center-ui" style="background-color: #f1f1c1;"><spring:message code="menu.monitoring.label.rightsection" /></th>
-    <th class="center-ui" colspan="2"><spring:message code="old.worklist.process.name.label" /></th>
-    <th class="center-ui"><spring:message code="menu.monitoring.column.averagenumber" /></th>
-    <th class="center-ui"><spring:message code="menu.monitoring.column.minpracticedays" /></th>
-    <th class="center-ui"><spring:message code="menu.monitoring.column.maxpracticedays" /></th>
-    <th class="center-ui"><spring:message code="menu.count.label" /></th>
-  </tr>
-  <tr>
-    <td style="background-color: #f1f1c1;" rowspan="5">도시개발과</td>
-    <td rowspan="5">복지</td>
-    <td>휴양소</td>
-    <td class="center-ui">33</td>
-    <td class="center-ui">25</td>
-    <td class="center-ui">50</td>
-    <td class="center-ui">23</td>
-  </tr>
-  <tr>
-    <td>근무복</td>
-    <td class="center-ui">12</td>
-    <td class="center-ui">10</td>
-    <td class="center-ui">22</td>
-    <td class="center-ui">21</td>
-  </tr>
-  <tr>
-    <td>선물</td>
-    <td class="center-ui">11</td>
-    <td class="center-ui">9</td>
-    <td class="center-ui">16</td>
-    <td class="center-ui">32</td>
-  </tr>
-  <tr>
-    <td>도서</td>
-    <td class="center-ui">11</td>
-    <td class="center-ui">8</td>
-    <td class="center-ui">16</td>
-    <td class="center-ui">45</td>
-  </tr>
-  <tr>
-    <td>교육신청</td>
-    <td class="center-ui">13</td>
-    <td class="center-ui">8</td>
-    <td class="center-ui">15</td>
-    <td class="center-ui">56</td>
-  </tr>
+<table id="dvColume" class="table" style="width:100%; border:1px solid #E0E0E0; ">
+  <tbody>
+	  <tr>
+	    <th class="center-ui" style="background-color: #f1f1c1;"><spring:message code="menu.monitoring.label.rightsection" /></th>
+	    <th class="center-ui" colspan="2"><spring:message code="old.worklist.process.name.label" /></th>
+	    <th class="center-ui"><spring:message code="menu.monitoring.column.averagenumber" /></th>
+	    <th class="center-ui"><spring:message code="menu.monitoring.column.minpracticedays" /></th>
+	    <th class="center-ui"><spring:message code="menu.monitoring.column.maxpracticedays" /></th>
+	    <th class="center-ui"><spring:message code="menu.count.label" /></th>
+	  </tr>
+  </tbody>
+  <tbody id ="dataListTbody">
+	  <tr id="dataList"></tr>
+  </tbody>
   
-   <tr>
-    <td style="background-color: #f1f1c1;" rowspan="2">유기농업과</td>
-    <td rowspan="2">지원</td>
-    <td>명함</td>
-    <td class="center-ui">35</td>
-    <td class="center-ui">25</td>
-    <td class="center-ui">31</td>
-    <td class="center-ui">7</td>
-  </tr>
-  <tr>
-    <td>전산용품</td>
-    <td class="center-ui">40</td>
-    <td class="center-ui">25</td>
-    <td class="center-ui">32</td>
-    <td class="center-ui">34</td>
-  </tr>
+  </table>
   
-  <tr>
-    <td style="background-color: #f1f1c1;" rowspan="2">산림녹지과</td>
-    <td rowspan="2">출장/차량</td>
-    <td>출장-국내출장</td>
-    <td class="center-ui">41</td>
-    <td class="center-ui">27</td>
-    <td class="center-ui">47</td>
-    <td class="center-ui">5</td>
-  </tr>
-  <tr>
-    <td>출장-해외출장</td>
-    <td class="center-ui">46</td>
-    <td class="center-ui">29</td>
-    <td class="center-ui">45</td>
-    <td class="center-ui">7</td>
-  </tr>
-  
-  <tr>
-    <td style="background-color: #f1f1c1;" >건축1과</td>
-    <td>일반</td>
-    <td>방문</td>
-    <td class="center-ui">25</td>
-    <td class="center-ui">19</td>
-    <td class="center-ui">27</td>
-    <td class="center-ui">45</td>
-  </tr>
-</table>
 </div>
+<form name="processingstatusbytask" id="processingstatusbytask" method="post" action="">
+	<input type="hidden" name="partCode" id="partCode">
+	<input type="hidden" name="searchFromDate" id="searchFromDate">
+	<input type="hidden" name="searchToDate" id="searchToDate">
+</form>
+
 </body>
 
 </html>

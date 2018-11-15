@@ -10,7 +10,6 @@
 	<div id="chartContainer" style="width: 80%; height: 350px;"></div>
 	<script>
 	window.onload = function() {
-		// fn_chartjs('bar', '<spring:message code="menu.monitoring.content.newworkstatus" />', 'newworkstatus');
 		fn_toastStackedColumn('newworkstatus', 'chartContainer',
 				'<spring:message code="menu.monitoring.content.newworkstatus" />');
 	};
