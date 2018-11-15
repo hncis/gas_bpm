@@ -66,70 +66,77 @@
   
   var makeTableList = function(data){
 	  var dvData = $("#dvData");
-		var counter = 0;
-		for(eachData in data){
-			isInit = true;
-			var oneDepthData = data[eachData].depthOneArray;
-			counter = 0;
-			for(var depthOneObject in oneDepthData){
-				var twoDepthData = oneDepthData[depthOneObject];
-				for(var depthTwoObject in twoDepthData){
-					if(depthTwoObject == 'depthTwoArray'){
-						counter += twoDepthData[depthTwoObject].length;
+	  if(data.length != 0){
+		  var counter = 0;
+			for(eachData in data){
+				isInit = true;
+				var oneDepthData = data[eachData].depthOneArray;
+				counter = 0;
+				for(var depthOneObject in oneDepthData){
+					var twoDepthData = oneDepthData[depthOneObject];
+					for(var depthTwoObject in twoDepthData){
+						if(depthTwoObject == 'depthTwoArray'){
+							counter += twoDepthData[depthTwoObject].length;
+						}
+						
+					}
+				}
+				var makeTr = document.createElement("tr");
+				var makeTd = document.createElement("td");
+				makeTd.style.textAlign="center";
+				makeTd.style.verticalAlign="middle";
+				makeTd.style.backgroundColor="#f1f1c1";
+				makeTd.rowSpan = counter;
+				makeTd.innerHTML = data[eachData].partName;
+				makeTr.appendChild(makeTd);
+				
+				for(var depthOneObject in oneDepthData){
+					var twoDepthData = oneDepthData[depthOneObject];
+					for(var depthTwoObject in twoDepthData){
+						if(depthTwoObject == 'depthTwoArray' && (twoDepthData[depthTwoObject].length != 0)){
+							var processPathTd = document.createElement("td");
+							processPathTd.style.textAlign="center";
+							processPathTd.innerHTML = twoDepthData.processType;
+							processPathTd.rowSpan = twoDepthData[depthTwoObject].length;
+							makeTr.appendChild(processPathTd);
+							var threeDepthData = twoDepthData[depthTwoObject];
+							for(depthThreeObject in threeDepthData){
+								var pathTd = document.createElement("td");
+								pathTd.style.textAlign="center";
+								pathTd.innerHTML = threeDepthData[depthThreeObject].path;
+								makeTr.appendChild(pathTd);
+								var workingDayAVGTd = document.createElement("td");
+								workingDayAVGTd.innerHTML = threeDepthData[depthThreeObject].workingDayAVG;
+								workingDayAVGTd.style.textAlign="center";
+								makeTr.appendChild(workingDayAVGTd);
+								var workingDayMaxTd = document.createElement("td");
+								workingDayMaxTd.innerHTML = threeDepthData[depthThreeObject].workingDayMax;
+								workingDayMaxTd.style.textAlign="center";
+								makeTr.appendChild(workingDayMaxTd);
+								var workingDayMinTd = document.createElement("td");
+								workingDayMinTd.innerHTML = threeDepthData[depthThreeObject].workingDayMin;
+								workingDayMinTd.style.textAlign="center";
+								makeTr.appendChild(workingDayMinTd);
+								var totalCountTd = document.createElement("td");
+								totalCountTd.style.textAlign="center";
+								totalCountTd.innerHTML = threeDepthData[depthThreeObject].totalCount;
+								makeTr.appendChild(totalCountTd);
+								$("#dataList").before(makeTr);
+								makeTr = document.createElement("tr");
+								makeTr.id ="makeTr";
+							}								
+						} 
 					}
 					
 				}
-			}
-			var makeTr = document.createElement("tr");
-			var makeTd = document.createElement("td");
-			makeTd.style.textAlign="center";
-			makeTd.style.verticalAlign="middle";
-			makeTd.style.backgroundColor="#f1f1c1";
-			makeTd.rowSpan = counter;
-			makeTd.innerHTML = data[eachData].partName;
-			makeTr.appendChild(makeTd);
-			
-			for(var depthOneObject in oneDepthData){
-				var twoDepthData = oneDepthData[depthOneObject];
-				for(var depthTwoObject in twoDepthData){
-					if(depthTwoObject == 'depthTwoArray' && (twoDepthData[depthTwoObject].length != 0)){
-						var processPathTd = document.createElement("td");
-						processPathTd.style.textAlign="center";
-						processPathTd.innerHTML = twoDepthData.processType;
-						processPathTd.rowSpan = twoDepthData[depthTwoObject].length;
-						makeTr.appendChild(processPathTd);
-						var threeDepthData = twoDepthData[depthTwoObject];
-						for(depthThreeObject in threeDepthData){
-							var pathTd = document.createElement("td");
-							pathTd.style.textAlign="center";
-							pathTd.innerHTML = threeDepthData[depthThreeObject].path;
-							makeTr.appendChild(pathTd);
-							var workingDayAVGTd = document.createElement("td");
-							workingDayAVGTd.innerHTML = threeDepthData[depthThreeObject].workingDayAVG;
-							workingDayAVGTd.style.textAlign="center";
-							makeTr.appendChild(workingDayAVGTd);
-							var workingDayMaxTd = document.createElement("td");
-							workingDayMaxTd.innerHTML = threeDepthData[depthThreeObject].workingDayMax;
-							workingDayMaxTd.style.textAlign="center";
-							makeTr.appendChild(workingDayMaxTd);
-							var workingDayMinTd = document.createElement("td");
-							workingDayMinTd.innerHTML = threeDepthData[depthThreeObject].workingDayMin;
-							workingDayMinTd.style.textAlign="center";
-							makeTr.appendChild(workingDayMinTd);
-							var totalCountTd = document.createElement("td");
-							totalCountTd.style.textAlign="center";
-							totalCountTd.innerHTML = threeDepthData[depthThreeObject].totalCount;
-							makeTr.appendChild(totalCountTd);
-							$("#dataList").before(makeTr);
-							makeTr = document.createElement("tr");
-							makeTr.id ="makeTr";
-						}								
-					} 
-				}
 				
 			}
-			
-		}  
+	  } else {
+		  var dataList = $("#dataList");
+		  console.log('test');
+		  dataList.html("<td colspan='7' style='text-align: center'>데이터가 존재하지 않습니다</td>");
+	  }
+		  
   }
   
   var getComboBoxData =  function(){
@@ -170,8 +177,8 @@
 	  setDate(1, 'week');
 	  getProcessingstatusbytask(true);
 	  $("#btnExcelExport").click(function (e) {
-		  var uri = $("#dvData").excelexportjs({
-			    containerid: "dvData" 
+		  var uri = $("#dvColume").excelexportjs({
+			    containerid: "dvColume" 
 			  , datatype: 'table'
 			  , encoding: "UTF-8"
 			  , returnUri: true
