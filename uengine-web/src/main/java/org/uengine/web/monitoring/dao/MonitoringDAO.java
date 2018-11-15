@@ -35,5 +35,10 @@ public class MonitoringDAO extends AbstractDAO {
 		return (List<MonitoringVO>)selectList("monitoring.selectProcessingStatusByTask", map);
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<MonitoringVO> getProcessingStatusByUser(Map<String, String> map){
+		return (List<MonitoringVO>)selectList("monitoring.selectprocessingstatusbyuser", map);
+	}
+	
 	
 }

@@ -479,4 +479,54 @@ public class MonitoringServiceImpl implements MonitoringService {
 		return result;
 	}
 
+	@Override
+	public Object getProcessingStatusByUserData(Map<String, String> map)
+			throws Exception {
+		List<MonitoringVO> listMonitoringVo = null;
+		listMonitoringVo = monitoringDAO.getProcessingStatusByUser(map);
+		JSONObject result = new JSONObject();
+		JSONArray resultArray = new JSONArray();
+		JSONObject chartData =  new JSONObject();
+		JSONObject tableData = new JSONObject();
+		JSONArray tableRow = new JSONArray();
+		JSONObject empData = new JSONObject();
+		JSONArray categoriesArray = new JSONArray();
+		JSONArray seriesArray = new JSONArray();
+		JSONObject passedCount =new JSONObject();
+		passedCount.put("name", "처리건수");
+		JSONObject passedDayAvg =new JSONObject();
+		passedDayAvg.put("name", "평균처리건수");
+		JSONObject delayedCount =new JSONObject();
+		delayedCount.put("name", "지연건수");
+		JSONArray passedCountArray = new JSONArray(); // 처리건수
+		JSONArray passedDayAvgArray = new JSONArray(); // 평균처리건수
+		JSONArray delayedCountArray = new JSONArray(); // 지연건수
+		Iterator<MonitoringVO> listMonitringVoIterator = listMonitoringVo.iterator();
+		while(listMonitringVoIterator.hasNext()){
+			MonitoringVO monitoringVoObject = listMonitringVoIterator.next();
+			categoriesArray.add(monitoringVoObject.getEmpName());
+			passedCountArray.add(monitoringVoObject.getPassedCount());
+			passedDayAvgArray.add(monitoringVoObject.getPassedDayAVG());
+			delayedCountArray.add(monitoringVoObject.getDelayedCount());
+			empData.put("name", monitoringVoObject.getEmpName());
+			empData.put("passedCount", monitoringVoObject.getPassedCount());
+			empData.put("passedDayAVG", monitoringVoObject.getPassedDayAVG());
+			empData.put("delayedDayAVG", monitoringVoObject.getDelayedDayAVG());
+			tableRow.add(empData);
+		}
+		passedCount.put("data", passedCountArray);
+		passedDayAvg.put("data", passedDayAvgArray);
+		delayedCount.put("data", delayedCountArray);
+		seriesArray.add(passedCount);
+		seriesArray.add(passedDayAvg);
+		seriesArray.add(delayedCount);
+		chartData.put("categories", categoriesArray);
+		chartData.put("series", seriesArray);
+		tableData.put("tableData", tableRow);
+		resultArray.add(chartData);
+		resultArray.add(tableData);
+		result.put("data", resultArray);
+		return result;
+	}
+
 }

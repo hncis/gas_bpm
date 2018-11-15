@@ -86,6 +86,7 @@
 				makeTd.style.textAlign="center";
 				makeTd.style.verticalAlign="middle";
 				makeTd.style.backgroundColor="#f1f1c1";
+				makeTd.style.borderBottom = '1px solid #E0E0E0';
 				makeTd.rowSpan = counter;
 				makeTd.innerHTML = data[eachData].partName;
 				makeTr.appendChild(makeTd);
@@ -98,27 +99,33 @@
 							processPathTd.style.textAlign="center";
 							processPathTd.innerHTML = twoDepthData.processType;
 							processPathTd.rowSpan = twoDepthData[depthTwoObject].length;
+							processPathTd.style.borderBottom = '1px solid #E0E0E0';
 							makeTr.appendChild(processPathTd);
 							var threeDepthData = twoDepthData[depthTwoObject];
 							for(depthThreeObject in threeDepthData){
 								var pathTd = document.createElement("td");
 								pathTd.style.textAlign="center";
 								pathTd.innerHTML = threeDepthData[depthThreeObject].path;
+								pathTd.style.borderBottom = '1px solid #E0E0E0';
 								makeTr.appendChild(pathTd);
 								var workingDayAVGTd = document.createElement("td");
 								workingDayAVGTd.innerHTML = threeDepthData[depthThreeObject].workingDayAVG;
 								workingDayAVGTd.style.textAlign="center";
+								workingDayAVGTd.style.borderBottom = '1px solid #E0E0E0';
 								makeTr.appendChild(workingDayAVGTd);
 								var workingDayMaxTd = document.createElement("td");
 								workingDayMaxTd.innerHTML = threeDepthData[depthThreeObject].workingDayMax;
 								workingDayMaxTd.style.textAlign="center";
+								workingDayMaxTd.style.borderBottom = '1px solid #E0E0E0';
 								makeTr.appendChild(workingDayMaxTd);
 								var workingDayMinTd = document.createElement("td");
 								workingDayMinTd.innerHTML = threeDepthData[depthThreeObject].workingDayMin;
 								workingDayMinTd.style.textAlign="center";
+								workingDayMinTd.style.borderBottom = '1px solid #E0E0E0';
 								makeTr.appendChild(workingDayMinTd);
 								var totalCountTd = document.createElement("td");
 								totalCountTd.style.textAlign="center";
+								totalCountTd.style.borderBottom = '1px solid #E0E0E0';
 								totalCountTd.innerHTML = threeDepthData[depthThreeObject].totalCount;
 								makeTr.appendChild(totalCountTd);
 								$("#dataList").before(makeTr);
@@ -264,8 +271,8 @@
 </div>
 
 <div id="page-content" class="container-fluid" style="width:100%; padding-top: 30px;   ">
-<table id="dvColume" class="table" style="width:100%; border:1px solid #E0E0E0; ">
-  <tbody>
+<table id="dvColume" class="table" style="width:100%; border-top:1px solid #E0E0E0; border-collapse: collapse;">
+  <tbody style="border-top:1px solid #E0E0E0;">
 	  <tr>
 	    <th class="center-ui" style="background-color: #f1f1c1;"><spring:message code="menu.monitoring.label.rightsection" /></th>
 	    <th class="center-ui" colspan="2"><spring:message code="old.worklist.process.name.label" /></th>
@@ -275,7 +282,7 @@
 	    <th class="center-ui"><spring:message code="menu.count.label" /></th>
 	  </tr>
   </tbody>
-  <tbody id ="dataListTbody">
+  <tbody id ="dataListTbody" style="border-top:1px solid #E0E0E0;">
 	  <tr id="dataList"></tr>
   </tbody>
   

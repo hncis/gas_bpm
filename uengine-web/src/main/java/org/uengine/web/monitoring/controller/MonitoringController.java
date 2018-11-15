@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 
 
 
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -121,19 +122,39 @@ public class MonitoringController {
 	@RequestMapping(value="/monitoring/processingstatusbytask", method = RequestMethod.POST)
 	@ResponseBody
 	public JSONObject getProcessingStatusByTaskData(HttpServletRequest request) throws Exception{
+		@SuppressWarnings("unchecked")
 		Map<String, String> map = new HashedMap();
-		System.out.println("partCode: " + request.getParameter("partCode"));
+
 		if(UEngineUtil.isNotEmpty(request.getParameter("partCode"))){
 			map.put("partCode", request.getParameter("partCode"));	
 		} 
 		if(UEngineUtil.isNotEmpty(request.getParameter("searchFromDate"))){
-			System.out.println("searchFromDate: " + request.getParameter("searchFromDate"));
 			map.put("searchFromDate", request.getParameter("searchFromDate"));	
 		} 
 		if(UEngineUtil.isNotEmpty(request.getParameter("searchToDate"))){
 			map.put("searchToDate", request.getParameter("searchToDate"));	
 		} 
         return (JSONObject)monitoringService.getProcessingStatusByTaskData(map);
+    }
+	
+	@RequestMapping(value="/monitoring/processingstatusbyuser", method = RequestMethod.POST)
+	@ResponseBody
+	public JSONObject getProcessingStatusByUserData(HttpServletRequest request) throws Exception{
+		System.out.println("partCode: " + request.getParameter("partCode"));
+		System.out.println("searchFromDate: " + request.getParameter("searchFromDate"));
+		System.out.println("searchToDate: " + request.getParameter("searchToDate"));
+		@SuppressWarnings("unchecked")
+		Map<String, String> map = new HashedMap();
+		if(UEngineUtil.isNotEmpty(request.getParameter("partCode"))){
+			map.put("partCode", request.getParameter("partCode"));	
+		} 
+		if(UEngineUtil.isNotEmpty(request.getParameter("searchFromDate"))){
+			map.put("searchFromDate", request.getParameter("searchFromDate"));	
+		} 
+		if(UEngineUtil.isNotEmpty(request.getParameter("searchToDate"))){
+			map.put("searchToDate", request.getParameter("searchToDate"));	
+		} 
+        return (JSONObject)monitoringService.getProcessingStatusByUserData(map);
     }
 	
 	@RequestMapping(value="/monitoring/combovaluelist/{comCode}", method = RequestMethod.POST)

@@ -66,5 +66,47 @@
 			GROUP BY INST.DEFNAME, DATE_FORMAT(INST.FINISHEDDATE,'%Y-%m-%d %H:%i:%s');
         ]]>
     </select>
-     
+    <select id="selectProcessingStatusByTask" resultType="MonitoringVO" parameterType="hashmap">
+        <![CDATA[
+		SELECT 
+			part.partname,
+			def.path,
+			COALESCE(FORMAT(AVG(DATEDIFF(finisheddate,starteddate)+1),0),0) AS workingDayAVG,
+			COALESCE(MIN(DISTINCT(DATEDIFF(finisheddate,starteddate)+1)),0) AS workingDayMIN,
+			COALESCE(MAX(DISTINCT(DATEDIFF(finisheddate,starteddate)+1)),0) AS workingDayMAX,
+			COUNT(1) AS totalCOUNT
+		FROM bpm_procinst inst
+		INNER JOIN 
+			(SELECT hi.defid, hierarchy_sys_connect_by_pathname('>', hi.defid) AS path
+			FROM (
+				SELECT  defid, CAST(@level AS SIGNED) AS level
+				FROM (
+						SELECT  @start_with := -1,
+								@idx := @start_with,
+								@level := 0
+						) vars, bpm_procdef
+				WHERE @idx IS NOT NULL AND isdeleted=0
+				) ho 
+		JOIN bpm_procdef hi ON hi.defid = ho.defid AND hi.isdeleted = 0 AND objtype = 'process') def ON inst.defid = def.defid
+		INNER JOIN emptable emp ON emp.empcode = inst.initep AND emp.isdeleted = 0
+		INNER JOIN parttable part ON part.partcode = emp.partcode AND part.isdeleted = 0
+		WHERE inst.status = 'Completed'
+			AND inst.isdeleted = 0
+			AND inst.issubprocess = 0
+		]]>
+		<if test="partCode != null">
+        <![CDATA[                                               
+			AND part.partcode = #{partCode}          
+		]]>
+        </if>	
+		<if test="searchFromDate != null and searchToDate != null">
+        <![CDATA[                                               
+			AND #{searchFromDate} <= DATE_FORMAT(finisheddate,'%Y-%m-%d') AND DATE_FORMAT(finisheddate,'%Y-%m-%d') <= #{searchToDate}  
+		]]>
+        </if>
+         <![CDATA[  
+		GROUP BY part.partname, inst.defname
+		order by def.path
+		]]>
+	</select>
 </mapper>

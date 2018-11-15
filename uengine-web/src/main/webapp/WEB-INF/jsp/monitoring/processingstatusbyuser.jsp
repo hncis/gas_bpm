@@ -2,8 +2,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -25,47 +23,7 @@
 .f1f1c1-color{background-color: #f1f1c1;}
 
 </style>
-
 <script>
-var barChartData = {
-		labels: ['황제성', '김명민', '박주영', '차용인', '이재성'],
-		datasets: [{
-			label: '<spring:message code="menu.monitoring.column.handingnumber" />',
-			backgroundColor: window.chartColors.red,
-			stack: 'Stack 0',
-			data: [
-				10,
-				9,
-				6,
-				15,
-				10
-			]
-		}, {
-			label: '<spring:message code="menu.monitoring.column.averhandingnumber" />',
-			backgroundColor: window.chartColors.blue,
-			stack: 'Stack 1',
-			data: [
-				5,
-				5,
-				5,
-				5,
-				5
-			]
-		}, {
-			label: '<spring:message code="menu.monitoring.column.delaynumber" />',
-			backgroundColor: window.chartColors.green,
-			stack: 'Stack 2',
-			data: [
-				0,
-				0,
-				0,
-				0,
-				2
-			]
-		}]
-
-	};
-  
   var getComboBoxData =  function(){
 	  //'demo'
 	  $.ajax({
@@ -83,6 +41,120 @@ var barChartData = {
 	            alert('There is an error : method(group)에 에러가 있습니다.');
 	        }
 		});
+  }
+  var drawProcessingstatusbyuserWindow = function(){
+	  var inputPartCode = $("#department option:selected").val();
+	  console.log("inputPartCode: " + inputPartCode);
+	  if(inputPartCode == "select"){
+		alert("부서를 선택하여 주세요");
+	  	return;
+	  }
+	  $("#partCode").val(inputPartCode);
+	  $("#searchFromDate").val($("#init_start_date").val());
+	  $("#searchToDate").val($("#init_end_date").val());
+	  var sendData = $("#processingstatusbytask").serialize();
+	  $.ajax({
+			type : "POST",
+			data : sendData,
+			url : contextPath+"/monitoring/processingstatusbyuser",
+			cache : false,
+			dataType : "JSON",
+			success : function(result) {
+				makeEmpColumnChart((result.data[0]), "chart");
+				makeTable((result.data[1]).tableData, inputPartCode);
+				console.log((result.data[1]).tableData, inputPartCode);
+	        },
+	        error : function(XMLHttpRequest, textStatus, errorThrown) {
+	            alert('There is an error : method(group)에 에러가 있습니다.');
+	        }
+		});
+  }
+  var makeEmpColumnChart =  function(data, chartName){
+	  $("#wholeWindow").empty();
+	  $("#wholeWindow").prepend("<div id='chart'></div>");
+	  var container = document.getElementById(chartName);
+	  var options = {
+	      chart: {
+	          width: 500,
+	          height: 300,
+	          title: '<spring:message code="menu.monitoring.content.psbu" />'
+	      },
+	      yAxis: {
+	          title: '<spring:message code="menu.count.label" />',
+	          min: 0
+	          
+	      },
+	      xAxis: {
+	          title: '<spring:message code="menu.monitoring.column.user" />'
+	      },
+	      legend: {
+	          align: 'top'
+	      }
+	  };
+	  tui.chart.columnChart(container, data, options);
+  }
+  var makeTable = function(data, partCode){
+	  $("#dataListTbody").empty();
+	  $("#dataListTbody").prepend("<tr id='dataList'></tr>");
+	  if (data.length != 0 ) {
+		  for(eachObject in data){
+			  var makeTr = document.createElement("tr");		  
+			  if(eachObject == 0){
+				  var makePartNameTd = document.createElement("td");
+				  makePartNameTd.rowSpan = data.length;
+				  makePartNameTd.style.verticalAlign = 'middle';
+				  makePartNameTd.style.borderBottom = '1px solid #E0E0E0';
+				  makePartNameTd.innerHTML = partCode;
+				  makeTr.appendChild(makePartNameTd);
+			  }
+			 
+			  var makeNameTd = document.createElement("td");
+			  makeNameTd.innerHTML = data[eachObject].name;
+			  makeNameTd.style.borderBottom = '1px solid #E0E0E0';
+			  var makePassedCountTd = document.createElement("td");
+			  makePassedCountTd.className = "center-ui";
+			  makePassedCountTd.innerHTML = data[eachObject].passedCount;
+			  makePassedCountTd.style.borderBottom = '1px solid #E0E0E0';
+			  var makePassedDayAVGTd = document.createElement("td");
+			  makePassedDayAVGTd.className = "center-ui";
+			  makePassedDayAVGTd.innerHTML = data[eachObject].passedDayAVG;
+			  makePassedDayAVGTd.style.borderBottom = '1px solid #E0E0E0';
+			  var makeDelayedDayAVG = document.createElement("td");
+			  makeDelayedDayAVG.className = "center-ui";
+			  makeDelayedDayAVG.innerHTML = data[eachObject].delayedDayAVG;
+			  makeDelayedDayAVG.style.borderBottom = '1px solid #E0E0E0';
+			  makeTr.appendChild(makeNameTd);
+			  makeTr.appendChild(makePassedCountTd);
+			  makeTr.appendChild(makePassedDayAVGTd);
+			  makeTr.appendChild(makeDelayedDayAVG);
+			  $("#dataList").before(makeTr);
+		  } 
+	  } else {
+		  var makeTr = document.createElement("tr");
+		  var nullPointTd = document.createElement("td");
+		  nullPointTd.colSpan = 5;
+		  nullPointTd.style.verticalAlign = 'middle';
+		  nullPointTd.style.border = '1px solid #E0E0E0';
+		  nullPointTd.className = "center-ui";
+		  nullPointTd.innerHTML = "데이터가 존재하지 않습니다";
+		  makeTr.appendChild(nullPointTd);
+		  $("#dataList").before(makeTr);
+	  }
+	  
+  }
+  
+  function initSetting(){
+	  $("#dataListTbody").empty();
+	  $("#dataListTbody").prepend("<tr id='dataList'></tr>");
+	  var makeTr = document.createElement("tr");
+	  var initTd = document.createElement("td");
+	  initTd.colSpan = 5;
+	  initTd.style.verticalAlign = 'middle';
+	  initTd.style.border = '1px solid #E0E0E0';
+	  initTd.className = "center-ui";
+	  initTd.innerHTML = "부서를 선택하세요";
+	  makeTr.appendChild(initTd);
+	  $("#dataList").before(makeTr);
   }
   
   $( function() {
@@ -103,8 +175,6 @@ var barChartData = {
 	    });
 	  $("#init_end_date").val($.datepicker.formatDate('yy-mm-dd', new Date()));
 	  setDate(1, 'week');
-	  
-	  
 	  $("#btnExcelExport").click(function (e) {
 		  var uri = $("#dvData").excelexportjs({
 			    containerid: "dvData" 
@@ -113,39 +183,15 @@ var barChartData = {
 			  , returnUri: true
 			  , worksheetName: '<spring:message code="menu.monitoring.content.psbu" />'
 			  });    
-		
 		$(this).attr('download', '<spring:message code="menu.monitoring.content.psbu" />.xls').attr('href', uri);
 		});
-	  
 	  $("#btnWordExport").click(function (e) {
-		  $("#page-content").wordExport();
-	  })
-	  
-	  
-	  var ctx = document.getElementById('canvas').getContext('2d');
-		window.myBar = new Chart(ctx, {
-			type: 'bar',
-			data: barChartData,
-			options: {
-				title: {
-					display: true,
-					text: '<spring:message code="menu.monitoring.content.psbu" />'
-				},
-				tooltips: {
-					mode: 'index',
-					intersect: false
-				},
-				responsive: true,
-				scales: {
-					xAxes: [{
-						stacked: true,
-					}],
-					yAxes: [{
-						stacked: true
-					}]
-				}
-			}
-		});
+		  $("#tableList").wordExport();
+	  });
+	  $("#searchButton").click(function (e){
+		  drawProcessingstatusbyuserWindow();
+	  });
+	  initSetting();
   } );
   
   function setDate(num, type){
@@ -187,7 +233,7 @@ var barChartData = {
                 <td style=" padding-top: 10px; padding-bottom: 10px;"><spring:message code="partname.label" /></td>
                 <td>
 		<select name="department" id="department" style="height: 21.979166px;" >
-		<option value="all"><spring:message code="menu.all.label" /></option>
+		<option value="select"><spring:message code="menu.select.label" /></option>
 		</select></td>
             </tr>
             <tr bgcolor="#b9cae3"><td colspan="4" height="1"></td></tr>
@@ -207,64 +253,38 @@ var barChartData = {
 	        		<img  src="<c:url value='/resources/images/icons/microsoft-word.svg' />" width="18" height="20" border="0">
 	        	</a>
 	        	
-	        	<button style="background-color: #F5F5F5; margin-left: 60px;" ><img src="<c:url value='/resources/images/icons/Search.svg' />" align="absmiddle" width="18" height="20" border="0"><spring:message code="menu.monitoring.label.search" /></button>
-	        </td>
-
+	        	<button id="searchButton" style="background-color: #F5F5F5; margin-left: 60px;" ><img src="<c:url value='/resources/images/icons/Search.svg' />" align="absmiddle" width="18" height="20" border="0"><spring:message code="menu.monitoring.label.search" /></button>
+	        	</td>
             </tr>
-            
             <tr>
                 <td colspan="5" bgcolor="#97aac6" height="2"></td>
             </tr>
         </table>
 </div>
 <div id="page-content">
-<div style="width: 50%; margin:auto;">
-		<canvas id="canvas"></canvas>
+<div id="wholeWindow" style="width: 50%; margin:auto;">
+		<div id='chart'></div>
 	</div>
-<div class="container-fluid" style="width:100%; padding-top: 30px;  ">
-<table id="dvData" class="table" style="width:100%; border:1px solid #E0E0E0;">
-  <tr>
-    <th class="center-ui f1f1c1-color"  colspan="2"><spring:message code="menu.monitoring.column.user" /></th>
-    <th class="center-ui f1f1c1-color"><spring:message code="menu.monitoring.column.handingnumber" /></th>
-    <th class="center-ui f1f1c1-color"><spring:message code="menu.monitoring.column.averhandingnumber" /></th>
-    <th class="center-ui f1f1c1-color"><spring:message code="menu.monitoring.column.delaynumber" /></th>
-  </tr>
-  <tr>
-    <td rowspan="5" style="vertical-align: middle; border: 1px solid #E0E0E0;">도시개발과</td>
-    <td>황재성</td>
-    <td class="center-ui">10</td>
-    <td class="center-ui">5</td>
-    <td class="center-ui">-</td>
-  </tr>
-  <tr>
-    <td>김명민</td>
-    <td class="center-ui">9</td>
-    <td class="center-ui">5</td>
-    <td class="center-ui">-</td>
-  </tr>
-  <tr>
-    <td>박주영</td>
-    <td class="center-ui">6</td>
-    <td class="center-ui">5</td>
-    <td class="center-ui">-</td>
-  </tr>
-  <tr>
-    <td>차용인</td>
-    <td class="center-ui">15</td>
-    <td class="center-ui">5</td>
-    <td class="center-ui">-</td>
-  </tr>
-  <tr>
-    <td>이재성</td>
-    <td class="center-ui">10</td>
-    <td class="center-ui">5</td>
-    <td class="center-ui" style="color: red;">2</td>
-  </tr>
-  
-   
+<div id="tableList" class="container-fluid" style="width:100%; padding-top: 30px;  ">
+<table id="dvData" class="table" style="width:100%; border-top:1px solid #E0E0E0; border-collapse: collapse;">
+  <tbody style="border-top:1px solid #E0E0E0;">
+    <tr>
+      <th class="center-ui f1f1c1-color"  colspan="2"><spring:message code="menu.monitoring.column.user" /></th>
+      <th class="center-ui f1f1c1-color"><spring:message code="menu.monitoring.column.handingnumber" /></th>
+      <th class="center-ui f1f1c1-color"><spring:message code="menu.monitoring.column.averhandingnumber" /></th>
+      <th class="center-ui f1f1c1-color"><spring:message code="menu.monitoring.column.delaynumber" /></th>
+    </tr>
+  </tbody>
+  <tbody id="dataListTbody" style="border-top:1px solid #E0E0E0;">
+  </tbody>
 </table>
 </div>
 </div>
+<form name="processingstatusbytask" id="processingstatusbytask" method="post" action="">
+	<input type="hidden" name="partCode" id="partCode">
+	<input type="hidden" name="searchFromDate" id="searchFromDate">
+	<input type="hidden" name="searchToDate" id="searchToDate">
+</form>
 </body>
 
 </html>

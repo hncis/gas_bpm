@@ -95,4 +95,25 @@
 		GROUP BY part.partname, def.path
 		]]>
 	</select>
+	<select id="selectprocessingstatusbyuser" resultType="MonitoringVO" parameterType="hashmap">
+	<![CDATA[ 
+		SELECT 
+			emp.empname,
+			NVL(COUNT(DISTINCT CASE WHEN duedate > finisheddate THEN inst.instid END),0) AS passedCOUNT ,
+			CASE WHEN ROUND(AVG((finisheddate-starteddate)+1),0) < 0 THEN 0 ELSE NVL(ROUND(AVG((finisheddate-starteddate)+1),0),0) END  AS passedDayAVG,
+			NVL(COUNT(DISTINCT CASE WHEN duedate <= finisheddate THEN inst.instid END),0) AS delayedCOUNT
+		FROM
+			bpm_procinst inst
+			INNER JOIN bpm_rolemapping rm ON rm.rootinstid = inst.instid 
+			INNER JOIN emptable emp ON emp.empcode = rm.endpoint AND emp.isdeleted = 0
+			INNER JOIN parttable part ON part.partcode = emp.partcode AND part.isdeleted = 0
+		WHERE
+			status = 'Completed'
+			AND inst.isdeleted = 0
+			AND inst.issubprocess = 0
+			AND part.partcode = #{partCode}			         			                                               
+			AND #{searchFromDate} <= TO_CHAR(finisheddate,'YYYY-MM-DD') AND TO_CHAR(finisheddate,'YYYY-MM-DD') <= #{searchToDate}  
+			GROUP BY emp.empname
+		]]>
+		</select>
 </mapper>
