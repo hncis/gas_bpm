@@ -467,6 +467,32 @@ CREATE TABLE IF NOT EXISTS `schedule_table` (
   `STARTDATE` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+delimiter $$
+CREATE FUNCTION hierarchy_sys_connect_by_pathname(delimiter TEXT, node INT) RETURNS TEXT
+NOT DETERMINISTIC
+READS SQL DATA
+BEGIN
+	DECLARE _path TEXT;
+	DECLARE _id INT;
+	DECLARE _name TEXT;
+	DECLARE EXIT HANDLER FOR NOT FOUND RETURN _path;
+	SET _id = COALESCE(node, @id);
+	-- SET _name = COALESCE(nodename, @name);
+SET _name = @name;
+SET _path = _name;
+LOOP
+	SELECT  parentfolder, name
+	INTO    _id, _name
+	FROM    bpm_procdef
+	WHERE   defid = _id
+	AND parentfolder <> -1
+	AND COALESCE(defid <> @start_with, TRUE);
+	SET _path = CONCAT(_name, IF(_path='','',delimiter), _path);
+  END LOOP;
+END
+$$
+delimiter ;
+
 -- 테이블 데이터 uengine4.schedule_table:~0 rows (대략적) 내보내기
 /*!40000 ALTER TABLE `schedule_table` DISABLE KEYS */;
 /*!40000 ALTER TABLE `schedule_table` ENABLE KEYS */;
