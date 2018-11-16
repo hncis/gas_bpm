@@ -1,6 +1,8 @@
 package com.hncis.controller.businessVehicles;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +48,10 @@ import com.hncis.pickupService.vo.BgabGascps01Dto;
 
 @Controller
 public class BusinessVehiclesController extends AbstractController{
+
+	private static final String strStart = "Start time : ";
+	private static final String strEnd = "End time : ";
+	private static final String strDateFormat = "yyyy-MM-dd HH:mm:ss.SSS";
 
 	@Autowired
     @Qualifier("businessVehiclesManagerImpl")
@@ -189,6 +195,10 @@ public class BusinessVehiclesController extends AbstractController{
 	public ModelAndView doInsertPsToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson" , required=true) String paramJson
 			) throws Exception{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
 
 		CommonMessage message = new CommonMessage();
 
@@ -208,6 +218,11 @@ public class BusinessVehiclesController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -263,6 +278,10 @@ public class BusinessVehiclesController extends AbstractController{
 	public ModelAndView doDeletePsToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson" , required=true) String paramJson
 			) throws Exception{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
 
 		CommonMessage message = new CommonMessage();
 
@@ -276,6 +295,11 @@ public class BusinessVehiclesController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -289,6 +313,11 @@ public class BusinessVehiclesController extends AbstractController{
 	@RequestMapping(value="/hncis/businessVehicles/doApproveBvToRequest.do")
 	public ModelAndView doApprovePsToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson" , required=true) String paramJson) throws Exception{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 
 		CommonMessage message = new CommonMessage();
 		BgabGascbv02Dto regDto = (BgabGascbv02Dto) getJsonToBean(paramJson, BgabGascbv02Dto.class);
@@ -300,6 +329,11 @@ public class BusinessVehiclesController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -313,6 +347,11 @@ public class BusinessVehiclesController extends AbstractController{
 	@RequestMapping(value="/hncis/businessVehicles/doApproveCancelBvToRequest.do")
 	public ModelAndView doApproveCancelPcToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson", required=true) String paramJson)throws HncisException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		BgabGascbv02Dto regDto = (BgabGascbv02Dto) getJsonToBean(paramJson, BgabGascbv02Dto.class);
@@ -326,6 +365,11 @@ public class BusinessVehiclesController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -341,6 +385,11 @@ public class BusinessVehiclesController extends AbstractController{
 	public ModelAndView doConfirmPsToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson" , required=true) String paramJson) throws Exception{
 
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 
 		BgabGascbv02Dto dto = (BgabGascbv02Dto) getJsonToBean(paramJson, BgabGascbv02Dto.class);
 
@@ -359,6 +408,11 @@ public class BusinessVehiclesController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -373,6 +427,11 @@ public class BusinessVehiclesController extends AbstractController{
 	@RequestMapping(value="/hncis/businessVehicles/doRejectBvToRequest.do")
 	public ModelAndView doRejectBvToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson" , required=true) String paramJson) throws Exception{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 
 		BgabGascbv02Dto dto = (BgabGascbv02Dto) getJsonToBean(paramJson, BgabGascbv02Dto.class);
 
@@ -390,6 +449,11 @@ public class BusinessVehiclesController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}

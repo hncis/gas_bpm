@@ -1,5 +1,7 @@
 package com.hncis.controller.roomsMeals;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +38,9 @@ import com.hncis.roomsMeals.vo.BgabGascrm04Dto;
 
 @Controller
 public class RoomsMealsController  extends AbstractController{
+	private static final String strStart = "Start time : ";
+	private static final String strEnd = "End time : ";
+	private static final String strDateFormat = "yyyy-MM-dd HH:mm:ss.SSS";
 
 	@Autowired
     @Qualifier("roomsMealsManagerImpl")
@@ -175,6 +180,11 @@ public class RoomsMealsController  extends AbstractController{
 	public ModelAndView doSaveRmToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson" , required=true) String paramJson
 			) throws Exception{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		CommonMessage message = new CommonMessage();
 
 		BgabGascrm01Dto dto = (BgabGascrm01Dto) getJsonToBean(paramJson, BgabGascrm01Dto.class);
@@ -195,6 +205,11 @@ public class RoomsMealsController  extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -210,6 +225,11 @@ public class RoomsMealsController  extends AbstractController{
 	public ModelAndView doDeleteRmToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson" , required=true) String paramJson
 			) throws Exception{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 
 		CommonMessage message = new CommonMessage();
 		BgabGascrm01Dto dto = (BgabGascrm01Dto) getJsonToBean(paramJson, BgabGascrm01Dto.class);
@@ -220,6 +240,11 @@ public class RoomsMealsController  extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -310,6 +335,10 @@ public class RoomsMealsController  extends AbstractController{
 	@RequestMapping(value="/hncis/roomsMeals/doApproveRmToRequest.do")
 	public ModelAndView doApprovePsToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson" , required=true) String paramJson) throws Exception{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
 
 		CommonMessage message = new CommonMessage();
 		BgabGascrm01Dto dto = (BgabGascrm01Dto) getJsonToBean(paramJson, BgabGascrm01Dto.class);
@@ -320,6 +349,11 @@ public class RoomsMealsController  extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -333,6 +367,11 @@ public class RoomsMealsController  extends AbstractController{
 	@RequestMapping(value="/hncis/roomsMeals/doApproveCancelRmToRequest.do")
 	public ModelAndView doApproveCancelPcToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson", required=true) String paramJson)throws HncisException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		BgabGascrm01Dto regDto = (BgabGascrm01Dto) getJsonToBean(paramJson, BgabGascrm01Dto.class);
@@ -343,6 +382,11 @@ public class RoomsMealsController  extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}

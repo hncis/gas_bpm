@@ -1,7 +1,9 @@
 package com.hncis.controller.security;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +48,9 @@ import com.hncis.security.vo.BgabGascse06;
 
 @Controller
 public class SecurityController extends AbstractController{
+	private static final String strStart = "Start time : ";
+	private static final String strEnd = "End time : ";
+	private static final String strDateFormat = "yyyy-MM-dd HH:mm:ss.SSS";
 
 	@Autowired
 	@Qualifier("securityManagerImpl")
@@ -62,6 +67,11 @@ public class SecurityController extends AbstractController{
 	@RequestMapping(value="/hncis/security/doInsertSecurityRequestVehicle.do")
 	public ModelAndView doInsertSecurityRequestVehicle(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson", required=true) String paramJson)throws HncisException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssSSS"); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info("Start time : " + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		List<BgabGascse01> paramList = (List<BgabGascse01>)getJsonToList(paramJson, BgabGascse01.class);
@@ -93,6 +103,11 @@ public class SecurityController extends AbstractController{
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
 
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssSSS"); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info("End time : " + strDT);
+		
 		return modelAndView;
 	}
 
@@ -235,6 +250,12 @@ public class SecurityController extends AbstractController{
 	@RequestMapping(value="/hncis/security/doInsertSecurityRequestDevices.do")
 	public ModelAndView doInsertSecurityRequestDevices(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson", required=true) String paramJson)throws HncisException{
+		
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssSSS"); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info("Start time : " + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		List<BgabGascse03> paramList = (List<BgabGascse03>)getJsonToList(paramJson, BgabGascse03.class);
@@ -267,6 +288,11 @@ public class SecurityController extends AbstractController{
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
 
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssSSS"); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info("End time : " + strDT);
+		
 		return modelAndView;
 	}
 
@@ -410,6 +436,11 @@ public class SecurityController extends AbstractController{
 	@RequestMapping(value="/hncis/security/doApproveSecurityRequest.do")
 	public ModelAndView doApproveSecurityRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="bsicInfo", required=true) String paramJson)throws HncisException, SessionException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		CommonApproval appInfo = new CommonApproval();
@@ -422,6 +453,11 @@ public class SecurityController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -433,6 +469,11 @@ public class SecurityController extends AbstractController{
 	@RequestMapping(value="/hncis/security/doApproveCancelSecurityRequest.do")
 	public ModelAndView doApproveCancelSecurityRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="bsicInfo", required=true) String paramJson)throws HncisException, SessionException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		CommonApproval appInfo = new CommonApproval();
@@ -447,6 +488,11 @@ public class SecurityController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -898,6 +944,11 @@ public class SecurityController extends AbstractController{
 	@RequestMapping(value="/hncis/security/doInsertSecurityRequestEntrance.do")
 	public ModelAndView doInsertSecurityRequestEntrance(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson", required=true) String paramJson)throws HncisException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssSSS"); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info("Start time : " + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		List<BgabGascse06> paramList = (List<BgabGascse06>)getJsonToList(paramJson, BgabGascse06.class);
@@ -930,6 +981,11 @@ public class SecurityController extends AbstractController{
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
 
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssSSS"); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info("End time : " + strDT);
+		
 		return modelAndView;
 	}
 
@@ -940,6 +996,11 @@ public class SecurityController extends AbstractController{
 	@RequestMapping(value="/hncis/security/doDeleteSecurityRequestEntrance.do")
 	public ModelAndView doDeleteSecurityRequestEntrance(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson", required=true) String paramJson)throws HncisException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		List<BgabGascse06> paramList = (List<BgabGascse06>)getJsonToList(paramJson, BgabGascse06.class);
@@ -953,6 +1014,11 @@ public class SecurityController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}

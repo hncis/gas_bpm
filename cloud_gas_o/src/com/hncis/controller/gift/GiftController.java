@@ -1,6 +1,8 @@
 package com.hncis.controller.gift;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +46,10 @@ import com.hncis.training.vo.BgabGasctr01;
 
 @Controller
 public class GiftController extends AbstractController{
+
+	private static final String strStart = "Start time : ";
+	private static final String strEnd = "End time : ";
+	private static final String strDateFormat = "yyyy-MM-dd HH:mm:ss.SSS";
 
 	@Autowired
 	@Qualifier("giftManagerImpl")
@@ -219,6 +225,11 @@ public class GiftController extends AbstractController{
 	public ModelAndView doInsertGfToGift(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson" , required=true) String paramJson
 			) throws Exception{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		BgabGascgf02Dto dto = (BgabGascgf02Dto) getJsonToBean(paramJson, BgabGascgf02Dto.class);
 		dto.setIpe_eeno(SessionInfo.getSess_empno(req));
 		dto.setUpdr_eeno(SessionInfo.getSess_empno(req));
@@ -229,6 +240,11 @@ public class GiftController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -266,6 +282,11 @@ public class GiftController extends AbstractController{
 	public ModelAndView doRequestGfToGift(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson" , required=true) String paramJson
 			) throws Exception{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		BgabGascgf02Dto dto = (BgabGascgf02Dto) getJsonToBean(paramJson, BgabGascgf02Dto.class);
 		dto.setIpe_eeno(SessionInfo.getSess_empno(req));
 		dto.setUpdr_eeno(SessionInfo.getSess_empno(req));
@@ -279,6 +300,11 @@ public class GiftController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -286,6 +312,11 @@ public class GiftController extends AbstractController{
 	@RequestMapping(value="/hncis/gift/doUpdateGfToRequestCancel.do")
 	public ModelAndView doUpdateGfToRequestCancel(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson" , required=true) String paramJson) throws Exception{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		BgabGascgf02Dto dto = (BgabGascgf02Dto) getJsonToBean(paramJson, BgabGascgf02Dto.class);
 		CommonMessage message = new CommonMessage();
 		CommonApproval appInfo = new CommonApproval();
@@ -297,6 +328,11 @@ public class GiftController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -312,6 +348,11 @@ public class GiftController extends AbstractController{
 	@RequestMapping(value="/hncis/gift/doConfirmGFToRequest.do")
 	public ModelAndView doConfirmGFToRequest(HttpServletRequest req, HttpServletResponse res, 
 			@RequestParam(value="uParams", required=true) String uParams)throws HncisException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 		
 		List<BgabGascgf02Dto> dtoList = (List<BgabGascgf02Dto>) getJsonToList(uParams, BgabGascgf02Dto.class);
@@ -325,6 +366,11 @@ public class GiftController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 		
 		return modelAndView;
 	}
@@ -341,6 +387,11 @@ public class GiftController extends AbstractController{
 	@RequestMapping(value="/hncis/gift/doRejectGFToRequest.do")
 	public ModelAndView doRejectGFToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="uParams", required=true) String uParams)throws HncisException, SessionException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		List<BgabGascgf02Dto> dtoList = (List<BgabGascgf02Dto>) getJsonToList(uParams, BgabGascgf02Dto.class);
@@ -354,6 +405,11 @@ public class GiftController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}

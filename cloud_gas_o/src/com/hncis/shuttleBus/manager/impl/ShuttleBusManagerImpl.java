@@ -1,7 +1,9 @@
 package com.hncis.shuttleBus.manager.impl;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -107,6 +109,7 @@ public class ShuttleBusManagerImpl implements ShuttleBusManager{
 
 	@Override
 	public int saveShuttleBusRequst(BgabGascsb01 param){
+		
 		int cnt = 0;
 		if("".equals(param.getHid_doc_no())){
 			cnt = shuttleBusDao.insertShuttleBusRequst(param);
@@ -128,6 +131,7 @@ public class ShuttleBusManagerImpl implements ShuttleBusManager{
 			
 			BpmApiUtil.sendSaveTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 		}
+		
 		return cnt;
 	}
 	

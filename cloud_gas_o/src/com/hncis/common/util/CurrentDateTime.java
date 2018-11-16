@@ -33,10 +33,10 @@ public final class CurrentDateTime {
 		//if(yy < 2000)   yyy = "19" + yy;
 		//else yyy = "" + yy;
 		yyy = "" + yy;
-		if(mo < 10) mmo = "0" + mo;
-		else mmo = "" + mo;
-		if(dd < 10) ddd = "0" + dd;
-		else ddd = "" + dd;
+		if(mo < 10){ mmo = "0" + mo;
+		}else{ mmo = "" + mo;}
+		if(dd < 10){ ddd = "0" + dd;
+		}else{ ddd = "" + dd;}
 
 		String addDate = "" + yyy + mmo + ddd;
 		return addDate;
@@ -56,10 +56,10 @@ public final class CurrentDateTime {
 		//if(yy < 2000)   yyy = "19" + yy;
 		//else yyy = "" + yy;
 		yyy = "" + yy;
-		if(mo < 10) mmo = "0" + mo;
-		else mmo = "" + mo;
-		if(dd < 10) ddd = "0" + dd;
-		else ddd = "" + dd;
+		if(mo < 10){ mmo = "0" + mo;
+		}else{ mmo = "" + mo;}
+		if(dd < 10){ ddd = "0" + dd;
+		}else{ ddd = "" + dd;}
 
 		String addDate = "" + yyy + "-" + mmo + "-" + ddd;
 		return addDate;
@@ -101,10 +101,10 @@ public final class CurrentDateTime {
 		//if(yy < 2000)   yyy = "19" + yy;
 		//else yyy = "" + yy;
 		yyy = "" + yy;
-		if(mo < 10) mmo = "0" + mo;
-		else mmo = "" + mo;
-		if(dd < 10) ddd = "0" + dd;
-		else ddd = "" + dd;
+		if(mo < 10){ mmo = "0" + mo;
+		}else{ mmo = "" + mo;}
+		if(dd < 10){ ddd = "0" + dd;
+		}else{ ddd = "" + dd;}
 
 		String addDate = "" + yyy + "/" + mmo + "/" + ddd;
 		return addDate;
@@ -139,10 +139,10 @@ public final class CurrentDateTime {
 		String ddd = null;
 		
 		yyy = "" + yy;
-		if(mo < 10) mmo = "0" + mo;
-		else mmo = "" + mo;
-		if(dd < 10) ddd = "0" + dd;
-		else ddd = "" + dd;
+		if(mo < 10){ mmo = "0" + mo;
+		}else{ mmo = "" + mo;}
+		if(dd < 10){ ddd = "0" + dd;
+		}else{ ddd = "" + dd;}
 
 		String addDate = "" + yyy + mmo + ddd;
 		return addDate;
@@ -178,23 +178,23 @@ public final class CurrentDateTime {
 		int new_yyyy=Integer.parseInt(yyyymm.substring(0,4));
 		int new_mm = Integer.parseInt(yyyymm.substring(4,6));
 
-		   if (new_mm==1) total_day=31;
+		   if (new_mm==1){ total_day=31;}
 		   else if(new_mm==2){
 			   if(((new_yyyy % 4 ==0) && (new_yyyy % 100 != 0)) || (new_yyyy % 400 == 0))
-				   total_day = 29;
+			   {   total_day = 29;}
 			   else
-				   total_day = 28;
+			   {   total_day = 28;}
 		   }
-		   else if(new_mm == 3) total_day = 31;
-		   else if(new_mm == 4) total_day = 30;
-		   else if(new_mm == 5) total_day = 31;
-		   else if(new_mm == 6) total_day = 30;
-		   else if(new_mm == 7) total_day = 31;
-		   else if(new_mm == 8) total_day = 31;
-		   else if(new_mm == 9) total_day = 30;
-		   else if(new_mm == 10) total_day = 31;
-		   else if(new_mm == 11) total_day = 30;
-		   else if(new_mm == 12) total_day = 31;
+		   else if(new_mm == 3){ total_day = 31;}
+		   else if(new_mm == 4){ total_day = 30;}
+		   else if(new_mm == 5){ total_day = 31;}
+		   else if(new_mm == 6){ total_day = 30;}
+		   else if(new_mm == 7){ total_day = 31;}
+		   else if(new_mm == 8){ total_day = 31;}
+		   else if(new_mm == 9){ total_day = 30;}
+		   else if(new_mm == 10){ total_day = 31;}
+		   else if(new_mm == 11){ total_day = 30;}
+		   else if(new_mm == 12){ total_day = 31;}
 
           return total_day;
           
@@ -216,8 +216,8 @@ public final class CurrentDateTime {
 		
 		Calendar cal = Calendar.getInstance();
 		int mo = cal.get(Calendar.MONTH) +1;
-		if(mo < 10) mmo = "0" + mo;
-		else mmo = "" + mo;
+		if(mo < 10) {mmo = "0" + mo;}
+		else {mmo = "" + mo;}
 		return mmo;
 		
 	}
@@ -243,8 +243,8 @@ public final class CurrentDateTime {
 			
 		String mmo = null;
 		
-		if(mo < 10) mmo = "0" + mo;
-		else mmo = "" + mo;
+		if(mo < 10) {mmo = "0" + mo;}
+		else{ mmo = "" + mo;}
 		
 		String addDate = "" + mmo ;
 		return addDate;
@@ -296,11 +296,11 @@ public final class CurrentDateTime {
 		String ddd = null;
 		
 		yyy = "" + yy;
-		if(mo < 10) mmo = "0" + mo;
-		else mmo = "" + mo;
+		if(mo < 10){ mmo = "0" + mo;}
+		else{ mmo = "" + mo;}
 		
-		if(dd < 10) ddd = "0" + dd;
-		else ddd = "" + dd;
+		if(dd < 10) {ddd = "0" + dd;}
+		else {ddd = "" + dd;}
 
 		String addDate = "" + yyy + mmo + ddd;
 		return addDate;
@@ -331,20 +331,20 @@ public final class CurrentDateTime {
 			String sss = null;
 			
 			yyy = "" + yy;
-			if(mo < 10) mmo = "0" + mo;
-			else mmo = "" + mo;
-			if(dd < 10) ddd = "0" + dd;
-			else ddd = "" + dd;
+			if(mo < 10){ mmo = "0" + mo;}
+			else {mmo = "" + mo;}
+			if(dd < 10){ ddd = "0" + dd;}
+			else {ddd = "" + dd;}
 	
 			String addDate = "" + yyy +"/"+ mmo +"/"+ ddd;
 	
-			if(hh < 10) hhh = "0" + hh;
-			else hhh = "" + hh;
-			if(mm < 10) mmm = "0" + mm;
-			else mmm = "" + mm;
-			if(ss < 10) sss = "0" + ss;
-			else sss = "" + ss;
-	
+			if(hh < 10){ hhh = "0" + hh;}
+			else{ hhh = "" + hh;}
+			if(mm < 10) {mmm = "0" + mm;}
+			else{ mmm = "" + mm;}
+			if(ss < 10) {sss = "0" + ss;}
+			else{ sss = "" + ss;
+			}
 			String addTime = "  " + hhh +":" + mmm +":" + sss;
 			addDate += addTime;
 	
@@ -399,12 +399,12 @@ public final class CurrentDateTime {
 		String mmm = null;
 		String sss = null;
 			
-		if(hh < 10) hhh = "0" + hh;
-		else hhh = "" + hh;
-		if(mm < 10) mmm = "0" + mm;
-		else mmm = "" + mm;
-		if(ss < 10) sss = "0" + ss;
-		else sss = "" + ss;
+		if(hh < 10){ hhh = "0" + hh;}
+		else{ hhh = "" + hh;}
+		if(mm < 10) {mmm = "0" + mm;}
+		else{ mmm = "" + mm;}
+		if(ss < 10) {sss = "0" + ss;}
+		else{ sss = "" + ss;}
 
 		String addTime = "" + hhh + mmm + sss;
 		return addTime;
@@ -467,9 +467,9 @@ public final class CurrentDateTime {
 		
 		try{
 			
-			if(Stdt.length() == 6) Stdt = Stdt + "01";	// 1날. YYYYMM
-			else if(Stdt.length() < 6) Stdt = CurrentDateTime.getDate();  //""
-			else if(Stdt.length() > 8) Stdt = Stdt.substring(0, 8);  // YYYYMMDDHHMM
+			if(Stdt.length() == 6) {Stdt = Stdt + "01";}	// 1날. YYYYMM
+			else if(Stdt.length() < 6) {Stdt = CurrentDateTime.getDate(); } //""
+			else if(Stdt.length() > 8) {Stdt = Stdt.substring(0, 8);}  // YYYYMMDDHHMM
 	
 			day = Integer.parseInt(Stdt.substring(6)); //DD 추출
 			Stdt = Stdt.substring(0, 6);		// YYYYMM 추출		
@@ -484,7 +484,7 @@ public final class CurrentDateTime {
 						year = Integer.parseInt(Stdt.substring(0, 4));
 						month = Integer.parseInt(Stdt.substring(4, 6));
 						if(month == 12){ month = 1; ++year; }
-						else ++month;
+						else {++month;}
 						day = 1;
 						Stdt = String.valueOf(year) + (month < 10? "0" : "") + month;
 						last_day = getMonthDays(Stdt);
@@ -499,7 +499,7 @@ public final class CurrentDateTime {
 						year = Integer.parseInt(Stdt.substring(0, 4));
 						month = Integer.parseInt(Stdt.substring(4, 6));
 						if(month == 1){ month = 12; --year; }
-						else --month;
+						else{ --month;}
 						Stdt = String.valueOf(year) + (month < 10? "0" : "") + month;
 						day = getMonthDays(Stdt);					
 					}							
@@ -541,7 +541,7 @@ public final class CurrentDateTime {
 		int days[] = new int[]{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 	
 		if ( ((year % 4 == 0) && !(year % 100 == 0))|| (year % 400 == 0) )
-			days[1] = 29;
+			{days[1] = 29;}
 		return days[month];
 	}
 // 기숙사용 수정	
@@ -588,10 +588,10 @@ public final class CurrentDateTime {
 		endt = "";
 		frdt = s_yyyymm;	
 	    i = month =  tmp = f_month =  e_month = 0;
-		if(frdt == null || frdt.length() < 6)  return 0;
+		if(frdt == null || frdt.length() < 6) { return 0;}
 		if(e_yyyymm == null || e_yyyymm.length() <  6)	
-			endt = CurrentDateTime.getDate().substring(0, 6);		
-		else endt = e_yyyymm;
+		{	endt = CurrentDateTime.getDate().substring(0, 6);		}
+		else{ endt = e_yyyymm;}
 		f_year = Integer.parseInt(frdt.substring(0, 4));
 		e_year = Integer.parseInt(endt.substring(0, 4));
 		f_month = Integer.parseInt(frdt.substring(4,6));
@@ -624,7 +624,7 @@ public final class CurrentDateTime {
 		String frdt, endt ;
 		int   year, month, day, sign;
 		
-		if(s_ymd == null || s_ymd.length() < 8)  return 0;
+		if(s_ymd == null || s_ymd.length() < 8) { return 0;}
 		if(e_ymd == null || e_ymd.length() <  8){
 			e_ymd = CurrentDateTime.getDate();
 		}
@@ -676,7 +676,7 @@ public final class CurrentDateTime {
 		
 		try{
 			if( Stdt.equals("") )
-				Stdt = CurrentDateTime.getDate().substring(0, 6);
+			{	Stdt = CurrentDateTime.getDate().substring(0, 6);}
 					
 			Year = Stdt.substring(0, 4);
 			Month = Stdt.substring(4, 6);
@@ -707,7 +707,7 @@ public final class CurrentDateTime {
 			Year = String.valueOf(year);
 			Month = String.valueOf(month);
 			if(Month.length() == 1)
-					Month = "0" + Month;		
+			{		Month = "0" + Month;		}
 			Stdt = Year + Month;
 			
 		}catch	(Exception e){
@@ -795,7 +795,7 @@ public final class CurrentDateTime {
 		
 		for (int i=1; i<13; i++){
 			strI = i + "";
-			if (i<10) strI = "0" + strI;
+			if (i<10) {strI = "0" + strI;}
 			strSelected = "";
 			if (currMonth.equals(strI)){
 				strSelected = "selected";
@@ -866,10 +866,10 @@ public final class CurrentDateTime {
 			String ddd = null;
 			
 			yyy = "" + yy;
-			if(mo < 10) mmo = "0" + mo;
-			else mmo = "" + mo;
-			if(dd < 10) ddd = "0" + dd;
-			else ddd = "" + dd;
+			if(mo < 10){ mmo = "0" + mo;}
+			else{ mmo = "" + mo;}
+			if(dd < 10) {ddd = "0" + dd;}
+			else{ ddd = "" + dd;}
 
 			String addDate = "" + yyy + mmo + ddd;
 			return addDate;
@@ -950,7 +950,7 @@ public final class CurrentDateTime {
 	
 	public static String dateConversionBr(String sValue){
 		
-		if (sValue.length() < 8 ) return sValue;
+		if (sValue.length() < 8 ){ return sValue;}
 		
 		String sResult = "";
 		

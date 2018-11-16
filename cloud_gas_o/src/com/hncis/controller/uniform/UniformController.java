@@ -1,5 +1,7 @@
 package com.hncis.controller.uniform;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +39,10 @@ import net.sf.json.JSONObject;
 
 @Controller
 public class UniformController extends AbstractController{
+
+	private static final String strStart = "Start time : ";
+	private static final String strEnd = "End time : ";
+	private static final String strDateFormat = "yyyy-MM-dd HH:mm:ss.SSS";
 
 	/** The uniform manager. - uniform 비지니스 로직 class*/
 	@Autowired
@@ -228,6 +234,11 @@ public class UniformController extends AbstractController{
 	@RequestMapping(value="/hncis/uniform/doRequestListToRequest.do")
 	public ModelAndView doRequestListToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="iParams", required=true) String iParams) throws HncisException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		//조회조건 설정
 		List<BgabGascaf01Dto> list = (List<BgabGascaf01Dto>) getJsonToList(iParams, BgabGascaf01Dto.class);
 
@@ -240,6 +251,11 @@ public class UniformController extends AbstractController{
 		//조회한 데이터를 string으로 해서 넣어줌.
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -312,6 +328,10 @@ public class UniformController extends AbstractController{
 	@RequestMapping(value="/hncis/uniform/doCancelRequestToList.do")
 	public ModelAndView doCancelRequestToList(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="dParams", required=true) String dParams) throws HncisException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
 		//조회조건 설정
 		List<BgabGascaf01Dto> dList = (List<BgabGascaf01Dto>) getJsonToList(dParams, BgabGascaf01Dto.class);
 
@@ -327,6 +347,11 @@ public class UniformController extends AbstractController{
 		//조회한 데이터를 string으로 해서 넣어줌.
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -456,6 +481,11 @@ public class UniformController extends AbstractController{
 	@RequestMapping(value="/hncis/uniform/doUpdateConfirmToConfirm.do")
 	public ModelAndView doUpdateConfirmToConfirm(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="uParams", required=true) String uParams) throws HncisException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		//조회조건 설정
 		List<BgabGascaf01Dto> uList = (List<BgabGascaf01Dto>) getJsonToList(uParams, BgabGascaf01Dto.class);
 
@@ -467,6 +497,11 @@ public class UniformController extends AbstractController{
 		//조회한 데이터를 string으로 해서 넣어줌.
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -847,6 +882,11 @@ public class UniformController extends AbstractController{
 	@RequestMapping(value="/hncis/uniform/doRejectListToComfirmList.do")
 	public ModelAndView doRejectListToComfirmList(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="uParams", required=true) String uParams) throws HncisException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		//조회조건 설정
 		List<BgabGascaf01Dto> dList = (List<BgabGascaf01Dto>) getJsonToList(uParams, BgabGascaf01Dto.class);
 
@@ -865,6 +905,11 @@ public class UniformController extends AbstractController{
 		//조회한 데이터를 string으로 해서 넣어줌.
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}

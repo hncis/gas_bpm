@@ -2419,36 +2419,26 @@ select MENU_LGRP_CD
 					WL.EXT1 AS CURRSTATUSCODE,
 					(SELECT TASK_CD FROM
 		              (SELECT 'RC' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCRC06$corp_cd$
+				      UNION
+				      SELECT 'UF' AS TASK_CD, to_char(doc_no||UNIF_TYPE_CD||UNIF_CLR_CD) as doc_no FROM BGAB_GASCAF01$corp_cd$ where doc_no is not null
+		              UNION                                            
+		              SELECT 'GF' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCGF02$corp_cd$ 
 		              UNION                                             
 		              SELECT 'BK' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCBK02$corp_cd$ 
 		              UNION                                            
-		              SELECT 'GS' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCGS03$corp_cd$ 
-		              UNION                                            
-		              SELECT 'FC' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCFC01$corp_cd$ 
-		              UNION                                            
-		              SELECT 'LV' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCLV01$corp_cd$ 
-		              UNION                                            
 		              SELECT 'TR' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCTR01$corp_cd$ 
 		              UNION                                            
-		              SELECT 'GF' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCGF02$corp_cd$ 
-		              UNION                                            
 		              SELECT 'FJ' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCFJ01$corp_cd$
-		              UNION                                            
-		              SELECT 'SC' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCSE01$corp_cd$ WHERE TYPE = '5'
-				      UNION
-				      SELECT 'PS' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCPS01$corp_cd$
-				      UNION
-				      SELECT 'TX' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCTX01$corp_cd$
-				      UNION
-				      SELECT 'PD' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCPD02$corp_cd$
-				      UNION
-				      SELECT 'BV' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCBV02$corp_cd$
 				      UNION
 				      SELECT 'BC' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCBA02$corp_cd$
-				      UNION
-				      SELECT 'VL' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCVL01$corp_cd$
+		              UNION                                            
+		              SELECT 'GS' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCGS03$corp_cd$ 
 				      UNION
 				      SELECT 'OS' AS TASK_CD, TO_CHAR(doc_no) AS doc_no FROM BGAB_GASCOS01$corp_cd$
+				      UNION
+				      SELECT 'SB' AS TASK_CD, TO_CHAR(doc_no) AS doc_no FROM BGAB_GASCSB01$corp_cd$
+				      UNION
+				      SELECT 'PD' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCPD02$corp_cd$
      				  UNION
 				      SELECT 'BT_1' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCBT01$corp_cd$
 				      WHERE DOM_ABRD_SCN_CD = 'PT001'
@@ -2456,15 +2446,25 @@ select MENU_LGRP_CD
 				      SELECT 'BT_2' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCBT01$corp_cd$
 				      WHERE DOM_ABRD_SCN_CD = 'PT002'
 				      UNION
-				      SELECT 'UF' AS TASK_CD, to_char(doc_no||UNIF_TYPE_CD||UNIF_CLR_CD) as doc_no FROM BGAB_GASCAF01$corp_cd$ where doc_no is not null
+				      SELECT 'PS' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCPS01$corp_cd$
+				      UNION
+				      SELECT 'TX' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCTX01$corp_cd$
+				      UNION
+				      SELECT 'BV' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCBV02$corp_cd$
+		              UNION                                            
+		              SELECT 'FC' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCFC01$corp_cd$ 
+				      UNION
+				      SELECT 'VL' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCVL01$corp_cd$
+		              UNION                                            
+		              SELECT 'SC' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCSE01$corp_cd$ WHERE TYPE = '5'
 		              UNION                                            
 		              /* SELECT 'IC' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCSE02$corp_cd$
 		              UNION */
 		              SELECT 'IC' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCSE02$corp_cd$
-				      UNION
-				      SELECT 'SB' AS TASK_CD, TO_CHAR(doc_no) AS doc_no FROM BGAB_GASCSB01$corp_cd$
 		              UNION                                            
-		              SELECT 'IM' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCSE04$corp_cd$)
+		              SELECT 'IM' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCSE04$corp_cd$
+		              UNION                                            
+		              SELECT 'LV' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCLV01$corp_cd$ )
 		              WHERE DOC_NO = INST.NAME) AS TASK_CD,
 					INST.INSTID AS INSTID
 				FROM

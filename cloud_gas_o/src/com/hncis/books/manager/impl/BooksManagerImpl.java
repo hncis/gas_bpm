@@ -1,12 +1,16 @@
 package com.hncis.books.manager.impl;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -22,11 +26,7 @@ import com.hncis.common.util.BpmApiUtil;
 import com.hncis.common.util.FileUtil;
 import com.hncis.common.util.StringUtil;
 import com.hncis.common.vo.BgabGascZ011Dto;
-import com.hncis.common.vo.CommonCode;
 import com.hncis.common.vo.CommonMessage;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 @Service("booksManagerImpl")
 public class BooksManagerImpl implements BooksManager{
@@ -70,6 +70,7 @@ public class BooksManagerImpl implements BooksManager{
 	
 	@Override
 	public CommonMessage updateBkToBookRequest(BgabGascbk02Dto dto) {
+		
 		CommonMessage message = new CommonMessage();
 		
 		String bpmSaveMsg="";
@@ -114,6 +115,7 @@ public class BooksManagerImpl implements BooksManager{
 			message.setMessage(HncisMessageSource.getMessage("APPLY.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
+		
 		return message;
 	}
 	

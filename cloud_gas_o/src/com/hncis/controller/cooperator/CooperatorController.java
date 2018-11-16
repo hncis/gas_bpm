@@ -1,5 +1,7 @@
 package com.hncis.controller.cooperator;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +30,9 @@ import com.hncis.cooperator.vo.BgabGascco02Dto;
 
 @Controller
 public class CooperatorController extends AbstractController{
+	private static final String strStart = "Start time : ";
+	private static final String strEnd = "End time : ";
+	private static final String strDateFormat = "yyyy-MM-dd HH:mm:ss.SSS";
 
 	@Autowired
 	@Qualifier("cooperatorManagerImpl")
@@ -54,6 +59,11 @@ public class CooperatorController extends AbstractController{
 			@RequestParam(value="bsicInfo", required=true) String bsicInfo,
 			@RequestParam(value="picInfo", required=true) String picInfo) throws HncisException, SessionException{
 
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		BgabGascco01Dto co01Dto = (BgabGascco01Dto) getJsonToBean(bsicInfo, BgabGascco01Dto.class);
 		List<BgabGascco02Dto> co02Dto = (List<BgabGascco02Dto>) getJsonToList(picInfo, BgabGascco02Dto.class);
 		
@@ -78,6 +88,11 @@ public class CooperatorController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -93,6 +108,11 @@ public class CooperatorController extends AbstractController{
 	@RequestMapping(value="/hncis/cooperator/doDeleteXcoToRequest.do")
 	public ModelAndView doDeleteXcoToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="bsicInfo", required=true) String bsicInfo) throws HncisException, SessionException{
+
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
 		
 		BgabGascco01Dto co01Dto = (BgabGascco01Dto) getJsonToBean(bsicInfo, BgabGascco01Dto.class);
 		co01Dto.setIpe_eeno(SessionInfo.getSess_empno(req));
@@ -112,6 +132,11 @@ public class CooperatorController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 		
 		return modelAndView;
 	}

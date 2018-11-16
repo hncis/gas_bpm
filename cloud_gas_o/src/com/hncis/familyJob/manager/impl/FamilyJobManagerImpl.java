@@ -1,12 +1,16 @@
 package com.hncis.familyJob.manager.impl;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -30,6 +34,7 @@ import com.hncis.familyJob.vo.BgabGascfj02Dto;
 
 @Service("familyJobManagerImpl")
 public class FamilyJobManagerImpl  implements FamilyJobManager{
+    private transient Log logger = LogFactory.getLog(getClass());
 
 	@Autowired
 	public FamilyJobDao familyJobDao;
@@ -87,6 +92,7 @@ public class FamilyJobManagerImpl  implements FamilyJobManager{
 	}
 
 	public int saveToFamilyJob(BgabGascfj01Dto vo){
+		
 		int cnt = 0;
 		if("".equals(vo.getHid_doc_no())){
 			cnt = familyJobDao.insertToFamilyJob(vo);
@@ -111,6 +117,7 @@ public class FamilyJobManagerImpl  implements FamilyJobManager{
 		}else{
 			cnt = familyJobDao.updateToFamilyJob(vo);
 		}
+		
 		return cnt;	
 	}
 	

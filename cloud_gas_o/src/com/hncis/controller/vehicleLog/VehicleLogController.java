@@ -1,5 +1,7 @@
 package com.hncis.controller.vehicleLog;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +38,10 @@ import com.hncis.vehicleLog.vo.BgabGascvl01Dto;
 @Controller
 public class VehicleLogController extends AbstractController{
 
+	private static final String strStart = "Start time : ";
+	private static final String strEnd = "End time : ";
+	private static final String strDateFormat = "yyyy-MM-dd HH:mm:ss.SSS";
+
 	@Autowired
     @Qualifier("vehicleLogManagerImpl")
 	private VehicleLogManager vehicleLogManager;
@@ -60,6 +66,11 @@ public class VehicleLogController extends AbstractController{
 	public ModelAndView doSaveXvl01Info(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson" , required=true) String paramJson
 			) throws Exception{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		BgabGascvl01Dto dto = (BgabGascvl01Dto) getJsonToBean(paramJson, BgabGascvl01Dto.class);
 		dto.setIpe_eeno(SessionInfo.getSess_empno(req));
 		dto.setUpdr_eeno(SessionInfo.getSess_empno(req));
@@ -70,6 +81,11 @@ public class VehicleLogController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -138,6 +154,11 @@ public class VehicleLogController extends AbstractController{
 	public ModelAndView doDeleteXvl01Info(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson" , required=true) String paramJson
 			) throws Exception{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		BgabGascvl01Dto dto = (BgabGascvl01Dto) getJsonToBean(paramJson, BgabGascvl01Dto.class);
 		dto.setIpe_eeno(SessionInfo.getSess_empno(req));
 		dto.setUpdr_eeno(SessionInfo.getSess_empno(req));
@@ -148,6 +169,11 @@ public class VehicleLogController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -270,6 +296,11 @@ public class VehicleLogController extends AbstractController{
 	@RequestMapping(value="/hncis/vehicleLog/doApproveVLToRequest.do")
 	public ModelAndView doApproveVLToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="bsicInfo", required=true) String paramJson)throws HncisException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		CommonMessage message = new CommonMessage();
@@ -282,6 +313,11 @@ public class VehicleLogController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -296,6 +332,11 @@ public class VehicleLogController extends AbstractController{
 	@RequestMapping(value="/hncis/vehicleLog/doApproveCancelVLToRequest.do")
 	public ModelAndView doApproveCancelVLToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="bsicInfo", required=true) String paramJson)throws HncisException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		CommonMessage message = new CommonMessage();
@@ -310,6 +351,11 @@ public class VehicleLogController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -325,6 +371,11 @@ public class VehicleLogController extends AbstractController{
 	@RequestMapping(value="/hncis/vehicleLog/doConfirmVLToRequest.do")
 	public ModelAndView doConfirmVLToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="bsicInfo", required=true) String paramJson)throws HncisException, SessionException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		CommonMessage message = new CommonMessage();
@@ -354,6 +405,11 @@ public class VehicleLogController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -369,6 +425,11 @@ public class VehicleLogController extends AbstractController{
 	@RequestMapping(value="/hncis/vehicleLog/doRejectVLToRequest.do")
 	public ModelAndView doRejectVLToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="bsicInfo", required=true) String paramJson)throws HncisException, SessionException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		BgabGascvl01Dto keyParamDto = (BgabGascvl01Dto) getJsonToBean(paramJson, BgabGascvl01Dto.class);
@@ -395,6 +456,11 @@ public class VehicleLogController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}

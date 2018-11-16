@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -63,6 +65,29 @@ import com.hncis.system.vo.BgabGascz035Dto;
 
 @Service("commonManagerImpl")
 public class CommonManagerImpl  implements CommonManager{
+    private transient Log logger = LogFactory.getLog(getClass());
+
+    private static final String str1 = "b_ptt_ymd";
+    private static final String str2 = "b_menu_type";
+    private static final String str3 = "b_menu_nm";
+    private static final String str4 = "k_ptt_ymd";
+    private static final String str5 = "k_menu_type";
+    private static final String str6 = "k_menu_knd";
+    private static final String str7 = "k_menu_ko_nm";
+    private static final String str8 = "k_menu_en_nm";
+    private static final String str9 = "k_menu_po_nm";
+    private static final String str10 = "xusr_empno";
+    private static final String str11 = "xorg_orga_c";
+    private static final String str12 = "lrg_cd";
+    private static final String str13 = "lrg_nm";
+    private static final String str14 = "lrg_sort";
+    private static final String str15 = "mrg_cd";
+    private static final String str16 = "mrg_nm";
+    private static final String str17 = "mrg_sort";
+    private static final String str18 = "false";
+    private static final String str19 = "EXCEL.0001";
+    private static final String str20 = "EXCEL.0004";
+    private static final String str21 = "admin";
 
 	@Autowired
 	public BooksDao booksDao;
@@ -126,7 +151,7 @@ public class CommonManagerImpl  implements CommonManager{
 
 	@Override
 	public BgabGascz002Dto getXusrInfo(BgabGascz002Dto bgabGascz002Dto){
-		System.out.println("getXusrInfo Debug01");
+		logger.info("getXusrInfo Debug01");
 		return commonJobDao.getXusrInfo(bgabGascz002Dto);
 	}
 
@@ -146,8 +171,8 @@ public class CommonManagerImpl  implements CommonManager{
 		session.setAttribute("reqLocale", userLocale);
 		session.setAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME, userLocale);
 		
-		System.out.println(session.getId());
-		System.out.println(session.getAttribute(Constant.SESSION_USER_KEY));
+		logger.info(session.getId());
+		logger.info(session.getAttribute(Constant.SESSION_USER_KEY));
 
 		/*
 		SessionUserInfo result = new SessionUserInfo();
@@ -331,20 +356,20 @@ public class CommonManagerImpl  implements CommonManager{
 						String[] excelKeyArr = null;
 						if("XST19A".equals(bgabGascZ011Dto.getUploadType())){
 							excelKeyArr = new String[3];
-							excelKeyArr[0] = "b_ptt_ymd";
-							excelKeyArr[1] = "b_menu_type";
-							excelKeyArr[2] = "b_menu_nm";
+							excelKeyArr[0] = str1;
+							excelKeyArr[1] = str2;
+							excelKeyArr[2] = str3;
 						}else if("XST19B".equals(bgabGascZ011Dto.getUploadType())){
 							excelKeyArr = new String[6];
-							excelKeyArr[0] = "k_ptt_ymd";
-							excelKeyArr[1] = "k_menu_type";
-							excelKeyArr[2] = "k_menu_knd";
-							excelKeyArr[3] = "k_menu_ko_nm";
-							excelKeyArr[4] = "k_menu_en_nm";
-							excelKeyArr[5] = "k_menu_po_nm";
+							excelKeyArr[0] = str4;
+							excelKeyArr[1] = str5;
+							excelKeyArr[2] = str6;
+							excelKeyArr[3] = str7;
+							excelKeyArr[4] = str8;
+							excelKeyArr[5] = str9;
 						}else if("XST01A".equals(bgabGascZ011Dto.getUploadType())){
 							excelKeyArr = new String[17];
-							excelKeyArr[0] = "xusr_empno";
+							excelKeyArr[0] = str10;
 							excelKeyArr[1] = "xusr_auth_knd";
 							excelKeyArr[2] = "xusr_name";
 							excelKeyArr[3] = "xusr_en_name";
@@ -363,7 +388,7 @@ public class CommonManagerImpl  implements CommonManager{
 							excelKeyArr[16] = "xusr_loc";
 						}else if("XST01B".equals(bgabGascZ011Dto.getUploadType())){
 							excelKeyArr = new String[9];
-							excelKeyArr[0]  = "xorg_orga_c";
+							excelKeyArr[0]  = str11;
 							excelKeyArr[1]  = "xorg_orga_e";
 							excelKeyArr[2]  = "xorg_orga_csner";
 							excelKeyArr[3]  = "xorg_clos_d";
@@ -374,12 +399,12 @@ public class CommonManagerImpl  implements CommonManager{
 							excelKeyArr[8] = "xorg_dept_lv";
 						}else if("XBK01".equals(bgabGascZ011Dto.getUploadType()) || "XGF01".equals(bgabGascZ011Dto.getUploadType())){
 							excelKeyArr = new String[6];
-							excelKeyArr[0]  = "lrg_cd";
-							excelKeyArr[1]  = "lrg_nm";
-							excelKeyArr[2]  = "lrg_sort";
-							excelKeyArr[3]  = "mrg_cd";
-							excelKeyArr[4]  = "mrg_nm";
-							excelKeyArr[5]  = "mrg_sort";
+							excelKeyArr[0]  = str12;
+							excelKeyArr[1]  = str13;
+							excelKeyArr[2]  = str14;
+							excelKeyArr[3]  = str15;
+							excelKeyArr[4]  = str16;
+							excelKeyArr[5]  = str17;
 						}
 
 						readExcel.setInputFile(result[2] + "/" + result[0]);
@@ -404,31 +429,31 @@ public class CommonManagerImpl  implements CommonManager{
 								BgabGascz019Dto       iXst19AData = new BgabGascz019Dto();
 								for(Map<String, String> excel : excelData){
 									iXst19AData = new BgabGascz019Dto();
-									if(StringUtil.isEmpty(excel.get("b_ptt_ymd"))){
+									if(StringUtil.isEmpty(excel.get(str1))){
 										errCnt++;
 										break;
 									}else{
-										if(excel.get("b_ptt_ymd").length() == 8){
-											iXst19AData.setB_ptt_ymd(excel.get("b_ptt_ymd").substring(4)+""+excel.get("b_ptt_ymd").substring(2,4)+""+excel.get("b_ptt_ymd").substring(0,2));
+										if(excel.get(str1).length() == 8){
+											iXst19AData.setB_ptt_ymd(excel.get(str1).substring(4)+""+excel.get(str1).substring(2,4)+""+excel.get(str1).substring(0,2));
 										}else{
 											errCnt++;
 											break;
 										}
 									}
-									if(StringUtil.isEmpty(excel.get("b_menu_type"))){
+									if(StringUtil.isEmpty(excel.get(str2))){
 										errCnt++;
 										break;
 									}else{
-										if(!"false".equals(excel.get("b_menu_type"))){
-											iXst19AData.setB_menu_type(excel.get("b_menu_type"));
+										if(!str18.equals(excel.get(str2))){
+											iXst19AData.setB_menu_type(excel.get(str2));
 										}
 									}
-									if(StringUtil.isEmpty(excel.get("b_menu_nm"))){
+									if(StringUtil.isEmpty(excel.get(str3))){
 										errCnt++;
 										break;
 									}else{
-										if(!"false".equals(excel.get("b_menu_nm"))){
-											iXst19AData.setB_menu_nm(excel.get("b_menu_nm"));
+										if(!str18.equals(excel.get(str3))){
+											iXst19AData.setB_menu_nm(excel.get(str3));
 										}
 									}
 									iXst19AList.add(iXst19AData);
@@ -444,56 +469,56 @@ public class CommonManagerImpl  implements CommonManager{
 								BgabGascz019Dto       iXst19BData = new BgabGascz019Dto();
 								for(Map<String, String> excel : excelData){
 									iXst19BData = new BgabGascz019Dto();
-									if(StringUtil.isEmpty(excel.get("k_ptt_ymd"))){
+									if(StringUtil.isEmpty(excel.get(str4))){
 										errCnt++;
 										break;
 									}else{
-										if(excel.get("k_ptt_ymd").length() == 8){
-											iXst19BData.setK_ptt_ymd(excel.get("k_ptt_ymd").substring(4)+""+excel.get("k_ptt_ymd").substring(2,4)+""+excel.get("k_ptt_ymd").substring(0,2));
+										if(excel.get(str4).length() == 8){
+											iXst19BData.setK_ptt_ymd(excel.get(str4).substring(4)+""+excel.get(str4).substring(2,4)+""+excel.get(str4).substring(0,2));
 										}else{
 											errCnt++;
 											break;
 										}
 									}
-									if(StringUtil.isEmpty(excel.get("k_menu_type"))){
+									if(StringUtil.isEmpty(excel.get(str5))){
 										errCnt++;
 										break;
 									}else{
-										if(!"false".equals(excel.get("k_menu_type"))){
-											iXst19BData.setK_menu_type(excel.get("k_menu_type"));
+										if(!str18.equals(excel.get(str5))){
+											iXst19BData.setK_menu_type(excel.get(str5));
 										}
 									}
-									if(StringUtil.isEmpty(excel.get("k_menu_knd"))){
+									if(StringUtil.isEmpty(excel.get(str6))){
 										errCnt++;
 										break;
 									}else{
-										if(!"false".equals(excel.get("k_menu_knd"))){
-											iXst19BData.setK_menu_knd   (excel.get("k_menu_knd"));
+										if(!str18.equals(excel.get(str6))){
+											iXst19BData.setK_menu_knd   (excel.get(str6));
 										}
 									}
-									if(StringUtil.isEmpty(excel.get("k_menu_ko_nm"))){
+									if(StringUtil.isEmpty(excel.get(str7))){
 										errCnt++;
 										break;
 									}else{
-										if(!"false".equals(excel.get("k_menu_ko_nm"))){
-											iXst19BData.setK_menu_ko_nm   (excel.get("k_menu_ko_nm"));
-											System.out.println("iXst19BData.setK_menu_ko_nm : " + iXst19BData.getK_menu_ko_nm() );
+										if(!str18.equals(excel.get(str7))){
+											iXst19BData.setK_menu_ko_nm   (excel.get(str7));
+											logger.info("iXst19BData.setK_menu_ko_nm : " + iXst19BData.getK_menu_ko_nm() );
 										}
 									}
-									if(StringUtil.isEmpty(excel.get("k_menu_en_nm"))){
+									if(StringUtil.isEmpty(excel.get(str8))){
 										errCnt++;
 										break;
 									}else{
-										if(!"false".equals(excel.get("k_menu_en_nm"))){
-											iXst19BData.setK_menu_en_nm   (excel.get("k_menu_en_nm"));
+										if(!str18.equals(excel.get(str8))){
+											iXst19BData.setK_menu_en_nm   (excel.get(str8));
 										}
 									}
-									if(StringUtil.isEmpty(excel.get("k_menu_po_nm"))){
+									if(StringUtil.isEmpty(excel.get(str9))){
 										errCnt++;
 										break;
 									}else{
-										if(!"false".equals(excel.get("k_menu_po_nm"))){
-											iXst19BData.setK_menu_po_nm   (excel.get("k_menu_po_nm"));
+										if(!str18.equals(excel.get(str9))){
+											iXst19BData.setK_menu_po_nm   (excel.get(str9));
 										}
 									}
 									iXst19BList.add(iXst19BData);
@@ -511,24 +536,24 @@ public class CommonManagerImpl  implements CommonManager{
 								int dataCnt = 0;
 								for(Map<String, String> excel : excelData){
 
-									if(!StringUtil.isNullToString(excel.get("xusr_empno")).equals("") && !StringUtil.isNullToString(excel.get("xusr_empno")).equals("false")){
-										if(!StringUtil.isNullToString(excel.get("xusr_empno")).equals("")     	  && !StringUtil.isNullToString(excel.get("xusr_empno")).equals("false")    	 &&
-										   !StringUtil.isNullToString(excel.get("xusr_auth_knd")).equals("")  	  && !StringUtil.isNullToString(excel.get("xusr_auth_knd")).equals("false") 	 &&
-										   !StringUtil.isNullToString(excel.get("xusr_name")).equals("")      	  && !StringUtil.isNullToString(excel.get("xusr_name")).equals("false") 		 &&
-										   !StringUtil.isNullToString(excel.get("xusr_en_name")).equals("")   	  && !StringUtil.isNullToString(excel.get("xusr_en_name")).equals("false")  	 &&
-										   !StringUtil.isNullToString(excel.get("xusr_dept_code")).equals("") 	  && !StringUtil.isNullToString(excel.get("xusr_dept_code")).equals("false")	 &&
-										   !StringUtil.isNullToString(excel.get("xusr_dept_name")).equals("") 	  && !StringUtil.isNullToString(excel.get("xusr_dept_name")).equals("false") 	 &&
-										   !StringUtil.isNullToString(excel.get("xusr_step_code")).equals("")     && !StringUtil.isNullToString(excel.get("xusr_step_code")).equals("false")     &&
-										   !StringUtil.isNullToString(excel.get("xusr_step_name")).equals("") 	  && !StringUtil.isNullToString(excel.get("xusr_step_name")).equals("false")     &&
-										   !StringUtil.isNullToString(excel.get("xusr_mail_adr")).equals("") 	  && !StringUtil.isNullToString(excel.get("xusr_mail_adr")).equals("false")      &&
-										   !StringUtil.isNullToString(excel.get("xusr_aply_date")).equals("") 	  && !StringUtil.isNullToString(excel.get("xusr_aply_date")).equals("false")     &&
-										   !StringUtil.isNullToString(excel.get("xusr_retr_flag")).equals("") 	  && !StringUtil.isNullToString(excel.get("xusr_retr_flag")).equals("false")     &&
-										   !StringUtil.isNullToString(excel.get("xusr_tel_no")).equals("") 	  	  && !StringUtil.isNullToString(excel.get("xusr_tel_no")).equals("false")     	 &&
-										   !StringUtil.isNullToString(excel.get("xusr_work_phone_no")).equals("") && !StringUtil.isNullToString(excel.get("xusr_work_phone_no")).equals("false") &&
-										   !StringUtil.isNullToString(excel.get("xusr_postal_code")).equals("")   && !StringUtil.isNullToString(excel.get("xusr_postal_code")).equals("false")   &&
-										   !StringUtil.isNullToString(excel.get("xusr_addr")).equals("") 	  	  && !StringUtil.isNullToString(excel.get("xusr_addr")).equals("false")    		 &&
-										   !StringUtil.isNullToString(excel.get("xusr_sex")).equals("") 	  	  && !StringUtil.isNullToString(excel.get("xusr_sex")).equals("false")			 &&
-										   !StringUtil.isNullToString(excel.get("xusr_loc")).equals("") 	  	  	  && !StringUtil.isNullToString(excel.get("xusr_loc")).equals("false"))
+									if(!StringUtil.isNullToString(excel.get(str10)).equals("") && !StringUtil.isNullToString(excel.get(str10)).equals(str18)){
+										if(!StringUtil.isNullToString(excel.get(str10)).equals("")     	  && !StringUtil.isNullToString(excel.get(str10)).equals(str18)    	 &&
+										   !StringUtil.isNullToString(excel.get("xusr_auth_knd")).equals("")  	  && !StringUtil.isNullToString(excel.get("xusr_auth_knd")).equals(str18) 	 &&
+										   !StringUtil.isNullToString(excel.get("xusr_name")).equals("")      	  && !StringUtil.isNullToString(excel.get("xusr_name")).equals(str18) 		 &&
+										   !StringUtil.isNullToString(excel.get("xusr_en_name")).equals("")   	  && !StringUtil.isNullToString(excel.get("xusr_en_name")).equals(str18)  	 &&
+										   !StringUtil.isNullToString(excel.get("xusr_dept_code")).equals("") 	  && !StringUtil.isNullToString(excel.get("xusr_dept_code")).equals(str18)	 &&
+										   !StringUtil.isNullToString(excel.get("xusr_dept_name")).equals("") 	  && !StringUtil.isNullToString(excel.get("xusr_dept_name")).equals(str18) 	 &&
+										   !StringUtil.isNullToString(excel.get("xusr_step_code")).equals("")     && !StringUtil.isNullToString(excel.get("xusr_step_code")).equals(str18)     &&
+										   !StringUtil.isNullToString(excel.get("xusr_step_name")).equals("") 	  && !StringUtil.isNullToString(excel.get("xusr_step_name")).equals(str18)     &&
+										   !StringUtil.isNullToString(excel.get("xusr_mail_adr")).equals("") 	  && !StringUtil.isNullToString(excel.get("xusr_mail_adr")).equals(str18)      &&
+										   !StringUtil.isNullToString(excel.get("xusr_aply_date")).equals("") 	  && !StringUtil.isNullToString(excel.get("xusr_aply_date")).equals(str18)     &&
+										   !StringUtil.isNullToString(excel.get("xusr_retr_flag")).equals("") 	  && !StringUtil.isNullToString(excel.get("xusr_retr_flag")).equals(str18)     &&
+										   !StringUtil.isNullToString(excel.get("xusr_tel_no")).equals("") 	  	  && !StringUtil.isNullToString(excel.get("xusr_tel_no")).equals(str18)     	 &&
+										   !StringUtil.isNullToString(excel.get("xusr_work_phone_no")).equals("") && !StringUtil.isNullToString(excel.get("xusr_work_phone_no")).equals(str18) &&
+										   !StringUtil.isNullToString(excel.get("xusr_postal_code")).equals("")   && !StringUtil.isNullToString(excel.get("xusr_postal_code")).equals(str18)   &&
+										   !StringUtil.isNullToString(excel.get("xusr_addr")).equals("") 	  	  && !StringUtil.isNullToString(excel.get("xusr_addr")).equals(str18)    		 &&
+										   !StringUtil.isNullToString(excel.get("xusr_sex")).equals("") 	  	  && !StringUtil.isNullToString(excel.get("xusr_sex")).equals(str18)			 &&
+										   !StringUtil.isNullToString(excel.get("xusr_loc")).equals("") 	  	  	  && !StringUtil.isNullToString(excel.get("xusr_loc")).equals(str18))
 										{
 
 											BgabGascz002Dto iXst01AData = new BgabGascz002Dto();
@@ -538,10 +563,10 @@ public class CommonManagerImpl  implements CommonManager{
 											iXst01AData.setXusr_work_auth("44444444444444444444444444444444444444444444444444");
 											iXst01AData.setCorp_cd(corpCd);
 											//iXst01AData.setXusr_pswd(xusrPswd)
-											iXst01AData.setXusr_pswd(SHA256Util.getEncrypt(excel.get("xusr_empno"), excel.get("xusr_empno")));
+											iXst01AData.setXusr_pswd(SHA256Util.getEncrypt(excel.get(str10), excel.get(str10)));
 
 											if("관리자".equals(iXst01AData.getXusr_auth_knd())
-											 ||"ADMIN".equals(iXst01AData.getXusr_auth_knd().toUpperCase())){
+											 ||str21.equals(iXst01AData.getXusr_auth_knd().toUpperCase())){
 												iXst01AData.setXusr_auth_knd("M");
 											}else{
 												iXst01AData.setXusr_auth_knd("U");
@@ -608,17 +633,17 @@ public class CommonManagerImpl  implements CommonManager{
 								int dataCnt = 0;
 
 								for(Map<String, String> excel : excelData){
-									if(!StringUtil.isNullToString(excel.get("xorg_orga_c")).equals("") 	   && !StringUtil.isNullToString(excel.get("xorg_orga_c")).equals("false"))
+									if(!StringUtil.isNullToString(excel.get(str11)).equals("") 	   && !StringUtil.isNullToString(excel.get(str11)).equals(str18))
 									{
-										if(!StringUtil.isNullToString(excel.get("xorg_orga_c")).equals("") 	   && !StringUtil.isNullToString(excel.get("xorg_orga_c")).equals("false")     &&
-										   !StringUtil.isNullToString(excel.get("xorg_orga_e")).equals("")     && !StringUtil.isNullToString(excel.get("xorg_orga_e")).equals("false")     &&
-										   //!StringUtil.isNullToString(excel.get("xorg_orga_csner")).equals("") && !StringUtil.isNullToString(excel.get("xorg_orga_csner")).equals("false") &&
-										   !StringUtil.isNullToString(excel.get("xorg_clos_d")).equals("")     && !StringUtil.isNullToString(excel.get("xorg_clos_d")).equals("false") 	   &&
-										   !StringUtil.isNullToString(excel.get("xorg_rsps_i")).equals("")     && !StringUtil.isNullToString(excel.get("xorg_rsps_i")).equals("false") 	   &&
-										   !StringUtil.isNullToString(excel.get("xorg_rsps_m")).equals("")     && !StringUtil.isNullToString(excel.get("xorg_rsps_m")).equals("false")     &&
-										   !StringUtil.isNullToString(excel.get("xorg_rsps_crank")).equals("") && !StringUtil.isNullToString(excel.get("xorg_rsps_crank")).equals("false") &&
-										   !StringUtil.isNullToString(excel.get("xorg_rsps_mrank")).equals("") && !StringUtil.isNullToString(excel.get("xorg_rsps_mrank")).equals("false") &&
-										   !StringUtil.isNullToString(excel.get("xorg_dept_lv")).equals("")    && !StringUtil.isNullToString(excel.get("xorg_dept_lv")).equals("false"))
+										if(!StringUtil.isNullToString(excel.get(str11)).equals("") 	   && !StringUtil.isNullToString(excel.get(str11)).equals(str18)     &&
+										   !StringUtil.isNullToString(excel.get("xorg_orga_e")).equals("")     && !StringUtil.isNullToString(excel.get("xorg_orga_e")).equals(str18)     &&
+										   //!StringUtil.isNullToString(excel.get("xorg_orga_csner")).equals("") && !StringUtil.isNullToString(excel.get("xorg_orga_csner")).equals(str18) &&
+										   !StringUtil.isNullToString(excel.get("xorg_clos_d")).equals("")     && !StringUtil.isNullToString(excel.get("xorg_clos_d")).equals(str18) 	   &&
+										   !StringUtil.isNullToString(excel.get("xorg_rsps_i")).equals("")     && !StringUtil.isNullToString(excel.get("xorg_rsps_i")).equals(str18) 	   &&
+										   !StringUtil.isNullToString(excel.get("xorg_rsps_m")).equals("")     && !StringUtil.isNullToString(excel.get("xorg_rsps_m")).equals(str18)     &&
+										   !StringUtil.isNullToString(excel.get("xorg_rsps_crank")).equals("") && !StringUtil.isNullToString(excel.get("xorg_rsps_crank")).equals(str18) &&
+										   !StringUtil.isNullToString(excel.get("xorg_rsps_mrank")).equals("") && !StringUtil.isNullToString(excel.get("xorg_rsps_mrank")).equals(str18) &&
+										   !StringUtil.isNullToString(excel.get("xorg_dept_lv")).equals("")    && !StringUtil.isNullToString(excel.get("xorg_dept_lv")).equals(str18))
 										{
 
 											BgabGascz003Dto iXst01BData = new BgabGascz003Dto();
@@ -689,19 +714,19 @@ public class CommonManagerImpl  implements CommonManager{
 								int dataCnt = 0;
 
 								for(Map<String, String> excel : excelData){
-									if( !"".equals(StringUtil.isNullToString(excel.get("lrg_cd")))   &&
-										!"".equals(StringUtil.isNullToString(excel.get("lrg_nm")))   &&
-										!"".equals(StringUtil.isNullToString(excel.get("lrg_sort"))) &&
-										!"".equals(StringUtil.isNullToString(excel.get("mrg_cd")))   &&
-										!"".equals(StringUtil.isNullToString(excel.get("mrg_nm")))   &&
-										!"".equals(StringUtil.isNullToString(excel.get("mrg_sort"))) ){
+									if( !"".equals(StringUtil.isNullToString(excel.get(str12)))   &&
+										!"".equals(StringUtil.isNullToString(excel.get(str13)))   &&
+										!"".equals(StringUtil.isNullToString(excel.get(str14))) &&
+										!"".equals(StringUtil.isNullToString(excel.get(str15)))   &&
+										!"".equals(StringUtil.isNullToString(excel.get(str16)))   &&
+										!"".equals(StringUtil.isNullToString(excel.get(str17))) ){
 										iXbk03BData = new BgabGascbkExcelTempDto();
-										iXbk03BData.setLrg_cd(StringUtil.isNullToString(excel.get("lrg_cd")));
-										iXbk03BData.setLrg_nm(StringUtil.isNullToString(excel.get("lrg_nm")));
-										iXbk03BData.setLrg_sort(StringUtil.isNullToString(excel.get("lrg_sort")));
-										iXbk03BData.setMrg_cd(StringUtil.isNullToString(excel.get("mrg_cd")));
-										iXbk03BData.setMrg_nm(StringUtil.isNullToString(excel.get("mrg_nm")));
-										iXbk03BData.setMrg_sort(StringUtil.isNullToString(excel.get("mrg_sort")));
+										iXbk03BData.setLrg_cd(StringUtil.isNullToString(excel.get(str12)));
+										iXbk03BData.setLrg_nm(StringUtil.isNullToString(excel.get(str13)));
+										iXbk03BData.setLrg_sort(StringUtil.isNullToString(excel.get(str14)));
+										iXbk03BData.setMrg_cd(StringUtil.isNullToString(excel.get(str15)));
+										iXbk03BData.setMrg_nm(StringUtil.isNullToString(excel.get(str16)));
+										iXbk03BData.setMrg_sort(StringUtil.isNullToString(excel.get(str17)));
 										iXbk03BList.add(iXbk03BData);
 									}else{
 										dataCnt++;
@@ -711,14 +736,14 @@ public class CommonManagerImpl  implements CommonManager{
 								if(dataCnt > 0){
 									msg = HncisMessageSource.getMessage("EXCEL.0003");
 								}else if(iXbk03BList.size() == 0){
-									msg = HncisMessageSource.getMessage("EXCEL.0001");
+									msg = HncisMessageSource.getMessage(str19);
 								}else{
 									booksDao.insertBkToExcelTemp(iXbk03BList);
 
 									if(booksDao.selectBkToExcelTempMrgChk() > 0){
-										msg = HncisMessageSource.getMessage("EXCEL.0004");
+										msg = HncisMessageSource.getMessage(str20);
 									}else if(booksDao.selectBkToMrgChk() > 0){
-										msg = HncisMessageSource.getMessage("EXCEL.0004");
+										msg = HncisMessageSource.getMessage(str20);
 									}else{
 										BgabGascbkExcelTempDto mrgTmp = new BgabGascbkExcelTempDto();
 										mrgTmp.setEeno(bgabGascZ011Dto.getEeno());
@@ -742,19 +767,19 @@ public class CommonManagerImpl  implements CommonManager{
 								int dataCnt = 0;
 
 								for(Map<String, String> excel : excelData){
-									if( !"".equals(StringUtil.isNullToString(excel.get("lrg_cd")))   &&
-										!"".equals(StringUtil.isNullToString(excel.get("lrg_nm")))   &&
-										!"".equals(StringUtil.isNullToString(excel.get("lrg_sort"))) &&
-										!"".equals(StringUtil.isNullToString(excel.get("mrg_cd")))   &&
-										!"".equals(StringUtil.isNullToString(excel.get("mrg_nm")))   &&
-										!"".equals(StringUtil.isNullToString(excel.get("mrg_sort"))) ){
+									if( !"".equals(StringUtil.isNullToString(excel.get(str12)))   &&
+										!"".equals(StringUtil.isNullToString(excel.get(str13)))   &&
+										!"".equals(StringUtil.isNullToString(excel.get(str14))) &&
+										!"".equals(StringUtil.isNullToString(excel.get(str15)))   &&
+										!"".equals(StringUtil.isNullToString(excel.get(str16)))   &&
+										!"".equals(StringUtil.isNullToString(excel.get(str17))) ){
 										iXgf03BData = new BgabGascgfExcelTempDto();
-										iXgf03BData.setLrg_cd(StringUtil.isNullToString(excel.get("lrg_cd")));
-										iXgf03BData.setLrg_nm(StringUtil.isNullToString(excel.get("lrg_nm")));
-										iXgf03BData.setLrg_sort(StringUtil.isNullToString(excel.get("lrg_sort")));
-										iXgf03BData.setMrg_cd(StringUtil.isNullToString(excel.get("mrg_cd")));
-										iXgf03BData.setMrg_nm(StringUtil.isNullToString(excel.get("mrg_nm")));
-										iXgf03BData.setMrg_sort(StringUtil.isNullToString(excel.get("mrg_sort")));
+										iXgf03BData.setLrg_cd(StringUtil.isNullToString(excel.get(str12)));
+										iXgf03BData.setLrg_nm(StringUtil.isNullToString(excel.get(str13)));
+										iXgf03BData.setLrg_sort(StringUtil.isNullToString(excel.get(str14)));
+										iXgf03BData.setMrg_cd(StringUtil.isNullToString(excel.get(str15)));
+										iXgf03BData.setMrg_nm(StringUtil.isNullToString(excel.get(str16)));
+										iXgf03BData.setMrg_sort(StringUtil.isNullToString(excel.get(str17)));
 										iXgf03BData.setCorp_cd(strCorpCd);
 										iXgf03BList.add(iXgf03BData);
 									}else{
@@ -768,15 +793,15 @@ public class CommonManagerImpl  implements CommonManager{
 								if(dataCnt > 0){
 									msg = HncisMessageSource.getMessage("EXCEL.0003");
 								}else if(iXgf03BList.size() == 0){
-									msg = HncisMessageSource.getMessage("EXCEL.0001");
+									msg = HncisMessageSource.getMessage(str19);
 								}else{
 									giftDao.insertGfToExcelTemp(iXgf03BList);
 
 
 									if(giftDao.selectGfToExcelTempMrgChk(chkDto) > 0){
-										msg = HncisMessageSource.getMessage("EXCEL.0004");
+										msg = HncisMessageSource.getMessage(str20);
 									}else if(giftDao.selectGfToMrgChk(chkDto) > 0){
-										msg = HncisMessageSource.getMessage("EXCEL.0004");
+										msg = HncisMessageSource.getMessage(str20);
 									}else{
 										BgabGascgfExcelTempDto mrgTmp = new BgabGascgfExcelTempDto();
 										mrgTmp.setEeno(bgabGascZ011Dto.getEeno());
@@ -801,7 +826,7 @@ public class CommonManagerImpl  implements CommonManager{
 								msg = result[4];
 //							}
 						}else{
-							msg = HncisMessageSource.getMessage("EXCEL.0001");
+							msg = HncisMessageSource.getMessage(str19);
 						}
 					}else{
 						msg = HncisMessageSource.getMessage("FILE.0001");
@@ -811,11 +836,6 @@ public class CommonManagerImpl  implements CommonManager{
 			}else{
 				msg = HncisMessageSource.getMessage("FILE.0001");
 			}
-		}catch(Exception e){
-			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-			msg = HncisMessageSource.getMessage("FILE.0001");
-			e.printStackTrace();
-		}finally{
 
 			try{
 				if(StringUtil.isNullToString(message.getResult()).equals("E3")){
@@ -823,7 +843,7 @@ public class CommonManagerImpl  implements CommonManager{
 					msg = HncisMessageSource.getMessage("EXCEL.0003");
 				}else if(StringUtil.isNullToString(message.getResult()).equals("E1")){
 					TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-					msg = HncisMessageSource.getMessage("EXCEL.0001");
+					msg = HncisMessageSource.getMessage(str19);
 				}
 
 				String dispatcherYN = "Y";
@@ -835,8 +855,34 @@ public class CommonManagerImpl  implements CommonManager{
 
 				return;
 			}catch(Exception e){
-				e.printStackTrace();
+				logger.error(e);
 			}
+		}catch(Exception e){
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			msg = HncisMessageSource.getMessage("FILE.0001");
+			logger.error(e);
+
+			try{
+				if(StringUtil.isNullToString(message.getResult()).equals("E3")){
+					TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+					msg = HncisMessageSource.getMessage("EXCEL.0003");
+				}else if(StringUtil.isNullToString(message.getResult()).equals("E1")){
+					TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+					msg = HncisMessageSource.getMessage(str19);
+				}
+
+				String dispatcherYN = "Y";
+				req.setAttribute("dispatcherYN", dispatcherYN);
+				req.setAttribute("csrfToken", bgabGascZ011Dto.getCsrfToken());
+				req.setAttribute("u_type", bgabGascZ011Dto.getUploadType());
+				req.setAttribute("message",  msg);
+				req.getRequestDispatcher(resultUrl).forward(req, res);
+
+				return;
+			}catch(Exception ex){
+				logger.error(ex);
+			}
+		}finally{
 		}
 	}
 
@@ -925,8 +971,8 @@ public class CommonManagerImpl  implements CommonManager{
 		BgabGascz031Dto dto = null;
 
 		String corpCd = bgabGascz030Dto.getCorp_cd();
-		String ipeEeno = "admin";
-		String updrEeno = "admin";
+		String ipeEeno = str21;
+		String updrEeno = str21;
 
 		//휴양소
 		dto = new BgabGascz031Dto();
@@ -1159,8 +1205,8 @@ public class CommonManagerImpl  implements CommonManager{
 		BgabGascz031Dto dto = null;
 
 		String corpCd = bgabGascz030Dto.getCorp_cd();
-		String ipeEeno = "admin";
-		String updrEeno = "admin";
+		String ipeEeno = str21;
+		String updrEeno = str21;
 		String tmpFlag = "N";
 
 		if("4".equals(StringUtil.isNullToString(bgabGascz030Dto.getPgs_st_cd()))){
@@ -1430,7 +1476,7 @@ public class CommonManagerImpl  implements CommonManager{
 			.setParameter("auth_key", uuid1);
 
 			url = builder.build().toString();
-			System.out.println(url);
+			logger.info(url);
 
 			String subject = HncisMessageSource.getMessage("MAIL.0000");
 
@@ -1439,7 +1485,7 @@ public class CommonManagerImpl  implements CommonManager{
 				   text+= "<a href='"+url+"'>"+HncisMessageSource.getMessage("pw_reset")+"</a><br /><br />";
 			String from = "hncis@hncis.co.kr";
 
-			System.out.println(text);
+			logger.info(text);
 
 			SendMail oMail = new SendMail();
 
@@ -1453,13 +1499,14 @@ public class CommonManagerImpl  implements CommonManager{
 			}
 
 			msg = HncisMessageSource.getMessage("MAIL.0002");
+			return msg;
 
 		} catch (Exception e) {
 			msg = HncisMessageSource.getMessage("MAIL.0003");
-			e.printStackTrace();
+			logger.error(e);
+			return msg;
 		}
 		finally {
-			return msg;
 		}
 	}
 
@@ -1473,7 +1520,7 @@ public class CommonManagerImpl  implements CommonManager{
 
 		}catch(Exception e){
 			message.setMessage(HncisMessageSource.getMessage("MSG.VAL.0052"));
-			e.printStackTrace();
+			logger.error(e);
 		}
 
 
@@ -1516,7 +1563,7 @@ public class CommonManagerImpl  implements CommonManager{
 
 		}catch(Exception e){
 			message.setMessage(HncisMessageSource.getMessage("MSG.VAL.0069"));
-			e.printStackTrace();
+			logger.error(e);
 		}
 
 		return message;

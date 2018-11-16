@@ -1,6 +1,8 @@
 package com.hncis.controller.generalService;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +47,10 @@ import net.sf.json.JSONObject;
 
 @Controller
 public class generalServiceController extends AbstractController{
+
+	private static final String strStart = "Start time : ";
+	private static final String strEnd = "End time : ";
+	private static final String strDateFormat = "yyyy-MM-dd HH:mm:ss.SSS";
 
 	@Autowired
     @Qualifier("generalServiceManagerImpl")
@@ -186,6 +192,11 @@ public class generalServiceController extends AbstractController{
 		@RequestParam(value="paramsI", required=false) String paramsI,
 		@RequestParam(value="paramsU", required=false) String paramsU) throws HncisException, SessionException{
 
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		BgabGascgs01 gsSaveVo = (BgabGascgs01) getJsonToBean(paramsV, BgabGascgs01.class);
 		List<BgabGascgs03> gsSaveList = (List<BgabGascgs03>) getJsonToList(paramsI, BgabGascgs03.class);
 		List<BgabGascgs03> gsModifyList = (List<BgabGascgs03>) getJsonToList(paramsU, BgabGascgs03.class);
@@ -230,7 +241,12 @@ public class generalServiceController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
-
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
+		
 		return modelAndView;
 	}
 
@@ -247,6 +263,10 @@ public class generalServiceController extends AbstractController{
 	public ModelAndView doDeleteByRequest(HttpServletRequest req, HttpServletResponse res,
 		@RequestParam(value="paramV", required=true) String paramV,
 		@RequestParam(value="paramD", required=true) String paramD) throws HncisException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
 
 		BgabGascgs01 gsDelVo = (BgabGascgs01) getJsonToBean(paramV, BgabGascgs01.class);
 		List<BgabGascgs03> BgabGascgs03 = (List<BgabGascgs03>) getJsonToList(paramD, BgabGascgs03.class);
@@ -263,6 +283,11 @@ public class generalServiceController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject("uiType", "ajax");
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -299,6 +324,10 @@ public class generalServiceController extends AbstractController{
 	@RequestMapping(value="/hncis/generalService/doUpdateByRequest.do")
 	public ModelAndView doUpdateByRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson", required=true) String paramJson) throws HncisException, SessionException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
 
 		List<BgabGascgs03> gsReqList = (List<BgabGascgs03>) getJsonToList(paramJson, BgabGascgs03.class);
 
@@ -314,6 +343,11 @@ public class generalServiceController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -331,6 +365,11 @@ public class generalServiceController extends AbstractController{
 	@RequestMapping(value="/hncis/generalService/doUpdateByRequestCancel.do")
 	public ModelAndView doUpdateByRequestCancel(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson", required=true) String paramJson) throws HncisException, SessionException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 
 		List<BgabGascgs03> gsReqList = (List<BgabGascgs03>) getJsonToList(paramJson, BgabGascgs03.class);
 
@@ -346,6 +385,11 @@ public class generalServiceController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -363,6 +407,10 @@ public class generalServiceController extends AbstractController{
 	@RequestMapping(value="/hncis/generalService/doUpdateByConfirm.do")
 	public ModelAndView doUpdateByConfirm(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson", required=true) String paramJson) throws HncisException, SessionException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
 
 		List<BgabGascgs03> gsReqList = (List<BgabGascgs03>) getJsonToList(paramJson, BgabGascgs03.class);
 
@@ -400,6 +448,11 @@ public class generalServiceController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -555,6 +608,11 @@ public class generalServiceController extends AbstractController{
 	@RequestMapping(value="/hncis/generalService/doUpdateByXgs07Request.do")
 	public ModelAndView doUpdateByXgs07Request(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson", required=true) String paramJson) throws HncisException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 
 		List<BgabGascgs03> gsListVo = (List<BgabGascgs03>) getJsonToList(paramJson, BgabGascgs03.class);
 
@@ -569,6 +627,11 @@ public class generalServiceController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -585,6 +648,10 @@ public class generalServiceController extends AbstractController{
 	@RequestMapping(value="/hncis/generalService/doUpdateByXgs07RequestCancel.do")
 	public ModelAndView doUpdateByXgs07RequestCancel(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson", required=true) String paramJson) throws HncisException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
 
 		List<BgabGascgs03> gsListVo = (List<BgabGascgs03>) getJsonToList(paramJson, BgabGascgs03.class);
 
@@ -599,6 +666,11 @@ public class generalServiceController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -1388,6 +1460,10 @@ public class generalServiceController extends AbstractController{
 	@RequestMapping(value="/hncis/generalService/doRejectByXgs03.do")
 	public ModelAndView doRejectByXgs03(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="uParams", required=false) String uParams) throws HncisException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
 
 		List<BgabGascgs03> gsDelVo = (List<BgabGascgs03>) getJsonToList(uParams, BgabGascgs03.class);
 
@@ -1400,6 +1476,11 @@ public class generalServiceController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}

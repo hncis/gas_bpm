@@ -1,5 +1,7 @@
 package com.hncis.controller.restCenter;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +43,10 @@ import com.hncis.restCenter.vo.BgabGascrc06Dto;
 
 @Controller
 public class RestCenterController extends AbstractController{
+
+	private static final String strStart = "Start time : ";
+	private static final String strEnd = "End time : ";
+	private static final String strDateFormat = "yyyy-MM-dd HH:mm:ss.SSS";
 
 	@Autowired
     @Qualifier("restCenterManagerImpl")
@@ -525,6 +531,11 @@ public class RestCenterController extends AbstractController{
 	public ModelAndView doSaveRcToRequestInfo(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson" , required=true) String paramJson
 			) throws Exception{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		BgabGascrc06Dto dto = (BgabGascrc06Dto) getJsonToBean(paramJson, BgabGascrc06Dto.class);
 
 		CommonMessage message = restCenterManager.isnertRcToRequestInfo(dto);
@@ -533,6 +544,11 @@ public class RestCenterController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -669,6 +685,10 @@ public class RestCenterController extends AbstractController{
 	public ModelAndView doDeleteRcToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson" , required=true) String paramJson
 			) throws Exception{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
 
 		CommonMessage message = new CommonMessage();
 		BgabGascrc06Dto dto = (BgabGascrc06Dto) getJsonToBean(paramJson, BgabGascrc06Dto.class);
@@ -679,6 +699,11 @@ public class RestCenterController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -686,6 +711,10 @@ public class RestCenterController extends AbstractController{
 	public ModelAndView doApproveRcToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson" , required=true) String paramJson
 			) throws Exception{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
 
 		CommonMessage message = new CommonMessage();
 		CommonApproval appInfo = new CommonApproval();
@@ -697,6 +726,11 @@ public class RestCenterController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -704,6 +738,10 @@ public class RestCenterController extends AbstractController{
 	public ModelAndView doApproveCancelRcToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson" , required=true) String paramJson
 			) throws Exception{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
 
 		CommonMessage message = new CommonMessage();
 		BgabGascrc06Dto dto = (BgabGascrc06Dto) getJsonToBean(paramJson, BgabGascrc06Dto.class);
@@ -721,6 +759,11 @@ public class RestCenterController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -728,6 +771,10 @@ public class RestCenterController extends AbstractController{
 	public ModelAndView doConfirmRcToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson" , required=true) String paramJson
 			) throws Exception{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
 
 		CommonMessage message = new CommonMessage();
 		BgabGascrc06Dto dto = (BgabGascrc06Dto) getJsonToBean(paramJson, BgabGascrc06Dto.class);
@@ -753,6 +800,11 @@ public class RestCenterController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -760,6 +812,10 @@ public class RestCenterController extends AbstractController{
 	public ModelAndView doRejectRcToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson" , required=true) String paramJson
 			) throws Exception{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
 
 		CommonMessage message = new CommonMessage();
 		BgabGascrc06Dto dto = (BgabGascrc06Dto) getJsonToBean(paramJson, BgabGascrc06Dto.class);
@@ -786,6 +842,11 @@ public class RestCenterController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}

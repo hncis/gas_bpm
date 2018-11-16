@@ -2,14 +2,19 @@
 package com.hncis.system.manager.impl;
 import java.io.File;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -19,6 +24,7 @@ import com.hncis.common.application.ApprovalGasc;
 import com.hncis.common.application.SessionInfo;
 import com.hncis.common.exception.impl.SessionException;
 import com.hncis.common.message.HncisMessageSource;
+import com.hncis.common.util.BpmApiUtil;
 import com.hncis.common.util.CurrentDateTime;
 import com.hncis.common.util.FileUtil;
 import com.hncis.common.util.SHA256Util;
@@ -51,8 +57,12 @@ import com.hncis.system.vo.BgabGascz035Dto;
 import com.hncis.system.vo.DashBoard;
 import com.hncis.system.vo.TableInfo;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 @Service("systemManagerImpl")
 public class SystemManagerImpl  implements SystemManager{
+    private transient Log logger = LogFactory.getLog(getClass());
 
 	@Autowired
 	public SystemDao systemDao;
@@ -2858,5 +2868,77 @@ public class SystemManagerImpl  implements SystemManager{
 	@Override
 	public List<BgabGascz035Dto> doSearchXst35List(BgabGascz035Dto dto) throws SQLException {
 		return systemDao.doSearchXst35List(dto);
+	}
+	
+
+
+	@Override
+	public void doSystemTest() throws Exception{
+		String docNo = "";
+		String adminID = "10000001";
+		String[] userArray = {"10000001", "10000002", "10000003", "10000004", "10000005", "10000006", "10000007", "10000008", "10000009", "10000010"
+							, "10000011", "10000012", "10000013", "10000014", "10000015", "10000016", "10000017", "10000018", "10000019", "10000020"};
+		String[] pCodeArray = {"P-B-001", "P-B-002", "P-B-003", "P-B-004", "P-B-005", "P-B-006"
+							 , "P-C-001", "P-C-002", "P-C-003", "P-C-004", "P-C-005"
+							 , "P-D-001", "P-D-002", "P-D-003", "P-D-004", "P-D-005", "P-D-006", "P-D-007"
+							 , "P-E-001", "P-E-002", "P-E-003", "P-E-004", "P-E-005", "P-E-006"};
+		String[] sCodeArray = {"GASBZ01210010", "GASBZ01220010", "GASBZ01230010", "GASBZ01240010", "GASBZ01250010", "GASBZ01260010"
+							 , "GASBZ01310010", "GASBZ01320010", "GASBZ01330010", "GASBZ01340010", "GASBZ01350010"
+							 , "GASBZ01410010", "GASBZ01420010", "GASBZ01430010", "GASBZ01440010", "GASBZ01450010", "GASBZ01460010", "GASBZ01470010"
+							 , "GASBZ01510010", "GASBZ01520010", "GASBZ01530010", "GASBZ01540010", "GASBZ01550010", "GASBZ01560010"};
+		String[] asCodeArray = {"GASBZ01210030", "GASBZ01220030", "GASBZ01230030", "GASBZ01240030", "GASBZ01250030", "GASBZ01260030"
+							 , "GASBZ01310030", "GASBZ01320030", "GASBZ01330030", "GASBZ01340030", "GASBZ01350030"
+							 , "GASBZ01410030", "GASBZ01420030", "GASBZ01430030", "GASBZ01440030", "GASBZ01450030", "GASBZ01460030", "GASBZ01470030"
+							 , "GASBZ01510030", "GASBZ01520030", "GASBZ01530030", "GASBZ01540030", "", "GASBZ01560030"};
+		String[] rCodeArray = {"GASROLE01210030", "GASROLE01220030", "GASROLE01230030", "GASROLE01240030", "GASROLE01250030", "GASROLE01260030"
+							 , "GASROLE01310030", "GASROLE01320030", "GASROLE01330030", "GASROLE01340030", "GASROLE01350030"
+							 , "GASROLE01410030", "GASROLE01420030", "GASROLE01430030", "GASROLE01440030", "GASROLE01450030", "GASROLE01460030", "GASROLE01470030"
+							 , "GASROLE01510030", "GASROLE01520030", "GASROLE01530030", "GASROLE01540030", "", "GASROLE01560030"};
+		String[] pArray = {"RC", "UF", "GF", "BK", "TR", "FJ"
+							 , "BC", "GS", "OS", "SB", "PD"
+							 , "BA", "BT", "PS", "TX", "BV", "FC", "VL"
+							 , "SC", "IC", "IM", "RM", "CO", "LV"};
+		int returnResult = 0;
+		String message;
+		logger.info("######### TEST START ###########");
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); 
+		String strDT = dayTime.format(new Date(time)); 
+		String sDate = CurrentDateTime.getDate();
+		for(int i=0;i<userArray.length; i++){
+			Random randomGenerator = new Random();
+			for(int j=0; j<pCodeArray.length; j++){
+				String pCode = pCodeArray[j];
+				String sTime = CurrentDateTime.getTime();
+				int sRandom = randomGenerator.nextInt(10);
+				
+				docNo = sDate + sTime + sRandom + pArray[j];
+				
+				String processCode = pCodeArray[j]; 	
+				String bizKey = docNo;	
+				String statusCode = sCodeArray[j];	
+				String adminCode = asCodeArray[j];
+				String loginUserId = userArray[i];	
+				String comment = null;
+				String roleCode = rCodeArray[j]; 
+				
+				List<String> approveList = new ArrayList<String>();
+				List<String> managerList = new ArrayList<String>();
+				managerList.add(adminID);
+				
+				message = BpmApiUtil.sendSaveTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
+				
+				returnResult++;
+						
+				logger.info("save_return : " + message);
+			}
+		}
+		logger.info("######### 실행 건수 : " + returnResult);
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); 
+		logger.info("**** Test Start time : " + strDT);
+		strDT = dayTime.format(new Date(time)); 
+		logger.info("**** Test End time : " + strDT);
+		logger.info("######### TEST END ###########");
 	}
 }

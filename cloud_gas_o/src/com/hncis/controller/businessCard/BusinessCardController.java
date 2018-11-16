@@ -1,5 +1,7 @@
 package com.hncis.controller.businessCard;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +42,10 @@ import com.hncis.controller.AbstractController;
 
 @Controller
 public class BusinessCardController extends AbstractController{
+
+	private static final String strStart = "Start time : ";
+	private static final String strEnd = "End time : ";
+	private static final String strDateFormat = "yyyy-MM-dd HH:mm:ss.SSS";
 
 	@Autowired
 	@Qualifier("businessCardManagerImpl")
@@ -114,6 +120,11 @@ public class BusinessCardController extends AbstractController{
 	@RequestMapping(value="/hncis/businessCard/doInsertBCToRequest.do")
 	public ModelAndView doInsertBCToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="bsicInfo", required=true) String bsicInfo)throws HncisException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 		CommonMessage message = new CommonMessage();
 
@@ -149,6 +160,11 @@ public class BusinessCardController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -163,6 +179,11 @@ public class BusinessCardController extends AbstractController{
 	@RequestMapping(value="/hncis/businessCard/doModifyBCToRequest.do")
 	public ModelAndView doModifyBCToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="bsicInfo", required=true) String bsicInfo)throws HncisException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		BgabGascba01 cgabGascba01 = (BgabGascba01)getJsonToBean(bsicInfo, BgabGascba01.class);
@@ -177,6 +198,11 @@ public class BusinessCardController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -191,6 +217,11 @@ public class BusinessCardController extends AbstractController{
 	@RequestMapping(value="/hncis/businessCard/doDeleteBCToRequest.do")
 	public ModelAndView doDeleteBCToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="bsicInfo", required=true) String paramJson)throws HncisException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		BgabGascba02 keyParamDto = (BgabGascba02) getJsonToBean(paramJson, BgabGascba02.class);
@@ -204,6 +235,11 @@ public class BusinessCardController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -219,6 +255,11 @@ public class BusinessCardController extends AbstractController{
 	@RequestMapping(value="/hncis/businessCard/doApproveBCToRequest.do")
 	public ModelAndView doApproveBCToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="bsicInfo", required=true) String paramJson)throws HncisException, SessionException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		CommonApproval appInfo = new CommonApproval();
@@ -233,6 +274,11 @@ public class BusinessCardController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(appMessage).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -248,6 +294,11 @@ public class BusinessCardController extends AbstractController{
 	@RequestMapping(value="/hncis/businessCard/doApproveCancelBCToRequest.do")
 	public ModelAndView doApproveCancelBCToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="bsicInfo", required=true) String paramJson)throws HncisException, SessionException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		CommonApproval appInfo = new CommonApproval();
@@ -263,6 +314,11 @@ public class BusinessCardController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -279,6 +335,11 @@ public class BusinessCardController extends AbstractController{
 	@RequestMapping(value="/hncis/businessCard/doConfirm1BCToRequest.do")
 	public ModelAndView doConfirm1BCToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="bsicInfo", required=true) String paramJson)throws HncisException, SessionException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		BgabGascba02 keyParamDto = (BgabGascba02) getJsonToBean(paramJson, BgabGascba02.class);
@@ -308,6 +369,11 @@ public class BusinessCardController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -322,6 +388,11 @@ public class BusinessCardController extends AbstractController{
 	@RequestMapping(value="/hncis/businessCard/doConfirmCancelBCToRequest.do")
 	public ModelAndView doConfirmCancelBCToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="bsicInfo", required=true) String paramJson)throws HncisException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		BgabGascba02 keyParamDto = (BgabGascba02) getJsonToBean(paramJson, BgabGascba02.class);
@@ -336,6 +407,11 @@ public class BusinessCardController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -351,6 +427,11 @@ public class BusinessCardController extends AbstractController{
 	@RequestMapping(value="/hncis/businessCard/doRejectBCToRequest.do")
 	public ModelAndView doRejectBCToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="bsicInfo", required=true) String paramJson)throws HncisException, SessionException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 		CommonMessage appMessage;
 
@@ -373,6 +454,11 @@ public class BusinessCardController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -387,6 +473,11 @@ public class BusinessCardController extends AbstractController{
 	@RequestMapping(value="/hncis/businessCard/doConfirm2BCToRequest.do")
 	public ModelAndView doConfirm2BCToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="bsicInfo", required=true) String paramJson)throws HncisException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		BgabGascba02 keyParamDto = (BgabGascba02) getJsonToBean(paramJson, BgabGascba02.class);
@@ -401,6 +492,11 @@ public class BusinessCardController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}

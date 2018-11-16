@@ -1,8 +1,12 @@
 package com.hncis.uniform.manager.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -20,6 +24,7 @@ import com.hncis.uniform.vo.BgabGascaf03Dto;
 
 @Service("uniformManagerImpl")
 public class UniformManagerImpl  implements UniformManager{
+    private transient Log logger = LogFactory.getLog(getClass());
     private static final String pCode = "P-B-002";
 	
 	@Autowired
@@ -56,6 +61,7 @@ public class UniformManagerImpl  implements UniformManager{
 	}
 	@Override
 	public CommonMessage insertListToRequest(List<BgabGascaf01Dto> list){
+		
 		CommonMessage message = new CommonMessage();
 		message.setResult("Y");
 		message.setMessage(HncisMessageSource.getMessage("APPLY.0000"));

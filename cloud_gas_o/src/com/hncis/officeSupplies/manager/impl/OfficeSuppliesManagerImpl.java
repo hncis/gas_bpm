@@ -1,7 +1,9 @@
 package com.hncis.officeSupplies.manager.impl;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -65,6 +67,7 @@ public class OfficeSuppliesManagerImpl implements OfficeSuppliesManager{
 
 	@Override
 	public int doInsertByRequest(BgabGascos01 gsSaveVo, List<BgabGascos03> gsSaveList, List<BgabGascos03> gsModifyList){
+		
 		int rs = 0;
 		if("I".equals(gsSaveVo.getBasic_mode())){
 			rs = officeSuppliesDao.doInsertByRequest(gsSaveVo);
@@ -87,6 +90,7 @@ public class OfficeSuppliesManagerImpl implements OfficeSuppliesManager{
 		}
 		rs = officeSuppliesDao.doInsertByList(gsSaveList);
 		officeSuppliesDao.doUpdateByList(gsModifyList);
+		
 		return rs;
 	}
 

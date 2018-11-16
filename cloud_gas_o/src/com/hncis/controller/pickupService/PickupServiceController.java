@@ -1,7 +1,9 @@
 package com.hncis.controller.pickupService;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +46,10 @@ import com.hncis.pickupService.vo.PickupServiceDto;
 
 @Controller
 public class PickupServiceController extends AbstractController{
+
+	private static final String strStart = "Start time : ";
+	private static final String strEnd = "End time : ";
+	private static final String strDateFormat = "yyyy-MM-dd HH:mm:ss.SSS";
 
 
 	@Autowired
@@ -205,6 +211,11 @@ public class PickupServiceController extends AbstractController{
 			@RequestParam(value="paramJsonList" , required=true) String paramJsonList,
 			@RequestParam(value="paramJsonStr" , required=true) String paramJsonStr
 			) throws Exception{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 
 		CommonMessage message = new CommonMessage();
 
@@ -227,6 +238,11 @@ public class PickupServiceController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -241,6 +257,10 @@ public class PickupServiceController extends AbstractController{
 	public ModelAndView doDeletePsToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson" , required=true) String paramJson
 			) throws Exception{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
 
 		CommonMessage message = new CommonMessage();
 
@@ -254,6 +274,11 @@ public class PickupServiceController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -419,6 +444,10 @@ public class PickupServiceController extends AbstractController{
 	@RequestMapping(value="/hncis/pickupService/doApprovePsToRequest.do")
 	public ModelAndView doApprovePsToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson" , required=true) String paramJson) throws Exception{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
 
 		CommonMessage message = new CommonMessage();
 		BgabGascps01Dto dto = (BgabGascps01Dto) getJsonToBean(paramJson, BgabGascps01Dto.class);
@@ -430,6 +459,11 @@ public class PickupServiceController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -444,6 +478,11 @@ public class PickupServiceController extends AbstractController{
 	@RequestMapping(value="/hncis/pickupService/doApproveCancelPsToRequest.do")
 	public ModelAndView doApproveCancelPcToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson", required=true) String paramJson)throws HncisException, SessionException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		BgabGascps01Dto dto = (BgabGascps01Dto) getJsonToBean(paramJson, BgabGascps01Dto.class);
@@ -455,6 +494,11 @@ public class PickupServiceController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -471,6 +515,10 @@ public class PickupServiceController extends AbstractController{
 			@RequestParam(value="paramJsonStr" , required=true) String paramJsonStr,
 			@RequestParam(value="paramJsonDriver" , required=false) String paramJsonDriver
 			) throws Exception{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
 
 		CommonMessage message = new CommonMessage();
 
@@ -492,6 +540,11 @@ public class PickupServiceController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -537,6 +590,11 @@ public class PickupServiceController extends AbstractController{
 	@RequestMapping(value="/hncis/pickupService/doRejectPsToRequest.do")
 	public ModelAndView doRejectPsToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson" , required=true) String paramJson) throws Exception{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		CommonMessage appMessage;
 
 		BgabGascps01Dto dto = (BgabGascps01Dto) getJsonToBean(paramJson, BgabGascps01Dto.class);
@@ -555,6 +613,11 @@ public class PickupServiceController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}

@@ -1,10 +1,14 @@
 package com.hncis.roomsMeals.manager.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -29,7 +33,8 @@ import com.hncis.system.dao.SystemDao;
 
 @Service("roomsMealsManagerImpl")
 public class RoomsMealsManagerImpl implements RoomsMealsManager{
-
+    private transient Log logger = LogFactory.getLog(getClass());
+    
 	@Autowired
 	public RoomsMealsDao roomsMealsDao;
 
@@ -69,7 +74,7 @@ public class RoomsMealsManagerImpl implements RoomsMealsManager{
 
 	@Override
 	public BgabGascrm01Dto saveRmToRequest(HttpServletRequest req, BgabGascrm01Dto dto) {
-
+		
 		List<BgabGascrm02Dto> dtoDtl = new ArrayList<BgabGascrm02Dto>();
 		BgabGascrm02Dto rm2Dto = null;
 		BgabGascrm01Dto rtnDto = new BgabGascrm01Dto();
@@ -176,7 +181,7 @@ public class RoomsMealsManagerImpl implements RoomsMealsManager{
 			rtnDto.setErrMsg(HncisMessageSource.getMessage("SAVE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
-
+		
 		return rtnDto;
 	}
 

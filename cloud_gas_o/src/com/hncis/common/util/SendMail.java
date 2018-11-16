@@ -137,7 +137,7 @@ public class SendMail {
 //			logger.info("_HOST:"+_HOST);
 			message.setFrom(new InternetAddress(from , MimeUtility.encodeText("GAS ADMIN",encodingType,"B")));
 			
-			Transport.send(message);
+//			Transport.send(message);
 			
 			logger.debug(strMethod);
 			logger.debug(strArea + StringUtil.getSystemArea().toUpperCase());
@@ -222,7 +222,7 @@ public class SendMail {
 			mp.addBodyPart(mbp2);
 			message.setContent(mp);
 			
-			Transport.send(message);
+//			Transport.send(message);
 		}catch(MessagingException mex){
 			logger.error(strMethod2);
 			logger.error(strArea + StringUtil.getSystemArea().toUpperCase());
@@ -327,7 +327,7 @@ public class SendMail {
 			}
 			message.setContent(mp);
 			
-			Transport.send(message);
+//			Transport.send(message);
 		}catch(MessagingException mex){
 			logger.error(strMethod2);
 			logger.error(strArea + StringUtil.getSystemArea().toUpperCase());
@@ -432,7 +432,7 @@ public class SendMail {
 			}
 			message.setContent(mp);
 			
-			Transport.send(message);
+//			Transport.send(message);
 		}catch(MessagingException mex){
 			logger.error(strMethod2);
 			logger.error(strArea + StringUtil.getSystemArea().toUpperCase());
@@ -524,7 +524,7 @@ public class SendMail {
 			
 			transport.connect(_HOST, SMTP_USERNAME, SMTP_PASSWORD);
 			
-			 transport.sendMessage(message, message.getAllRecipients());
+//			 transport.sendMessage(message, message.getAllRecipients());
 			
 			logger.info(strMethod);
 			logger.info(strArea + StringUtil.getSystemArea().toUpperCase());

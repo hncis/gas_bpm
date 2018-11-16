@@ -1,6 +1,8 @@
 package com.hncis.controller.shuttleBus;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,12 +57,20 @@ public class ShuttleBusController extends AbstractController{
 	@Qualifier("businessTravelManagerImpl")
 	private BusinessTravelManager businessTravelManager;
 
+	private static final String strStart = "Start time : ";
+	private static final String strEnd = "End time : ";
+	private static final String strDateFormat = "yyyy-MM-dd HH:mm:ss.SSS";
+
 	/**
 	 * Shuttle Bus New Save
 	 */
 	@RequestMapping(value="/hncis/shuttleBus/doSaveShuttleBusRequst.do")
 	public ModelAndView doSaveShuttleBusRequst(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson", required=true) String paramJson)throws HncisException, IOException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
 
 		ModelAndView modelAndView = null;
 
@@ -81,6 +91,11 @@ public class ShuttleBusController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -115,6 +130,11 @@ public class ShuttleBusController extends AbstractController{
 	@RequestMapping(value="/hncis/shuttleBus/doRequestShuttleBusRequstNew.do")
 	public ModelAndView doRequestShuttleBusRequstNew(HttpServletRequest req, HttpServletResponse res,
 		@RequestParam(value="paramJson", required=true) String paramJson)throws HncisException, IOException, SessionException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		CommonMessage message = new CommonMessage();
@@ -126,6 +146,11 @@ public class ShuttleBusController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -136,6 +161,11 @@ public class ShuttleBusController extends AbstractController{
 	@RequestMapping(value="/hncis/shuttleBus/doRequestShuttleBusNewRequstCancel.do")
 	public ModelAndView doRequestShuttleBusNewRequstCancel(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson", required=true) String paramJson)throws HncisException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		CommonMessage message = new CommonMessage();
@@ -149,6 +179,11 @@ public class ShuttleBusController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -1040,6 +1075,12 @@ public class ShuttleBusController extends AbstractController{
 	@RequestMapping(value="/hncis/shuttleBus/doRequestShuttleBusNewRequstCheck.do")
 	public ModelAndView doRequestShuttleBusNewRequstCheck(HttpServletRequest req, HttpServletResponse res,
 		@RequestParam(value="paramJson", required=true) String paramJson)throws HncisException, IOException, SessionException{
+
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		CommonMessage message = new CommonMessage();
@@ -1053,6 +1094,11 @@ public class ShuttleBusController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}

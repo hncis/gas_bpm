@@ -57,6 +57,8 @@ import com.hncis.system.vo.BgabGascz033Dto;
 import com.hncis.system.vo.BgabGascz035Dto;
 import com.hncis.system.vo.DashBoard;
 import com.hncis.system.vo.TableInfo;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -64,6 +66,7 @@ import com.hncis.system.vo.TableInfo;
  */
 @Controller
 public class SystemController extends AbstractController{
+    private transient Log logger = LogFactory.getLog(getClass());
 
 	/** The system manager. - system 비지니스 로직 class*/
 	@Autowired
@@ -3332,6 +3335,25 @@ public class SystemController extends AbstractController{
 			message.setMessage(HncisMessageSource.getMessage("SEARCH.0002"));
 			modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		}
+
+		return modelAndView;
+	}
+	
+	@RequestMapping(value="/hncis/system/doSystemTest.do")
+	public ModelAndView doSystemTest(HttpServletRequest req, HttpServletResponse res,
+			@RequestParam(value="paramJson" , required=true) String paramJson) throws HncisException{
+
+		try {
+			systemManager.doSystemTest();
+		} catch (Exception e) {
+			logger.error("error : ", e);
+		}
+
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName(DATA_JSON_PAGE);
+		//조회한 데이터를 string으로 해서 넣어줌.
+		modelAndView.addObject(JSON_DATA_KEY, null);
+		modelAndView.addObject("uiType", "ajax");
 
 		return modelAndView;
 	}

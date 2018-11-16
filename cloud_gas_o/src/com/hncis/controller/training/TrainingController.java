@@ -1,6 +1,8 @@
 package com.hncis.controller.training;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +40,10 @@ import com.hncis.training.vo.BgabGasctr01;
 @Controller
 public class TrainingController extends AbstractController{
 
+	private static final String strStart = "Start time : ";
+	private static final String strEnd = "End time : ";
+	private static final String strDateFormat = "yyyy-MM-dd HH:mm:ss.SSS";
+
 	@Autowired
 	@Qualifier("trainingManagerImpl")
 	private TrainingManager trainingManager;
@@ -57,6 +63,11 @@ public class TrainingController extends AbstractController{
 	@RequestMapping(value="/hncis/training/doInsertTRToRequest.do")
 	public ModelAndView doInsertTRToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="bsicInfo", required=true) String bsicInfo)throws HncisException{
+		long time = System.currentTimeMillis();  
+		SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssSSS"); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info("Start time : " + strDT);
+		
 		ModelAndView modelAndView = null;
 		CommonMessage message = new CommonMessage();
 
@@ -96,6 +107,11 @@ public class TrainingController extends AbstractController{
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
 
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssSSS"); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info("End time : " + strDT);
+		
 		return modelAndView;
 	}
 
@@ -137,6 +153,11 @@ public class TrainingController extends AbstractController{
 	@RequestMapping(value="/hncis/training/doDeleteTRToRequest.do")
 	public ModelAndView doDeleteTRToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="bsicInfo", required=true) String paramJson)throws HncisException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		BgabGasctr01 keyParamDto = (BgabGasctr01) getJsonToBean(paramJson, BgabGasctr01.class);
@@ -150,6 +171,12 @@ public class TrainingController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
+
 
 		return modelAndView;
 	}
@@ -330,6 +357,11 @@ public class TrainingController extends AbstractController{
 	@RequestMapping(value="/hncis/training/doApproveTRToRequest.do")
 	public ModelAndView doApproveTRToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="bsicInfo", required=true) String paramJson)throws HncisException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 
 //		CommonMessage message = new CommonMessage();
@@ -350,6 +382,12 @@ public class TrainingController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
+
 
 		return modelAndView;
 	}
@@ -364,6 +402,11 @@ public class TrainingController extends AbstractController{
 	@RequestMapping(value="/hncis/training/doApproveCancelTRToRequest.do")
 	public ModelAndView doApproveCancelTRToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="bsicInfo", required=true) String paramJson)throws HncisException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		BgabGasctr01 dto = (BgabGasctr01) getJsonToBean(paramJson, BgabGasctr01.class);
@@ -377,6 +420,11 @@ public class TrainingController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -392,6 +440,11 @@ public class TrainingController extends AbstractController{
 	@RequestMapping(value="/hncis/training/doConfirmTRToRequest.do")
 	public ModelAndView doConfirmTRToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="bsicInfo", required=true) String paramJson)throws HncisException, SessionException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		CommonMessage message = new CommonMessage();
@@ -422,6 +475,11 @@ public class TrainingController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -437,6 +495,11 @@ public class TrainingController extends AbstractController{
 	@RequestMapping(value="/hncis/training/doRejectTRToRequest.do")
 	public ModelAndView doRejectTRToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="bsicInfo", required=true) String paramJson)throws HncisException, SessionException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		BgabGasctr01 keyParamDto = (BgabGasctr01) getJsonToBean(paramJson, BgabGasctr01.class);
@@ -463,6 +526,11 @@ public class TrainingController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}

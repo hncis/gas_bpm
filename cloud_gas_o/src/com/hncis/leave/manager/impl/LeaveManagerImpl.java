@@ -1,6 +1,8 @@
 package com.hncis.leave.manager.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -381,6 +383,11 @@ public class LeaveManagerImpl implements LeaveManager{
 	
 	@Override
 	public CommonMessage insertLvToRequestInfo(BgabGasclv01Dto dto) {
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssSSS"); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info("Start time : " + strDT);
+		
 		CommonMessage message = new CommonMessage();
 		
 		try{
@@ -520,6 +527,12 @@ public class LeaveManagerImpl implements LeaveManager{
 			message.setMessage(HncisMessageSource.getMessage("SAVE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssSSS"); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info("End time : " + strDT);
+		
 		return message;
 	}
 	

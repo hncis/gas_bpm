@@ -1,5 +1,7 @@
 package com.hncis.controller.fuelCost;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +38,10 @@ import com.hncis.fuelCost.vo.BgabGascfc02Dto;
 @Controller
 public class FuelCostController extends AbstractController{
 
+	private static final String strStart = "Start time : ";
+	private static final String strEnd = "End time : ";
+	private static final String strDateFormat = "yyyy-MM-dd HH:mm:ss.SSS";
+
 	@Autowired
     @Qualifier("fuelCostManagerImpl")
 	private FuelCostManager fuelCostManager;
@@ -47,6 +53,11 @@ public class FuelCostController extends AbstractController{
 	@RequestMapping(value="/hncis/fuelCost/doSaveXfc01Info.do")
 	public ModelAndView doSaveXfc01Info(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson", required=true) String paramJson) throws HncisException, SessionException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 
 		BgabGascfc01Dto dto = (BgabGascfc01Dto) getJsonToBean(paramJson, BgabGascfc01Dto.class);
 		dto.setIpe_eeno(SessionInfo.getSess_empno(req));
@@ -58,6 +69,11 @@ public class FuelCostController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject("uiType", "ajax");
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -66,6 +82,11 @@ public class FuelCostController extends AbstractController{
 	public ModelAndView doDeleteXfc01Info(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson", required=true) String paramJson) throws HncisException{
 
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		BgabGascfc01Dto dto = (BgabGascfc01Dto) getJsonToBean(paramJson, BgabGascfc01Dto.class);
 
 		CommonMessage message = fuelCostManager.deleteXfc01Info(dto);
@@ -74,6 +95,11 @@ public class FuelCostController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject("uiType", "ajax");
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -186,6 +212,11 @@ public class FuelCostController extends AbstractController{
 	public ModelAndView doUpdateXfcRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson", required=true) String paramJson) throws HncisException, SessionException{
 
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		BgabGascfc01Dto dto = (BgabGascfc01Dto) getJsonToBean(paramJson, BgabGascfc01Dto.class);
 		dto.setIpe_eeno(SessionInfo.getSess_empno(req));
 		dto.setUpdr_eeno(SessionInfo.getSess_empno(req));
@@ -199,6 +230,11 @@ public class FuelCostController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject("uiType", "ajax");
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -207,6 +243,11 @@ public class FuelCostController extends AbstractController{
 	public ModelAndView doUpdateXfcRequestCancel(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson", required=true) String paramJson) throws HncisException, SessionException{
 
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		BgabGascfc01Dto dto = (BgabGascfc01Dto) getJsonToBean(paramJson, BgabGascfc01Dto.class);
 		dto.setIpe_eeno(SessionInfo.getSess_empno(req));
 		dto.setUpdr_eeno(SessionInfo.getSess_empno(req));
@@ -221,6 +262,11 @@ public class FuelCostController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject("uiType", "ajax");
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -228,6 +274,11 @@ public class FuelCostController extends AbstractController{
 	@RequestMapping(value="/hncis/fuelCost/doUpdateXfcConfirm.do")
 	public ModelAndView doUpdateXfcConfirm(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson", required=true) String paramJson) throws HncisException, SessionException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 
 		BgabGascfc01Dto dto = (BgabGascfc01Dto) getJsonToBean(paramJson, BgabGascfc01Dto.class);
 		dto.setIpe_eeno(SessionInfo.getSess_empno(req));
@@ -254,6 +305,11 @@ public class FuelCostController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject("uiType", "ajax");
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -261,6 +317,11 @@ public class FuelCostController extends AbstractController{
 	@RequestMapping(value="/hncis/fuelCost/doUpdateXfcReject.do")
 	public ModelAndView doUpdateXfcReject(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson", required=true) String paramJson) throws HncisException, SessionException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 
 		BgabGascfc01Dto dto = (BgabGascfc01Dto) getJsonToBean(paramJson, BgabGascfc01Dto.class);
 		dto.setIpe_eeno(SessionInfo.getSess_empno(req));
@@ -288,6 +349,11 @@ public class FuelCostController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject("uiType", "ajax");
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}

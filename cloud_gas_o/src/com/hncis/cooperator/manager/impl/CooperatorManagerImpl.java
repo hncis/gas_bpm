@@ -1,20 +1,21 @@
 package com.hncis.cooperator.manager.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.hncis.common.application.SessionInfo;
 import com.hncis.common.dao.CommonJobDao;
 import com.hncis.common.util.BpmApiUtil;
 import com.hncis.cooperator.dao.CooperatorDao;
 import com.hncis.cooperator.manager.CooperatorManager;
 import com.hncis.cooperator.vo.BgabGascco01Dto;
 import com.hncis.cooperator.vo.BgabGascco02Dto;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 @Service("cooperatorManagerImpl")
 public class CooperatorManagerImpl implements CooperatorManager{

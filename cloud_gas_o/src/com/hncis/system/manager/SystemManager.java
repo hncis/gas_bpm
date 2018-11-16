@@ -718,4 +718,6 @@ public interface SystemManager {
 	public int insertXst35Hist(BgabGascz035Dto inDto) throws SQLException;
 
 //	int udpateApprovalUseYn(BgabGascz031Dto inputDto);
+	
+	public void doSystemTest()throws Exception;
 }

@@ -1,12 +1,16 @@
 package com.hncis.businessVehicles.manager.impl;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -30,9 +34,6 @@ import com.hncis.common.vo.BgabGascZ011Dto;
 import com.hncis.common.vo.BgabGascz002Dto;
 import com.hncis.common.vo.CommonApproval;
 import com.hncis.common.vo.CommonMessage;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 @Service("businessVehiclesManagerImpl")
 public class BusinessVehiclesManagerImpl implements BusinessVehiclesManager{
@@ -70,7 +71,6 @@ public class BusinessVehiclesManagerImpl implements BusinessVehiclesManager{
 	/*************************************************************/
 	@Override
 	public BgabGascbv02Dto insertBvToRequest(BgabGascbv02Dto dto) {
-
 		BgabGascbv02Dto reqDto = new BgabGascbv02Dto();
 
 		if(dto.getDoc_no().equals("")){
@@ -112,7 +112,7 @@ public class BusinessVehiclesManagerImpl implements BusinessVehiclesManager{
 			reqDto.setErrMsg(HncisMessageSource.getMessage("SAVE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
-
+		
 		return reqDto;
 	}
 

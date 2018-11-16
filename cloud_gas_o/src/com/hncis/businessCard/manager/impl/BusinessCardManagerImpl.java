@@ -1,10 +1,14 @@
 package com.hncis.businessCard.manager.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -38,6 +42,7 @@ public class BusinessCardManagerImpl implements BusinessCardManager{
 	@Autowired
 	public CommonJobDao commonJobDao;
 
+    private transient Log logger = LogFactory.getLog(getClass());
 	private static final String pCode = "P-C-001";
 	private static final String sCode = "GASBZ01310010";
 	private static final String rCode = "GASROLE01310030";
@@ -72,7 +77,7 @@ public class BusinessCardManagerImpl implements BusinessCardManager{
 	}
 	@Override
 	public Object insertInfoBCToRequest_2(BgabGascba01 cgabGascba01){
-
+		
 		// BPM API호출
 		String processCode = pCode; 	//프로세스 코드 (명함신청 프로세스) - 프로세스 정의서 참조
 		String bizKey = cgabGascba01.getDoc_no();	//신청서 번호
@@ -86,6 +91,8 @@ public class BusinessCardManagerImpl implements BusinessCardManager{
 		managerList.add(adminID);
 		
 		BpmApiUtil.sendSaveTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
+
+		
 		return businessCardDao.insertInfoBCToRequest_2(cgabGascba01);
 	}
 

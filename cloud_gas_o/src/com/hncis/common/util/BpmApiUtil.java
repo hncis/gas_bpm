@@ -20,10 +20,6 @@ public class BpmApiUtil {
 	
 	public static String sendSaveTask(String pCode, String docNo, String sCode, String userId, String roleCd, List<String> aList, List<String> mList){
 		String returnMessage = "";
-		long time = System.currentTimeMillis(); 
-		SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssSSS"); 
-		String strDT = dayTime.format(new Date(time)); 
-		logger.info("Start time : " + strDT);
 		try {
 			// BPM API호출
 			String processCode = pCode; 	//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
@@ -53,20 +49,12 @@ public class BpmApiUtil {
 		} catch (IOException e) {
 			logger.error(strMessage, e);
 		}
-		time = System.currentTimeMillis(); 
-		dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssSSS"); 
-		strDT = dayTime.format(new Date(time)); 
-		logger.info("End time : " + strDT);
 		return returnMessage;
 
 	}
 
 	public static String sendCompleteTask(String pCode, String docNo, String sCode, String userId, String roleCd,List<String> aList, List<String> mList){
 		String returnMessage = "";
-		long time = System.currentTimeMillis(); 
-		SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssSSS"); 
-		String strDT = dayTime.format(new Date(time)); 
-		logger.info("Start time : " + strDT);
 		try {
 			// BPM API호출
 			String processCode = pCode; 	//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
@@ -99,10 +87,6 @@ public class BpmApiUtil {
 		} catch (IOException e) {
 			logger.error(strMessage, e);
 		}
-		time = System.currentTimeMillis(); 
-		dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssSSS"); 
-		strDT = dayTime.format(new Date(time)); 
-		logger.info("End time : " + strDT);
 		return returnMessage;
 
 	}
@@ -110,10 +94,6 @@ public class BpmApiUtil {
 	
 	public static String sendFinalCompleteTask(String pCode, String docNo, String sCode, String userId){
 		String returnMessage = "";
-		long time = System.currentTimeMillis(); 
-		SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssSSS"); 
-		String strDT = dayTime.format(new Date(time)); 
-		logger.info("Start time : " + strDT);
 		try {
 			// BPM API호출
 			String processCode = pCode; 	//프로세스 코드 (휴양소 프로세스) - 프로세스 정의서 참조
@@ -133,20 +113,12 @@ public class BpmApiUtil {
 		} catch (IOException e) {
 			logger.error(strMessage, e);
 		}
-		time = System.currentTimeMillis(); 
-		dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssSSS"); 
-		strDT = dayTime.format(new Date(time)); 
-		logger.info("End time : " + strDT);
 		return returnMessage;
 
 	}
 
 	public static String sendRejectTask(String pCode, String docNo, String sCode, String userId, String roleCd, List<String> aList, List<String> mList){
 		String returnMessage = "";
-		long time = System.currentTimeMillis(); 
-		SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssSSS"); 
-		String strDT = dayTime.format(new Date(time)); 
-		logger.info("Start time : " + strDT);
 		try {
 			// BPM API호출
 			String processCode = pCode; 	//프로세스 코드 - 프로세스 정의서 참조
@@ -176,20 +148,12 @@ public class BpmApiUtil {
 		} catch (IOException e) {
 			logger.error(strMessage, e);
 		}
-		time = System.currentTimeMillis(); 
-		dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssSSS"); 
-		strDT = dayTime.format(new Date(time)); 
-		logger.info("End time : " + strDT);
 		return returnMessage;
 
 	}
 	
 	public static String sendCollectTask(String pCode, String docNo, String sCode, String userId, String roleCd, List<String> aList, List<String> mList){
 		String returnMessage = "";
-		long time = System.currentTimeMillis(); 
-		SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssSSS"); 
-		String strDT = dayTime.format(new Date(time)); 
-		logger.info("Start time : " + strDT);
 		try {
 			// BPM API호출
 			String processCode = pCode; 	//프로세스 코드 - 프로세스 정의서 참조
@@ -220,20 +184,12 @@ public class BpmApiUtil {
 		} catch (IOException e) {
 			logger.error(strMessage, e);
 		}
-		time = System.currentTimeMillis(); 
-		dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssSSS"); 
-		strDT = dayTime.format(new Date(time)); 
-		logger.info("End time : " + strDT);
 		return returnMessage;
 
 	}
 	
 	public static String sendDeleteAndRejectTask(String pCode, String docNo, String sCode, String userId){
 		String returnMessage = "";
-		long time = System.currentTimeMillis(); 
-		SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssSSS"); 
-		String strDT = dayTime.format(new Date(time)); 
-		logger.info("Start time : " + strDT);
 		try {
 			// BPM API호출
 			String processCode = pCode; 	//프로세스 코드  - 프로세스 정의서 참조
@@ -246,20 +202,12 @@ public class BpmApiUtil {
 		} catch (IOException e) {
 			logger.error(strMessage, e);
 		}
-		time = System.currentTimeMillis(); 
-		dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssSSS"); 
-		strDT = dayTime.format(new Date(time)); 
-		logger.info("End time : " + strDT);
 		return returnMessage;
 
 	}
 	
 	public static String sendRestoreTask(String pCode, String docNo, String sCode, String userId){
 		String returnMessage = "";
-		long time = System.currentTimeMillis(); 
-		SimpleDateFormat dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssSSS"); 
-		String strDT = dayTime.format(new Date(time)); 
-		logger.info("Start time : " + strDT);
 		try {
 			// BPM API호출
 			String processCode = pCode; 	//프로세스 코드  - 프로세스 정의서 참조
@@ -272,10 +220,6 @@ public class BpmApiUtil {
 		} catch (IOException e) {
 			logger.error(strMessage, e);
 		}
-		time = System.currentTimeMillis(); 
-		dayTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssSSS"); 
-		strDT = dayTime.format(new Date(time)); 
-		logger.info("Start time : " + strDT);
 		return returnMessage;
 
 	}

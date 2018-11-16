@@ -1,7 +1,9 @@
 package com.hncis.fuelCost.manager.impl;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,7 +46,7 @@ public class FuelCostManagerImpl implements FuelCostManager{
 
 	@Override
 	public CommonMessage saveXfc01Info(BgabGascfc01Dto dto) {
-
+		
 		CommonMessage message = new CommonMessage();
 
 		if(dto.getDoc_no().equals("")){
@@ -93,7 +95,7 @@ public class FuelCostManagerImpl implements FuelCostManager{
 			message.setMessage(HncisMessageSource.getMessage(saveMsg1));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
-
+		
 		return message;
 	}
 

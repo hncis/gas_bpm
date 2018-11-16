@@ -1,7 +1,9 @@
 package com.hncis.product.manager.impl;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,10 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import com.hncis.books.vo.BgabGascbk01Dto;
-import com.hncis.books.vo.BgabGascbk02Dto;
-import com.hncis.books.vo.BgabGascbk03Dto;
-import com.hncis.books.vo.BgabGascbk04Dto;
 import com.hncis.common.dao.CommonJobDao;
 import com.hncis.common.message.HncisMessageSource;
 import com.hncis.common.util.BpmApiUtil;

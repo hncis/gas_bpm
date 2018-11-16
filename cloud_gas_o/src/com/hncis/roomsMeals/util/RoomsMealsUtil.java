@@ -6,12 +6,16 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.hncis.common.application.SessionInfo;
 import com.hncis.common.util.CurrentDateTime;
 import com.hncis.common.util.StringUtil;
 import com.hncis.roomsMeals.vo.BgabGascrm01Dto;
 
 public class RoomsMealsUtil {
+    private transient Log logger = LogFactory.getLog(getClass());
 
 	String colorMy ="#FFCC66";
 	String colorEnd ="#FF0000";
@@ -136,7 +140,7 @@ public List<BgabGascrm01Dto> getRequstRoomByPlace(List<BgabGascrm01Dto> list, Li
 			}                       
 		
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 		
 		return newList;
@@ -264,7 +268,7 @@ public List<BgabGascrm01Dto> getRequstRoomByPlace(List<BgabGascrm01Dto> list, Li
 			
 		
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 		
 		return newList;
@@ -367,7 +371,7 @@ public List<BgabGascrm01Dto> getRequstRoomByPlace(List<BgabGascrm01Dto> list, Li
 				str = "0";
 			}
 			str = trimChar(str,",").trim();
-			if (Double.parseDouble(str)==0 && format.indexOf("0")==-1){
+			if (Double.parseDouble(str)==0 && format.split("0").length ==1){
 				return "";
 			} else {
 				return strNum(new java.math.BigDecimal(str).doubleValue(),format);

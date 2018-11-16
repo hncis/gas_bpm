@@ -1,10 +1,14 @@
 package com.hncis.vehicleLog.manager.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -23,7 +27,7 @@ import com.hncis.vehicleLog.vo.BgabGascvl01Dto;
 
 @Service("vehicleLogManagerImpl")
 public class VehicleLogManagerImpl implements VehicleLogManager{
-
+    private transient Log logger = LogFactory.getLog(getClass());
     private static final String pCode = "P-D-007";
     private static final String sCode = "GASBZ01470010";
     private static final String rCode = "GASROLE01470030";
@@ -37,7 +41,6 @@ public class VehicleLogManagerImpl implements VehicleLogManager{
 
 	@Override
 	public CommonMessage saveXvl01Info(BgabGascvl01Dto dto) {
-
 		CommonMessage message = new CommonMessage();
 
 		if(dto.getDoc_no().equals("")){
@@ -81,7 +84,7 @@ public class VehicleLogManagerImpl implements VehicleLogManager{
 			message.setMessage(HncisMessageSource.getMessage("SAVE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
-
+		
 		return message;
 	}
 

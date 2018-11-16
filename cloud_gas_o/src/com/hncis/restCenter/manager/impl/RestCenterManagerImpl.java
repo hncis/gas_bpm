@@ -1,7 +1,9 @@
 package com.hncis.restCenter.manager.impl;
 
-import java.util.List;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -16,6 +18,7 @@ import com.hncis.common.application.SessionInfo;
 import com.hncis.common.dao.CommonJobDao;
 import com.hncis.common.exception.impl.SessionException;
 import com.hncis.common.message.HncisMessageSource;
+import com.hncis.common.util.BpmApiUtil;
 import com.hncis.common.util.CurrentDateTime;
 import com.hncis.common.util.StringUtil;
 import com.hncis.common.vo.BgabGascz002Dto;
@@ -29,7 +32,6 @@ import com.hncis.restCenter.vo.BgabGascrc03Dto;
 import com.hncis.restCenter.vo.BgabGascrc04Dto;
 import com.hncis.restCenter.vo.BgabGascrc05Dto;
 import com.hncis.restCenter.vo.BgabGascrc06Dto;
-import com.hncis.common.util.BpmApiUtil;
 
 @Service("restCenterManagerImpl")
 public class RestCenterManagerImpl  implements RestCenterManager{
@@ -169,6 +171,7 @@ public class RestCenterManagerImpl  implements RestCenterManager{
 
 	@Override
 	public CommonMessage isnertRcToRequestInfo(BgabGascrc06Dto dto) {
+		
 		CommonMessage message = new CommonMessage();
 		
 		try{
@@ -221,6 +224,7 @@ public class RestCenterManagerImpl  implements RestCenterManager{
 			message.setMessage(HncisMessageSource.getMessage("SAVE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
+		
 		return message;
 	}
 

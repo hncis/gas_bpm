@@ -1,7 +1,9 @@
 package com.hncis.gift.manager.impl;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -70,6 +72,7 @@ public class GiftManagerImpl implements GiftManager{
 	
 	@Override
 	public CommonMessage insertGfToGiftRequest(BgabGascgf02Dto dto) {
+		
 		CommonMessage message = new CommonMessage();
 
 		try{
@@ -114,6 +117,7 @@ public class GiftManagerImpl implements GiftManager{
 			message.setMessage(HncisMessageSource.getMessage("SAVE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 		}
+		
 		return message;
 	}
 

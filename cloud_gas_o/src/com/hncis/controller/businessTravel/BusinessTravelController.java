@@ -1,6 +1,8 @@
 package com.hncis.controller.businessTravel;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +61,10 @@ public class BusinessTravelController extends AbstractController{
 	@Autowired
 	@Qualifier("commonManagerImpl")
 	private CommonManager commonManager;
+
+	private static final String strStart = "Start time : ";
+	private static final String strEnd = "End time : ";
+	private static final String strDateFormat = "yyyy-MM-dd HH:mm:ss.SSS";
 
 	/**
 	 * business Travel combo list
@@ -177,6 +183,11 @@ public class BusinessTravelController extends AbstractController{
 		@RequestParam(value="travelerVtInfoI", required=true) String travelerVtInfoI,
 		@RequestParam(value="travelerVtInfoU", required=true) String travelerVtInfoU) throws HncisException{
 
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		BgabGascbt01 btReqDto = (BgabGascbt01) getJsonToBean(bsicInfo, BgabGascbt01.class);
 		List<BgabGascbt02> bt002DtoI = (List<BgabGascbt02>) getJsonToList(travelerInfoI, BgabGascbt02.class);
 		List<BgabGascbt02> bt002DtoU = (List<BgabGascbt02>) getJsonToList(travelerInfoU, BgabGascbt02.class);
@@ -208,6 +219,11 @@ public class BusinessTravelController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -221,6 +237,10 @@ public class BusinessTravelController extends AbstractController{
 	@RequestMapping(value="/hncis/businessTravel/doDeleteBTToRequest.do")
 	public ModelAndView doDeleteBTToRequest(HttpServletRequest req, HttpServletResponse res,
 		@RequestParam(value="bsicInfo", required=true) String bsicInfo) throws HncisException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
 
 		BgabGascbt01 btReqDto = (BgabGascbt01) getJsonToBean(bsicInfo, BgabGascbt01.class);
 		businessTravelManager.deleteBTToRequest(btReqDto);
@@ -233,6 +253,11 @@ public class BusinessTravelController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -901,6 +926,11 @@ public class BusinessTravelController extends AbstractController{
 	public ModelAndView doApproveBTToRequest(HttpServletRequest req, HttpServletResponse res,
 		@RequestParam(value="bsicInfo", required=true) String paramJson) throws HncisException, Exception{
 
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		BgabGascbt01 btReqDto = (BgabGascbt01) getJsonToBean(paramJson, BgabGascbt01.class);
 
 		ModelAndView modelAndView = new ModelAndView();
@@ -909,6 +939,12 @@ public class BusinessTravelController extends AbstractController{
 		CommonMessage appMessage = businessTravelManager.setApproval(btReqDto, req);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(appMessage).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
+		
 		return modelAndView;
 	}
 
@@ -922,6 +958,12 @@ public class BusinessTravelController extends AbstractController{
 	@RequestMapping(value="/hncis/businessTravel/doApproveCancelBTToRequest.do")
 	public ModelAndView doApproveCancelBTToRequest(HttpServletRequest req, HttpServletResponse res,
 		@RequestParam(value="bsicInfo", required=true) String paramJson) throws HncisException, SessionException{
+
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 
 		BgabGascbt01 btReqDto = (BgabGascbt01) getJsonToBean(paramJson, BgabGascbt01.class);
@@ -933,6 +975,11 @@ public class BusinessTravelController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -947,6 +994,11 @@ public class BusinessTravelController extends AbstractController{
 	@RequestMapping(value="/hncis/businessTravel/doConfirmBTToRequest.do")
 	public ModelAndView doConfirmBTToRequest(HttpServletRequest req, HttpServletResponse res,
 		@RequestParam(value="bsicInfo", required=true) String paramJson) throws HncisException, SessionException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 		BgabGascbt01 btReqDto = (BgabGascbt01) getJsonToBean(paramJson, BgabGascbt01.class);
 
@@ -965,6 +1017,11 @@ public class BusinessTravelController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -979,6 +1036,11 @@ public class BusinessTravelController extends AbstractController{
 	@RequestMapping(value="/hncis/businessTravel/doConfirm3BTToRequest.do")
 	public ModelAndView doConfirm3BTToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="bsicInfo", required=true) String paramJson) throws HncisException, SessionException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 		BgabGascbt01 btReqDto = (BgabGascbt01) getJsonToBean(paramJson, BgabGascbt01.class);
 		CommonMessage message = new CommonMessage();
@@ -991,6 +1053,11 @@ public class BusinessTravelController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -1005,6 +1072,11 @@ public class BusinessTravelController extends AbstractController{
 	@RequestMapping(value="/hncis/businessTravel/doAfterCalBTToRequest.do")
 	public ModelAndView doAfterCalBTToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="bsicInfo", required=true) String paramJson) throws HncisException, SessionException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 		BgabGascbt01 btReqDto = (BgabGascbt01) getJsonToBean(paramJson, BgabGascbt01.class);
 		CommonMessage message = new CommonMessage();
@@ -1017,6 +1089,11 @@ public class BusinessTravelController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -1065,6 +1142,11 @@ public class BusinessTravelController extends AbstractController{
 	@RequestMapping(value="/hncis/businessTravel/doRejectBTToRequest.do")
 	public ModelAndView doRejectBTToRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="bsicInfo", required=true) String paramJson)throws HncisException, SessionException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
+		
 		ModelAndView modelAndView = null;
 		CommonMessage appMessage;
 
@@ -1086,6 +1168,11 @@ public class BusinessTravelController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}

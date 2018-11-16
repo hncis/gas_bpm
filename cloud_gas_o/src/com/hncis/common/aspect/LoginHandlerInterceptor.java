@@ -115,7 +115,9 @@ public class LoginHandlerInterceptor extends HandlerInterceptorAdapter
 
         if(session != null && session.getAttribute(Constant.SESSION_USER_KEY) != null) {
         	return true;
-        } else if((session == null || session.getAttribute(Constant.SESSION_USER_KEY) == null)) {
+        }else if("/hncis/system/doSystemTest.do".equals(request.getRequestURI())){ 
+        	return true;
+        }else if((session == null || session.getAttribute(Constant.SESSION_USER_KEY) == null)) {
         	removeSession(session);
     		throw new SessionException(notLogin);
 //        } else if(!"M".equals(SessionInfo.getSess_mstu_gubb(request)) && !StringUtil.getMenuAuthManagerFlag(request)){
