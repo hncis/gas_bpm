@@ -2878,40 +2878,38 @@ public class SystemManagerImpl  implements SystemManager{
 		logger.info("######### TEST START ###########");
 		String docNo = "";
 		String adminID = "10000001";
-		String[] userArray = {"10000002", "10000003", "10000004", "10000005"};
-		String[] pCodeArray = {"P-B-001", "P-B-002", "P-B-003", "P-B-004", "P-B-005", "P-B-006"};
-		String[] sCodeArray = {"GASBZ01210010", "GASBZ01220010", "GASBZ01230010", "GASBZ01240010", "GASBZ01250010", "GASBZ01260010"};
-		String[] asCodeArray = {"GASBZ01210030", "GASBZ01220030", "GASBZ01230030", "GASBZ01240030", "GASBZ01250030", "GASBZ01260030"};
-		String[] rCodeArray = {"GASROLE01210030", "GASROLE01220030", "GASROLE01230030", "GASROLE01240030", "GASROLE01250030", "GASROLE01260030"};
-		String[] pArray = {"RC", "UF", "GF", "BK", "TR", "FJ"};
+		String userArray = "10000002";
+		String pCodeArray = "P-B-001";
+		String sCodeArray = "GASBZ01210010";
+		String asCodeArray = "GASBZ01210030";
+		String rCodeArray = "GASROLE01210030";
+		String pArray = "RC";
 		String message;
 		String sDate = CurrentDateTime.getDate();
+	
+		Random randomGenerator = new Random();
+	
+		String sTime = CurrentDateTime.getTime();
+		int sRandom = randomGenerator.nextInt(10);
 		
-		for(int i=0;i<userArray.length; i++){
-			Random randomGenerator = new Random();
-			for(int j=0; j<pCodeArray.length; j++){
-				String sTime = CurrentDateTime.getTime();
-				int sRandom = randomGenerator.nextInt(10);
-				
-				docNo = sDate + sTime + sRandom + pArray[j];
-				
-				String processCode = pCodeArray[j]; 	
-				String bizKey = docNo;	
-				String statusCode = sCodeArray[j];	
-				String adminCode = asCodeArray[j];
-				String loginUserId = userArray[i];	
-				String comment = null;
-				String roleCode = rCodeArray[j]; 
-				
-				List<String> approveList = new ArrayList<String>();
-				List<String> managerList = new ArrayList<String>();
-				managerList.add(adminID);
-				
-				message = BpmApiUtil.sendSaveTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
-				
-				logger.info("save_return : " + message);
-			}
-		}
+		docNo = sDate + sTime + sRandom + pArray;
+		
+		String processCode = pCodeArray; 	
+		String bizKey = docNo;	
+		String statusCode = sCodeArray;	
+		String adminCode = asCodeArray;
+		String loginUserId = userArray;	
+		String comment = null;
+		String roleCode = rCodeArray; 
+		
+		List<String> approveList = new ArrayList<String>();
+		List<String> managerList = new ArrayList<String>();
+		managerList.add(adminID);
+		
+		message = BpmApiUtil.sendSaveTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
+		
+		logger.info("save_return : " + message);
+	
 		logger.info("######### TEST END ###########");
 	}
 }

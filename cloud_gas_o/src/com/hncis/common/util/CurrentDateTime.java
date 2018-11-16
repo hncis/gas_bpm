@@ -18,6 +18,9 @@ public final class CurrentDateTime {
     private static final String strSelected = "selected";
     private static final String strEnterLine = "\n <option value='";
     private static final String strEmpty = "";
+    private static final String strComma= "' ";
+    private static final String strRight= ">";
+    private static final String strOption= "</option>";
     
 
 	/**
@@ -744,7 +747,7 @@ public final class CurrentDateTime {
 			if (currYear.equals(i+strEmpty)){
 				strSelected = strSelected;
 			}
-			sb.append(strEnterLine + (i+strEmpty) + "' " + strSelected + ">" + (i+strEmpty) + "</option>");
+			sb.append(strEnterLine + (i+strEmpty) + strComma + strSelected + strRight + (i+strEmpty) + strOption);
 		}
 	
 		return sb.toString();
@@ -765,7 +768,7 @@ public final class CurrentDateTime {
 			if (currYear == i){
 				strSelected = strSelected;
 			}
-			sb.append(strEnterLine + i + "' " + strSelected + ">" + i + "</option>");
+			sb.append(strEnterLine + i + strComma + strSelected + strRight + i + strOption);
 		}
 	
 		return sb.toString();
@@ -786,7 +789,7 @@ public final class CurrentDateTime {
 			if (currYear == i){
 				strSelected = strSelected;
 			}
-			sb.append(strEnterLine + i + "' " + strSelected + ">" + i + "</option>");
+			sb.append(strEnterLine + i + strComma + strSelected + strRight + i + strOption);
 		}
 	
 		return sb.toString();
@@ -810,7 +813,7 @@ public final class CurrentDateTime {
 			if (currMonth.equals(strI)){
 				strSelected = strSelected;
 			}
-			sb.append(strEnterLine + strI + "' " + strSelected + ">" + (i+strEmpty) + "</option>");
+			sb.append(strEnterLine + strI + strComma + strSelected + strRight + (i+strEmpty) + strOption);
 		}
 	
 		return sb.toString();
