@@ -88,6 +88,7 @@ public class CommonManagerImpl  implements CommonManager{
     private static final String str19 = "EXCEL.0001";
     private static final String str20 = "EXCEL.0004";
     private static final String str21 = "admin";
+    private static final String str22 = "EXCEL.0003";
 
 	@Autowired
 	public BooksDao booksDao;
@@ -734,7 +735,7 @@ public class CommonManagerImpl  implements CommonManager{
 								}
 
 								if(dataCnt > 0){
-									msg = HncisMessageSource.getMessage("EXCEL.0003");
+									msg = HncisMessageSource.getMessage(str22);
 								}else if(iXbk03BList.size() == 0){
 									msg = HncisMessageSource.getMessage(str19);
 								}else{
@@ -791,7 +792,7 @@ public class CommonManagerImpl  implements CommonManager{
 								chkDto.setCorp_cd(strCorpCd);
 
 								if(dataCnt > 0){
-									msg = HncisMessageSource.getMessage("EXCEL.0003");
+									msg = HncisMessageSource.getMessage(str22);
 								}else if(iXgf03BList.size() == 0){
 									msg = HncisMessageSource.getMessage(str19);
 								}else{
@@ -840,7 +841,7 @@ public class CommonManagerImpl  implements CommonManager{
 			try{
 				if(StringUtil.isNullToString(message.getResult()).equals("E3")){
 					TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-					msg = HncisMessageSource.getMessage("EXCEL.0003");
+					msg = HncisMessageSource.getMessage(str22);
 				}else if(StringUtil.isNullToString(message.getResult()).equals("E1")){
 					TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 					msg = HncisMessageSource.getMessage(str19);
@@ -865,7 +866,7 @@ public class CommonManagerImpl  implements CommonManager{
 			try{
 				if(StringUtil.isNullToString(message.getResult()).equals("E3")){
 					TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-					msg = HncisMessageSource.getMessage("EXCEL.0003");
+					msg = HncisMessageSource.getMessage(str22);
 				}else if(StringUtil.isNullToString(message.getResult()).equals("E1")){
 					TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 					msg = HncisMessageSource.getMessage(str19);
@@ -882,7 +883,6 @@ public class CommonManagerImpl  implements CommonManager{
 			}catch(Exception ex){
 				logger.error(ex);
 			}
-		}finally{
 		}
 	}
 
@@ -1505,8 +1505,6 @@ public class CommonManagerImpl  implements CommonManager{
 			msg = HncisMessageSource.getMessage("MAIL.0003");
 			logger.error(e);
 			return msg;
-		}
-		finally {
 		}
 	}
 

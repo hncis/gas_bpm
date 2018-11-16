@@ -34,6 +34,10 @@ import com.hncis.system.dao.SystemDao;
 @Service("roomsMealsManagerImpl")
 public class RoomsMealsManagerImpl implements RoomsMealsManager{
     private transient Log logger = LogFactory.getLog(getClass());
+
+    private static final String strUpdate = "update";
+    private static final String strpCode = "P-E-004";
+    private static final String strsCode = "GASBZ01540010";
     
 	@Autowired
 	public RoomsMealsDao roomsMealsDao;
@@ -87,7 +91,7 @@ public class RoomsMealsManagerImpl implements RoomsMealsManager{
 			dto.setMode("insert");
 		}else{
 			docNo = dto.getDoc_no();
-			dto.setMode("update");
+			dto.setMode(strUpdate);
 		}
 
 		try{
@@ -160,9 +164,9 @@ public class RoomsMealsManagerImpl implements RoomsMealsManager{
 			}
 			
 			// BPM API호출
-			String processCode = "P-E-004"; 	//프로세스 코드 (도서 프로세스) - 프로세스 정의서 참조
+			String processCode = strpCode; 	//프로세스 코드 (도서 프로세스) - 프로세스 정의서 참조
 			String bizKey = dto.getDoc_no();	//신청서 번호
-			String statusCode = "GASBZ01540010";	//액티비티 코드 (도서신청서작성) - 프로세스 정의서 참조
+			String statusCode = strsCode;	//액티비티 코드 (도서신청서작성) - 프로세스 정의서 참조
 			String loginUserId = dto.getIpe_eeno();	//로그인 사용자 아이디
 			String comment = null;
 			String roleCode = "GASROLE01540030";   //도서 담당자 역할코드
@@ -172,11 +176,11 @@ public class RoomsMealsManagerImpl implements RoomsMealsManager{
 			managerList.add("10000001");
 
 			String bpmSaveMsg = BpmApiUtil.sendSaveTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
-			System.out.println("BPM 저장 메시지 : " + bpmSaveMsg);
+			logger.info("BPM 저장 메시지 : " + bpmSaveMsg);
 
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			rtnDto.setErrYn(true);
 			rtnDto.setErrMsg(HncisMessageSource.getMessage("SAVE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -193,9 +197,9 @@ public class RoomsMealsManagerImpl implements RoomsMealsManager{
 			if(cnt > 0){
 				
 				// BPM API호출
-				String processCode = "P-E-004"; 	//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
+				String processCode = strpCode; 	//프로세스 코드 (명함 프로세스) - 프로세스 정의서 참조
 				String bizKey = dto.getDoc_no();	//신청서 번호
-				String statusCode = "GASBZ01540010";	//액티비티 코드 (명함 신청서작성) - 프로세스 정의서 참조
+				String statusCode = strsCode;	//액티비티 코드 (명함 신청서작성) - 프로세스 정의서 참조
 				String loginUserId = dto.getEeno();	//로그인 사용자 아이디
 				
 				BpmApiUtil.sendDeleteAndRejectTask(processCode, bizKey, statusCode, loginUserId);
@@ -257,7 +261,7 @@ public class RoomsMealsManagerImpl implements RoomsMealsManager{
 		boolean errYn	=	false;
 		int workAuth = 0;
 		int sndType = 0;
-		if(mode.equals("update") || mode.equals("delete")){
+		if(mode.equals(strUpdate) || mode.equals("delete")){
 
 			HncisCommon hmcCommon = new HncisCommon();
 			String scrnId="XRM01";
@@ -272,7 +276,7 @@ public class RoomsMealsManagerImpl implements RoomsMealsManager{
 			hmcCommon.setSndType(sndType);
 			workAuth = Integer.parseInt(commonJobDao.getAuthority(hmcCommon).trim());
 			}catch (Exception ee) {
-				ee.printStackTrace();
+				logger.error(ee);
 				workAuth = 0;
 			}
 			if(!(workAuth > 4 || SessionInfo.getSess_mstu_gubb(req).equals("M") || auth_type.indexOf(room_place_h) > -1)){
@@ -280,7 +284,7 @@ public class RoomsMealsManagerImpl implements RoomsMealsManager{
 				}
 				else{
 					errYn = true;
-					if(mode.equals("update")){
+					if(mode.equals(strUpdate)){
 						msg   = "Can not edit data.";
 					}
 					else{
@@ -291,7 +295,7 @@ public class RoomsMealsManagerImpl implements RoomsMealsManager{
 			}
 		}
 		if(!errYn){
-			if(mode.equals("insert") || mode.equals("update")){
+			if(mode.equals("insert") || mode.equals(strUpdate)){
 
 				String bTime = tim_info_sbc;
 				int st = 0;
@@ -427,9 +431,9 @@ public class RoomsMealsManagerImpl implements RoomsMealsManager{
 			message.setMessage(HncisMessageSource.getMessage("APPROVE.0000"));
 			
 			// BPM API호출
-			String processCode = "P-E-004"; 	//프로세스 코드 (회의실 프로세스) - 프로세스 정의서 참조
+			String processCode = strpCode; 	//프로세스 코드 (회의실 프로세스) - 프로세스 정의서 참조
 			String bizKey = reqDto.getDoc_no();	//신청서 번호
-			String statusCode = "GASBZ01540010";	//액티비티 코드 (회의실 신청서작성) - 프로세스 정의서 참조
+			String statusCode = strsCode;	//액티비티 코드 (회의실 신청서작성) - 프로세스 정의서 참조
 			String loginUserId = reqDto.getEeno();	//로그인 사용자 아이디
 			String comment = null;
 			String roleCode = "GASBZ01540030";   //휴양소 담당자 역할코드
@@ -445,7 +449,7 @@ public class RoomsMealsManagerImpl implements RoomsMealsManager{
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			message.setErrorCode("E");
 			message.setMessage(HncisMessageSource.getMessage("APPROVE.0001"));
-			e.printStackTrace();
+			logger.error(e);
 		}
 
 		return message;
@@ -459,9 +463,9 @@ public class RoomsMealsManagerImpl implements RoomsMealsManager{
 			
 		if(cnt > 0){
 			// BPM API호출
-			String processCode = "P-E-004"; 	//프로세스 코드 (회의실 프로세스) - 프로세스 정의서 참조
+			String processCode = strpCode; 	//프로세스 코드 (회의실 프로세스) - 프로세스 정의서 참조
 			String bizKey = regDto.getDoc_no();	//신청서 번호
-			String statusCode = "GASBZ01540010";	//액티비티 코드 (회의실 신청서작성) - 프로세스 정의서 참조
+			String statusCode = strsCode;	//액티비티 코드 (회의실 신청서작성) - 프로세스 정의서 참조
 			String loginUserId = regDto.getUpdr_eeno();	//로그인 사용자 아이디
 	
 			BpmApiUtil.sendRestoreTask(processCode, bizKey, statusCode, loginUserId);
@@ -563,7 +567,7 @@ public class RoomsMealsManagerImpl implements RoomsMealsManager{
 				BgabGascrm01Dto reqDto = roomsMealsDao.selectInfoRmToRequest(dtoList.get(i));
 
 				if(reqDto.getPgs_st_cd().equals("0")){
-					reqDto.setMode("update");
+					reqDto.setMode(strUpdate);
 				}else{
 					reqDto.setMode("insert");
 				}
@@ -588,7 +592,7 @@ public class RoomsMealsManagerImpl implements RoomsMealsManager{
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 			rtnDto.setErrYn(true);
 			rtnDto.setErrMsg(HncisMessageSource.getMessage("DONE.0001"));
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

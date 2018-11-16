@@ -4,12 +4,21 @@ import java.io.*;
 import java.text.*;
 import java.util.*;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * 유형 설명을 삽입하십시오.
  * 작성 날짜: (2000-11-01 오후 4:08:37)
  * @작성자: Administrator
  */
 public final class CurrentDateTime {
+    private transient static Log logger = LogFactory.getLog(CurrentDateTime.class.getClass());
+    
+    private static final String strSelected = "selected";
+    private static final String strEnterLine = "\n <option value='";
+    private static final String strEmpty = "";
+    
 
 	/**
 	 * CurrentDateTime 생성자 주석.
@@ -31,14 +40,14 @@ public final class CurrentDateTime {
 		String ddd = null;
 		
 		//if(yy < 2000)   yyy = "19" + yy;
-		//else yyy = "" + yy;
-		yyy = "" + yy;
+		//else yyy = strEmpty + yy;
+		yyy = strEmpty + yy;
 		if(mo < 10){ mmo = "0" + mo;
-		}else{ mmo = "" + mo;}
+		}else{ mmo = strEmpty + mo;}
 		if(dd < 10){ ddd = "0" + dd;
-		}else{ ddd = "" + dd;}
+		}else{ ddd = strEmpty + dd;}
 
-		String addDate = "" + yyy + mmo + ddd;
+		String addDate = strEmpty + yyy + mmo + ddd;
 		return addDate;
 	}
 	
@@ -54,19 +63,19 @@ public final class CurrentDateTime {
 		String ddd = null;
 		
 		//if(yy < 2000)   yyy = "19" + yy;
-		//else yyy = "" + yy;
-		yyy = "" + yy;
+		//else yyy = strEmpty + yy;
+		yyy = strEmpty + yy;
 		if(mo < 10){ mmo = "0" + mo;
-		}else{ mmo = "" + mo;}
+		}else{ mmo = strEmpty + mo;}
 		if(dd < 10){ ddd = "0" + dd;
-		}else{ ddd = "" + dd;}
+		}else{ ddd = strEmpty + dd;}
 
-		String addDate = "" + yyy + "-" + mmo + "-" + ddd;
+		String addDate = strEmpty + yyy + "-" + mmo + "-" + ddd;
 		return addDate;
 	}	
 	
 	public static String getDashDate(String yyyymmdd, int add) {
-		String ymd = yyyymmdd.replace("/", "");
+		String ymd = yyyymmdd.replace("/", strEmpty);
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.YEAR,  Integer.parseInt(ymd.substring(0,4)));
 		cal.set(Calendar.MONTH, Integer.parseInt(ymd.substring(4,6))- 1) ;
@@ -80,11 +89,11 @@ public final class CurrentDateTime {
 		String mmo = null;
 		String ddd = null;
 
-		yyy = "" + yy;
+		yyy = strEmpty + yy;
 		mmo = StringUtil.lpad(String.valueOf(mo), 2, "0");
 		ddd = StringUtil.lpad(String.valueOf(dd), 2, "0");
 
-		String addDate = "" + yyy + "/" + mmo + "/" + ddd;
+		String addDate = strEmpty + yyy + "/" + mmo + "/" + ddd;
 		return addDate;
 	}
 	
@@ -99,14 +108,14 @@ public final class CurrentDateTime {
 		String ddd = null;
 		
 		//if(yy < 2000)   yyy = "19" + yy;
-		//else yyy = "" + yy;
-		yyy = "" + yy;
+		//else yyy = strEmpty + yy;
+		yyy = strEmpty + yy;
 		if(mo < 10){ mmo = "0" + mo;
-		}else{ mmo = "" + mo;}
+		}else{ mmo = strEmpty + mo;}
 		if(dd < 10){ ddd = "0" + dd;
-		}else{ ddd = "" + dd;}
+		}else{ ddd = strEmpty + dd;}
 
-		String addDate = "" + yyy + "/" + mmo + "/" + ddd;
+		String addDate = strEmpty + yyy + "/" + mmo + "/" + ddd;
 		return addDate;
 	}
 	
@@ -115,7 +124,7 @@ public final class CurrentDateTime {
 		String mmo = yyyymmdd.substring(4,6);
 		String ddd = yyyymmdd.substring(6,8);
 		
-		String addDate = "" + ddd + "/" + mmo + "/" + yyy;
+		String addDate = strEmpty + ddd + "/" + mmo + "/" + yyy;
 		return addDate;
 
 	}
@@ -138,13 +147,13 @@ public final class CurrentDateTime {
 		String mmo = null;
 		String ddd = null;
 		
-		yyy = "" + yy;
+		yyy = strEmpty + yy;
 		if(mo < 10){ mmo = "0" + mo;
-		}else{ mmo = "" + mo;}
+		}else{ mmo = strEmpty + mo;}
 		if(dd < 10){ ddd = "0" + dd;
-		}else{ ddd = "" + dd;}
+		}else{ ddd = strEmpty + dd;}
 
-		String addDate = "" + yyy + mmo + ddd;
+		String addDate = strEmpty + yyy + mmo + ddd;
 		return addDate;
 
 	}
@@ -164,8 +173,8 @@ public final class CurrentDateTime {
 		
 		Calendar cal = Calendar.getInstance();
 		int dd = cal.get(Calendar.DAY_OF_MONTH);
-		if(dd < 10) ddd = "0" + dd;
-		else ddd = "" + dd;
+		if(dd < 10) {ddd = "0" + dd;}
+		else {ddd = strEmpty + dd;}
 		return ddd;
 		
 	}
@@ -217,7 +226,7 @@ public final class CurrentDateTime {
 		Calendar cal = Calendar.getInstance();
 		int mo = cal.get(Calendar.MONTH) +1;
 		if(mo < 10) {mmo = "0" + mo;}
-		else {mmo = "" + mo;}
+		else {mmo = strEmpty + mo;}
 		return mmo;
 		
 	}
@@ -244,9 +253,9 @@ public final class CurrentDateTime {
 		String mmo = null;
 		
 		if(mo < 10) {mmo = "0" + mo;}
-		else{ mmo = "" + mo;}
+		else{ mmo = strEmpty + mo;}
 		
-		String addDate = "" + mmo ;
+		String addDate = strEmpty + mmo ;
 		return addDate;
 
 	}
@@ -271,7 +280,7 @@ public final class CurrentDateTime {
 
 		int year = cal.get(Calendar.YEAR);
 			
-		String addDate = "" + year ;
+		String addDate = strEmpty + year ;
 		return addDate;
 
 	}
@@ -295,14 +304,14 @@ public final class CurrentDateTime {
 		String mmo = null;
 		String ddd = null;
 		
-		yyy = "" + yy;
+		yyy = strEmpty + yy;
 		if(mo < 10){ mmo = "0" + mo;}
-		else{ mmo = "" + mo;}
+		else{ mmo = strEmpty + mo;}
 		
 		if(dd < 10) {ddd = "0" + dd;}
-		else {ddd = "" + dd;}
+		else {ddd = strEmpty + dd;}
 
-		String addDate = "" + yyy + mmo + ddd;
+		String addDate = strEmpty + yyy + mmo + ddd;
 		return addDate;
 
 	}
@@ -330,20 +339,20 @@ public final class CurrentDateTime {
 			String mmm = null;
 			String sss = null;
 			
-			yyy = "" + yy;
+			yyy = strEmpty + yy;
 			if(mo < 10){ mmo = "0" + mo;}
-			else {mmo = "" + mo;}
+			else {mmo = strEmpty + mo;}
 			if(dd < 10){ ddd = "0" + dd;}
-			else {ddd = "" + dd;}
+			else {ddd = strEmpty + dd;}
 	
-			String addDate = "" + yyy +"/"+ mmo +"/"+ ddd;
+			String addDate = strEmpty + yyy +"/"+ mmo +"/"+ ddd;
 	
 			if(hh < 10){ hhh = "0" + hh;}
-			else{ hhh = "" + hh;}
+			else{ hhh = strEmpty + hh;}
 			if(mm < 10) {mmm = "0" + mm;}
-			else{ mmm = "" + mm;}
+			else{ mmm = strEmpty + mm;}
 			if(ss < 10) {sss = "0" + ss;}
-			else{ sss = "" + ss;
+			else{ sss = strEmpty + ss;
 			}
 			String addTime = "  " + hhh +":" + mmm +":" + sss;
 			addDate += addTime;
@@ -354,8 +363,8 @@ public final class CurrentDateTime {
 	
 	public static int getSecond(int hhmmss) {
 		
-		String sign = "";
-		String timeString = "";
+		String sign = strEmpty;
+		String timeString = strEmpty;
 		int time = 0;
 		int hh = 0;
 		int mm = 0;
@@ -370,7 +379,8 @@ public final class CurrentDateTime {
 		if (timeString.length() < 6) {
 			StringBuffer bf = new StringBuffer();
 			for (int i=timeString.length(); i < 6 ; i++) {
-				bf.append("0");
+				String zero = "0";
+				bf.append(zero);
 			}
 			timeString = bf.toString() + timeString;	
 		}	
@@ -400,13 +410,13 @@ public final class CurrentDateTime {
 		String sss = null;
 			
 		if(hh < 10){ hhh = "0" + hh;}
-		else{ hhh = "" + hh;}
+		else{ hhh = strEmpty + hh;}
 		if(mm < 10) {mmm = "0" + mm;}
-		else{ mmm = "" + mm;}
+		else{ mmm = strEmpty + mm;}
 		if(ss < 10) {sss = "0" + ss;}
-		else{ sss = "" + ss;}
+		else{ sss = strEmpty + ss;}
 
-		String addTime = "" + hhh + mmm + sss;
+		String addTime = strEmpty + hhh + mmm + sss;
 		return addTime;
 	}
 	
@@ -463,12 +473,12 @@ public final class CurrentDateTime {
 	
 		Calendar date = Calendar.getInstance( Locale.KOREA );
 		int  loop_cnt, week, year, month, day, day_num, last_day, i, j;
-		String [] day_name = {"", "일", "월", "화", "수", "목", "금", "토" };
+		String [] day_name = {strEmpty, "일", "월", "화", "수", "목", "금", "토" };
 		
 		try{
 			
 			if(Stdt.length() == 6) {Stdt = Stdt + "01";}	// 1날. YYYYMM
-			else if(Stdt.length() < 6) {Stdt = CurrentDateTime.getDate(); } //""
+			else if(Stdt.length() < 6) {Stdt = CurrentDateTime.getDate(); } //strEmpty
 			else if(Stdt.length() > 8) {Stdt = Stdt.substring(0, 8);}  // YYYYMMDDHHMM
 	
 			day = Integer.parseInt(Stdt.substring(6)); //DD 추출
@@ -478,7 +488,7 @@ public final class CurrentDateTime {
 			loop_cnt = num < 0 ? -num : num;
 			if(num >= 0){
 				for(i = 0; i < loop_cnt; i++){
-					sDate[0][i] =  Stdt + ( day < 10 ? "0" : "") + String.valueOf(day);
+					sDate[0][i] =  Stdt + ( day < 10 ? "0" : strEmpty) + Integer.toString(day);
 					sDate[1][i] = day_name[getDayOfWeek(sDate[0][i])];			
 					if(++day > last_day){
 						year = Integer.parseInt(Stdt.substring(0, 4));
@@ -486,27 +496,27 @@ public final class CurrentDateTime {
 						if(month == 12){ month = 1; ++year; }
 						else {++month;}
 						day = 1;
-						Stdt = String.valueOf(year) + (month < 10? "0" : "") + month;
+						Stdt = Integer.toString(year) + (month < 10? "0" : strEmpty) + month;
 						last_day = getMonthDays(Stdt);
 					}				
 				}
 			}
 			else{
 				for(i = loop_cnt - 1; i >= 0; i--){
-					sDate[0][i] =  Stdt + ( day < 10 ? "0" : "") + String.valueOf(day);
+					sDate[0][i] =  Stdt + ( day < 10 ? "0" : strEmpty) + Integer.toString(day);
 					sDate[1][i] = day_name[getDayOfWeek(sDate[0][i])];			
 					if(--day < 1){
 						year = Integer.parseInt(Stdt.substring(0, 4));
 						month = Integer.parseInt(Stdt.substring(4, 6));
 						if(month == 1){ month = 12; --year; }
 						else{ --month;}
-						Stdt = String.valueOf(year) + (month < 10? "0" : "") + month;
+						Stdt = Integer.toString(year) + (month < 10? "0" : strEmpty) + month;
 						day = getMonthDays(Stdt);					
 					}							
 				}
 			}
 		} catch(Exception e){
-			e.printStackTrace();
+			logger.error(e);
 		}
 		
 		return sDate;
@@ -585,7 +595,7 @@ public final class CurrentDateTime {
 		String frdt, endt ;
 		int f_month, e_month, tmp, f_year, e_year, month, i;
 			
-		endt = "";
+		endt = strEmpty;
 		frdt = s_yyyymm;	
 	    i = month =  tmp = f_month =  e_month = 0;
 		if(frdt == null || frdt.length() < 6) { return 0;}
@@ -601,7 +611,7 @@ public final class CurrentDateTime {
 		tmp = f_year;
 		month = f_month;
 		while(tmp < e_year){
-			for(i = month; i <=12; i++) ++cnt;
+			for(i = month; i <=12; i++){ ++cnt;}
 			++tmp;
 			month = 1;
 		}	
@@ -653,9 +663,9 @@ public final class CurrentDateTime {
 				}
 				day = getMonthDays(year, month);
 			}
-			endt = String.valueOf(year)  
-					+ ( String.valueOf(month).length() != 2 ? "0" + String.valueOf(month) : String.valueOf(month) ) 
-					+ ( String.valueOf(day).length() != 2 ? "0" + String.valueOf(day) : String.valueOf(day) ); 
+			endt = Integer.toString(year)  
+					+ ( Integer.toString(month).length() != 2 ? "0" + Integer.toString(month) : Integer.toString(month) ) 
+					+ ( Integer.toString(day).length() != 2 ? "0" + Integer.toString(day) : Integer.toString(day) ); 
 			cnt++;
 		}
 		
@@ -663,7 +673,7 @@ public final class CurrentDateTime {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println("gugan:" + getDateGugan("20091013", ""));
+		logger.info("gugan:" + getDateGugan("20091013", strEmpty));
 	}
 	/**  이전/년월 구하기
 	  * ex> 200207, -1 -> 200206을 리턴 
@@ -675,7 +685,7 @@ public final class CurrentDateTime {
 		int   year,  month,  loop_cnt;
 		
 		try{
-			if( Stdt.equals("") )
+			if( Stdt.equals(strEmpty) )
 			{	Stdt = CurrentDateTime.getDate().substring(0, 6);}
 					
 			Year = Stdt.substring(0, 4);
@@ -711,7 +721,7 @@ public final class CurrentDateTime {
 			Stdt = Year + Month;
 			
 		}catch	(Exception e){
-			e.printStackTrace();
+			logger.error(e);
 		}
 			
 		return Stdt;
@@ -724,17 +734,17 @@ public final class CurrentDateTime {
 	 * @return String
 	 */
 	public static String getComboYear() {
-		StringBuffer sb = new StringBuffer();
+		StringBuffer sb = new StringBuffer(50);
 		String currYear = CurrentDateTime.getYear();
-		String strSelected = "";
+		String strSelected = strEmpty;
 		int cYear = Integer.parseInt(CurrentDateTime.getYear());
 		
 		for (int i = cYear - 10; i < cYear + 10; i++){
-			strSelected = "";
-			if (currYear.equals(i+"")){
-				strSelected = "selected";
+			strSelected = strEmpty;
+			if (currYear.equals(i+strEmpty)){
+				strSelected = strSelected;
 			}
-			sb.append("\n <option value='" + (i+"") + "' " + strSelected + ">" + (i+"") + "</option>");
+			sb.append(strEnterLine + (i+strEmpty) + "' " + strSelected + ">" + (i+strEmpty) + "</option>");
 		}
 	
 		return sb.toString();
@@ -746,16 +756,16 @@ public final class CurrentDateTime {
 	 * @return String
 	 */
 	public static String getComboYear2() {
-		StringBuffer sb = new StringBuffer();
+		StringBuffer sb = new StringBuffer(50);
 		int currYear = Integer.parseInt(CurrentDateTime.getYear());
-		String strSelected = "";
+		String strSelected = strEmpty;
 		
 		for (int i=currYear - 40; i <= currYear; i++){
-			strSelected = "";
+			strSelected = strEmpty;
 			if (currYear == i){
-				strSelected = "selected";
+				strSelected = strSelected;
 			}
-			sb.append("\n <option value='" + i + "' " + strSelected + ">" + i + "</option>");
+			sb.append(strEnterLine + i + "' " + strSelected + ">" + i + "</option>");
 		}
 	
 		return sb.toString();
@@ -767,16 +777,16 @@ public final class CurrentDateTime {
 	 * @return String
 	 */
 	public static String getComboYear3() {
-		StringBuffer sb = new StringBuffer();
+		StringBuffer sb = new StringBuffer(50);
 		int currYear = Integer.parseInt(CurrentDateTime.getYear());
-		String strSelected = "";
+		String strSelected = strEmpty;
 		
 		for (int i = currYear; i <= currYear + 20; i++){
-			strSelected = "";
+			strSelected = strEmpty;
 			if (currYear == i){
-				strSelected = "selected";
+				strSelected = strSelected;
 			}
-			sb.append("\n <option value='" + i + "' " + strSelected + ">" + i + "</option>");
+			sb.append(strEnterLine + i + "' " + strSelected + ">" + i + "</option>");
 		}
 	
 		return sb.toString();
@@ -790,17 +800,17 @@ public final class CurrentDateTime {
 	public static String getComboMonth() {
 		StringBuffer sb = new StringBuffer();
 		String currMonth = CurrentDateTime.getMonth();
-		String strSelected = "";
-		String strI = "";
+		String strSelected = strEmpty;
+		String strI = strEmpty;
 		
 		for (int i=1; i<13; i++){
-			strI = i + "";
+			strI = i + strEmpty;
 			if (i<10) {strI = "0" + strI;}
-			strSelected = "";
+			strSelected = strEmpty;
 			if (currMonth.equals(strI)){
-				strSelected = "selected";
+				strSelected = strSelected;
 			}
-			sb.append("\n <option value='" + strI + "' " + strSelected + ">" + (i+"") + "</option>");
+			sb.append(strEnterLine + strI + "' " + strSelected + ">" + (i+strEmpty) + "</option>");
 		}
 	
 		return sb.toString();
@@ -819,7 +829,7 @@ public final class CurrentDateTime {
 		String mm = yyyymmdd.substring(4,6);
 		String dd = yyyymmdd.substring(6,8);
 		
-		String eng_m = "";
+		String eng_m = strEmpty;
 		
 		if(mm.equals("01")){
 			eng_m = "Jan";
@@ -865,13 +875,13 @@ public final class CurrentDateTime {
 			String mmo = null;
 			String ddd = null;
 			
-			yyy = "" + yy;
+			yyy = strEmpty + yy;
 			if(mo < 10){ mmo = "0" + mo;}
-			else{ mmo = "" + mo;}
+			else{ mmo = strEmpty + mo;}
 			if(dd < 10) {ddd = "0" + dd;}
-			else{ ddd = "" + dd;}
+			else{ ddd = strEmpty + dd;}
 
-			String addDate = "" + yyy + mmo + ddd;
+			String addDate = strEmpty + yyy + mmo + ddd;
 			return addDate;
 	}
 	
@@ -881,8 +891,8 @@ public final class CurrentDateTime {
 			return yyyymmdd;
 		}
 		
-		if(yyyymmdd.indexOf("/") != -1){
-			yyyymmdd = yyyymmdd.replaceAll("/","");
+		if(yyyymmdd.split("/").length != 1){
+			yyyymmdd = yyyymmdd.replaceAll("/",strEmpty);
 			
 			String yyyy = yyyymmdd.substring(0,4);
 			String mm = yyyymmdd.substring(4,6);
@@ -905,8 +915,8 @@ public final class CurrentDateTime {
 			return ddmmyyyy;
 		}
 		
-		if(ddmmyyyy.indexOf("/") != -1){
-			ddmmyyyy = ddmmyyyy.replaceAll("/","");
+		if(ddmmyyyy.split("/").length != 1){
+			ddmmyyyy = ddmmyyyy.replaceAll("/",strEmpty);
 			
 			String yyyy = ddmmyyyy.substring(4,8);
 			String mm = ddmmyyyy.substring(2,4);
@@ -927,7 +937,7 @@ public final class CurrentDateTime {
 		
 		int dayCnt = getDayOfWeek(yyyymmdd);
 		
-		String dayOfWeek = "";
+		String dayOfWeek = strEmpty;
 		
 		if(dayCnt == 1){
 			dayOfWeek = "Sunday";
@@ -952,9 +962,9 @@ public final class CurrentDateTime {
 		
 		if (sValue.length() < 8 ){ return sValue;}
 		
-		String sResult = "";
+		String sResult = strEmpty;
 		
-		if(sValue.indexOf("/") != -1){
+		if(sValue.split("/").length != 1){
 			sResult = sValue.substring(8)+"/"+sValue.substring(5,7)+"/"+sValue.substring(0,4);
 		}else{
 			sResult = sValue.substring(6)+sValue.substring(4,6)+sValue.substring(0,4);
@@ -988,6 +998,7 @@ public final class CurrentDateTime {
 		try{
 			cal.setTime(sdf.parse(fromDate));
 		}catch (Exception e){
+			logger.error(e);
 		}
 		
 		int count = getDiffDayCount(fromDate, toDate);
