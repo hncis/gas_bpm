@@ -2874,6 +2874,8 @@ public class SystemManagerImpl  implements SystemManager{
 
 	@Override
 	public void doSystemTest() throws Exception{
+
+		logger.info("######### TEST START ###########");
 		String docNo = "";
 		String adminID = "10000001";
 		String[] userArray = {"10000002", "10000003", "10000004", "10000005"};
@@ -2882,13 +2884,12 @@ public class SystemManagerImpl  implements SystemManager{
 		String[] asCodeArray = {"GASBZ01210030", "GASBZ01220030", "GASBZ01230030", "GASBZ01240030", "GASBZ01250030", "GASBZ01260030"};
 		String[] rCodeArray = {"GASROLE01210030", "GASROLE01220030", "GASROLE01230030", "GASROLE01240030", "GASROLE01250030", "GASROLE01260030"};
 		String[] pArray = {"RC", "UF", "GF", "BK", "TR", "FJ"};
-		
 		String message;
+		String sDate = CurrentDateTime.getDate();
 		
 		for(int i=0;i<userArray.length; i++){
 			Random randomGenerator = new Random();
 			for(int j=0; j<pCodeArray.length; j++){
-				String pCode = pCodeArray[j];
 				String sTime = CurrentDateTime.getTime();
 				int sRandom = randomGenerator.nextInt(10);
 				
