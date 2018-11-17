@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
 
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -3353,46 +3355,28 @@ public class SystemController extends AbstractController{
 	@RequestMapping(value="/hncis/system/doSystemTest.do")
 	public ModelAndView doSystemTest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="bsicInfo", required=true) String bsicInfo)throws HncisException{
-		logger.info("Test Start");
+		logger.info("********** Test Start ************");
 		ModelAndView modelAndView = null;
-		CommonMessage message = new CommonMessage();
 
-		BgabGasctr01 cgabGasctr01 = (BgabGasctr01)getJsonToBean(bsicInfo, BgabGasctr01.class);
+		String safe = Jsoup.clean(bsicInfo, Whitelist.basicWithImages());
+		BgabGasctr01 cgabGasctr01 = (BgabGasctr01)JSONObject.toBean(JSONObject.fromObject(safe.replace("&quot;", "\"")), BgabGasctr01.class);
 
-
-		String doc_no = StringUtil.getDocNo();
-		cgabGasctr01.setDoc_no(doc_no);
-
-		Integer cnt = (Integer)trainingManager.insertInfoTRToRequest(cgabGasctr01);
-
-		if(cnt > 0){
-			message.setMessage(HncisMessageSource.getMessage("SAVE.0000"));
-			message.setCode(cgabGasctr01.getDoc_no());
-			
-			// BPM API호출
-			String processCode = "P-B-005"; 	//프로세스 코드 (교육신청 프로세스) - 프로세스 정의서 참조
-			String bizKey = cgabGasctr01.getDoc_no();	//신청서 번호
-			String statusCode = "GASBZ01250010";	//액티비티 코드 (교육신청신청서작성) - 프로세스 정의서 참조
-			String loginUserId = cgabGasctr01.getEeno();	//로그인 사용자 아이디
-			String comment = null;
-			String roleCode = "GASROLE01250030";  //교육신청 담당자 역할코드
-			
-			//역할정보
-			List<String> approveList = new ArrayList<String>();
-			List<String> managerList = new ArrayList<String>();
-			managerList.add("10000001");
-
-			BpmApiUtil.sendSaveTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
+		trainingManager.insertInfoTRToRequest(cgabGasctr01);
 		
-		}else{
-			message.setMessage(HncisMessageSource.getMessage("SAVE.0001"));
-		}
+		String processCode = "P-B-005"; 	
+		String bizKey = cgabGasctr01.getDoc_no();
+		String statusCode = "GASBZ01250010";	
+		String loginUserId = cgabGasctr01.getEeno();	
+		String roleCode = "GASROLE01250030";
+		
+		//역할정보
+		List<String> approveList = new ArrayList<String>();
+		List<String> managerList = new ArrayList<String>();
+		managerList.add("10000001");
 
-		modelAndView = new ModelAndView();
-		modelAndView.setViewName(DATA_JSON_PAGE);
-		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
-		modelAndView.addObject("uiType", "ajax");
-		logger.info("Test End");
+		BpmApiUtil.sendSaveTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
+	
+		logger.info("********** Test End ************");
 		
 		return modelAndView;
 	}
