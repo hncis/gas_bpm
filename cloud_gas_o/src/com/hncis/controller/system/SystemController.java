@@ -2,6 +2,9 @@ package com.hncis.controller.system;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +29,7 @@ import com.hncis.common.exception.impl.HncisException;
 import com.hncis.common.exception.impl.SessionException;
 import com.hncis.common.manager.CommonManager;
 import com.hncis.common.message.HncisMessageSource;
+import com.hncis.common.util.BpmApiUtil;
 import com.hncis.common.util.StringUtil;
 import com.hncis.common.vo.BgabGascZ011Dto;
 import com.hncis.common.vo.BgabGascz002Dto;
@@ -57,6 +61,9 @@ import com.hncis.system.vo.BgabGascz033Dto;
 import com.hncis.system.vo.BgabGascz035Dto;
 import com.hncis.system.vo.DashBoard;
 import com.hncis.system.vo.TableInfo;
+import com.hncis.training.manager.TrainingManager;
+import com.hncis.training.vo.BgabGasctr01;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -3338,23 +3345,55 @@ public class SystemController extends AbstractController{
 
 		return modelAndView;
 	}
-	
+
+
+	@Autowired
+	@Qualifier("trainingManagerImpl")
+	private TrainingManager trainingManager;
 	@RequestMapping(value="/hncis/system/doSystemTest.do")
 	public ModelAndView doSystemTest(HttpServletRequest req, HttpServletResponse res,
-			@RequestParam(value="paramJson" , required=true) String paramJson) throws HncisException{
+			@RequestParam(value="bsicInfo", required=true) String bsicInfo)throws HncisException{
+		logger.info("Test Start");
+		ModelAndView modelAndView = null;
+		CommonMessage message = new CommonMessage();
 
-		try {
-			systemManager.doSystemTest();
-		} catch (Exception e) {
-			logger.error("error : ", e);
+		BgabGasctr01 cgabGasctr01 = (BgabGasctr01)getJsonToBean(bsicInfo, BgabGasctr01.class);
+
+
+		String doc_no = StringUtil.getDocNo();
+		cgabGasctr01.setDoc_no(doc_no);
+
+		Integer cnt = (Integer)trainingManager.insertInfoTRToRequest(cgabGasctr01);
+
+		if(cnt > 0){
+			message.setMessage(HncisMessageSource.getMessage("SAVE.0000"));
+			message.setCode(cgabGasctr01.getDoc_no());
+			
+			// BPM API호출
+			String processCode = "P-B-005"; 	//프로세스 코드 (교육신청 프로세스) - 프로세스 정의서 참조
+			String bizKey = cgabGasctr01.getDoc_no();	//신청서 번호
+			String statusCode = "GASBZ01250010";	//액티비티 코드 (교육신청신청서작성) - 프로세스 정의서 참조
+			String loginUserId = cgabGasctr01.getEeno();	//로그인 사용자 아이디
+			String comment = null;
+			String roleCode = "GASROLE01250030";  //교육신청 담당자 역할코드
+			
+			//역할정보
+			List<String> approveList = new ArrayList<String>();
+			List<String> managerList = new ArrayList<String>();
+			managerList.add("10000001");
+
+			BpmApiUtil.sendSaveTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
+		
+		}else{
+			message.setMessage(HncisMessageSource.getMessage("SAVE.0001"));
 		}
 
-		ModelAndView modelAndView = new ModelAndView();
+		modelAndView = new ModelAndView();
 		modelAndView.setViewName(DATA_JSON_PAGE);
-		//조회한 데이터를 string으로 해서 넣어줌.
-		modelAndView.addObject(JSON_DATA_KEY, null);
+		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
-
+		logger.info("Test End");
+		
 		return modelAndView;
 	}
 }
