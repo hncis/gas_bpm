@@ -3353,15 +3353,31 @@ public class SystemController extends AbstractController{
 	@Qualifier("trainingManagerImpl")
 	private TrainingManager trainingManager;
 	@RequestMapping(value="/hncis/system/doSystemTest.do")
-	public ModelAndView doSystemTest(HttpServletRequest req, HttpServletResponse res,
-			@RequestParam(value="bsicInfo", required=true) String bsicInfo)throws HncisException{
-		logger.info("********** Test Start ************");
+	public ModelAndView doSystemTest(HttpServletRequest req, HttpServletResponse res)throws HncisException{
+		//logger.info("********** Test Start ************");
+		
 		ModelAndView modelAndView = null;
+/*
+		BgabGasctr01 cgabGasctr01 = new BgabGasctr01();
+		cgabGasctr01.setDoc_no(StringUtil.getDocNo());
+		cgabGasctr01.setEeno("10000003");
+		cgabGasctr01.setEenm("박철수");
+		cgabGasctr01.setOps_cd("60000003");
+		cgabGasctr01.setOps_nm("개발2팀");
+		cgabGasctr01.setPgs_st_cd("0");
+		cgabGasctr01.setPgs_st_nm("");
+		cgabGasctr01.setPh_no("010-0000-0000");
+		cgabGasctr01.setTitle("test");
+		cgabGasctr01.setAmount("150000");
+		cgabGasctr01.setFrom_ymd("20181120");
+		cgabGasctr01.setTo_ymd("20181120");
+		cgabGasctr01.setPlace("test");
+		cgabGasctr01.setDescription("");
+		cgabGasctr01.setUpdr_eeno("10000003");
+		cgabGasctr01.setCorp_cd("demo");
+		cgabGasctr01.setLocale("ko");
 
-		String safe = Jsoup.clean(bsicInfo, Whitelist.basicWithImages());
-		BgabGasctr01 cgabGasctr01 = (BgabGasctr01)JSONObject.toBean(JSONObject.fromObject(safe.replace("&quot;", "\"")), BgabGasctr01.class);
-
-		trainingManager.insertInfoTRToRequest(cgabGasctr01);
+//		trainingManager.insertInfoTRToRequest(cgabGasctr01);
 		
 		String processCode = "P-B-005"; 	
 		String bizKey = cgabGasctr01.getDoc_no();
@@ -3376,7 +3392,12 @@ public class SystemController extends AbstractController{
 
 		BpmApiUtil.sendSaveTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
 	
-		logger.info("********** Test End ************");
+		logger.info("********** Test End ************");*/
+		try {
+			systemManager.doSystemTest();
+		} catch (Exception e) {
+			logger.error(e);
+		}
 		
 		return modelAndView;
 	}
