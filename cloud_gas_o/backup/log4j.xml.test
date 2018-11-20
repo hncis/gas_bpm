@@ -61,11 +61,11 @@
     </appender>
 
     <!-- log SQL with timing information, post execution -->
-    <logger name="com.hncis">
+    <!-- <logger name="com.hncis">
         <level value="INFO" />
 		<appender-ref ref="console"/>
 		<appender-ref ref="dailyRollingFile" />
-    </logger>
+    </logger> -->
 	
 	<!-- 3rdparty Loggers -->
 	<logger name="org.springframework.core">
