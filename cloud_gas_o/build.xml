@@ -254,13 +254,19 @@
 			</fileset>
 		</pmd>
 	</target>
-		
-	<target name="findbugs" depends="jar">
+	<path id="ant_fb.classpath">
+		<fileset dir="D:/apache-ant-1.9.13/findbugs-3.0.1/lib">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>	
+	<target name="findbugs">
 		<mkdir dir="./target"/>
-		<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"/>
+		<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="ant_fb.classpath"/>
 		<findbugs home="${findbugs.home}"
               output="xml"
-              outputFile="./target/findbugsXml.xml" >
+              outputFile="./target/findbugsXml.xml"
+			  includeFilter="${basedir}/findbugs-include.xml"
+			  excludeFilter="${basedir}/findbugs-exclude.xml">
       <auxClasspath path="${basedir}/lib/Regex.jar" />
       <sourcePath path="${basedir}/src/java" />
       <class location="${basedir}/bin/bcel-5.2.jar" />
