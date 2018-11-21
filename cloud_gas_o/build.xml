@@ -4,7 +4,7 @@
 	<property name="app.name" value="cloud_gas_o"/>
 	<property name="demo.target" value="D:/"/>
 	<property name="build.classpath" value="C:/Program Files/Java/jdk1.7.0_60/lib"/>
-	
+	<property name="findbugs.home" value="D:/apache-ant-1.9.13/findbugs-3.0.1/" />
 	<path id="classpath">
 		<fileset dir="WebContent/WEB-INF/lib">
 			<include name="*.jar"/>
@@ -254,20 +254,19 @@
 			</fileset>
 		</pmd>
 	</target>
+		
+	<target name="findbugs" depends="jar">
+		<mkdir dir="./target"/>
+		<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"/>
+		<findbugs home="${findbugs.home}"
+              output="xml"
+              outputFile="./target/findbugsXml.xml" >
+      <auxClasspath path="${basedir}/lib/Regex.jar" />
+      <sourcePath path="${basedir}/src/java" />
+      <class location="${basedir}/bin/bcel-5.2.jar" />
+    </findbugs>
+  </target>
 	
-	<path id="ant_fb.classpath">
-		<fileset dir="D:/apache-ant-1.9.13/findbugs-3.0.1/lib">
-			<include name="**/*.jar"/>
-		</fileset>
-	</path>
-		<target name="findbugs">
-			<mkdir dir="./target"/>
-			<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="ant_fb.classpath" />
-				<findbugs output="xml" outputFile="target/findbugsXml.xml" >
-				  <sourcePath path="${basedir}/src"/>
-				  <class location="D:/apache-ant-1.9.13/findbugs-3.0.1/lib/bcel-6.0-SNAPSHOT.jar" />				  
-				</findbugs>
-		</target>
-		<target name="dist" depends="deploy_test, pmd, findbugs" />
+	<target name="dist" depends="deploy_test, pmd, findbugs" />
 
 </project>
