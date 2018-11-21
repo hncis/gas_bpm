@@ -264,7 +264,7 @@
 			<mkdir dir="./target"/>
 			<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="ant_fb.classpath" />
 				<findbugs output="xml" outputFile="target/findbugsXml.xml" >
-				  <sourcePath dir="${basedir}/src">
+				  <sourcePath path="${basedir}/src">
 					<include name="com/hncis/common/**/*.java" />
 					<include name="com/hncis/books/**/*.java" />
 					<include name="com/hncis/businessCard/**/*.java" />
