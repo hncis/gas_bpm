@@ -263,7 +263,7 @@
 		<target name="findbugs">
 			<mkdir dir="./target"/>
 			<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="ant_fb.classpath" />
-				<findbugs output="xml" outputFile="bcel-fb.xml" >
+				<findbugs output="xml" outputFile="target/findbugsXml.xml" >
 				  <sourcePath dir="${basedir}/src">
 					<include name="com/hncis/common/**/*.java" />
 					<include name="com/hncis/books/**/*.java" />
@@ -291,8 +291,7 @@
 					<include name="com/hncis/uniform/**/*.java" />
 					<include name="com/hncis/vehicleLog/**/*.java" />
 				  </sourcePath>
-				  <class location="D:/apache-ant-1.9.13/findbugs-3.0.1/lib/bcel-6.0-SNAPSHOT.jar" />
-				  <formatter type="xml" toFile="target/pmd.xml" />
+				  <class location="D:/apache-ant-1.9.13/findbugs-3.0.1/lib/bcel-6.0-SNAPSHOT.jar" />				  
 				</findbugs>
 		</target>
 		<target name="dist" depends="deploy_test, pmd, findbugs" />
