@@ -168,6 +168,29 @@
 					</includes>
                 </configuration>
             </plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>3.0.6-SNAPSHOT</version>
+				<configuration>
+				  <effort>Max</effort>
+				  <threshold>Low</threshold>
+				  <failOnError>true</failOnError>
+				  <excludeFilterFile>${basedir}/findbugs-exclude.xml</excludeFilterFile>
+				  <includeFilterFile>${basedir}/findbugs-include.xml</includeFilterFile>
+				  <sourceEncoding>UTF-8</sourceEncoding> 
+					<includes>
+						<include>**/bpmutil/util/*.java</include>
+					</includes>
+					<plugins>
+						<plugin>
+							<groupId>com.h3xstream.findsecbugs</groupId>
+							<artifactId>findsecbugs-plugin</artifactId>
+							<version>1.2.0</version>
+						</plugin>
+					</plugins>
+				</configuration>
+			  </plugin>
         </plugins>
 	</build>
 	
