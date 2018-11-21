@@ -264,33 +264,7 @@
 			<mkdir dir="./target"/>
 			<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="ant_fb.classpath" />
 				<findbugs output="xml" outputFile="target/findbugsXml.xml" >
-				  <sourcePath path="${basedir}/src">
-					<include name="com/hncis/common/**/*.java" />
-					<include name="com/hncis/books/**/*.java" />
-					<include name="com/hncis/businessCard/**/*.java" />
-					<include name="com/hncis/businessTravel/**/*.java" />
-					<include name="com/hncis/businessVehicles/**/*.java" />
-					<include name="com/hncis/cooperator/**/*.java" />
-					<include name="com/hncis/favmilyJob/**/*.java" />
-					<include name="com/hncis/fuelCost/**/*.java" />
-					<include name="com/hncis/generalService/**/*.java" />
-					<include name="com/hncis/gift/**/*.java" />
-					<include name="com/hncis/leave/**/*.java" />
-					<include name="com/hncis/officeSupplies/**/*.java" />
-					<include name="com/hncis/pickupService/**/*.java" />
-					<include name="com/hncis/postOffice/**/*.java" />
-					<include name="com/hncis/product/**/*.java" />
-					<include name="com/hncis/restCenter/**/*.java" />
-					<include name="com/hncis/roomsMeals/**/*.java" />
-					<include name="com/hncis/security/**/*.java" />
-					<include name="com/hncis/shuttleBus/**/*.java" />
-					<include name="com/hncis/smartRooms/**/*.java" />
-					<include name="com/hncis/taxi/**/*.java" />
-					<include name="com/hncis/trafficTicket/**/*.java" />
-					<include name="com/hncis/training/**/*.java" />
-					<include name="com/hncis/uniform/**/*.java" />
-					<include name="com/hncis/vehicleLog/**/*.java" />
-				  </sourcePath>
+				  <sourcePath path="${basedir}/src"/>
 				  <class location="D:/apache-ant-1.9.13/findbugs-3.0.1/lib/bcel-6.0-SNAPSHOT.jar" />				  
 				</findbugs>
 		</target>
