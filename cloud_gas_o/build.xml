@@ -268,8 +268,31 @@
 			  includeFilter="${basedir}/findbugs-include.xml"
 			  excludeFilter="${basedir}/findbugs-exclude.xml">
       <auxClasspath path="${basedir}/lib/Regex.jar" />
-      <sourcePath path="${basedir}/src/come" />
-      <class location="${basedir}/deploy/cloud_gas_o/WEB-INF/classes" />
+        <sourcePath path="${basedir}/src/com/hncis/common/**/*.java" />
+	    <sourcePath path="${basedir}/src/com/hncis/books/**/*.java" />
+	    <sourcePath path="${basedir}/src/com/hncis/businessCard/**/*.java" />		
+	    <sourcePath path="${basedir}/src/com/hncis/businessTravel/**/*.java" />
+	    <sourcePath path="${basedir}/src/com/hncis/businessVehicles/**/*.java" />	
+		<sourcePath path="${basedir}/src/com/hncis/cooperator/**/*.java" />
+		<sourcePath path="${basedir}/src/com/hncis/favmilyJob/**/*.java" />
+		<sourcePath path="${basedir}/src/com/hncis/fuelCost/**/*.java" />	
+		<sourcePath path="${basedir}/src/com/hncis/generalService/**/*.java" />		
+		<sourcePath path="${basedir}/src/com/hncis/gift/**/*.java" />
+		<sourcePath path="${basedir}/src/com/hncis/leave/**/*.java" />	
+		<sourcePath path="${basedir}/src/com/hncis/officeSupplies/**/*.java" />	
+		<sourcePath path="${basedir}/src/com/hncis/pickupService/**/*.java" />
+		<sourcePath path="${basedir}/src/com/hncis/postOffice/**/*.java" />
+		<sourcePath path="${basedir}/src/com/hncis/product/**/*.java" />
+		<sourcePath path="${basedir}/src/com/hncis/restCenter/**/*.java" />
+		<sourcePath path="${basedir}/src/com/hncis/roomsMeals/**/*.java" />
+		<sourcePath path="${basedir}/src/com/hncis/security/**/*.java" />
+		<sourcePath path="${basedir}/src/com/hncis/shuttleBus/**/*.java" />
+		<sourcePath path="${basedir}/src/com/hncis/smartRooms/**/*.java" />
+		<sourcePath path="${basedir}/src/com/hncis/taxi/**/*.java" />	
+		<sourcePath path="${basedir}/src/com/hncis/trafficTicket/**/*.java" />
+		<sourcePath path="${basedir}/src/com/hncis/training/**/*.java" />
+		<sourcePath path="${basedir}/src/com/hncis/uniform/**/*.java" />
+		<sourcePath path="${basedir}/src/com/hncis/vehicleLog/**/*.java" />		
     </findbugs>
   </target>
 	
