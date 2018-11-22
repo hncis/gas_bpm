@@ -462,7 +462,10 @@
 				  <excludeFilterFile>${basedir}/findbugs-exclude.xml</excludeFilterFile>
 				  <includeFilterFile>${basedir}/findbugs-include.xml</includeFilterFile>
 				  <sourceEncoding>UTF-8</sourceEncoding>
-				  <onlyAnalyze>kr.co.hncis.components.*, org.uengine.web.apitest.*</onlyAnalyze>					
+				  <includes>
+				    <include>**/hncis/components/activity/*.java</include>
+				    <include>**/hncis/components/activity/descriptor/*.java</include>
+				  </includes>					
 					<plugins>
 						<plugin>
 							<groupId>com.h3xstream.findsecbugs</groupId>
