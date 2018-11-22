@@ -167,7 +167,8 @@ public class RoomsMealsManagerImpl implements RoomsMealsManager{
 			String processCode = strpCode; 	//프로세스 코드 (도서 프로세스) - 프로세스 정의서 참조
 			String bizKey = dto.getDoc_no();	//신청서 번호
 			String statusCode = strsCode;	//액티비티 코드 (도서신청서작성) - 프로세스 정의서 참조
-			String loginUserId = dto.getIpe_eeno();	//로그인 사용자 아이디
+			//String loginUserId = dto.getIpe_eeno();	//로그인 사용자 아이디
+			String loginUserId = dto.getUpdr_eeno();	//로그인 사용자 아이디
 			String comment = null;
 			String roleCode = "GASROLE01540030";   //도서 담당자 역할코드
 			//역할정보

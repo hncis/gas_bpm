@@ -2464,7 +2464,9 @@ select MENU_LGRP_CD
 		              UNION                                            
 		              SELECT 'IM' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCSE04$corp_cd$
 		              UNION                                            
-		              SELECT 'LV' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCLV01$corp_cd$ )
+		              SELECT 'LV' AS TASK_CD, to_char(doc_no) as doc_no FROM BGAB_GASCLV01$corp_cd$ 
+				      UNION
+				      SELECT 'RM' AS TASK_CD, TO_CHAR(doc_no) AS doc_no FROM BGAB_GASCRM01$corp_cd$)
 		              WHERE DOC_NO = INST.NAME) AS TASK_CD,
 					INST.INSTID AS INSTID
 				FROM

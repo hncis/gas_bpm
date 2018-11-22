@@ -327,6 +327,10 @@ public class officeSuppliesController extends AbstractController{
 	@RequestMapping(value="/hncis/officeSupplies/doUpdateByRequest.do")
 	public ModelAndView doUpdateByRequest(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson", required=true) String paramJson) throws HncisException, SessionException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
 
 		List<BgabGascos03> gsReqList = (List<BgabGascos03>) getJsonToList(paramJson, BgabGascos03.class);
 
@@ -358,6 +362,11 @@ public class officeSuppliesController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
@@ -618,6 +627,10 @@ public class officeSuppliesController extends AbstractController{
 	@RequestMapping(value="/hncis/officeSupplies/doUpdateByXos07Request.do")
 	public ModelAndView doUpdateByXos07Request(HttpServletRequest req, HttpServletResponse res,
 			@RequestParam(value="paramJson", required=true) String paramJson) throws HncisException{
+		long time = System.currentTimeMillis(); 
+		SimpleDateFormat dayTime = new SimpleDateFormat(strDateFormat); 
+		String strDT = dayTime.format(new Date(time)); 
+		logger.info(strStart + strDT);
 
 		List<BgabGascos03> gsListVo = (List<BgabGascos03>) getJsonToList(paramJson, BgabGascos03.class);
 
@@ -632,6 +645,11 @@ public class officeSuppliesController extends AbstractController{
 		modelAndView.setViewName(DATA_JSON_PAGE);
 		modelAndView.addObject(JSON_DATA_KEY, JSONObject.fromObject(message).toString());
 		modelAndView.addObject("uiType", "ajax");
+		
+		time = System.currentTimeMillis(); 
+		dayTime = new SimpleDateFormat(strDateFormat); 
+		strDT = dayTime.format(new Date(time)); 
+		logger.info(strEnd + strDT);
 
 		return modelAndView;
 	}
