@@ -179,7 +179,9 @@
 				  <excludeFilterFile>${basedir}/findbugs-exclude.xml</excludeFilterFile>
 				  <includeFilterFile>${basedir}/findbugs-include.xml</includeFilterFile>
 				  <sourceEncoding>UTF-8</sourceEncoding>
-				  <onlyAnalyze>org.uengine.bpmutil.*</onlyAnalyze>					
+					<includes>
+						<include>${basedir}/src/main/java/org/uengine/bpmutil/**/*.java</include>
+					</includes>				
 					<plugins>
 						<plugin>
 							<groupId>com.h3xstream.findsecbugs</groupId>
