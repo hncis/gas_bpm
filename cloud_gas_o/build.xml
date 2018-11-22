@@ -263,7 +263,7 @@
 		<mkdir dir="./target"/>
 		<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="ant_fb.classpath"/>
 		<findbugs home="${findbugs.home}"
-              output="text"
+              output="xml"
               outputFile="./target/findbugsXml.xml"
 			  includeFilter="${basedir}/findbugs-include.xml"
 			  excludeFilter="${basedir}/findbugs-exclude.xml">
