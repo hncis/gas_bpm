@@ -293,6 +293,7 @@
 		<sourcePath path="${basedir}/src/com/hncis/training/**/*.java" />
 		<sourcePath path="${basedir}/src/com/hncis/uniform/**/*.java" />
 		<sourcePath path="${basedir}/src/com/hncis/vehicleLog/**/*.java" />		
+      <class location="${basedir}/deploy/cloud_gas_o/WEB-INF/classes" />
     </findbugs>
   </target>
 	
