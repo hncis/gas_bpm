@@ -461,11 +461,8 @@
 				  <failOnError>true</failOnError>
 				  <excludeFilterFile>${basedir}/findbugs-exclude.xml</excludeFilterFile>
 				  <includeFilterFile>${basedir}/findbugs-include.xml</includeFilterFile>
-				  <sourceEncoding>UTF-8</sourceEncoding> 
-					<includes>
-						<include>**/hncis/components/activity/*.java</include>
-						<include>**/hncis/components/activity/descriptor/*.java</include>
-					</includes>
+				  <sourceEncoding>UTF-8</sourceEncoding>
+				  <sourcepath>${basedir}/src/main/java/kr/co/hncis/components/**/*.java</sourcepath>					
 					<plugins>
 						<plugin>
 							<groupId>com.h3xstream.findsecbugs</groupId>
