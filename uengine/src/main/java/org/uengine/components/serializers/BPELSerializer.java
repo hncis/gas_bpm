@@ -1,7 +1,7 @@
 package org.uengine.components.serializers;
 
-import org.uengine.smcp.twister.TwisterBPELToolkit;
-import org.uengine.smcp.twister.engine.priv.core.definition.TwisterProcess;
+//import org.uengine.smcp.twister.TwisterBPELToolkit;
+//import org.uengine.smcp.twister.engine.priv.core.definition.TwisterProcess;
 import org.uengine.util.UEngineUtil;
 
 import org.uengine.kernel.ProcessDefinition;
@@ -47,9 +47,9 @@ public class BPELSerializer implements Serializer{
 		GlobalElement doc = un.unmarshal(is, "file:///C:/Java/xml/xgen/docsoapxdk/BPELv1_1.xsd");
 */
 
-		InputStream defIS = (InputStream)extendedContext.get("wsdl");
+		//InputStream defIS = (InputStream)extendedContext.get("wsdl");
 		
-		TwisterProcess tp = (new TwisterBPELToolkit()).read(is, defIS);
+		//TwisterProcess tp = (new TwisterBPELToolkit()).read(is, defIS);
 				
 		return null;
 	}

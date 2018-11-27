@@ -124,11 +124,11 @@
 			<version>1.1.1</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.dom4j/dom4j -->
-		<dependency>
+<!-- 		<dependency>
 			<groupId>org.dom4j</groupId>
 			<artifactId>dom4j</artifactId>
 			<version>2.0.0</version>
-		</dependency>
+		</dependency> -->
 		<!-- https://mvnrepository.com/artifact/bsf/bsf -->
 		<dependency>
 			<groupId>bsf</groupId>
@@ -266,11 +266,11 @@
 			<scope>system</scope>
 			<systemPath>${java.home}/lib/javaws.jar</systemPath>
 		</dependency>
-		<dependency>
+<!-- 		<dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc7</artifactId>
 			<version>12.1.0.1</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.uengine</groupId>
 			<artifactId>metaworks</artifactId>
