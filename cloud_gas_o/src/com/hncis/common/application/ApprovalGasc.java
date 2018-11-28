@@ -17,7 +17,7 @@ import com.hncis.common.exception.impl.SessionException;
 import com.hncis.common.message.HncisMessageSource;
 import com.hncis.common.util.CurrentDateTime;
 import com.hncis.common.util.StringUtil;
-import com.hncis.common.util.Submit;
+//import com.hncis.common.util.Submit;
 import com.hncis.common.vo.CommonApproval;
 import com.hncis.common.vo.CommonCode;
 import com.hncis.pickupService.dao.PickupServiceDao;
@@ -318,7 +318,7 @@ public class ApprovalGasc{
 
 				String mailAdr = commonJobDao.getSelectInfoToEenoEmailAdr(commonApproval);
 
-				Submit.sendEmail(fromEeno, fromStepNm, toEeno, mailAdr, mode, title, corp_cd);
+//				Submit.sendEmail(fromEeno, fromStepNm, toEeno, mailAdr, mode, title, corp_cd);
 			}
 		}
 		return commonApproval;
@@ -563,7 +563,7 @@ public class ApprovalGasc{
 			
 			String mailAdr = commonJobDao.getSelectInfoToEenoEmailAdr(commonApproval);
 
-			Submit.sendEmail(fromEeno, fromStepNm, toEeno, mailAdr, mode, title, corp_cd);
+//			Submit.sendEmail(fromEeno, fromStepNm, toEeno, mailAdr, mode, title, corp_cd);
 		}
 		return commonApproval;
 	}
@@ -845,7 +845,7 @@ public class ApprovalGasc{
 
 				String mailAdr = commonJobDao.getSelectInfoToEenoEmailAdr(commonApproval);
 
-				Submit.sendEmail(fromEeno, fromStepNm, toEeno, mailAdr, mode, title, corp_cd);
+//				Submit.sendEmail(fromEeno, fromStepNm, toEeno, mailAdr, mode, title, corp_cd);
 				
 				// BMP 역할정보
 				List<String> approveList = new ArrayList<String>();
@@ -912,7 +912,7 @@ public class ApprovalGasc{
 				commonApproval.setRdcs_eeno(commonApproval.getRpts_eeno());
 				String mailAdr = commonJobDao.getSelectInfoToEenoEmailAdr(commonApproval);
 
-				Submit.returnEmail(fromEeno, fromStepNm, mailAdr, mode, title,rtnText, corp_cd);
+//				Submit.returnEmail(fromEeno, fromStepNm, mailAdr, mode, title,rtnText, corp_cd);
 			}else{
 				returnCd = "E";
 				returnMsg = "You can't ask your request, Please ask system administrator.";
@@ -957,7 +957,7 @@ public class ApprovalGasc{
 				
 				String mailAdr = commonJobDao.getSelectInfoToEenoEmailAdr(commonApproval);
 
-				Submit.sendEmail(fromEeno, fromStepNm, toEeno, mailAdr, mode, title, corp_cd);
+//				Submit.sendEmail(fromEeno, fromStepNm, toEeno, mailAdr, mode, title, corp_cd);
 
 			}else{	// 최종결재
 
@@ -1004,7 +1004,7 @@ public class ApprovalGasc{
 
 						String mailAdr = commonJobDao.getSelectInfoToEenoEmailAdr(commonApproval);
 
-						Submit.confirmEmail(fromEeno, fromStepNm, mailAdr, title);
+//						Submit.confirmEmail(fromEeno, fromStepNm, mailAdr, title);
 					} else {
 						//결제 완료시 담당자에게 메일을 발송한다.
 						String fromEeno   = SessionInfo.getSess_name(req);
@@ -1084,7 +1084,7 @@ public class ApprovalGasc{
 
 							String mailAdr = picList.get(i).getXawy_mail();
 
-							Submit.sendStandByConfirmEmail(fromEeno, fromStepNm, mailAdr, "", title, corp_cd);
+//							Submit.sendStandByConfirmEmail(fromEeno, fromStepNm, mailAdr, "", title, corp_cd);
 						}
 
 					}

@@ -37,7 +37,7 @@ import com.hncis.common.util.Base64;
 import com.hncis.common.util.FileUtil;
 import com.hncis.common.util.ReadExcelPoi;
 import com.hncis.common.util.SHA256Util;
-import com.hncis.common.util.SendMail;
+//import com.hncis.common.util.SendMail;
 import com.hncis.common.util.StringUtil;
 import com.hncis.common.util.VoUtil;
 import com.hncis.common.vo.BgabGascZ011Dto;
@@ -1487,10 +1487,10 @@ public class CommonManagerImpl  implements CommonManager{
 
 			logger.info(text);
 
-			SendMail oMail = new SendMail();
+//			SendMail oMail = new SendMail();
 
-			boolean success = oMail.sendMail(eMail, from, subject, text, 1, false);
-			//boolean success = true;
+//			boolean success = oMail.sendMail(eMail, from, subject, text, 1, false);
+			boolean success = true;
 
 			if(success){
 				dto.setXusr_pswd_key(uuid);

@@ -2,13 +2,13 @@ package com.hncis.common.application;
 
 import com.hncis.common.util.StringUtil;
 import com.hncis.common.vo.RfcBudgetCheckVo;
-import com.sap.mw.jco.IFunctionTemplate;
+/*import com.sap.mw.jco.IFunctionTemplate;
 import com.sap.mw.jco.IRepository;
 import com.sap.mw.jco.JCO;
 import com.sap.mw.jco.JCO.Client;
 import com.sap.mw.jco.JCO.Function;
 import com.sap.mw.jco.JCO.ParameterList;
-import com.sap.mw.jco.JCO.Repository;
+import com.sap.mw.jco.JCO.Repository;*/
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -38,7 +38,7 @@ public class RfcBudgetCheck {
 		this.initEaiConnections(gubn);
 	}
 	
-	public Client getConnection() throws JCO.Exception {
+	/*public Client getConnection() throws JCO.Exception {
 
 		Client connection = null;
 		try{
@@ -56,16 +56,16 @@ public class RfcBudgetCheck {
 			logger.error(strMessage, e);
 		}
 		return connection;
-	}
+	}*/
 	
 	/**
 	 * Connection 객체 반환 
 	 * (사용 후 반드시 호출 해야 함 try{ ... } catch(Exception e){ .. } finally{ release() }  )
 	 * @param connection
 	 */
-	public void release(Client connection) {
+	/*public void release(Client connection) {
 		JCO.releaseClient(connection);
-	}
+	}*/
 	
 	/**
 	 * 커넥션 정보 세팅
@@ -108,17 +108,17 @@ public class RfcBudgetCheck {
 	}
 	
 	public RfcBudgetCheckVo getBudgetCheckByDept(RfcBudgetCheckVo i_BudgetInfo) throws Exception{
-		Client client = getConnection();
+//		Client client = getConnection();
 		RfcBudgetCheckVo rfVal = new RfcBudgetCheckVo();
 
 		try {
-			IRepository repository = new Repository("MYRepository", client);
+/*			IRepository repository = new Repository("MYRepository", client);
 	
 			IFunctionTemplate ftemplate = repository.getFunctionTemplate("ZHBR_FM_BUDGET_CHECK");
 			Function function = new Function(ftemplate);
 			ParameterList in_params = function.getImportParameterList();
 			ParameterList out_params = function.getExportParameterList();
-	
+
 			in_params.setValue("H301","I_FIKRS");
 			in_params.setValue(i_BudgetInfo.getI_gjahr(),"I_GJAHR");
 			in_params.setValue("000","I_VERSN");
@@ -146,22 +146,22 @@ public class RfcBudgetCheck {
 			rfVal.setO_budget(out_params.getValue("O_BUDGET").toString());
 			rfVal.setO_commitment(out_params.getValue("O_COMMITMENT").toString());
 			rfVal.setO_waers(out_params.getValue("O_WAERS").toString());
-			
+			*/
 		}catch(Exception e){
 			logger.info("RFC 호출 중 문제가 발생하였습니다.");
 			logger.error(strMessage, e);
 		} finally {
-			release(client);
+//			release(client);
 		}
 		return rfVal;
 	}
 	
 	public RfcBudgetCheckVo getBudgetCheckByIO(RfcBudgetCheckVo i_BudgetInfo) throws Exception{
-		Client client = getConnection();
+//		Client client = getConnection();
 		RfcBudgetCheckVo rfVal = new RfcBudgetCheckVo();
 
 		try {
-			IRepository repository = new Repository("MYRepository", client);
+/*			IRepository repository = new Repository("MYRepository", client);
 	
 			IFunctionTemplate ftemplate = repository.getFunctionTemplate("ZHBR_MM_GASC_BUDGET_BY_IO");
 			Function function = new Function(ftemplate);
@@ -185,22 +185,22 @@ public class RfcBudgetCheck {
 			rfVal.setO_actual(out_params.getValue(strResult).toString());
 			rfVal.setO_balance(out_params.getValue(strBudget).toString());
 			rfVal.setO_commitment(out_params.getValue(strDesc).toString());
-			
+*/			
 		}catch(Exception e){
 			logger.info("RFC 호출 중 문제가 발생하였습니다.");
 			logger.error(strMessage, e);
 		} finally {
-			release(client);
+			//release(client);
 		}
 		return rfVal;
 	}
 	
 	public RfcBudgetCheckVo getBudgetCheckByWBS(RfcBudgetCheckVo i_BudgetInfo) throws Exception{
-		Client client = getConnection();
+//		Client client = getConnection();
 		RfcBudgetCheckVo rfVal = new RfcBudgetCheckVo();
 
 		try {
-			IRepository repository = new Repository("MYRepository", client);
+/*			IRepository repository = new Repository("MYRepository", client);
 	
 			IFunctionTemplate ftemplate = repository.getFunctionTemplate("ZHBR_MM_GASC_BUDGET_BY_WBS");
 			Function function = new Function(ftemplate);
@@ -224,12 +224,12 @@ public class RfcBudgetCheck {
 			rfVal.setO_actual(out_params.getValue(strResult).toString());
 			rfVal.setO_balance(out_params.getValue(strBudget).toString());
 			rfVal.setO_commitment(out_params.getValue(strDesc).toString());
-			
+	*/		
 		}catch(Exception e){
 			logger.info("RFC 호출 중 문제가 발생하였습니다.");
 			logger.error(strMessage, e);
 		} finally {
-			release(client);
+//			release(client);
 		}
 		return rfVal;
 	}

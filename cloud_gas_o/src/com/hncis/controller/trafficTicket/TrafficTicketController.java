@@ -24,7 +24,7 @@ import com.hncis.common.manager.CommonManager;
 import com.hncis.common.message.HncisMessageSource;
 import com.hncis.common.util.CurrentDateTime;
 import com.hncis.common.util.StringUtil;
-import com.hncis.common.util.Submit;
+//import com.hncis.common.util.Submit;
 import com.hncis.common.vo.BgabGascz002Dto;
 import com.hncis.common.vo.CommonList;
 import com.hncis.common.vo.CommonMessage;
@@ -211,7 +211,7 @@ public class TrafficTicketController extends AbstractController{
 					String mode       = "Email";
 					String title      = "Traffic Ticket";
 
-					Submit.sendEmailTrafficTicketForEmailSend(fromEenm, fromStepNm, toEeno, mode, title);
+//					Submit.sendEmailTrafficTicketForEmailSend(fromEenm, fromStepNm, toEeno, mode, title);
 				}
 //				if("payment".equals(paramBtn)){
 //					BgabGascz002Dto userDto = new BgabGascz002Dto();

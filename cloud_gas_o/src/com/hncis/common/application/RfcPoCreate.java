@@ -2,13 +2,13 @@ package com.hncis.common.application;
 
 import com.hncis.common.util.StringUtil;
 import com.hncis.common.vo.RfcPoCreateVo;
-import com.sap.mw.jco.IFunctionTemplate;
+/*import com.sap.mw.jco.IFunctionTemplate;
 import com.sap.mw.jco.IRepository;
 import com.sap.mw.jco.JCO;
 import com.sap.mw.jco.JCO.Client;
 import com.sap.mw.jco.JCO.Function;
 import com.sap.mw.jco.JCO.ParameterList;
-import com.sap.mw.jco.JCO.Repository;
+import com.sap.mw.jco.JCO.Repository;*/
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,7 +37,7 @@ public class RfcPoCreate {
 	/**
 	 * SAP와 JCO 커넥션 맺기
 	 */
-	public Client getConnection() throws JCO.Exception {
+	/*public Client getConnection() throws JCO.Exception {
 
 		Client connection = null;
 		try{
@@ -58,15 +58,15 @@ public class RfcPoCreate {
 		}
 		return connection;
 	}
-	
+	*/
 	/**
 	 * Connection 객체 반환 
 	 * (사용 후 반드시 호출 해야 함 try{ ... } catch(Exception e){ .. } finally{ release() }  )
 	 * @param connection
 	 */
-	public void release(Client connection) {
+	/*public void release(Client connection) {
 		JCO.releaseClient(connection);
-	}
+	}*/
 	
 	/**
 	 * 커넥션 정보 세팅
@@ -113,11 +113,11 @@ public class RfcPoCreate {
 	}
 	
 	public RfcPoCreateVo doPoDelete(RfcPoCreateVo i_PoInfo) throws Exception{
-		Client client = getConnection();
+//		Client client = getConnection();
 		RfcPoCreateVo rfVal = new RfcPoCreateVo();
 		
 		try {
-			IRepository repository = new Repository("MYRepository", client);
+			/*IRepository repository = new Repository("MYRepository", client);
 	
 			IFunctionTemplate ftemplate = repository.getFunctionTemplate("ZHBR_MM_GASC_DELETE_PO");
 			Function function = new Function(ftemplate);
@@ -137,24 +137,24 @@ public class RfcPoCreate {
 			
 			rfVal.setO_if_result(out_params.getValue("IF_RESULT").toString());
 			rfVal.setO_if_fail_msg(out_params.getValue("IF_FAIL_MSG").toString());
-			
+			*/
 		}catch(Exception e){
 			logger.info("RFC 호출 중 문제가 발생하였습니다.");
 			rfVal.setO_if_result("E");
 			rfVal.setO_if_fail_msg(e.toString());
 			logger.error("messege", e);
 		} finally {
-			release(client);
+//			release(client);
 			rfVal.setO_if_result("Z");
 		}
 		return rfVal;
 	}
 	
 	public RfcPoCreateVo doPoCreate(RfcPoCreateVo i_PoInfo) throws Exception{
-		Client client = getConnection();
+//		Client client = getConnection();
 		RfcPoCreateVo rfVal = new RfcPoCreateVo();
 		try {
-			JCO.Table output = null;
+/*			JCO.Table output = null;
 			IRepository repository = new Repository("MYRepository", client);
 			IFunctionTemplate ftemplate = repository.getFunctionTemplate("ZHBR_MM_GASC_PURCHASE_ORDER");
 			Function function = new Function(ftemplate);
@@ -240,14 +240,14 @@ public class RfcPoCreate {
 //			logger.info("IFRESULT:"+output.getValue("IFRESULT"));
 //			logger.info("IFFAILMSG:"+output.getValue("IFFAILMSG"));
 //			logger.info("PO_NO:"+out_params.getValue("PO_NO"));
-			
+*/			
 		}catch(Exception e){
 			logger.info("RFC 호출 중 문제가 발생하였습니다.");
 			rfVal.setO_if_result("E");
 			rfVal.setO_if_fail_msg(e.toString());
 			logger.error("messege", e);
 		} finally {
-			release(client);
+//			release(client);
 //			rfVal.setO_if_result("Z");
 		}
 		return rfVal;

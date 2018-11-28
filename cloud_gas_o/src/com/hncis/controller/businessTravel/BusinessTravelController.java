@@ -37,7 +37,7 @@ import com.hncis.common.exception.impl.SessionException;
 import com.hncis.common.manager.CommonManager;
 import com.hncis.common.message.HncisMessageSource;
 import com.hncis.common.util.StringUtil;
-import com.hncis.common.util.Submit;
+//import com.hncis.common.util.Submit;
 import com.hncis.common.vo.BgabGascZ011Dto;
 import com.hncis.common.vo.BgabGascz002Dto;
 import com.hncis.common.vo.BgabGascz005Dto;
@@ -1811,7 +1811,7 @@ public class BusinessTravelController extends AbstractController{
 		String toEeno     = userDetailInfo.getXusr_mail_adr();
 		String mode       = "confirm";
 		String title      = "Business Travel";
-		Submit.sendEmailBusinessTripForConfirm(fromEenm, fromStepNm, toEeno, mode, title, rsList);
+//		Submit.sendEmailBusinessTripForConfirm(fromEenm, fromStepNm, toEeno, mode, title, rsList);
 
 		CommonMessage message = new CommonMessage();
 		message.setMessage(HncisMessageSource.getMessage("MAIL.0000"));
@@ -1847,7 +1847,7 @@ public class BusinessTravelController extends AbstractController{
 		String toEeno     = userDetailInfo.getXusr_mail_adr();
 		String mode       = "confirm";
 		String title      = "Business Travel";
-		Submit.sendEmailBusinessTripForConfirm(fromEenm, fromStepNm, toEeno, mode, title, rsList);
+//		Submit.sendEmailBusinessTripForConfirm(fromEenm, fromStepNm, toEeno, mode, title, rsList);
 
 		CommonMessage message = new CommonMessage();
 		message.setMessage(HncisMessageSource.getMessage("MAIL.0000"));

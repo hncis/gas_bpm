@@ -27,7 +27,7 @@ import com.hncis.common.manager.CommonManager;
 import com.hncis.common.message.HncisMessageSource;
 import com.hncis.common.util.CurrentDateTime;
 import com.hncis.common.util.StringUtil;
-import com.hncis.common.util.Submit;
+//import com.hncis.common.util.Submit;
 import com.hncis.common.vo.BgabGascZ011Dto;
 import com.hncis.common.vo.BgabGascz002Dto;
 import com.hncis.common.vo.CommonCode;
@@ -435,7 +435,7 @@ public class generalServiceController extends AbstractController{
 				String mode       = "confirm";
 				String title      = gsVo03.getTitle();
 				String comment    = rsVo.getComment();
-				Submit.confirmEmail(fromEenm, fromStepNm, toEeno, title);
+//				Submit.confirmEmail(fromEenm, fromStepNm, toEeno, title);
 //				Submit.sendEmailGeneralServiceForConfirm(fromEenm, fromStepNm, toEeno, mode, title, comment);
 			}
 		}

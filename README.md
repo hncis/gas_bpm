@@ -1,4 +1,4 @@
-스마트 업무환경에 맞춰진 총무솔루션!!
+스마트 업무환경에 맞춰진 총무솔루션!
 
 전사 직원들이 가장 많이 사용하고 있는 복지, 지원, 출장, 차량, OA통신, 총무일반 업무에 대한 문서작업 위주의 업무를 전산화 함으로써, 총무업무운영 및 관리 효율성을 증대할 수 있는 클라우드 기반 총무 업무지원 솔루션입니다.
 
@@ -35,6 +35,26 @@
 - 사용자 업무환경을 고려한 상기 솔루션의 추가 개발 및 사용자 환경의 최적화에 따라 추가적인 비즈니스 모델 확장 가능
 
 
+* 라이선스 다운로드 링크
+- Proprietary License
+https://canvasjs.com/download-html5-charting-graphing-library/
+
+- Microsoft JDBC Driver 4.0 for SQL Server CTP Pre-Release License
+https://docs.microsoft.com/ko-kr/sql/connect/jdbc/redistributing-the-microsoft-jdbc-driver?view=sql-server-2017
+
+- Oracle Technology Network Development and Distribution 01-2008 License  
+https://www.oracle.com/technetwork/apps-tech/jdbc-10201-088211.html
+
+- Oracle Technology Network Development and Distribution License
+https://www.oracle.com/technetwork/database/features/jdbc/default-2280470.html
+
+- Sun JavaBeans Activation Framework 1.0.2 License
+https://www.oracle.com/technetwork/java/javase/jaf-136260.html
+
+- Sun JavaBeans Activation Framework 1.1 License for non-redistribution
+https://www.oracle.com/technetwork/java/jaf11-139815.html
+
+
 ======================================================================================
 
 General Affairs Solution for Smart Business Environments!
@@ -69,3 +89,24 @@ Easiness
 - Small-and-medium companies that conduct and manage the general affairs can easily use the solution as a general affairs solution is serviced
 - Create effects of cutting down the TCO (total cost of ownership) through the cloud-based S/W services (SaaS) of the suggested solution in contrast to the costs originating from introducing a new computerized system such as costs of analysis, design, and development and from purchasing electronic equipment such as the server and solution
 - Additional development of the above solution that considers the user’s working environment and extra expansion of business models according to the optimization of user environment are possible
+
+
+* Download License Link
+- Proprietary License
+https://canvasjs.com/download-html5-charting-graphing-library/
+
+- Microsoft JDBC Driver 4.0 for SQL Server CTP Pre-Release License
+https://docs.microsoft.com/ko-kr/sql/connect/jdbc/redistributing-the-microsoft-jdbc-driver?view=sql-server-2017
+
+- Oracle Technology Network Development and Distribution 01-2008 License  
+https://www.oracle.com/technetwork/apps-tech/jdbc-10201-088211.html
+
+- Oracle Technology Network Development and Distribution License
+https://www.oracle.com/technetwork/database/features/jdbc/default-2280470.html
+
+- Sun JavaBeans Activation Framework 1.0.2 License
+https://www.oracle.com/technetwork/java/javase/jaf-136260.html
+
+- Sun JavaBeans Activation Framework 1.1 License for non-redistribution
+https://www.oracle.com/technetwork/java/jaf11-139815.html
+

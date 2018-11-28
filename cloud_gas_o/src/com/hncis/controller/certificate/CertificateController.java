@@ -26,7 +26,7 @@ import com.hncis.common.exception.impl.SessionException;
 import com.hncis.common.manager.CommonManager;
 import com.hncis.common.message.HncisMessageSource;
 import com.hncis.common.util.StringUtil;
-import com.hncis.common.util.Submit;
+//import com.hncis.common.util.Submit;
 import com.hncis.common.vo.BgabGascz002Dto;
 import com.hncis.common.vo.CommonApproval;
 import com.hncis.common.vo.CommonList;
@@ -228,7 +228,7 @@ public class CertificateController extends AbstractController{
 
 		String mailAdr = commonManager.selectUserMailAddr(bgabGascz002Dto);
 
-		Submit.sendEmailConfirm(fromEeno, fromStepNm, mailAdr, mode, title, corp_cd);
+//		Submit.sendEmailConfirm(fromEeno, fromStepNm, mailAdr, mode, title, corp_cd);
 
 		int cnt = certificateManager.updateCertificateToConfirm(dto);
 		if(cnt > 0){
@@ -268,7 +268,7 @@ public class CertificateController extends AbstractController{
 
 		String mailAdr = commonManager.selectUserMailAddr(bgabGascz002Dto);
 
-		Submit.returnEmail(fromEeno, fromStepNm, mailAdr,"", title, rtnText, corp_cd);
+//		Submit.returnEmail(fromEeno, fromStepNm, mailAdr,"", title, rtnText, corp_cd);
 
 		int cnt = certificateManager.updateCertificateToReject(dto);
 		if(cnt > 0){

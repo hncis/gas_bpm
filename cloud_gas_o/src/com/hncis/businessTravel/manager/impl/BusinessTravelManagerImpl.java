@@ -46,7 +46,7 @@ import com.hncis.common.util.CurrentDateTime;
 import com.hncis.common.util.ExcelTemplat;
 import com.hncis.common.util.FileUtil;
 import com.hncis.common.util.StringUtil;
-import com.hncis.common.util.Submit;
+//import com.hncis.common.util.Submit;
 import com.hncis.common.vo.BgabGascZ011Dto;
 import com.hncis.common.vo.BgabGascz002Dto;
 import com.hncis.common.vo.BgabGascz005Dto;
@@ -673,7 +673,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 			String mailAdr = commonJobDao.getSelectInfoToEenoEmailAdr(commonApproval);
 
 			if(StringUtil.isNullToString(bgabGascbt01.getMode()).equals("confirmCancel")){
-				Submit.confirmCancelEmail(fromEeno, fromStepNm, mailAdr, "Business Travel", bgabGascbt01.getSnb_rson_sbc());
+//				Submit.confirmCancelEmail(fromEeno, fromStepNm, mailAdr, "Business Travel", bgabGascbt01.getSnb_rson_sbc());
 			}else{
 
 				// BPM API호출
@@ -733,7 +733,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 				}
 				
 				if(bgabGascbt01.getAcpc_pgs_st_cd().equals("3")){
-					Submit.confirmEmail(fromEeno, fromStepNm, mailAdr, "Business Travel");
+//					Submit.confirmEmail(fromEeno, fromStepNm, mailAdr, "Business Travel");
 				}
 			}
 		}
@@ -1339,7 +1339,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 						String mailAdr = commonJobDao.getSelectInfoToEenoEmailAdr(commonApproval);
 
 						if(dto.getAcpc_pgs_st_cd().equals("3")){
-							Submit.confirmEmail(fromEeno, fromStepNm, mailAdr, "Business Travel");
+//							Submit.confirmEmail(fromEeno, fromStepNm, mailAdr, "Business Travel");
 						}
 					} catch (SessionException e) {
 						logger.error(strMessege, e);
@@ -2326,7 +2326,7 @@ public class BusinessTravelManagerImpl implements BusinessTravelManager{
 
 			String mailAdr = commonJobDao.getSelectInfoToEenoEmailAdr(commonApproval);
 
-			Submit.returnEmail(fromEeno, fromStepNm, mailAdr,"", title, rtnText, corp_cd);
+//			Submit.returnEmail(fromEeno, fromStepNm, mailAdr,"", title, rtnText, corp_cd);
 		}
 
 		return message;

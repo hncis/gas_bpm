@@ -38,7 +38,7 @@ import com.hncis.common.message.HncisMessageSource;
 import com.hncis.common.message.JSPMessageSource;
 import com.hncis.common.util.RSA;
 import com.hncis.common.util.SHA256Util;
-import com.hncis.common.util.SendMail;
+//import com.hncis.common.util.SendMail;
 import com.hncis.common.util.StringUtil;
 import com.hncis.common.vo.BgabGascz002Dto;
 import com.hncis.common.vo.BgabGascz003Dto;
@@ -941,10 +941,10 @@ public class CommonController extends AbstractController{
 			String fromEmail     = "hncis@hncis.co.kr";
 			String text       = bgabGascz030Dto.getCorp_nm()+HncisMessageSource.getMessage("MAIL.0016",locale);
 			String subject      = HncisMessageSource.getMessage("MAIL.0015",locale); //가입신청이 완료되었습니다.
-			SendMail oMail = new SendMail();
+//			SendMail oMail = new SendMail();
 
-			boolean success = oMail.sendMail(toEmail, fromEmail, subject, text, 0, false);
- 			
+//			boolean success = oMail.sendMail(toEmail, fromEmail, subject, text, 0, false);
+			boolean success = true;
 			if(success){
 				message.setMessage(HncisMessageSource.getMessage("MSG.VAL.0053"));
 			}else{

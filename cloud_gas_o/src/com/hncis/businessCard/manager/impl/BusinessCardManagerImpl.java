@@ -25,7 +25,7 @@ import com.hncis.common.exception.impl.SessionException;
 import com.hncis.common.message.HncisMessageSource;
 import com.hncis.common.util.BpmApiUtil;
 import com.hncis.common.util.StringUtil;
-import com.hncis.common.util.Submit;
+//import com.hncis.common.util.Submit;
 import com.hncis.common.vo.BgabGascz002Dto;
 import com.hncis.common.vo.CommonApproval;
 import com.hncis.common.vo.CommonMessage;
@@ -377,7 +377,7 @@ public class BusinessCardManagerImpl implements BusinessCardManager{
 
 		String mailAdr = commonJobDao.getSelectInfoToEenoEmailAdr(commonApproval);
 
-		Submit.returnEmail(fromEeno, fromStepNm, mailAdr,"", "Business Card", rtnText, corp_cd);
+//		Submit.returnEmail(fromEeno, fromStepNm, mailAdr,"", "Business Card", rtnText, corp_cd);
 //		}
 
 		return message;

@@ -29,7 +29,7 @@ import com.hncis.common.exception.impl.SessionException;
 import com.hncis.common.manager.CommonManager;
 import com.hncis.common.message.HncisMessageSource;
 import com.hncis.common.util.StringUtil;
-import com.hncis.common.util.Submit;
+//import com.hncis.common.util.Submit;
 import com.hncis.common.vo.BgabGascZ011Dto;
 import com.hncis.common.vo.BgabGascz002Dto;
 import com.hncis.common.vo.CommonApproval;
@@ -511,7 +511,7 @@ public class TaxiController extends AbstractController{
 
 		String mailAdr = commonManager.selectUserMailAddr(bgabGascz002Dto);
 
-		Submit.sendEmailConfirm(fromEeno, fromStepNm, mailAdr, mode, title, corp_cd);
+//		Submit.sendEmailConfirm(fromEeno, fromStepNm, mailAdr, mode, title, corp_cd);
 
 		message.setMessage(HncisMessageSource.getMessage("CONFIRM.0000"));
 		message.setCode(keyParamDto.getKey_pgs_st_cd());
@@ -564,7 +564,7 @@ public class TaxiController extends AbstractController{
 
 		String mailAdr = commonManager.selectUserMailAddr(bgabGascz002Dto);
 
-		Submit.returnEmail(fromEeno, fromStepNm, mailAdr,"", title, rtnText, corp_cd);
+//		Submit.returnEmail(fromEeno, fromStepNm, mailAdr,"", title, rtnText, corp_cd);
 
 		modelAndView = new ModelAndView();
 		modelAndView.setViewName(DATA_JSON_PAGE);

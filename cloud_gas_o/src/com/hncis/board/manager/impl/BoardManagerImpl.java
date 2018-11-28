@@ -15,7 +15,7 @@ import com.hncis.board.vo.BgabGasc01KeyDto;
 import com.hncis.common.application.SessionInfo;
 import com.hncis.common.message.HncisMessageSource;
 import com.hncis.common.util.FileUtil;
-import com.hncis.common.util.SendMail;
+//import com.hncis.common.util.SendMail;
 import com.hncis.common.util.StringUtil;
 import com.hncis.common.vo.CommonCode;
 import com.hncis.common.vo.CommonMessage;
@@ -853,10 +853,10 @@ public class BoardManagerImpl implements BoardManager{
 	public void sendMail(String to, String from,  String subject, String content){
 		String area = StringUtil.getSystemArea().toUpperCase();
 
-		SendMail oMail = new SendMail();
+//		SendMail oMail = new SendMail();
 		if(area.equals("REAL")){
 			try {
-				oMail.sendMail(to, from, subject, content, 1, false);
+//				oMail.sendMail(to, from, subject, content, 1, false);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

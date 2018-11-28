@@ -23,7 +23,7 @@ import com.hncis.common.message.HncisMessageSource;
 import com.hncis.common.util.BpmApiUtil;
 import com.hncis.common.util.FileUtil;
 import com.hncis.common.util.StringUtil;
-import com.hncis.common.util.Submit;
+//import com.hncis.common.util.Submit;
 import com.hncis.common.vo.BgabGascZ011Dto;
 import com.hncis.common.vo.CommonApproval;
 import com.hncis.common.vo.CommonCode;
@@ -325,7 +325,7 @@ public class ShuttleBusManagerImpl implements ShuttleBusManager{
 
 		String mailAdr = commonJobDao.getSelectInfoToEenoEmailAdr(commonApproval);
 
-		Submit.returnEmail(fromEeno, fromStepNm, mailAdr,"", "Shuttle Bus", rtnText, SessionInfo.getSess_corp_cd(req));
+//		Submit.returnEmail(fromEeno, fromStepNm, mailAdr,"", "Shuttle Bus", rtnText, SessionInfo.getSess_corp_cd(req));
 
 		return shuttleBusDao.updateInfoSbToReject(param);
 	}

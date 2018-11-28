@@ -29,7 +29,7 @@ import com.hncis.common.manager.CommonManager;
 import com.hncis.common.message.HncisMessageSource;
 import com.hncis.common.util.BpmApiUtil;
 import com.hncis.common.util.StringUtil;
-import com.hncis.common.util.Submit;
+//import com.hncis.common.util.Submit;
 import com.hncis.common.vo.BgabGascZ011Dto;
 import com.hncis.common.vo.BgabGascz002Dto;
 import com.hncis.common.vo.CommonApproval;
@@ -517,7 +517,7 @@ public class FamilyJobController extends AbstractController{
 
 		String mailAdr = commonManager.selectUserMailAddr(bgabGascz002Dto);
 		
-		Submit.sendEmailConfirm(fromEeno, fromStepNm, mailAdr, mode, title, corp_cd);
+//		Submit.sendEmailConfirm(fromEeno, fromStepNm, mailAdr, mode, title, corp_cd);
 
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName(DATA_JSON_PAGE);
@@ -560,7 +560,7 @@ public class FamilyJobController extends AbstractController{
 
 		String mailAdr = commonManager.selectUserMailAddr(bgabGascz002Dto);
 		
-		Submit.returnEmail(fromEeno, fromStepNm, mailAdr,"", title, rtnText, corp_cd);
+//		Submit.returnEmail(fromEeno, fromStepNm, mailAdr,"", title, rtnText, corp_cd);
 
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName(DATA_JSON_PAGE);

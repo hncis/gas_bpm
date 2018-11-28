@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.uengine.bpmutil.util.BpmUtil;
 
 import com.hncis.common.Constant;
 import com.hncis.common.application.ApprovalGasc;
@@ -28,7 +30,7 @@ import com.hncis.common.util.BpmApiUtil;
 import com.hncis.common.util.CurrentDateTime;
 import com.hncis.common.util.FileUtil;
 import com.hncis.common.util.SHA256Util;
-import com.hncis.common.util.SendMail;
+//import com.hncis.common.util.SendMail;
 import com.hncis.common.util.StringUtil;
 import com.hncis.common.vo.BgabGascz002Dto;
 import com.hncis.common.vo.BgabGascz003Dto;
@@ -1587,11 +1589,11 @@ public class SystemManagerImpl  implements SystemManager{
 			text       += "<br/> ID : admin";
 			text       += "<br/> PW : admin";
 			String subject      = "GAS "+HncisMessageSource.getMessage("MAIL.0017",locale);
-			SendMail oMail = new SendMail();
+//			SendMail oMail = new SendMail();
 
 			boolean success = true;
 			try {
-				success = oMail.sendMail(toEmail, fromEmail, subject, text, 1, false);
+//				success = oMail.sendMail(toEmail, fromEmail, subject, text, 1, false);
 				
 				if(!success){
 					TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -2902,11 +2904,19 @@ public class SystemManagerImpl  implements SystemManager{
 		String comment = null;
 		String roleCode = rCodeArray; 
 		
-		List<String> approveList = new ArrayList<String>();
 		List<String> managerList = new ArrayList<String>();
 		managerList.add(adminID);
+
+		//역할정보
+		Map<String, List<String>> roleMap = new HashMap<String, List<String>>();
+
+		roleMap.put(roleCode, managerList); //담당자 - 프로세스 정의서 참조
+		Map<String, List<String>> varMap = new HashMap<String, List<String>>();
+		List<String> varList = new ArrayList<String>();
+		varList.add(adminID);
+		varMap.put("APPROVALLINE", varList); //결재라인생성여부 - 프로세스 정의서 참조
 		
-		message = BpmApiUtil.sendSaveTask(processCode, bizKey, statusCode, loginUserId, roleCode, approveList, managerList );
+		message = BpmUtil.saveTask(processCode, bizKey, statusCode, loginUserId, roleMap, varMap  );
 		
 		logger.info("save_return : " + message);
 	

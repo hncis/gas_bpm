@@ -30,7 +30,7 @@ import com.hncis.common.exception.impl.SessionException;
 import com.hncis.common.manager.CommonManager;
 import com.hncis.common.message.HncisMessageSource;
 import com.hncis.common.util.StringUtil;
-import com.hncis.common.util.Submit;
+//import com.hncis.common.util.Submit;
 import com.hncis.common.vo.BgabGascZ011Dto;
 import com.hncis.common.vo.CommonCode;
 import com.hncis.common.vo.CommonList;
@@ -928,7 +928,7 @@ public class ShuttleBusController extends AbstractController{
 			String toEeno     = hrList.get(i).getName(); //"suzi.yun@hyundai-brasil.com"; // BUS 회사 메일
 			String mode       = "SendMail";
 			String title      = "Shuttle Bus";
-			Submit.sendEmailShuttleBusForHRmail(fromEenm, fromStepNm, toEeno, mode, title, rsList, info);
+//			Submit.sendEmailShuttleBusForHRmail(fromEenm, fromStepNm, toEeno, mode, title, rsList, info);
 		}
 //		String fromEenm   = SessionInfo.getSess_name(req);
 //		String fromStepNm = SessionInfo.getSess_step_name(req);

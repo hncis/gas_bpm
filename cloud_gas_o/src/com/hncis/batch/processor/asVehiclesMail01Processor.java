@@ -23,7 +23,7 @@ import com.hncis.batch.job.vo.dto.BgabGascI001Dto;
 import com.hncis.batch.job.vo.impl.JobVo;
 import com.hncis.businessVehicles.vo.BgabGascbv01Dto;
 import com.hncis.common.util.StringUtil;
-import com.hncis.common.util.Submit;
+//import com.hncis.common.util.Submit;
 import com.hncis.common.vo.BgabGascz002Dto;
 
 @Service("asVehiclesMail01Processor")
@@ -83,7 +83,7 @@ public class asVehiclesMail01Processor extends StepExecutionListenerSupport impl
 	@Override
 	public ExitStatus afterStep(StepExecution stepExec) {
 		System.out.println("============================메일배치 프로세스후");
-		Submit.sendEmailForAsVehicle(mailList);
+//		Submit.sendEmailForAsVehicle(mailList);
 		
 		
 		

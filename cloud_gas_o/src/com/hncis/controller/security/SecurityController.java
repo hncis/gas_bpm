@@ -31,7 +31,7 @@ import com.hncis.common.manager.CommonManager;
 import com.hncis.common.message.HncisMessageSource;
 import com.hncis.common.util.BpmApiUtil;
 import com.hncis.common.util.StringUtil;
-import com.hncis.common.util.Submit;
+//import com.hncis.common.util.Submit;
 import com.hncis.common.vo.BgabGascZ011Dto;
 import com.hncis.common.vo.BgabGascz002Dto;
 import com.hncis.common.vo.CommonApproval;
@@ -571,7 +571,7 @@ public class SecurityController extends AbstractController{
 
 		String email = commonManager.selectUserMailAddr(bgabGascz002Dto);
 
-		Submit.sendEmailConfirm(fromEeno, fromStepNm, email, mode, title, corp_cd);
+//		Submit.sendEmailConfirm(fromEeno, fromStepNm, email, mode, title, corp_cd);
 
 		CommonMessage message = new CommonMessage();
 		message.setMessage(HncisMessageSource.getMessage("CONFIRM.0000"));
@@ -645,7 +645,7 @@ public class SecurityController extends AbstractController{
 
 		String email = commonManager.selectUserMailAddr(bgabGascz002Dto);
 
-		Submit.sendEmailConfirm(fromEeno, fromStepNm, email, mode, title, corp_cd);
+//		Submit.sendEmailConfirm(fromEeno, fromStepNm, email, mode, title, corp_cd);
 
 		// BPM API호출
 		String processCode = "P-E-001"; 	//프로세스 코드 (방문객 프로세스) - 프로세스 정의서 참조
@@ -1255,7 +1255,7 @@ public class SecurityController extends AbstractController{
 
 		String mailAdr = commonManager.selectUserMailAddr(bgabGascz002Dto);
 
-		Submit.returnEmail(fromEeno, fromStepNm, mailAdr,"", title, rtnText, corp_cd);
+//		Submit.returnEmail(fromEeno, fromStepNm, mailAdr,"", title, rtnText, corp_cd);
 
 		CommonMessage message = new CommonMessage();
 		message.setMessage(HncisMessageSource.getMessage("REJECT.0000"));

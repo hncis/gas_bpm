@@ -32,7 +32,7 @@ import com.hncis.common.util.CurrentDateTime;
 import com.hncis.common.util.ExcelTemplat;
 import com.hncis.common.util.FileUtil;
 import com.hncis.common.util.StringUtil;
-import com.hncis.common.util.Submit;
+//import com.hncis.common.util.Submit;
 import com.hncis.common.vo.BgabGascZ011Dto;
 import com.hncis.common.vo.BgabGascz002Dto;
 import com.hncis.common.vo.BgabGascz005Dto;
@@ -205,7 +205,7 @@ public class PickupServiceManagerImpl implements PickupServiceManager{
 
 		String mailAdr = commonJobDao.getSelectInfoToEenoEmailAdr(commonApproval);
 
-		Submit.confirmEmail(fromEeno, fromStepNm, mailAdr, "Pick-up Service");
+//		Submit.confirmEmail(fromEeno, fromStepNm, mailAdr, "Pick-up Service");
 
 		}catch(Exception e){
 			logger.error(strMessege, e);
@@ -227,7 +227,7 @@ public class PickupServiceManagerImpl implements PickupServiceManager{
 
 		String mailAdr = commonJobDao.getSelectInfoToEenoEmailAdr(commonApproval);
 
-		Submit.confirmCancelEmail(fromEeno, fromStepNm, mailAdr, "Pick-up Service", rtnText);
+//		Submit.confirmCancelEmail(fromEeno, fromStepNm, mailAdr, "Pick-up Service", rtnText);
 
 		return pickupServiceDao.updateInfoPsToConfirmCancel(dto);
 	}
@@ -340,7 +340,7 @@ public class PickupServiceManagerImpl implements PickupServiceManager{
 
 			String mailAdr = commonJobDao.getSelectInfoToEenoEmailAdr(commonApproval);
 
-			Submit.returnEmail(fromEeno, fromStepNm, mailAdr,"", title, rtnText, corp_cd);
+//			Submit.returnEmail(fromEeno, fromStepNm, mailAdr,"", title, rtnText, corp_cd);
 //		}
 			
 		return message;

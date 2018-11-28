@@ -3,13 +3,13 @@ package com.hncis.common.application;
 import com.hncis.common.util.CurrentDateTime;
 import com.hncis.common.util.StringUtil;
 import com.hncis.common.vo.RfcPoCreateVo;
-import com.sap.mw.jco.IFunctionTemplate;
+/*import com.sap.mw.jco.IFunctionTemplate;
 import com.sap.mw.jco.IRepository;
 import com.sap.mw.jco.JCO;
 import com.sap.mw.jco.JCO.Client;
 import com.sap.mw.jco.JCO.Function;
 import com.sap.mw.jco.JCO.ParameterList;
-import com.sap.mw.jco.JCO.Repository;
+import com.sap.mw.jco.JCO.Repository;*/
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -36,7 +36,7 @@ public class RfcFiCreate {
 	/**
 	 * SAP와 JCO 커넥션 맺기
 	 */
-	public Client getConnection() throws JCO.Exception {
+/*	public Client getConnection() throws JCO.Exception {
 
 		Client connection = null;
 		try{
@@ -56,16 +56,16 @@ public class RfcFiCreate {
 			logger.error("messege", e);
 		}
 		return connection;
-	}
+	}*/
 	
 	/**
 	 * Connection 객체 반환 
 	 * (사용 후 반드시 호출 해야 함 try{ ... } catch(Exception e){ .. } finally{ release() }  )
 	 * @param connection
 	 */
-	public void release(Client connection) {
+/*	public void release(Client connection) {
 		JCO.releaseClient(connection);
-	}
+	}*/
 	
 	/**
 	 * 커넥션 정보 세팅
@@ -92,16 +92,16 @@ public class RfcFiCreate {
 	
 	public RfcPoCreateVo getResult(RfcPoCreateVo i_PoInfo) throws Exception{
 		RfcPoCreateVo rfVal = new RfcPoCreateVo();
-		Client client = getConnection();
+//		Client client = getConnection();
 		
 		try {
 			logger.info("getResult Start");
 			
-			JCO.Table output = null;
+/*			JCO.Table output = null;
 			IRepository repository = new Repository("MYRepository", client);
 			IFunctionTemplate ftemplate = repository.getFunctionTemplate("ZHBR_GASC_FI_ACC_CREATE");
 			Function function = new Function(ftemplate);
-/*
+
 		JCO.Structure in_header = function.getImportParameterList().getStructure("I_PO_HEADER");
 		in_header.setValue(i_PoInfo.getI_date(), "DATE");
 		in_header.setValue(i_PoInfo.getI_vendor_code(),"VENDOR_CODE");
@@ -109,7 +109,7 @@ public class RfcFiCreate {
 		in_header.setValue(i_PoInfo.getI_pur_org_code(),"PUR_ORG_CODE");
 		in_header.setValue(i_PoInfo.getI_pur_group(),"PUR_GROUP");
 		in_header.setValue(i_PoInfo.getI_company_code(),"COMPANY_CODE");
-		*/
+		
 //		JCO.Table itemTable = function.getTableParameterList().getTable("T_GASC_ITEMS"); 
 //		itemTable.appendRow(); 
 //		itemTable.setValue("20140206164937937100074F", "BKTXT"); 	// tempCashList.get(j).getDoc_no()+tempCashList.get(j).getEeno()+"F"
@@ -175,14 +175,14 @@ public class RfcFiCreate {
 //			logger.info("IFRESULT:"+output.getValue("IFRESULT"));
 //			logger.info("IFFAILMSG:"+output.getValue("IFFAILMSG"));
 //			logger.info("PO_NO:"+out_params.getValue("PO_NO"));
-			
+	*/		
 		}catch(Exception e){
 			logger.info("RFC 호출 중 문제가 발생하였습니다.");
 			rfVal.setO_if_result("E");
 			rfVal.setO_if_fail_msg(e.toString());
 			logger.error("messege", e);
 		} finally {
-			release(client);
+//			release(client);
 //			rfVal.setO_if_result("Z");
 		}
 		return rfVal;

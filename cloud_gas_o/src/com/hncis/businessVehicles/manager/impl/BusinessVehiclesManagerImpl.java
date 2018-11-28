@@ -29,7 +29,7 @@ import com.hncis.common.message.HncisMessageSource;
 import com.hncis.common.util.BpmApiUtil;
 import com.hncis.common.util.FileUtil;
 import com.hncis.common.util.StringUtil;
-import com.hncis.common.util.Submit;
+//import com.hncis.common.util.Submit;
 import com.hncis.common.vo.BgabGascZ011Dto;
 import com.hncis.common.vo.BgabGascz002Dto;
 import com.hncis.common.vo.CommonApproval;
@@ -261,7 +261,7 @@ public class BusinessVehiclesManagerImpl implements BusinessVehiclesManager{
 		
 		String mailAdr = commonJobDao.getSelectInfoToEenoEmailAdr(commonApproval);
 
-		Submit.confirmEmail(fromEeno, fromStepNm, mailAdr, "Business Vehicles");
+//		Submit.confirmEmail(fromEeno, fromStepNm, mailAdr, "Business Vehicles");
 		
 		// BPM API호출
 		String processCode = pCode; 	//프로세스 코드 (차량신청 프로세스) - 프로세스 정의서 참조
@@ -290,7 +290,7 @@ public class BusinessVehiclesManagerImpl implements BusinessVehiclesManager{
 		
 		String mailAdr = commonJobDao.getSelectInfoToEenoEmailAdr(commonApproval);
 
-		Submit.confirmCancelEmail(fromEeno, fromStepNm, mailAdr, "Business Vehicles", rtnText);
+//		Submit.confirmCancelEmail(fromEeno, fromStepNm, mailAdr, "Business Vehicles", rtnText);
 
 		return businessVehiclesDao.updateInfoBvToConfirmCancel(dto);
 	}
@@ -520,7 +520,7 @@ public class BusinessVehiclesManagerImpl implements BusinessVehiclesManager{
 			
 			String mailAdr = commonJobDao.getSelectInfoToEenoEmailAdr(commonApproval);
 
-			Submit.returnEmail(fromEeno, fromStepNm, mailAdr,"", title, rtnText, corp_cd);
+//			Submit.returnEmail(fromEeno, fromStepNm, mailAdr,"", title, rtnText, corp_cd);
 			
 			// BPM API호출
 			String processCode = pCode; 	//프로세스 코드 (차량신청 프로세스) - 프로세스 정의서 참조

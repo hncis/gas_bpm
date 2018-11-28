@@ -32,7 +32,7 @@ import com.hncis.common.exception.impl.SessionException;
 import com.hncis.common.manager.CommonManager;
 import com.hncis.common.message.HncisMessageSource;
 import com.hncis.common.util.StringUtil;
-import com.hncis.common.util.Submit;
+//import com.hncis.common.util.Submit;
 import com.hncis.common.vo.BgabGascz002Dto;
 import com.hncis.common.vo.CommonApproval;
 import com.hncis.common.vo.CommonCode;
@@ -359,7 +359,7 @@ public class BusinessCardController extends AbstractController{
 
 		String email = commonManager.selectUserMailAddr(bgabGascz002Dto);
 
-		Submit.sendEmailConfirm(fromEeno, fromStepNm, email, mode, title, corp_cd);
+//		Submit.sendEmailConfirm(fromEeno, fromStepNm, email, mode, title, corp_cd);
 
 		CommonMessage message = new CommonMessage();
 		message.setMessage(HncisMessageSource.getMessage("CONFIRM.0000"));
@@ -636,7 +636,7 @@ public class BusinessCardController extends AbstractController{
 			String email = commonManager.selectUserMailAddr(bgabGascz002Dto);
 
 //			Submit.sendEmailConfirm(fromEeno, fromStepNm, toEeno, mode, title);
-			Submit.sendEmailConfirm(fromEeno, fromStepNm, email, mode, title, corp_cd);
+//			Submit.sendEmailConfirm(fromEeno, fromStepNm, email, mode, title, corp_cd);
 		}
 
 
@@ -739,7 +739,7 @@ public class BusinessCardController extends AbstractController{
 
 			String email = commonManager.selectUserMailAddr(bgabGascz002Dto);
 
-			Submit.sendEmailConfirm(fromEeno, fromStepNm, toEeno, mode, title, corp_cd);
+//			Submit.sendEmailConfirm(fromEeno, fromStepNm, toEeno, mode, title, corp_cd);
 		}
 
 		CommonMessage message = new CommonMessage();
