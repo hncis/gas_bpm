@@ -1,4 +1,6 @@
 
+본 프로젝트는 GPL-3.0로 배포됩니다.
+
 //==================================================================================
 // Apache-2.0
 //==================================================================================
@@ -206,6 +208,60 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
+   
+※ 이 라이선스의 적용을 받는 공개SW 컴포넌트 목록   
+- fastinfoset
+- Apache Tomcat   
+- Apache Web Services Axis
+- Apache Jakarta Commons BeanUtils
+- Apache Commons Collections
+- Apache Jakarta Commons DBCP
+- Apache Jakarta DBCP
+- Apache Commons Digester
+- Apache Commons FileUpload
+- Commons IO
+- Commons JEXL
+- Apache Commons Lang 
+- Apache HttpClient
+- Commons Logging - commons-logging:commons-logging
+- Apache Jakarta Commons Net
+- Apache Jakarta Commons Pool
+- ezmorph
+- Gson
+- http-client-common 
+- httpclient.jar
+- HttpCore - httpcomponents-httpcore:jakarta-httpcore
+- ibatis-sqlmap
+- javax.jms.jar
+- Joda time
+- json-simple
+- Streaming API for XML (StAX) - JSR-173
+- Apache Log4j - log4j:log4j
+- log4jdbc
+- log4sql-slf4j
+- Spring Framework - springframework
+- Apache POI
+- Apache POI - org.apache.poi:poi-examples
+- Apache-Jakarta POI
+- quartz - quartz-scheduler/quartz
+- Spring Batch
+- Spring Framework
+- Apache Standard Taglib Implementation
+- Apache Standard Taglib 1.0 EL Support
+- Apache Standard Taglib Specification API
+- XBean
+- ExplorerCanvas
+- ANT Contrib
+- Commons DBCP
+- Apache Jakarta HTTP Client
+- Apache Commons Pool
+- JTA 1.1
+- mybatis-parent
+- Quartz Enterprise Job Scheduler
+- Spring Framework: Mock
+- Bootstrap
+- bootstrap-treeview
+   
    
    
    
