@@ -229,16 +229,6 @@
 			hid_view_nm = "xtx02";
 			eeno = initEeno;
 			break;
-		case "SB" :
-			movePage = ctxPath+"/hncis/shuttleBus/xsb06.gas?hid_doc_no="+docNo;
-			
-			eeno = initEeno;
-			break;	
-		case "RM" :
-			movePage = ctxPath+"/hncis/roomsMeals/xrm01.gas?hid_doc_no="+docNo;
-			
-			eeno = initEeno;
-			break;	
 	}
 
 	var form = $("<form/>");
